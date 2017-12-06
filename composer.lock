@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4b22760d00140b1b928eb5e72a8430b",
+    "content-hash": "5e599a95d30077f3ace1662cd220484a",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -486,48 +486,6 @@
             "time": "2015-07-28T04:44:39+00:00"
         },
         {
-            "name": "yadjet/yii2-tagged-behavior",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hiscaler/yii2-TaggedBehavior.git",
-                "reference": "910f4fcf99b2aa0d48ec781498e0777651761ef9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hiscaler/yii2-TaggedBehavior/zipball/910f4fcf99b2aa0d48ec781498e0777651761ef9",
-                "reference": "910f4fcf99b2aa0d48ec781498e0777651761ef9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4",
-                "yiisoft/yii2": "*"
-            },
-            "type": "project",
-            "autoload": {
-                "psr-4": {
-                    "yadjet\\behaviors\\": "src/yadjet/behaviors"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "hiscaler",
-                    "email": "hiscaler@gmail.com"
-                }
-            ],
-            "description": "Tag behaviors For Yii2",
-            "keywords": [
-                "Behavior",
-                "tag",
-                "yii2"
-            ],
-            "time": "2016-02-15T05:40:57+00:00"
-        },
-        {
             "name": "yadjet/yii2-ueditor",
             "version": "dev-master",
             "source": {
@@ -569,48 +527,6 @@
                 "yii2"
             ],
             "time": "2015-09-10T00:41:32+00:00"
-        },
-        {
-            "name": "yadjet/yii2-ztree",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hiscaler/yii2-ztree.git",
-                "reference": "d340d383cd90731ef5d6673f0d84aba3108edc9b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hiscaler/yii2-ztree/zipball/d340d383cd90731ef5d6673f0d84aba3108edc9b",
-                "reference": "d340d383cd90731ef5d6673f0d84aba3108edc9b",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4",
-                "yiisoft/yii2": "*"
-            },
-            "type": "project",
-            "autoload": {
-                "psr-4": {
-                    "yadjet\\ztree\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "hiscaler",
-                    "email": "hiscaler@gmail.com"
-                }
-            ],
-            "description": "JQuery ZTree Yii2",
-            "keywords": [
-                "tree",
-                "yii2",
-                "ztree"
-            ],
-            "time": "2016-03-05T01:30:20+00:00"
         },
         {
             "name": "yiisoft/yii2",
@@ -1173,9 +1089,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "yadjet/yii2-date-picker": 20,
-        "yadjet/yii2-ueditor": 20,
-        "yadjet/yii2-tagged-behavior": 20,
-        "yadjet/yii2-ztree": 20
+        "yadjet/yii2-ueditor": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
