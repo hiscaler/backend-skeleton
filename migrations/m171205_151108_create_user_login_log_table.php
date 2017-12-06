@@ -3,7 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `user_login_log`.
+ * 用户登录日志
+ *
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class m171205_151108_create_user_login_log_table extends Migration
 {

@@ -2,7 +2,7 @@
 
 namespace app\modules\admin\widgets;
 
-use app\models\Tenant;
+
 use Yii;
 use yii\base\Widget;
 use yii\helpers\ArrayHelper;
@@ -23,11 +23,11 @@ class GlobalControlPanel extends Widget
         $controllerId = $controller->id;
         $modules = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
 
-        $tenantModules = Tenant::modules();
+
         foreach ($modules as $group => $ms) {
             $rawItems = [];
             foreach ($ms as $key => $value) {
-                if ((isset($value['forceEmbed']) && $value['forceEmbed']) || in_array($key, $tenantModules)) {
+                if ((isset($value['forceEmbed']) && $value['forceEmbed'])) {
                     $url = $value['url'];
                     $urlControllerId = null;
                     foreach (explode('/', $url[0]) as $d) {

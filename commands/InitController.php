@@ -60,59 +60,16 @@ class InitController extends Controller
         return 0;
     }
 
-    /**
-     * 初始化站点
-     */
-    public function _initTenant($tenantId)
-    {
-        echo "Begin init tenant data..." . PHP_EOL;
-        $db = Yii::$app->getDb();
-        $exists = $db->createCommand('SELECT COUNT(*) FROM {{%tenant}} WHERE [[id]] = :id', [':id' => $tenantId])->queryScalar();
-        if (!$exists) {
-            $now = time();
-            $db->createCommand()->insert('{{%tenant}}', [
-                'key' => date('Ymd') . sprintf('%04d', 1),
-                'name' => 'Default site',
-                'language' => 'zh-CN',
-                'timezone' => 'PRC',
-                'date_format' => 'php:Y-m-d',
-                'time_format' => 'php:H:i:s',
-                'datetime_format' => 'php:Y-m-d H:i:s',
-                'domain_name' => 'www.example.com',
-                'description' => 'This is default site.',
-                'enabled' => 1,
-                'created_at' => $now,
-                'created_by' => $this->_userId,
-                'updated_at' => $now,
-                'updated_by' => $this->_userId,
-            ])->execute();
-            $db->createCommand()->insert('{{%tenant_user}}', [
-                'user_id' => 1,
-                'tenant_id' => $tenantId,
-                'created_at' => $now,
-                'created_by' => $this->_userId,
-                'updated_at' => $now,
-                'updated_by' => $this->_userId,
-            ])->execute();
-            echo 'initialize successed.' . PHP_EOL;
-        } else {
-            echo 'Site is exists.' . PHP_EOL;
-        }
-
-        echo "Done." . PHP_EOL;
-    }
 
     /**
      * 初始化配置资料
      *
      * @return int
      */
-    public function _initLookups($tenantId)
+    public function _initLookups()
     {
         echo "Begin..." . PHP_EOL;
         $db = Yii::$app->getDb();
-        $language = $db->createCommand('SELECT [[language]] FROM {{%tenant}} WHERE [[id]] = :id', [':id' => $tenantId])->queryScalar();
-        $language && Yii::$app->language = $language;
         $items = [
             Lookup::GROUP_CUSTOM => [
                 'custom.site.name' => [
@@ -270,7 +227,7 @@ class InitController extends Controller
             ],
         ];
         $cmd = $db->createCommand();
-        $existsCmd = $db->createCommand('SELECT COUNT(*) FROM {{%lookup}} WHERE [[type]] = :type AND [[key]] = :key AND [[tenant_id]] = :tenantId');
+        $existsCmd = $db->createCommand('SELECT COUNT(*) FROM {{%lookup}} WHERE [[type]] = :type AND [[key]] = :key');
         $now = time();
         foreach ($items as $group => $data) {
             foreach ($data as $key => $item) {
@@ -280,7 +237,6 @@ class InitController extends Controller
                 $exists = $existsCmd->bindValues([
                     ':type' => $type,
                     ':key' => $key,
-                    ':tenantId' => $tenantId
                 ])->queryScalar();
                 if ($exists) {
                     echo "{$key} is exists, ignore it..." . PHP_EOL;
@@ -306,7 +262,7 @@ class InitController extends Controller
                     'input_method' => isset($item['inputMethod']) ? $item['inputMethod'] : Lookup::INPUT_METHOD_TEXT,
                     'input_value' => isset($item['inputValue']) ? $item['inputValue'] : '',
                     'enabled' => Constant::BOOLEAN_TRUE,
-                    'tenant_id' => $tenantId,
+
                     'created_by' => $this->_userId,
                     'created_at' => $now,
                     'updated_by' => $this->_userId,
@@ -321,21 +277,13 @@ class InitController extends Controller
     }
 
     /**
-     * yii init 1
+     * yii init
      *
-     * @param integer $tenantId
      */
-    public function actionIndex($tenantId)
+    public function actionIndex()
     {
-        $tenantId = (int) $tenantId;
-        if ($tenantId) {
-            $this->_initAdminUser();
-            $this->_initTenant($tenantId);
-            $this->_initLookups($tenantId);
-        } else {
-            echo "tenantId param error.";
-            exit(1);
-        }
+        $this->_initAdminUser();
+        $this->_initLookups();
     }
 
 }

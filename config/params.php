@@ -17,13 +17,6 @@ return [
         ],
          */
         'System Manage' => [
-            'app-models-Tenant' => [
-                'id' => 'tenants',
-                'label' => 'Tenants',
-                'url' => ['tenants/index'],
-                'activeConditions' => ['tenants', 'tenant-access-tokens'],
-                'forceEmbed' => true,
-            ],
             'app-models-User' => [
                 'id' => 'users',
                 'label' => 'Users',
