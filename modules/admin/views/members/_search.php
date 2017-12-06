@@ -1,43 +1,67 @@
 <?php
 
-use app\models\Option;
-use app\models\UserGroup;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\UserSearch */
+/* @var $model app\models\MemberSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-<div class="form-outside form-search form-layout-column" style="display: none">
-    <div class="user-search form">
 
-        <?php
-        $form = ActiveForm::begin([
-            'id' => 'form-user-search',
-            'action' => ['index'],
-            'method' => 'get',
-        ]);
-        ?>
+<div class="member-search">
 
-        <div class="entry">
-            <?= $form->field($model, 'username') ?>
+    <?php $form = ActiveForm::begin([
+        'action' => ['index'],
+        'method' => 'get',
+    ]); ?>
 
-            <?= $form->field($model, 'nickname') ?>
-        </div>
+    <?= $form->field($model, 'id') ?>
 
-        <div class="entry">
-            <?php echo $form->field($model, 'user_group')->dropDownList(UserGroup::userGroupOptions(), ['prompt' => '']) ?>
+    <?= $form->field($model, 'type') ?>
 
-            <?php echo $form->field($model, 'status')->dropDownList(Option::booleanOptions(), ['prompt' => '']) ?>
-        </div>
+    <?= $form->field($model, 'username') ?>
 
-        <div class="form-group buttons">
-            <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-            <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
-        </div>
+    <?= $form->field($model, 'nickname') ?>
 
-        <?php ActiveForm::end(); ?>
+    <?= $form->field($model, 'avatar') ?>
 
+    <?php // echo $form->field($model, 'auth_key') ?>
+
+    <?php // echo $form->field($model, 'password_hash') ?>
+
+    <?php // echo $form->field($model, 'password_reset_token') ?>
+
+    <?php // echo $form->field($model, 'email') ?>
+
+    <?php // echo $form->field($model, 'tel') ?>
+
+    <?php // echo $form->field($model, 'mobile_phone') ?>
+
+    <?php // echo $form->field($model, 'register_ip') ?>
+
+    <?php // echo $form->field($model, 'login_count') ?>
+
+    <?php // echo $form->field($model, 'last_login_ip') ?>
+
+    <?php // echo $form->field($model, 'last_login_time') ?>
+
+    <?php // echo $form->field($model, 'status') ?>
+
+    <?php // echo $form->field($model, 'remark') ?>
+
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'created_by') ?>
+
+    <?php // echo $form->field($model, 'updated_at') ?>
+
+    <?php // echo $form->field($model, 'updated_by') ?>
+
+    <div class="form-group">
+        <?= Html::submitButton(Yii::t('member', 'Search'), ['class' => 'btn btn-primary']) ?>
+        <?= Html::resetButton(Yii::t('member', 'Reset'), ['class' => 'btn btn-default']) ?>
     </div>
+
+    <?php ActiveForm::end(); ?>
+
 </div>

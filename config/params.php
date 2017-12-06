@@ -61,6 +61,12 @@ return [
                 'url' => ['user-groups/index'],
                 'forceEmbed' => true,
             ],
+            'app-models-Member' => [
+                'id' => 'member',
+                'label' => 'Members',
+                'url' => ['members/index'],
+                'forceEmbed' => true,
+            ],
         ],
         'Content Manage' => [
             'app-models-Article' => [

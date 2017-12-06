@@ -1,134 +1,55 @@
 <?php
 
-use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\User */
+/* @var $model app\models\Member */
 
-$this->title = $model->username;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Users'), 'url' => ['index']];
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('member', 'Members'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-
-$this->params['menus'] = [
-    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
-    ['label' => Yii::t('app', 'Update'), 'url' => ['update', 'id' => $model->id]],
-];
 ?>
+<div class="member-view">
 
-<ul class="tabs-common clearfix">
-    <li class="active"><a href="javascript:;" data-toggle="panel-base">基本资料</a></li>
-    <li><a href="javascript:;" data-toggle="panel-meta">扩展信息</a></li>
-    <li><a href="javascript:;" data-toggle="panel-credits">积分情况</a></li>
-    <li><a href="javascript:;" data-toggle="panel-login-logs">登录日志</a></li>
-</ul>
+    <h1><?= Html::encode($this->title) ?></h1>
 
-<div class="panels">
-    <div id="panel-base" class="tab-pane">
-        <?=
-        DetailView::widget([
-            'model' => $model,
-            'attributes' => [
-                'username',
-                'nickname',
-                'avatar:image',
-                'credits_count',
-                'user_group_text',
-                'register_ip',
-                'login_count',
-                'last_login_ip',
-                'last_login_time',
-                'status_text',
-                'created_at:datetime',
-                'updated_at:datetime',
+    <p>
+        <?= Html::a(Yii::t('member', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('member', 'Delete'), ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => Yii::t('member', 'Are you sure you want to delete this item?'),
+                'method' => 'post',
             ],
-        ])
-        ?>
-    </div>
+        ]) ?>
+    </p>
 
-    <!-- 扩展信息 -->
-    <div id="panel-meta" class="tab-pane" style="display: none;">
-        <div class="grid-view">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>标题</th>
-                    <th>内容</th>
-                </tr>
-                </thead>
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'id',
+            'type',
+            'username',
+            'nickname',
+            'avatar',
+            'auth_key',
+            'password_hash',
+            'password_reset_token',
+            'email:email',
+            'tel',
+            'mobile_phone',
+            'register_ip',
+            'login_count',
+            'last_login_ip',
+            'last_login_time:datetime',
+            'status',
+            'remark:ntext',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ],
+    ]) ?>
 
-                <tbody>
-                <?php
-                $items = app\models\Meta::getItems($model);
-                foreach ($items as $item):
-                    ?>
-                    <tr>
-                        <td style="width: 160px;"><?= $item['label'] ?></td>
-                        <td>
-                            <?php
-                            $value = $item['value'];
-                            if (is_array($value) || $item['input_candidate_value']) {
-                                $output = [];
-                                $value = is_array($value) ? $value : [$value];
-                                foreach ($value as $v) {
-                                    if (isset($item['input_candidate_value'][$v])) {
-                                        $output[] = $item['input_candidate_value'][$v];
-                                    } else {
-                                        $output[] = $v;
-                                    }
-                                }
-                                $value = implode('、', $output);
-                            }
-
-                            echo $value;
-                            ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- // 扩展信息 -->
-
-    <div id="panel-credits" class="tab-pane" style="display: none;">
-        <?php
-        echo GridView::widget([
-            'dataProvider' => $creditLogsDataProvider,
-            'caption' => yii\helpers\Html::a('+', ['add-credits', 'id' => $model['id']], ['class' => 'btn-circle']),
-            'columns' => [
-                [
-                    'class' => 'yii\grid\SerialColumn',
-                    'contentOptions' => ['class' => 'serial-number']
-                ],
-                [
-                    'attribute' => 'operation_formatted',
-                    'contentOptions' => ['style' => 'width: 100px;', 'class' => 'center']
-                ],
-                [
-                    'attribute' => 'credits',
-                    'contentOptions' => ['class' => 'number']
-                ],
-                [
-                    'attribute' => 'remark',
-                    'format' => 'raw',
-                ],
-                [
-                    'attribute' => 'created_at',
-                    'format' => 'datetime',
-                    'contentOptions' => ['class' => 'datetime'],
-                ],
-                [
-                    'attribute' => 'creater.username',
-                    'headerOptions' => ['class' => 'last'],
-                    'contentOptions' => ['class' => 'username'],
-                ],
-            ],
-        ]);
-        ?>
-    </div>
-
-    <div id="panel-login-logs" class="tab-pane" style="display: none;">
-        登录日志
-    </div>
 </div>

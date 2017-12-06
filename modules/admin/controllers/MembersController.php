@@ -2,49 +2,42 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\MemberSearch;
-use app\models\User;
-use app\models\UserCreditLog;
-use app\modules\admin\forms\ChangePasswordForm;
-use app\modules\admin\forms\CreditForm;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\filters\AccessControl;
+use app\models\Member;
+use app\models\MemberSearch;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
 /**
  * 会员管理
- *
- * @author hiscaler <hiscaler@gmail.com>
  */
-class MembersController extends ShopController
+class MembersController extends Controller
 {
-
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'actions' => ['index', 'update', 'view', 'change-password', 'add-credits'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
                 ],
             ],
         ];
     }
 
     /**
-     * Lists all User models.
+     * Lists all Member models.
      *
      * @return mixed
      */
     public function actionIndex()
     {
         $searchModel = new MemberSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -52,12 +45,51 @@ class MembersController extends ShopController
         ]);
     }
 
+    /**
+     * Displays a single Member model.
+     *
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Creates a new Member model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     *
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new Member();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Updates an existing Member model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     *
+     * @param integer $id
+     * @return mixed
+     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -66,94 +98,33 @@ class MembersController extends ShopController
     }
 
     /**
-     * 会员详情
+     * Deletes an existing Member model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
      *
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
+    public function actionDelete($id)
     {
-        $model = $this->findModel($id);
+        $this->findModel($id)->delete();
 
-        $creditLogsDataProvider = new ActiveDataProvider([
-            'query' => UserCreditLog::find()->where(['user_id' => $model['id']]),
-            'sort' => [
-                'defaultOrder' => [
-                    'created_at' => SORT_DESC,
-                ]
-            ]
-        ]);
-
-        return $this->render('view', [
-            'model' => $model,
-            'creditLogsDataProvider' => $creditLogsDataProvider
-        ]);
+        return $this->redirect(['index']);
     }
 
     /**
-     * 添加积分
-     *
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionAddCredits($id)
-    {
-        $member = $this->findModel($id);
-        $model = new CreditForm();
-
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
-            UserCreditLog::add($member['id'], UserCreditLog::OPERATION_MANUAL, $model['credits'], null, $model['remark']);
-
-            return $this->redirect(['members/view', 'id' => $member['id']]);
-        }
-
-        return $this->render('add-credits', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * 修改密码
-     *
-     * @return mixed
-     */
-    public function actionChangePassword($id)
-    {
-        $user = $this->findModel($id);
-        $model = new ChangePasswordForm();
-
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
-            $user->setPassword($model->password);
-            if ($user->save()) {
-                Yii::$app->getSession()->setFlash('notice', "用户 {$user->username} 密码修改成功，请通知用户下次登录使用新的密码。");
-
-                return $this->redirect(['index']);
-            }
-        }
-
-        return $this->render('change-password', [
-            'user' => $user,
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Finds the User model based on its primary key value.
+     * Finds the Member model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param integer $id
-     * @return User the loaded model
+     * @return Member the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        $model = User::find()->where(['id' => (int) $id])->one();
-
-        if ($model !== null) {
+        if (($model = Member::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }

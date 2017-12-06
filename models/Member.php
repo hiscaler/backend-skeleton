@@ -3,42 +3,263 @@
 namespace app\models;
 
 use Yii;
+use yii\web\IdentityInterface;
 
 /**
- * 会员模型
+ * This is the model class for table "{{%member}}".
+ *
+ * @property integer $id
+ * @property integer $type
+ * @property string $username
+ * @property string $nickname
+ * @property string $avatar
+ * @property string $auth_key
+ * @property string $password_hash
+ * @property string $password_reset_token
+ * @property string $email
+ * @property string $tel
+ * @property string $mobile_phone
+ * @property integer $register_ip
+ * @property integer $login_count
+ * @property integer $last_login_ip
+ * @property integer $last_login_time
+ * @property integer $status
+ * @property string $remark
+ * @property integer $created_at
+ * @property integer $created_by
+ * @property integer $updated_at
+ * @property integer $updated_by
  */
-class Member extends User
+class Member extends \yii\db\ActiveRecord implements IdentityInterface
 {
 
     /**
-     * 用户类型
-     *
-     * @var integer
+     * 用户状态
      */
-    public $type = self::TYPE_MEMBER;
+    const STATUS_PENDING = 0; // 待审核状态
+    const STATUS_ACTIVE = 1; // 激活状态
+    const STATUS_LOCKED = 2; // 禁止状态
+    const STATUS_DELETED = 10; // 删除状态
 
     /**
-     * 用户推荐码
-     *
-     * @var string
+     * @inheritdoc
      */
-    public $referral;
+    public static function tableName()
+    {
+        return '{{%member}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['type', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['username', 'auth_key'], 'required'],
+            [['username', 'nickname', 'tel', 'mobile_phone', 'email'], 'trim'],
+            [['type'], 'default', 'value' => 0],
+            [['remark'], 'string'],
+            [['username', 'nickname'], 'string', 'max' => 20],
+            [['avatar'], 'string', 'max' => 100],
+            [['auth_key'], 'string', 'max' => 32],
+            [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
+            [['email'], 'string', 'max' => 50],
+            [['tel'], 'string', 'max' => 30],
+            [['mobile_phone'], 'string', 'max' => 35],
+            [['username'], 'unique'],
+            [['password_reset_token'], 'unique'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'type' => '会员类型',
+            'username' => '用户名',
+            'nickname' => '昵称',
+            'avatar' => '头像',
+            'auth_key' => '认证 key',
+            'password_hash' => '密码',
+            'password_reset_token' => '密码重置 token',
+            'email' => '邮箱',
+            'tel' => '电话号码',
+            'mobile_phone' => '手机号码',
+            'register_ip' => '注册 IP',
+            'login_count' => '登录次数',
+            'last_login_ip' => '最后登录 IP',
+            'last_login_time' => '最后登录时间',
+            'status' => '状态',
+            'remark' => '备注',
+            'created_at' => '添加时间',
+            'created_by' => '添加人',
+            'updated_at' => '更新时间',
+            'updated_by' => '更新人',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented . ');
+    }
+
+    /**
+     * Finds user by username
+     *
+     * @param string $username
+     * @return static|null
+     */
+    public static function findByUsername($username, $type = null)
+    {
+        $condition = ['username' => $username, 'status' => self::STATUS_ACTIVE];
+
+        return static::findOne($condition);
+    }
+
+    /**
+     * Finds user by password reset token
+     *
+     * @param string $token password reset token
+     * @return static|null
+     */
+    public static function findByPasswordResetToken($token)
+    {
+        if (!static::isPasswordResetTokenValid($token)) {
+            return null;
+        }
+
+        return static::findOne([
+            'password_reset_token' => $token,
+            'status' => self::STATUS_ACTIVE,
+        ]);
+    }
+
+    /**
+     * Finds out if password reset token is valid
+     *
+     * @param string $token password reset token
+     * @return boolean
+     */
+    public static function isPasswordResetTokenValid($token)
+    {
+        if (empty($token)) {
+            return false;
+        }
+
+        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
+        $expire = Yii::$app->params['user . passwordResetTokenExpire'];
+
+        return $timestamp + $expire >= time();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getId()
+    {
+        return $this->getPrimaryKey();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAuthKey()
+    {
+        return $this->auth_key;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
+    }
+
+    /**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return boolean if password provided is valid for current user
+     */
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
+    }
+
+    /**
+     * Generates password hash from password and sets it to the model
+     *
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+    }
+
+    /**
+     * Generates "remember me" authentication key
+     */
+    public function generateAuthKey()
+    {
+        $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
+    }
+
+    /**
+     * Generates new password reset token
+     */
+    public function generatePasswordResetToken()
+    {
+        $this->password_reset_token = Yii::$app->getSecurity()->generateRandomString() . '_' . time();
+    }
+
+    /**
+     * Removes password reset token
+     */
+    public function removePasswordResetToken()
+    {
+        $this->password_reset_token = null;
+    }
+
+    public function removeAccessToken()
+    {
+        $this->access_token = $this->access_token_expire_datetime = null;
+    }
 
     // Events
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            if (empty($this->nickname)) {
+                $this->nickname = $this->username;
+            }
             if ($insert) {
-                $this->type = self::TYPE_MEMBER;
-                $status = Lookup::getValue('user.signup.status', self::STATUS_PENDING);
-                $this->status = isset(self::statusOptions()[$status]) ? $status : self::STATUS_PENDING;
-
-                // 设置推荐人
-                $referral = trim($this->referral);
-                if (!empty($referral)) {
-                    $userId = Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%user}} WHERE [[referral_code]] = :referralCode', [':referralCode' => $referral])->queryScalar();
-                    $this->referral_user_id = $userId ?: 0;
+                $this->generateAuthKey();
+                $this->register_ip = Yii::$app->getRequest()->getUserIP();
+                if (Yii::$app->getUser()->isGuest) {
+                    $this->created_by = $this->updated_by = 0;
+                } else {
+                    $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
                 }
+                $this->created_at = $this->updated_at = time();
+            } else {
+                $this->updated_at = time();
+                $this->updated_by = Yii::$app->getUser()->getId();
             }
 
             return true;
@@ -46,21 +267,4 @@ class Member extends User
             return false;
         }
     }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        if ($insert) {
-            if ($signupCredits = abs((int) Lookup::getValue('user.signup.status', 0))) {
-                // 注册赠送积分
-                UserCreditLog::add($this->id, UserCreditLog::OPERATION_USER_SIGNUP, $signupCredits, $this->id, null);
-            }
-
-            // 推荐人员赠送积分    
-            if ($this->referral_user_id && $referralCredits = abs((int) Lookup::getValue('user.signup.referral.credits', 0))) {
-                UserCreditLog::add($this->referral_user_id, UserCreditLog::OPERATION_REFERRAL_SIGNUP, $referralCredits, $this->id, $this->referral);
-            }
-        }
-    }
-
 }
