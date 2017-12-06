@@ -3,12 +3,12 @@
 namespace app\controllers;
 
 use app\models\Constant;
+use app\models\Member;
 use Yii;
 use yii\helpers\Url;
 
 class WechatController extends Controller
 {
-
 
     public function actionAuth($redirectUrl = null)
     {
@@ -22,22 +22,28 @@ class WechatController extends Controller
                 $openid = $user->openid;
                 $exists = $db->createCommand('SELECT [[id]] FROM {{%member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
                 if (!$exists) {
-                    $columns = [
-                        'subscribe' => Constant::BOOLEAN_TRUE,
-                        'openid' => $openid,
-                        'nickname' => $user->nickname,
-                        'sex' => $user->sex,
-                        'country' => $user->country,
-                        'province' => $user->province,
-                        'city' => $user->city,
-                        'language' => $user->language,
-                        'headimgurl' => $user->headimgurl,
-                        'subscribe_time' => time(),
-                    ];
-                    $db->createCommand()->insert('{{%member}}', $columns)->execute();
+                    $member = new Member();
+                    $member->username = $user->nickname;
+                    $member->nickname = $user->nickname;
+                    $member->avatar = $user->headimgurl;
+                    $member->status = Member::STATUS_ACTIVE;
+                    if ($member->save()) {
+                        $columns = [
+                            'member_id' => $member->id,
+                            'subscribe' => Constant::BOOLEAN_TRUE,
+                            'openid' => $openid,
+                            'nickname' => $user->nickname,
+                            'sex' => $user->sex,
+                            'country' => $user->country,
+                            'province' => $user->province,
+                            'city' => $user->city,
+                            'language' => $user->language,
+                            'headimgurl' => $user->headimgurl,
+                            'subscribe_time' => time(),
+                        ];
+                        $db->createCommand()->insert('{{%member}}', $columns)->execute();
+                    }
                 }
-
-                $member = Member::findByUsername($openid);
                 $webUser->login($member, 3600 * 24 * 30);
             }
         }
