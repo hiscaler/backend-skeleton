@@ -23,7 +23,6 @@ class GlobalControlPanel extends Widget
         $controllerId = $controller->id;
         $modules = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
 
-
         foreach ($modules as $group => $ms) {
             $rawItems = [];
             foreach ($ms as $key => $value) {
