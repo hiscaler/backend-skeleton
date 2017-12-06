@@ -1,0 +1,109 @@
+html, body {
+    font-family: \5FAE\8F6F\96C5\9ED1, Tahoma, "宋体";
+    font-size: 13px;
+    color: #333333;
+    padding: 0;
+    height: 100%;
+}
+body, div, dl, dt, dd, ul, ol, li, pre, form, fieldset, input, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+a {
+    color: #4362BF;
+    font-size: 12px;
+    text-decoration: none;
+}
+a:hover {
+    color: #4362BF;
+    text-decoration: underline;
+}
+fieldset, img {
+    border: 0 none;
+}
+address, caption, cite, code, dfn, em, th, var, i {
+    font-style: normal;
+    font-weight: normal;
+}
+ol li, ul li {
+    list-style: none outside none;
+}
+caption, th {
+    text-align: left;
+}
+#print-toolbar {
+    text-align: center;
+    text-align: center;
+    padding-top: 10px;
+}
+#print-block {
+    width: 598px;
+    margin: 10px auto;
+}
+.wrapper {
+    display: block;
+    margin-bottom: .6em;
+    *zoom: 1;
+}
+.bold {
+    font-weight: bold;
+}
+/* 清除浮动 */
+.clearfix:after, .wrapper:after {
+    content: "\0020";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+    overflow: hidden;
+}
+.clearfix, .wrapper {display:block;}
+.clear {clear:both;}
+#print-block .header {
+    text-align: center;
+    font-size: 1.9em;
+}
+table.detail-view .null {
+    color: pink;
+}
+table.detail-view {
+    background: white;
+    border-collapse: collapse;
+    margin: 0;
+    width: 100%;
+}
+table.detail-view th, table.detail-view td {
+    border: 1px #000 solid;
+    padding: 5px;
+    vertical-align: top;
+}
+table.detail-view th {
+    text-align: right;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    padding: 5px 16px;
+    white-space: nowrap;
+    width: 1px;
+    word-break: keep-all; /* for ie */
+    white-space: nowrap; /* for chrome */
+}
+table.detail-view thead th {
+    background-color: #F5F5F5;
+    text-align: left;
+    border-top: #E9E9E9 solid 3px;
+}
+table.detail-view tr.odd {
+    background: #FFF;
+}
+table.detail-view tr.even {
+    background: #F5F5F5;
+}
+table.detail-view tr.odd th {
+    background: #F8F8F8;
+}
+table.detail-view tr.even th {
+    background: #F8F8F8;
+}
+table.detail-view .notice {
+    margin: 0;
+}
