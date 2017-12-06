@@ -6,6 +6,10 @@ return [
     'fromMailAddress' => [
         'admin@example.com' => 'you name',
     ],
+    'wechat' => [
+        'appid' => '',
+        'secret' => '',
+    ],
     'modules' => [
         /**
         'app-models-Article' => [
