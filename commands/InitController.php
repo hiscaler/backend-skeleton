@@ -50,6 +50,9 @@ class InitController extends Controller
                 'updated_at' => $now,
             ];
             $db->createCommand()->insert('{{%user}}', $columns)->execute();
+            $this->_userId = $db->getLastInsertID();
+
+            return $this->_userId;
         } else {
             echo "'{$username}' is exists." . PHP_EOL;
         }
