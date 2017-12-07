@@ -8,11 +8,15 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\MemberSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('model', 'Member');
+$this->title = Yii::t('app', 'Members');
 $this->params['breadcrumbs'][] = $this->title;
+
+$this->params['menus'] = [
+    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
+    ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
+];
 ?>
 <div class="member-index">
-
 
     <?= $this->render('_search', ['model' => $searchModel]); ?>
 

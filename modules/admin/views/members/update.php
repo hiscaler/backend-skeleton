@@ -1,20 +1,21 @@
 <?php
 
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
 /* @var $model app\models\Member */
 
-$this->title = Yii::t('member', 'Update {modelClass}: ', [
-    'modelClass' => 'Member',
-]) . $model->id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('member', 'Members'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Update {modelClass}: ', [
+        'modelClass' => Yii::t('model', 'Member'),
+    ]) . $model->username;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Members'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('member', 'Update');
+
+$this->params['menus'] = [
+    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
+    ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
+];
 ?>
 <div class="member-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,
