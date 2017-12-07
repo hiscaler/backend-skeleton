@@ -6,10 +6,6 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Modules');
 $this->params['breadcrumbs'][] = $this->title;
-
-$this->params['menus'] = [
-    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
-];
 ?>
 <div class="module-index">
 
@@ -26,7 +22,7 @@ $this->params['menus'] = [
                         <div class="hd">
                             <?= $module['name'] ?>
                             <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
-                            <span class="buttons"><?= Html::a(Yii::t('module', 'Uninstall'), ['install', 'alias' => $module['alias']], ['class' => 'uninstall']) ?></span>
+                            <span class="buttons"><?= Html::a(Yii::t('module', 'Uninstall'), ['uninstall', 'alias' => $module['alias']], ['class' => 'uninstall', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['install', 'alias' => $module['alias']])]) ?></span>
                         </div>
                         <div class="bd">
                             <p class="misc">
@@ -49,7 +45,7 @@ $this->params['menus'] = [
                         <div class="hd">
                             <?= $module['name'] ?>
                             <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
-                            <span class="buttons"><?= Html::a(Yii::t('module', 'Install'), ['install', 'alias' => $module['alias']], ['class' => 'install']) ?></span>
+                            <span class="buttons"><?= Html::a(Yii::t('module', 'Install'), ['install', 'alias' => $module['alias']], ['class' => 'install', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['uninstall', 'alias' => $module['alias']])]) ?></span>
                         </div>
                         <div class="bd">
                             <p class="misc">
@@ -68,3 +64,37 @@ $this->params['menus'] = [
     </div>
 
 </div>
+
+<?php \app\modules\admin\components\JsBlock::begin() ?>
+<script type="text/javascript">
+    $(function () {
+        var installText = '<?= Yii::t('module', 'Install')?>',
+            uninstallText = '<?= Yii::t('module', 'Uninstall')?>';
+        $('.install, .uninstall').on('click', function () {
+            var $t = $(this), url = $t.attr('href');
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        var isInstall = $t.hasClass('install'),
+                            $obj = $('#module-' + $t.attr('data-key'));
+                        $t.text(isInstall ? uninstallText : installText)
+                            .attr('href', $t.attr('data-url'))
+                            .attr('data-url', url)
+                            .removeClass(isInstall ? 'install' : 'uninstall')
+                            .addClass(isInstall ? 'uninstall' : 'install');
+                        var $tmp = $obj.clone(true, true);
+                        $obj.remove();
+                        $(isInstall ? '#panel-installed ul' : '#panel-notinstalled ul').append($tmp);
+                    } else {
+                        layer.alert(response.error.message);
+                    }
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+<?php \app\modules\admin\components\JsBlock::end() ?>

@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\Constant;
 use app\models\Module;
 use Yii;
 use yii\base\InvalidParamException;
@@ -100,14 +101,18 @@ class ModulesController extends Controller
      */
     public function actionIndex()
     {
+        $notInstalledModules = $this->_localModules;
         $installedModules = Yii::$app->getDb()->createCommand('SELECT * FROM {{%module}} ORDER BY [[updated_at]] DESC')->queryAll();
         foreach ($installedModules as $key => $module) {
             $installedModules[$key]['error'] = isset($this->_localModules[$module['alias']]) ? Module::ERROR_NONE : Module::ERROR_NOT_FOUND_DIRECTORY;
+            if (isset($notInstalledModules[$module['alias']])) {
+                unset($notInstalledModules[$module['alias']]);
+            }
         }
 
         return $this->render('index', [
             'installedModules' => $installedModules,
-            'notInstalledModules' => $this->_localModules,
+            'notInstalledModules' => $notInstalledModules,
         ]);
     }
 
@@ -194,7 +199,28 @@ class ModulesController extends Controller
             $errorMessage = '该模块已经安装。';
         } else {
             // @todo Insert module information to DB
-            $success = true;
+            $module = isset($this->_localModules[$alias]) ? $this->_localModules[$alias] : null;
+            if ($module === null) {
+                $errorMessage = '安装模块不存在。';
+            } else {
+                $now = time();
+                $userId = Yii::$app->getUser()->getId();
+                $db->createCommand()->insert('{{%module}}', [
+                    'alias' => $alias,
+                    'name' => $module['name'],
+                    'author' => $module['author'],
+                    'version' => $module['version'],
+                    'icon' => $module['icon'],
+                    'url' => $module['url'],
+                    'description' => $module['description'],
+                    'enabled' => Constant::BOOLEAN_TRUE,
+                    'created_at' => $now,
+                    'created_by' => $userId,
+                    'updated_at' => $now,
+                    'updated_by' => $userId,
+                ])->execute();
+                $success = true;
+            }
         }
 
         $responseBody = ['success' => $success];
@@ -220,12 +246,13 @@ class ModulesController extends Controller
         $success = false;
         $errorMessage = null;
         $db = Yii::$app->getDb();
-        $exists = $db->createCommand('SELECT COUNT(*) FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
-        if ($exists) {
-            $errorMessage = '该模块不存在。';
-        } else {
+        $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
+        if ($moduleId) {
             // @todo Remove module information from DB
+            $db->createCommand()->delete('{{%module}}', ['id' => $moduleId])->execute();
             $success = true;
+        } else {
+            $errorMessage = '该模块不存在。';
         }
 
         $responseBody = ['success' => $success];

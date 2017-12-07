@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use function time;
 use Yii;
 
 /**
