@@ -860,6 +860,62 @@ ul.list li em {
     border-right: #999 solid 1px;
 }
 /*******************************************************************************
+ * 模块信息
+ ******************************************************************************/
+.widget-module {}
+.widget-module .hd {
+    border-bottom: #ccc solid 1px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    height: 32px;
+    line-height: 32px;
+}
+.widget-module .hd span {
+    display: inline-block;
+}
+.widget-module .hd span.icon {
+    float: left;
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+}
+.widget-module .hd span.buttons {
+    float: right;
+}
+.widget-module .hd span.buttons a {
+    display: inline;
+    padding: 3px 4px;
+    border-radius: 3px;
+    border: #ccc solid 1px;
+    background-color: #F5F5F5;
+    font-size: 12px;
+    font-weight: normal;
+    color: #FFFFEF;
+}
+.widget-module .hd span.buttons a.install {
+    border-color: #00aa00;
+    background-color: #00aa00;
+}
+.widget-module .hd span.buttons a.uninstall {
+    border-color: #c60000;
+    background-color: #c60000;
+}
+.widget-module .bd {}
+.widget-module .bd .misc {
+    height: 24px;
+    line-height: 24px;
+}
+.widget-module .bd .misc span {
+    margin-right: 10px;
+}
+.widget-module .bd .description {
+    line-height: 24px;
+    text-indent: 24px;
+    color: #CCC;
+}
+/*******************************************************************************
  * Layer 定制
  ******************************************************************************/
 body .layer-grid-view .layui-layer-content {

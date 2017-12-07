@@ -3,7 +3,6 @@
 namespace app\modules\admin\controllers;
 
 use app\models\Module;
-use app\models\ModuleSearch;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\filters\VerbFilter;
@@ -25,11 +24,13 @@ class ModulesController extends Controller
      * @var array
      */
     private $_localModules = [];
+    private $_installedModules = [];
 
     public function init()
     {
         parent::init();
-        $directories = [];
+        $defaultIcon = Yii::$app->getRequest()->getBaseUrl() . '/images/default-module-icon.png';
+        $localModules = [];
         $baseDirectory = Yii::getAlias('@app/modules');
         $handle = opendir($baseDirectory);
         if ($handle === false) {
@@ -40,12 +41,40 @@ class ModulesController extends Controller
                 continue;
             }
             // @todo 需要检测类的有效性
-            if (is_dir($baseDirectory . DIRECTORY_SEPARATOR . $dir)) {
-                $directories[] = $dir;
+            $fullDirectory = $baseDirectory . DIRECTORY_SEPARATOR . $dir;
+            if (is_dir($fullDirectory)) {
+                $m = [
+                    'alias' => $dir,
+                    'name' => null,
+                    'author' => null,
+                    'version' => null,
+                    'url' => null,
+                    'icon' => $defaultIcon,
+                    'description' => null,
+                ];
+                if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'readme.txt')) {
+                    $readme = file($fullDirectory . DIRECTORY_SEPARATOR . 'readme.txt');
+                    if ($readme !== false) {
+                        foreach ($readme as $row) {
+                            if (stripos($row, ':') !== false) {
+                                $row = array_map('trim', explode(':', $row));
+                                $key = array_shift($row);
+                                $value = implode('', $row);
+                                if ($key && $value && $key != 'alias' && array_key_exists($key, $m)) {
+                                    $m[$key] = $value;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'icon.png')) {
+                    $m['icon'] = Yii::$app->getModule($dir)->getBasePath() . '/icon.png';
+                }
+                $localModules[$dir] = $m;
             }
         }
         closedir($handle);
-        $this->_localModules = $directories;
+        $this->_localModules = $localModules;
     }
 
     /**
@@ -70,12 +99,14 @@ class ModulesController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ModuleSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $installedModules = Yii::$app->getDb()->createCommand('SELECT * FROM {{%module}} ORDER BY [[updated_at]] DESC')->queryAll();
+        foreach ($installedModules as $key => $module) {
+            $installedModules[$key]['error'] = isset($this->_localModules[$module['alias']]) ? Module::ERROR_NONE : Module::ERROR_NOT_FOUND_DIRECTORY;
+        }
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'installedModules' => $installedModules,
+            'notInstalledModules' => $this->_localModules,
         ]);
     }
 
@@ -161,7 +192,38 @@ class ModulesController extends Controller
         if ($exists) {
             $errorMessage = '该模块已经安装。';
         } else {
-            // @todo Insert module informations to DB
+            // @todo Insert module information to DB
+            $success = true;
+        }
+
+        $responseBody = ['success' => $success];
+        if (!$success) {
+            $responseBody['error']['message'] = $errorMessage;
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseBody,
+        ]);
+    }
+
+    /**
+     * 模块卸载
+     *
+     * @param $alias
+     * @return Response
+     * @throws \yii\db\Exception
+     */
+    public function actionUninstall($alias)
+    {
+        $success = false;
+        $errorMessage = null;
+        $db = Yii::$app->getDb();
+        $exists = $db->createCommand('SELECT COUNT(*) FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
+        if ($exists) {
+            $errorMessage = '该模块不存在。';
+        } else {
+            // @todo Remove module information from DB
             $success = true;
         }
 

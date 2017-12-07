@@ -24,6 +24,12 @@ use Yii;
  */
 class Module extends \yii\db\ActiveRecord
 {
+
+    const ERROR_NONE = '';
+    const ERROR_NOT_FOUND_DIRECTORY = 'Not found directory';
+    const ERROR_INVALID_MODULE = 'Invalid module';
+    const ERROR_NO_README_FILE = 'No readme file';
+
     /**
      * @inheritdoc
      */

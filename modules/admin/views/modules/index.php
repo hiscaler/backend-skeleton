@@ -1,47 +1,70 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
-use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\ModuleSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Modules');
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
-    ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
 ];
 ?>
 <div class="module-index">
 
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <ul class="tabs-common">
+        <li class="active"><a href="javascript:;" data-toggle="panel-installed">已安装模块</a></li>
+        <li><a href="javascript:;" data-toggle="panel-notinstalled">待安装模块</a></li>
+    </ul>
 
-    <?php Pjax::begin(); ?>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    <div class="panels">
+        <div id="panel-installed" class="tab-pane">
+            <ul>
+                <?php foreach ($installedModules as $i => $module): ?>
+                    <li id="module-<?= $module['alias'] ?>" class="widget-module">
+                        <div class="hd">
+                            <?= $module['name'] ?>
+                            <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
+                            <span class="buttons"><?= Html::a(Yii::t('module', 'Uninstall'), ['install', 'alias' => $module['alias']], ['class' => 'uninstall']) ?></span>
+                        </div>
+                        <div class="bd">
+                            <p class="misc">
+                                <span>作者：<?= $module['author'] ?></span>
+                                <span>版本：<?= $module['version'] ?></span>
+                                <span>URL：<?= $module['url'] ?></span>
+                            </p>
+                            <p class="description">
+                                <?= $module['description'] ?>
+                            </p>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <div id="panel-notinstalled" class="tab-pane" style="display: none">
+            <ul>
+                <?php foreach ($notInstalledModules as $i => $module): ?>
+                    <li id="module-<?= $module['alias'] ?>" class="widget-module">
+                        <div class="hd">
+                            <?= $module['name'] ?>
+                            <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
+                            <span class="buttons"><?= Html::a(Yii::t('module', 'Install'), ['install', 'alias' => $module['alias']], ['class' => 'install']) ?></span>
+                        </div>
+                        <div class="bd">
+                            <p class="misc">
+                                <span>作者：<?= $module['author'] ?></span>
+                                <span>版本：<?= $module['version'] ?></span>
+                                <span>URL：<?= $module['url'] ?></span>
+                            </p>
+                            <p class="description">
+                                <?= $module['description'] ?>
+                            </p>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
 
-            'id',
-            'alias',
-            'name',
-            'author',
-            'version',
-            // 'icon',
-            // 'url:url',
-            // 'description',
-            // 'enabled',
-            // 'created_at',
-            // 'created_by',
-            // 'updated_at',
-            // 'updated_by',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-    <?php Pjax::end(); ?>
 </div>
