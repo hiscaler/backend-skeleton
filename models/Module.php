@@ -77,6 +77,17 @@ class Module extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * 获取已经安装的模块
+     *
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public static function getInstalledModules()
+    {
+        return Yii::$app->getDb()->createCommand('SELECT * FROM {{%module}}')->queryAll();
+    }
+
     // Events
     public function beforeSave($insert)
     {

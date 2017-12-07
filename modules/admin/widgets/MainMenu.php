@@ -39,14 +39,14 @@ class MainMenu extends Widget
         $items = [
             [
                 'label' => '首页',
-                'url' => ['default/index'],
+                'url' => ['/admin/default/index'],
                 'active' => $controllerId == 'default',
             ],
         ];
         if ($firstControllerId) {
             $items[] = [
                 'label' => '全局管理',
-                'url' => ["{$firstControllerId}/index"],
+                'url' => ["/admin/{$firstControllerId}/index"],
                 'active' => in_array($controllerId, $globalControllerIds),
             ];
         }

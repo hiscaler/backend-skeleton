@@ -3,6 +3,7 @@
 namespace app\modules\admin\widgets;
 
 
+use app\models\Module;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\ArrayHelper;
@@ -17,13 +18,13 @@ class GlobalControlPanel extends Widget
 
     public function getItems()
     {
-
         $items = [];
-        $controller = $this->view->context;
+        $controller = Yii::$app->controller;
         $controllerId = $controller->id;
-        $modules = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
+        $moduleId = $controller->module->id;
+        $builtinModules = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
 
-        foreach ($modules as $group => $ms) {
+        foreach ($builtinModules as $group => $ms) {
             $rawItems = [];
             foreach ($ms as $key => $value) {
                 if ((isset($value['forceEmbed']) && $value['forceEmbed'])) {
@@ -35,6 +36,7 @@ class GlobalControlPanel extends Widget
                             break;
                         }
                     }
+                    $url[0] = '/admin/' . $url[0];
                     $activeConditions = isset($value['activeConditions']) ? in_array($controllerId, $value['activeConditions']) : $controllerId == $urlControllerId;
                     $rawItems[] = [
                         'label' => Yii::t('app', $value['label']),
@@ -51,6 +53,23 @@ class GlobalControlPanel extends Widget
                 $items[$group]['items'] = $rawItems;
             }
         }
+
+        // 启用的模块
+        $installedModules = Module::getInstalledModules();
+        if ($installedModules) {
+            $items['installedModules'] = [
+                'label' => '模块管理',
+                'items' => [],
+            ];
+            foreach ($installedModules as $module) {
+                $items['installedModules']['items'][] = [
+                    'label' => $module['name'],
+                    'url' => ['/' . $module['alias'] . '/default/index'],
+                    'active' => $moduleId == $module['alias'],
+                ];
+            }
+        }
+
 
         return $items;
     }
