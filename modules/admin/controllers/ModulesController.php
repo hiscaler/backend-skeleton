@@ -2,12 +2,14 @@
 
 namespace app\modules\admin\controllers;
 
-use Yii;
 use app\models\Module;
 use app\models\ModuleSearch;
+use Yii;
+use yii\base\InvalidParamException;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * 模块管理
@@ -16,6 +18,36 @@ use yii\filters\VerbFilter;
  */
 class ModulesController extends Controller
 {
+
+    /**
+     * 本地放置的模块，不一定有安装到系统中
+     *
+     * @var array
+     */
+    private $_localModules = [];
+
+    public function init()
+    {
+        parent::init();
+        $directories = [];
+        $baseDirectory = Yii::getAlias('@app/modules');
+        $handle = opendir($baseDirectory);
+        if ($handle === false) {
+            throw new InvalidParamException("Unable to open directory: {$baseDirectory}");
+        }
+        while (($dir = readdir($handle)) !== false) {
+            if ($dir === '.' || $dir === '..' || $dir === 'admin' || !file_exists($baseDirectory . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'Module.php')) {
+                continue;
+            }
+            // @todo 需要检测类的有效性
+            if (is_dir($baseDirectory . DIRECTORY_SEPARATOR . $dir)) {
+                $directories[] = $dir;
+            }
+        }
+        closedir($handle);
+        $this->_localModules = $directories;
+    }
+
     /**
      * @inheritdoc
      */
@@ -111,6 +143,37 @@ class ModulesController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * 模块安装
+     *
+     * @param $alias
+     * @return Response
+     * @throws \yii\db\Exception
+     */
+    public function actionInstall($alias)
+    {
+        $success = false;
+        $errorMessage = null;
+        $db = Yii::$app->getDb();
+        $exists = $db->createCommand('SELECT COUNT(*) FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
+        if ($exists) {
+            $errorMessage = '该模块已经安装。';
+        } else {
+            // @todo Insert module informations to DB
+            $success = true;
+        }
+
+        $responseBody = ['success' => $success];
+        if (!$success) {
+            $responseBody['error']['message'] = $errorMessage;
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseBody,
+        ]);
     }
 
     /**
