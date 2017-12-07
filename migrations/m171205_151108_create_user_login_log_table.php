@@ -18,7 +18,7 @@ class m171205_151108_create_user_login_log_table extends Migration
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->notNull()->comment('用户 id'),
             'login_ip' => $this->string(15)->notNull()->comment('登录 IP'),
-            'client_informations' => $this->string()->notNull()->comment('客户端信息'),
+            'client_information' => $this->string()->notNull()->comment('客户端信息'),
             'login_at' => $this->integer()->notNull()->comment('登录时间')
 
         ]);

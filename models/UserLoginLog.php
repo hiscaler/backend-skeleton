@@ -13,7 +13,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $user_id
  * @property string $login_ip
- * @property string $client_informations
+ * @property string $client_information
  * @property integer $login_at
  */
 class UserLoginLog extends ActiveRecord
@@ -33,9 +33,9 @@ class UserLoginLog extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'login_ip', 'client_informations', 'login_at'], 'required'],
+            [['user_id', 'login_ip', 'client_information', 'login_at'], 'required'],
             [['user_id', 'login_at'], 'integer'],
-            [['login_ip', 'client_informations'], 'string', 'max' => 255]
+            [['login_ip', 'client_information'], 'string', 'max' => 255]
         ];
     }
 
@@ -47,7 +47,7 @@ class UserLoginLog extends ActiveRecord
         return [
             'user_id' => Yii::t('user', 'Username'),
             'login_ip' => Yii::t('userLoginLog', 'Login IP'),
-            'client_informations' => Yii::t('userLoginLog', 'Client Informations'),
+            'client_information' => Yii::t('userLoginLog', 'Client Informations'),
             'login_at' => Yii::t('userLoginLog', 'Login At'),
         ];
     }
@@ -67,7 +67,7 @@ class UserLoginLog extends ActiveRecord
         Yii::$app->getDb()->createCommand()->insert('{{%user_login_log}}', [
             'user_id' => Yii::$app->getUser()->getId(),
             'login_ip' => Yii::$app->getRequest()->getUserIP(),
-            'client_informations' => UtilHelper::getBrowserName(),
+            'client_information' => UtilHelper::getBrowserName(),
             'login_at' => time(),
         ])->execute();
     }

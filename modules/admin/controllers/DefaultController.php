@@ -149,7 +149,7 @@ class DefaultController extends Controller
         $this->layout = 'my';
         $loginLogs = [];
         $formatter = Yii::$app->formatter;
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.login_ip]], [[t.client_informations]], [[t.login_at]] FROM {{%user_login_log}} t WHERE [[t.user_id]] = :userId ORDER BY [[t.login_at]] DESC')->bindValue(':userId', Yii::$app->getUser()->getId(), PDO::PARAM_INT)->queryAll();
+        $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.login_ip]], [[t.client_information]], [[t.login_at]] FROM {{%user_login_log}} t WHERE [[t.user_id]] = :userId ORDER BY [[t.login_at]] DESC')->bindValue(':userId', Yii::$app->getUser()->getId(), PDO::PARAM_INT)->queryAll();
         foreach ($rawData as $data) {
             $loginLogs[$formatter->asDate($data['login_at'])][] = $data;
         }

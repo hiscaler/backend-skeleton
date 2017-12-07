@@ -32,7 +32,7 @@ return [
     'Active' => '激活',
     'Disabled' => '禁止',
     'Deleted' => '删除',
-    'Base Informations' => '基础信息',
+    'Base Information' => '基础信息',
     "Management's Sites" => '管理的站点',
     'Pending' => '待审核',
     'Active' => '激活',
