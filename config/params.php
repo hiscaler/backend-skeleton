@@ -29,6 +29,12 @@ return [
             ],
         ],
         'Site Manage' => [
+            'app-models-Module' => [
+                'id' => 'modules',
+                'label' => 'Modules',
+                'url' => ['modules/index'],
+                'forceEmbed' => true,
+            ],
             'app-models-Lookup' => [
                 'id' => 'lookups',
                 'label' => 'Lookups',

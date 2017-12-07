@@ -108,6 +108,7 @@ return array(
     'Tenants' => '站点管理',
     'Tenant Access Tokens' => '站点访问令牌管理',
     'Members' => '会员管理',
+    'Modules' => '模块管理',
     'Users' => '用户管理',
     'User Groups' => '用户分组管理',
     'Users' => '用户管理',

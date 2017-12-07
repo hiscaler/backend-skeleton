@@ -25,6 +25,7 @@ return [
     'Lookup' => '常规设定',
     'Member' => '会员',
     'Meta' => '自定义表单',
+    'Module' => '模块管理',
     'News' => '资讯',
     'Node' => '内容节点',
     'Brand' => '品牌',
