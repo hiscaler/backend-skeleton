@@ -2,12 +2,9 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\Constant;
 use app\models\User;
-use app\models\Yad;
 use app\modules\admin\forms\ChangeMyPasswordForm;
 use app\modules\admin\forms\LoginForm;
-use PDO;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -149,7 +146,7 @@ class DefaultController extends Controller
         $this->layout = 'my';
         $loginLogs = [];
         $formatter = Yii::$app->formatter;
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.login_ip]], [[t.client_information]], [[t.login_at]] FROM {{%user_login_log}} t WHERE [[t.user_id]] = :userId ORDER BY [[t.login_at]] DESC')->bindValue(':userId', Yii::$app->getUser()->getId(), PDO::PARAM_INT)->queryAll();
+        $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.login_ip]], [[t.client_information]], [[t.login_at]] FROM {{%user_login_log}} t WHERE [[t.user_id]] = :userId ORDER BY [[t.login_at]] DESC', [':userId' => Yii::$app->getUser()->getId()])->queryAll();
         foreach ($rawData as $data) {
             $loginLogs[$formatter->asDate($data['login_at'])][] = $data;
         }
