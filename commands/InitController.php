@@ -5,7 +5,6 @@ namespace app\commands;
 use app\models\Constant;
 use app\models\Lookup;
 use app\models\User;
-use PDO;
 use Yii;
 use yii\base\Security;
 use yii\console\Controller;
@@ -51,9 +50,7 @@ class InitController extends Controller
                 'updated_at' => $now,
             ];
             $db->createCommand()->insert('{{%user}}', $columns)->execute();
-            $this->_userId = $db->getLastInsertID();
         } else {
-            $this->_userId = $userId;
             echo "'{$username}' is exists." . PHP_EOL;
         }
 

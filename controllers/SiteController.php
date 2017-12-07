@@ -6,14 +6,12 @@ use app\forms\ForgetPasswordForm;
 use app\forms\ResetPasswordForm;
 use app\forms\SigninForm;
 use app\forms\SignupForm;
-use app\models\Constant;
 use app\models\Meta;
 use app\modules\admin\components\DynamicMetaModel;
 use Yii;
 use yii\base\Security;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
-use yii\web\Cookie;
 
 class SiteController extends Controller
 {
@@ -180,40 +178,6 @@ class SiteController extends Controller
         return $this->render('reset-password', [
             'model' => $model,
         ]);
-    }
-
-    /**
-     * 切换语言
-     *
-     * @param string $lang
-     */
-    public function actionLanguage($lang = null)
-    {
-        $lang = strtolower($lang);
-        $languages = ['zh-cn' => 1, 'en-us' => 2, 'es' => 3];
-        if (!isset($languages[$lang])) {
-            $lang = 'zh-cn';
-        }
-
-        $tenant = Yii::$app->getDb()->createCommand('SELECT [[id]], [[language]], [[timezone]], [[date_format]], [[time_format]], [[datetime_format]] FROM {{%tenant}} WHERE [[id]] = :id AND [[enabled]] = :enabled')->bindValues([
-            ':id' => $languages[$lang],
-            ':enabled' => Constant::BOOLEAN_TRUE
-        ])->queryOne();
-        if ($tenant) {
-            $cookie = new Cookie(['name' => '_site', 'httpOnly' => true]);
-            $cookie->value = [
-                'id' => $tenant['id'],
-                'language' => $tenant['language'],
-                'timezone' => $tenant['timezone'],
-                'dateFormat' => $tenant['date_format'],
-                'timeFormat' => $tenant['time_format'],
-                'datetimeFormat' => $tenant['datetime_format'],
-            ];
-            $cookie->expire = time() + 86400 * 365;
-            Yii::$app->getResponse()->getCookies()->add($cookie);
-        }
-
-        return $this->redirect(Yii::$app->getRequest()->referrer);
     }
 
 }
