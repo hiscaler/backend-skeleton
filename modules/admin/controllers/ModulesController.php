@@ -68,7 +68,8 @@ class ModulesController extends Controller
                     }
                 }
                 if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'icon.png')) {
-                    $m['icon'] = Yii::$app->getModule($dir)->getBasePath() . '/icon.png';
+                    $t = Yii::$app->getModule($dir);
+                    $t && $m['icon'] = $t->getBasePath() . '/icon.png';
                 }
                 $localModules[$dir] = $m;
             }
