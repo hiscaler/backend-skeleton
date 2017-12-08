@@ -10,8 +10,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="module-index">
 
     <ul class="tabs-common">
-        <li class="active"><a href="javascript:;" data-toggle="panel-installed">已安装模块</a></li>
-        <li><a href="javascript:;" data-toggle="panel-notinstalled">待安装模块</a></li>
+        <li class="active"><a href="javascript:;" data-toggle="panel-installed"><?= Yii::t('module', 'Installed modules') ?></a></li>
+        <li><a href="javascript:;" data-toggle="panel-notinstalled"><?= Yii::t('module', 'Pending install modules') ?></a></li>
     </ul>
 
     <div class="panels">
@@ -26,9 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                         <div class="bd">
                             <p class="misc">
-                                <span>作者：<?= $module['author'] ?></span>
-                                <span>版本：<?= $module['version'] ?></span>
-                                <span>URL：<?= $module['url'] ?></span>
+                                <span><?= Yii::t('module', 'Author') ?>：<?= $module['author'] ?></span>
+                                <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
+                                <span><?= Yii::t('module', 'Url') ?>：<?= $module['url'] ?></span>
                             </p>
                             <p class="description">
                                 <?= $module['description'] ?>
@@ -49,9 +49,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                         <div class="bd">
                             <p class="misc">
-                                <span>作者：<?= $module['author'] ?></span>
-                                <span>版本：<?= $module['version'] ?></span>
-                                <span>URL：<?= $module['url'] ?></span>
+                                <span><?= Yii::t('module', 'Author') ?>：<?= $module['author'] ?></span>
+                                <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
+                                <span><?= Yii::t('module', 'Url') ?>：<?= $module['url'] ?></span>
                             </p>
                             <p class="description">
                                 <?= $module['description'] ?>
