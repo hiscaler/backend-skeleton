@@ -198,7 +198,6 @@ class ModulesController extends Controller
         if ($exists) {
             $errorMessage = '该模块已经安装。';
         } else {
-            // @todo Insert module information to DB
             $module = isset($this->_localModules[$alias]) ? $this->_localModules[$alias] : null;
             if ($module === null) {
                 $errorMessage = '安装模块不存在。';
@@ -248,7 +247,6 @@ class ModulesController extends Controller
         $db = Yii::$app->getDb();
         $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
         if ($moduleId) {
-            // @todo Remove module information from DB
             $db->createCommand()->delete('{{%module}}', ['id' => $moduleId])->execute();
             $success = true;
         } else {
