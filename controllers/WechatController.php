@@ -4,7 +4,9 @@ namespace app\controllers;
 
 use app\models\Constant;
 use app\models\Member;
+use Overtrue\Wechat\Auth;
 use Yii;
+use yii\helpers\StringHelper;
 use yii\helpers\Url;
 
 class WechatController extends Controller
@@ -15,13 +17,13 @@ class WechatController extends Controller
         $webUser = Yii::$app->getUser();
         $db = Yii::$app->getDb();
         if ($webUser->isGuest) {
-            $wechatConfig = Yii::$app->params['wechat'];
-            $auth = new Auth($wechatConfig['appid'], $wechatConfig['secret']);
+            $wechatOptions = Yii::$app->params['wechat'];
+            $auth = new Auth($wechatOptions['appid'], $wechatOptions['secret']);
             $user = $auth->authorize($to = null, 'snsapi_userinfo', 'STATE');
             if ($user) {
                 $openid = $user->openid;
-                $exists = $db->createCommand('SELECT [[id]] FROM {{%member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
-                if (!$exists) {
+                $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
+                if (!$memberId) {
                     $member = new Member();
                     $member->username = $user->nickname;
                     $member->nickname = $user->nickname;
@@ -41,8 +43,10 @@ class WechatController extends Controller
                             'headimgurl' => $user->headimgurl,
                             'subscribe_time' => time(),
                         ];
-                        $db->createCommand()->insert('{{%member}}', $columns)->execute();
+                        $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
                     }
+                } else {
+                    $member = Member::find($memberId);
                 }
                 $webUser->login($member, 3600 * 24 * 30);
             }
