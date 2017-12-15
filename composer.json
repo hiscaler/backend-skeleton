@@ -27,7 +27,7 @@
         "yadjet/yii2-file-upload-behaviors": "~1.0.0",
         "yadjet/yii2-date-picker": "dev-master",
         "yadjet/yii2-ueditor": "dev-master",
-        "overtrue/wechat": "~3.1"
+        "overtrue/wechat": "2.1.*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
