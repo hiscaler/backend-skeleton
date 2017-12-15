@@ -56,12 +56,12 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['type', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['username', 'auth_key'], 'required'],
+            [['username'], 'required'],
             [['username', 'nickname', 'tel', 'mobile_phone', 'email'], 'trim'],
             [['type'], 'default', 'value' => 0],
             [['remark'], 'string'],
             [['username', 'nickname'], 'string', 'max' => 20],
-            [['avatar'], 'string', 'max' => 100],
+            [['avatar'], 'string', 'max' => 200],
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 50],
