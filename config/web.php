@@ -12,6 +12,9 @@ $config = [
             'class' => 'app\modules\admin\Module',
             'layout' => 'main.php',
         ],
+        'api' => [
+            'class' => 'app\modules\api\Module',
+        ],
     ],
     'components' => [
         'request' => [
