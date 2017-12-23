@@ -46,7 +46,7 @@ class WechatController extends Controller
                         $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
                     }
                 } else {
-                    $member = Member::find($memberId);
+                    $member = Member::findOne($memberId);
                 }
                 $webUser->login($member, 3600 * 24 * 30);
             }
