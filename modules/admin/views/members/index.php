@@ -17,36 +17,56 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="member-index">
-
     <?= $this->render('_search', ['model' => $searchModel]); ?>
-
     <?php Pjax::begin(); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            'type',
-            'username',
-            'nickname',
+            [
+                'class' => 'yii\grid\SerialColumn',
+                'contentOptions' => ['class' => 'serial-number']
+            ],
+            [
+                'attribute' => 'username',
+                'contentOptions' => ['class' => 'username'],
+            ],
+            [
+                'attribute' => 'nickname',
+                'contentOptions' => ['class' => 'username'],
+            ],
 //            'avatar:image',
             // 'auth_key',
             // 'password_hash',
             // 'password_reset_token',
-            // 'email:email',
-            // 'tel',
-            // 'mobile_phone',
+            'email:email',
+            [
+                'attribute' => 'tel',
+                'contentOptions' => ['class' => 'tel'],
+            ],
+            [
+                'attribute' => 'mobile_phone',
+                'contentOptions' => ['class' => 'mobile-phone'],
+            ],
             // 'register_ip',
             // 'login_count',
             // 'last_login_ip',
             // 'last_login_time:datetime',
             // 'status',
             // 'remark:ntext',
-            // 'created_at',
+            [
+                'attribute' => 'created_at',
+                'format' => 'datetime',
+                'contentOptions' => ['class' => 'datetime'],
+            ],
             // 'created_by',
             // 'updated_at',
             // 'updated_by',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update} {delete}',
+                'headerOptions' => ['class' => 'buttons-2 last'],
+            ],
         ],
     ]); ?>
     <?php Pjax::end(); ?>
