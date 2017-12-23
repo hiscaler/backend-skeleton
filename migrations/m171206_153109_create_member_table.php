@@ -23,6 +23,7 @@ class m171206_153109_create_member_table extends Migration
             'auth_key' => $this->string(32)->notNull()->comment('认证 key'),
             'password_hash' => $this->string()->notNull()->comment('密码'),
             'password_reset_token' => $this->string()->unique()->comment('密码重置 token'),
+            'access_token' => $this->string()->unique()->comment('访问 Token'),
             'email' => $this->string(50)->comment('邮箱'),
             'tel' => $this->string(30)->comment('电话号码'),
             'mobile_phone' => $this->string(35)->comment('手机号码'),

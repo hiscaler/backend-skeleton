@@ -32,7 +32,6 @@ use yii\web\IdentityInterface;
  */
 class Member extends \yii\db\ActiveRecord implements IdentityInterface
 {
-
     /**
      * 用户状态
      */
@@ -115,7 +114,18 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented . ');
+        if ($type == 'app\modules\api\extensions\yii\filters\auth\WechatAuth') {
+            $userId = Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%member}} WHERE [[access_token]] = :token', [':token' => $token])->queryScalar();
+
+            return $userId ? static::findOne(['id' => $userId]) : null;
+        } else {
+            $user = static::findOne(['access_token' => $token]);
+            if ($user) {
+                return (int) substr($token, strrpos($token, '.') + 1) > time() ? $user : null;
+            } else {
+                return null;
+            }
+        }
     }
 
     /**
