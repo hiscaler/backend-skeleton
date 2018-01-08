@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%meta}}".
@@ -179,7 +180,6 @@ class Meta extends \yii\db\ActiveRecord
                         }
                     }
                 } catch (Exception $exc) {
-
                 }
             }
         }
@@ -203,7 +203,7 @@ class Meta extends \yii\db\ActiveRecord
      * @param \yii\db\ActiveRecord $activeRecord
      * @return array
      */
-    public static function getItems(\yii\db\ActiveRecord $activeRecord)
+    public static function getItems(ActiveRecord $activeRecord)
     {
         $items = [];
         $query = new \yii\db\Query();
@@ -281,10 +281,36 @@ class Meta extends \yii\db\ActiveRecord
                     $data['input_candidate_value'] = [];
                     break;
             }
+            $rules = self::getMetaRules($data['id']);
+            $data['rules'] = $rules ?: [[$data['key'], 'safe']];
             $items[$data['key']] = $data;
         }
 
         return $items;
+    }
+
+    /**
+     * 获取数据验证规则
+     *
+     * @param $objectName
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public static function getRules($objectName)
+    {
+        $rules = [];
+        $validators = Yii::$app->getDb()->createCommand('SELECT [[name]], [[options]] FROM {{%meta_validator}} WHERE [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName)', [':objectName' => trim($objectName)])->queryAll();
+        foreach ($validators as $validator) {
+            $options = unserialize($validator['options']) ?: [];
+            foreach ($options as $key => $value) {
+                if (trim($value) == '') {
+                    unset($options[$key]);
+                }
+            }
+            $rules[$validator['name']] = $options ?: 'safe';
+        }
+
+        return $rules;
     }
 
     /**
