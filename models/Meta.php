@@ -307,7 +307,7 @@ class Meta extends \yii\db\ActiveRecord
                     unset($options[$key]);
                 }
             }
-            $rules[$validator['name']] = $options ?: 'safe';
+            $rules[$validator['name']] = $options ?: ['safe' => []];
         }
 
         return $rules;

@@ -12,6 +12,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Inflector;
+use yii\helpers\VarDumper;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -86,19 +87,16 @@ class UsersController extends GlobalController
             'dynamicAttributeLabels' => $attributeLabels,
         ]);
         foreach ($metaItems as $name => $meta) {
-            foreach ($meta['rules'] as $rule) {
-                $dynamicModel->addRule($rule[0], $rule[1]);
+            foreach ($meta['rules'] as $rule => $options) {
+                $dynamicModel->addRule($name, $rule, $options);
             }
         }
 
         $post = Yii::$app->getRequest()->post();
-        if ($model->load($post) && $model->validate()) {
+        if (($model->load($post) && $model->validate()) && ($dynamicModel->load($post) && $dynamicModel->validate())) {
             $model->setPassword($model->password);
             if ($model->save()) {
-                $dynamicModel->load($post);
-                if (isset($post['DynamicForm'])) {
-                    Meta::saveValues($model, $dynamicModel, true);
-                }
+                Meta::saveValues($model, $dynamicModel, true);
 
                 return $this->redirect(['index']);
             }
@@ -126,16 +124,15 @@ class UsersController extends GlobalController
             'dynamicAttributeLabels' => $attributeLabels,
         ]);
         foreach ($metaItems as $name => $meta) {
-            foreach ($meta['rules'] as $rule) {
-                $dynamicModel->addRule($rule[0], $rule[1]);
+            foreach ($meta['rules'] as $rule => $options) {
+                $dynamicModel->addRule($name, $rule, $options);
             }
         }
 
         $post = Yii::$app->getRequest()->post();
-        if ($model->load($post) && $model->save()) {
-            if (isset($post['DynamicForm']) && $dynamicModel->load($post)) {
-                Meta::saveValues($model, $dynamicModel, true);
-            }
+        if (($model->load($post) && $model->validate()) && ($dynamicModel->load($post) && $dynamicModel->validate())) {
+            $model->save(false);
+            Meta::saveValues($model, $dynamicModel, true);
 
             return $this->redirect(['index']);
         } else {
