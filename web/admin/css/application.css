@@ -16,71 +16,87 @@ html, body {
     background: #F5F5F5 url(about:blank);
     background-attachment: fixed;
 }
+
 body, div, dl, dt, dd, ul, ol, li, pre, form, fieldset, input, p, blockquote, th, td {
     margin: 0;
     padding: 0;
 }
+
 a {
     color: #4362BF;
     text-decoration: none;
 }
+
 a:hover {
     color: #4362BF;
     text-decoration: underline;
 }
+
 fieldset, img {
     border: 0 none;
 }
+
 address, caption, cite, code, dfn, em, th, var, i {
     font-style: normal;
     font-weight: normal;
 }
+
 ol li, ul li {
     list-style: none outside none;
 }
+
 caption, th {
     text-align: left;
 }
+
 q:before, q:after {
     content: "";
 }
+
 /*table {
     table-layout: fixed;
 }*/
 th, td {
     vertical-align: middle;
 }
+
 i {
     display: inline;
     overflow: hidden;
     font-size: 12px;
 }
+
 iframe {
     background-color: #FFFFFF;
 }
+
 input[type="radio"], input[type="checkbox"] {
     margin-right: 2px;
 }
+
 input {
     -moz-background-clip: border;
     -moz-background-inline-policy: continuous;
     -moz-background-origin: padding;
-    font-family: \5FAE\8F6F\96C5\9ED1,Tahoma,Arial,Helvetica,sans-serif;
+    font-family: \5FAE\8F6F\96C5\9ED1, Tahoma, Arial, Helvetica, sans-serif;
     font-size: 13px;
     outline: medium none;
     border-radius: 3px;
 }
+
 label input {
     font-size: 13px;
     position: relative;
     top: 2px;
 }
+
 textarea {
     font-size: 13px;
     overflow: auto;
     padding: 1px 0 0 1px;
     border-radius: 3px;
 }
+
 select {
     font-size: 13px;
     padding: 5px 6px;
@@ -89,19 +105,23 @@ select {
     margin: 0;
     width: 212px;
 }
+
 cite {
     display: none;
     line-height: 33px;
     text-indent: -999px;
 }
+
 .wrapper {
     display: block;
     margin-bottom: .6em;
     *zoom: 1;
 }
+
 .bold {
     font-weight: bold;
 }
+
 /* 清除浮动 */
 .clearfix:after, .wrapper:after {
     content: "\0020";
@@ -111,16 +131,24 @@ cite {
     visibility: hidden;
     overflow: hidden;
 }
-.clearfix, .wrapper {display:block;}
-.clear {clear:both;}
+
+.clearfix, .wrapper {
+    display: block;
+}
+
+.clear {
+    clear: both;
+}
 
 .hidden {
     display: none;
 }
+
 .container {
     width: 100%;
     margin: 0 auto;
 }
+
 .container:after {
     content: "\0020";
     display: block;
@@ -129,39 +157,48 @@ cite {
     visibility: hidden;
     overflow: hidden;
 }
+
 .container {
     display: block;
 }
+
 .inner {
     padding: 10px;
 }
+
 .ptb {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
 .inner-p10 {
     padding: 10px;
 }
+
 .clear-margin {
     margin: 0 !important;
 }
+
 /*******************************************************************************
  * Detail view
  ******************************************************************************/
 table.detail-view .null {
     color: pink;
 }
+
 table.detail-view {
     background: white;
     border-collapse: collapse;
     margin: 0;
     width: 100%;
 }
+
 table.detail-view th, table.detail-view td {
     border: 1px #E9E9E9 solid;
     padding: 8px;
     vertical-align: top;
 }
+
 table.detail-view th {
     text-align: right;
     font-weight: bold;
@@ -173,18 +210,23 @@ table.detail-view th {
     word-break: keep-all; /* for ie */
     white-space: nowrap; /* for chrome */
 }
+
 table.detail-view tr.odd {
     background: #FFF;
 }
+
 table.detail-view tr.even {
     background: #F5F5F5;
 }
+
 table.detail-view tr.odd th {
     background: #F8F8F8;
 }
+
 table.detail-view tr.even th {
     background: #F8F8F8;
 }
+
 table.detail-view td img.thumbnail {
     border: #ccc solid 1px;
     padding: 3px;
@@ -193,25 +235,31 @@ table.detail-view td img.thumbnail {
     border-radius: 2px;
     max-width: 80%;
 }
+
 /*******************************************************************************
  * data list
  ******************************************************************************/
-ul.list {}
+ul.list {
+}
+
 ul.list li {
     line-height: 30px;
     background: url(../images/bullet-blue.png) no-repeat left center;
     padding-left: 16px;
     border-bottom: #F5F5F5 solid 1px;
 }
+
 ul.list li.left {
     display: inline-block;
     float: left;
     margin-right: 20px;
 }
+
 ul.list li em {
     float: right;
     color: #A2A4A5;
 }
+
 /*******************************************************************************
  * 布局
  ******************************************************************************/
@@ -222,11 +270,13 @@ ul.list li em {
     /* bug fix: 主栏没有内容时，在 Firefox 和 Chrome 等浏览器下，布局不对 */
     min-height: 1px;
 }
+
 .col-sub, .col-extra,
 .col-sub-inner-side, .col-extra-inner-side {
     float: left;
     /*position: relative; 按需设置，仅在需要时添加 */
 }
+
 /** 清除浮动 **/
 .layout:after,
 .main-wrap:after, .col-sub:after, .col-extra:after,
@@ -236,15 +286,21 @@ ul.list li em {
     height: 0;
     clear: both;
 }
+
 .layout,
 .main-wrap, .col-sub, .col-extra,
 .main-wrap-inner-side, .col-sub-inner-side, .col-extra-inner-side {
     *zoom: 1;
 }
+
 .grid-s6m0e0 {
     /*overflow: hidden*/
 }
-.grid-s6m0e0 .main-wrap { margin: 0 0 0 161px; }
+
+.grid-s6m0e0 .main-wrap {
+    margin: 0 0 0 161px;
+}
+
 .grid-s6m0e0 .col-sub {
     width: 160px;
     margin-left: -100%;
@@ -253,12 +309,19 @@ ul.list li em {
     margin-bottom: -9999px;
     padding-bottom: 9999px;
 }
-.grid-s6m0e0 .col-extra {}
-.grid-s6m0e0 .main-wrap-inner-side { margin: 0 0 0 171px; }
+
+.grid-s6m0e0 .col-extra {
+}
+
+.grid-s6m0e0 .main-wrap-inner-side {
+    margin: 0 0 0 171px;
+}
+
 .grid-s6m0e0 .col-sub-inner-side {
     width: 160px;
     margin-left: -100%;
 }
+
 #page-hd {
     width: 100%;
     height: 50px;
@@ -266,32 +329,38 @@ ul.list li em {
     margin: 0 auto;
     background: #FFF none;
 }
+
 #page-bd {
     margin: 0 auto;
     overflow: hidden;
     padding-bottom: 10px;
     background: #FFF none;
 }
+
 #page-ft {
     width: 100%;
     border-top: 1px solid #E9E9E9;
 }
+
 /* normal page */
 .normal-page {
     width: 950px;
     margin: 0 auto;
 }
+
 .normal-page .npl {
     display: block;
     float: left;
     width: 600px;
     margin-right: 10px;
 }
+
 .normal-page .npr {
     display: block;
     float: left;
     width: 340px;
 }
+
 /*******************************************************************************
  * Header
  ******************************************************************************/
@@ -311,6 +380,7 @@ ul.list li em {
     _position: absolute;
     _top: expression(documentElement.scrollTop + "px");
 }
+
 #header #main-menu,
 #header #header-account-manage {
     position: absolute;
@@ -320,23 +390,28 @@ ul.list li em {
     z-index: 1000;
     font-size: 14px;
 }
+
 #header #header-account-manage a {
     font-size: 14px;
     color: #FFF;
     margin: 0 10px;
 }
+
 #header #main-menu a {
     font-size: 14px;
 }
+
 #header #logo {
     width: 60px;
     margin-left: 10px;
     margin-top: 2px;
 }
+
 #header #logo img {
     width: 48px;
     height: 48px;
 }
+
 #header li {
     float: left;
     height: 50px;
@@ -344,6 +419,7 @@ ul.list li em {
     overflow: hidden;
     display: inline-block;
 }
+
 #header li a {
     height: 50px;
     line-height: 50px;
@@ -354,49 +430,61 @@ ul.list li em {
     float: left;
     padding: 0 15px;
 }
+
 #header li a i {
     margin-left: 10px;
 }
+
 #header li.last {
     float: right;
     margin-right: 10px;
 }
+
 #header li.last a {
     background: none;
 }
+
 #header li.active a {
     text-decoration: none;
     line-height: 50px;
     font-weight: bold;
     background-color: #417BB6;
 }
+
 #header li a:hover {
     text-decoration: none;
     background-color: #417BB6;
 }
+
 /* main menu */
 #main-menu {
     left: 0;
     color: #FFF;
     margin-left: 70px;
 }
+
 /* Header account manage */
 #header-account-manage {
     right: 0;
 }
+
 #header-account-manage .header-settings {
-    background: url(../images/icons.png) no-repeat -1776px -16px!important;
+    background: url(../images/icons.png) no-repeat -1776px -16px !important;
     margin: 17px 0;
 }
+
 #header-account-manage li a {
     padding: 0 10px;
 }
+
 #header-account-manage li.drop a {
     background-color: #417BB6;
 }
+
 #header-account-manage li.change-tenant ul {
     display: none;
 }
+
 #header-account-manage li ul {
     width: 200px;
     background-color: #1F4E7C;
@@ -407,19 +495,22 @@ ul.list li em {
     margin-top: 50px;
     margin-left: 10px;
 }
+
 #header-account-manage li ul li {
     width: 100%;
     display: block;
     height: 30px;
     line-height: 30px;
 }
+
 #header-account-manage li ul li a {
     display: block;
     width: 100%;
     height: 30px;
     line-height: 30px;
-    margin: 0!important;
+    margin: 0 !important;
 }
+
 #header-account-manage li ul li a:hover,
 #header-account-manage li ul li.active a {
     height: 30px;
@@ -429,6 +520,7 @@ ul.list li em {
     width: 100%;
     font-weight: normal;
 }
+
 /*******************************************************************************
  * 操作菜单按钮
  ******************************************************************************/
@@ -436,15 +528,18 @@ ul.list li em {
     padding: 0;
     margin: 0;
 }
+
 #menu-buttons ul {
     display: block;
     height: 28px;
     line-height: 28px;
 }
+
 #menu-buttons li {
     display: inline-block;
     float: left;
 }
+
 #menu-buttons li a {
     cursor: pointer;
     display: inline-block;
@@ -455,22 +550,26 @@ ul.list li em {
     padding: 0 15px;
     background: #F5F5F5 url(../images/grid-view-header-bg.gif) no-repeat right center;
 }
+
 #menu-buttons ul.misc li.first a,
 #menu-buttons ul.misc li.first-last a {
     border-left: #E9E9E9 solid 1px;
     border-bottom-left-radius: 3px;
 }
+
 #menu-buttons li.first-last a,
 #menu-buttons li.last a {
     border-radius: 0 0 3px 0;
     border-right: #E9E9E9 solid 1px;
     background: #F5F5F5;
 }
+
 #menu-buttons li.active a,
 #menu-buttons li a:hover {
     text-decoration: none;
     color: #DD4B39;
 }
+
 /*******************************************************************************
  * Breadcrumbs
  ******************************************************************************/
@@ -483,25 +582,32 @@ ul.list li em {
     height: 40px;
     line-height: 40px;
 }
+
 .breadcrumbs li {
     display: inline-block;
     float: left;
     margin-right: 10px;
 }
+
 .breadcrumbs li i {
     margin: 0 0 0 10px;
 }
+
 .breadcrumbs a, .breadcrumbs li i {
     font-size: 14px;
     font-style: normal;
 }
+
 /*******************************************************************************
  * control panel
  ******************************************************************************/
-.control-panel {}
+.control-panel {
+}
+
 .control-panel .inner {
     padding: 10px 5px;
 }
+
 .control-panel .btn a {
     display: block;
     height: 24px;
@@ -511,9 +617,11 @@ ul.list li em {
     text-align: center;
     border-radius: 4px;
 }
+
 .control-panel .btn a:hover {
     border: #CCC solid 1px;
 }
+
 .control-panel .title {
     height: 58px;
     line-height: 58px;
@@ -523,15 +631,18 @@ ul.list li em {
     border-bottom: #FFF solid 1px;
     overflow: hidden;
 }
+
 .control-panel .shortcut {
     background: url("../images/khotkeys.png") no-repeat left center;
     padding-left: 25px;
 }
+
 .control-panel .shortcuts {
     border-bottom: #FFF solid 1px;
     border-top: #E9E9E9 solid 1px;
     padding: 5px 0;
 }
+
 .control-panel .shortcuts li {
     line-height: 30px;
     display: block;
@@ -542,19 +653,24 @@ ul.list li em {
     padding-left: 20px;
     color: #4362BF;
 }
+
 .control-panel .shortcuts li.active {
     background-position: 2px 7px;
 }
+
 .control-panel .shortcuts li.active ul li {
     background-position: 0 7px;
 }
+
 .control-panel .shortcuts li li {
     height: 30px;
     overflow: hidden;
 }
+
 .control-panel .shortcuts li i {
     margin-left: 10px;
 }
+
 .control-panel .shortcuts li.active {
     border: #E9E9E9 solid 1px;
     border-left: #d04437 solid 3px;
@@ -564,29 +680,36 @@ ul.list li em {
     background-color: #FFF;
     border-radius: 5px 0 0 5px;
 }
+
 .control-panel .shortcuts li.active {
     font-weight: bold;
 }
+
 .control-panel .shortcuts li.active li {
     font-weight: normal;
 }
+
 .control-panel .shortcuts li ul li {
-    background: url("../images/bullet-blue.png") no-repeat 0 12px!important;
+    background: url("../images/bullet-blue.png") no-repeat 0 12px !important;
     padding-left: 10px;
 }
+
 .control-panel .shortcuts li ul li.active {
-    background: url("../images/right-arrow.png") no-repeat 0 7px!important;
+    background: url("../images/right-arrow.png") no-repeat 0 7px !important;
 }
+
 .control-panel .shortcuts li ul li.active {
     border: none;
     background-color: #FFF;
     margin: 0 -11px 0 -5px;
     padding-left: 10px;
 }
+
 .control-panel .shortcuts li ul li.active a {
     color: #d04437;
     padding-left: 5px;
 }
+
 /*******************************************************************************
  * Account register login form
  ******************************************************************************/
@@ -599,23 +722,27 @@ ul.list li em {
     width: 400px;
     margin: 0 auto;
 }
+
 #form-account-reg-login .success {
     padding: 0;
     margin: 0;
     border: none;
     background: #FFF;
 }
+
 #form-account-reg-login .errorMessage {
     border: none;
     padding-left: 130px;
     background: #FFF url(../images/error.png) no-repeat 110px center;
 }
+
 #form-account-reg-login .hd {
     border-bottom: #ccc solid 1px;
     margin-bottom: 10px;
     background: url(../images/account-reg-login.png) no-repeat left center;
     padding-left: 40px;
 }
+
 #form-account-reg-login .hd h1 {
     font-size: 20px;
     height: 40px;
@@ -623,18 +750,24 @@ ul.list li em {
     padding: 0;
     margin: 0;
 }
-#form-account-reg-login .bd {}
+
+#form-account-reg-login .bd {
+}
+
 #form-account-reg-login .bd .entry {
     margin-bottom: 10px;
     display: block;
 }
+
 #form-account-reg-login .bd .error {
     margin-bottom: 0;
 }
+
 #form-account-reg-login .bd .entry input.g-text {
     width: 240px;
     padding: 8px 4px;
 }
+
 #form-account-reg-login .bd .entry label {
     width: 70px;
     display: inline-block;
@@ -649,32 +782,39 @@ ul.list li em {
     clear: both;
     float: none;
 }
+
 #form-account-reg-login .bd .entry label.auto {
     width: 160px;
     text-align: left;
     margin: 0;
     padding: 0
 }
+
 #form-account-reg-login .bd .buttons {
     padding-left: 115px;
 }
+
 #form-account-reg-login .bd .buttons .button {
     padding: 8px 15px;
     font-weight: bold;
     cursor: pointer;
 }
+
 #form-account-reg-login .ft {
     border-top: #CCC solid 1px;
 }
+
 .social-login-icons {
     width: 245px;
     margin: 0 auto;
 }
+
 .social-login-icons li {
     display: inline-block;
     margin: 10px 5px;
     float: left;
 }
+
 /*******************************************************************************
  * Notices widget
  ******************************************************************************/
@@ -682,6 +822,7 @@ ul.list li em {
     border: #D0D1D3 solid 1px;
     border-radius: 5px;
 }
+
 .widget-common .hd {
     border-bottom: #D0D1D3 solid 1px;
     height: 30px;
@@ -691,9 +832,11 @@ ul.list li em {
     font-size: 16px;
     background: #ececec url(../images/notice.png) no-repeat 5px center;
 }
+
 .widget-common .bd {
     padding: 10px;
 }
+
 /*******************************************************************************
  * 实体数据关联的自定义属性列表
  ******************************************************************************/
@@ -702,22 +845,27 @@ ul.list li em {
     border: #e9e9e9 solid 1px;
     border-radius: 5px;
 }
+
 .entity-attributes-list li,
 .entity-attributes-list li a {
     display: inline-block;
     float: left;
 }
+
 .entity-attributes-list li a {
     border-right: #e9e9e9 solid 1px;
     padding: 4px 10px;
 }
+
 .entity-attributes-list li.last a {
     border-right: none;
 }
+
 .entity-attributes-list li.active a {
     font-weight: bold;
     color: #d04437;
 }
+
 /*******************************************************************************
  * 登陆日志
  ******************************************************************************/
@@ -727,6 +875,7 @@ ul.list li em {
     border: #E9E9E9 solid 1px;
     border-radius: 5px;
 }
+
 .widget-user-login-logs .hd {
     height: 30px;
     line-height: 30px;
@@ -740,11 +889,17 @@ ul.list li em {
     padding: 10px 0;
     background-color: #F5F5F5;
 }
-.widget-user-login-logs .bd {}
+
+.widget-user-login-logs .bd {
+}
+
 .widget-user-login-logs .bd li {
     padding-left: 10px;
 }
-.widget-user-login-logs .time-lines {}
+
+.widget-user-login-logs .time-lines {
+}
+
 .widget-user-login-logs .time-lines .day {
     font-size: 16px;
     color: #4362BF;
@@ -752,6 +907,7 @@ ul.list li em {
     padding: 5px 0 5px 30px;
     margin-left: -18px;
 }
+
 .widget-user-login-logs .time-lines .item {
     height: 32px;
     line-height: 32px;
@@ -759,14 +915,18 @@ ul.list li em {
     color: #CCC;
     margin-left: -10px;
 }
+
 .widget-user-login-logs .time-lines .item .ip,
 .widget-user-login-logs .time-lines .item .client-informations {
     margin-left: 10px;
 }
+
 /*******************************************************************************
  * 商品图片列表
  ******************************************************************************/
-.item-images {}
+.item-images {
+}
+
 .item-images li {
     width: 302px;
     height: 432px;
@@ -774,6 +934,7 @@ ul.list li em {
     float: left;
     margin: 10px;
 }
+
 .item-images li img {
     width: 300px;
     height: 400px;
@@ -781,18 +942,21 @@ ul.list li em {
     border-bottom: none;
     border-radius: 6px 6px 0 0;
 }
+
 .item-images li .image span {
     position: absolute;
     margin-top: -400px;
     margin-left: 280px;
     top: auto;
 }
+
 .item-images li input {
     width: 290px;
     border: #d2d6de solid 1px;
     border-top: none;
     margin-top: -4px;
 }
+
 /*******************************************************************************
  * 租赁站点选择列表
  ******************************************************************************/
@@ -801,9 +965,11 @@ ul.list li em {
     margin: 50px auto 40px auto;
     border-radius: 5px;
 }
+
 #tenants-list .bd {
     padding: 5px 0;
 }
+
 #tenants-list li {
     display: block;
     float: left;
@@ -813,6 +979,7 @@ ul.list li em {
     background: none;
     width: 300px;
 }
+
 #tenants-list li .base a {
     display: block;
     border-radius: 5px;
@@ -820,11 +987,13 @@ ul.list li em {
     text-align: center;
     background-color: #F5F5F5;
 }
+
 #tenants-list li a:hover {
     border-color: #4362BF;
     background-color: #EEE;
     text-decoration: none;
 }
+
 #tenants-list li a span {
     display: block;
     height: 30px;
@@ -832,19 +1001,24 @@ ul.list li em {
     text-align: left;
     padding: 0 10px;
 }
+
 #tenants-list li a span.name {
     border-bottom: #999 solid 1px;
     font-weight: bold;
 }
+
 #tenants-list li a span.name em {
     float: right;
 }
+
 #tenants-list li a span.description {
     color: #666666;
 }
+
 #tenants-list li .actions {
     margin-left: 5px;
 }
+
 #tenants-list li .actions a {
     display: inline-block;
     border: #999 solid 1px;
@@ -852,19 +1026,23 @@ ul.list li em {
     border-right: none;
     padding: 3px 10px;
 }
+
 #tenants-list li .actions a.first {
     border-radius: 0 0 0 3px;
 }
+
 #tenants-list li .actions a.last {
     border-radius: 0 0 3px 0;
     border-right: #999 solid 1px;
 }
+
 /*******************************************************************************
  * 模块信息
  ******************************************************************************/
 .widget-module {
     margin-bottom: 10px;
 }
+
 .widget-module .hd {
     border-bottom: #e9e9e9 solid 1px;
     font-weight: bold;
@@ -872,18 +1050,22 @@ ul.list li em {
     height: 40px;
     line-height: 40px;
 }
+
 .widget-module .hd span {
     display: inline-block;
 }
+
 .widget-module .hd span.icon {
     float: left;
     width: 32px;
     height: 32px;
     margin: 4px 10px 0 0;
 }
+
 .widget-module .hd span.buttons {
     float: right;
 }
+
 .widget-module .hd span.buttons a {
     display: inline;
     padding: 3px 4px;
@@ -894,33 +1076,68 @@ ul.list li em {
     font-weight: normal;
     color: #FFFFEF;
 }
+
 .widget-module .hd span.buttons a.install {
     border-color: #00aa00;
     background-color: #00aa00;
 }
+
 .widget-module .hd span.buttons a.uninstall {
     border-color: #c60000;
     background-color: #c60000;
 }
-.widget-module .bd {}
+
+.widget-module .bd {
+}
+
 .widget-module .bd .misc {
     height: 24px;
     line-height: 24px;
 }
+
 .widget-module .bd .misc span {
     margin-right: 10px;
 }
+
 .widget-module .bd .description {
     line-height: 24px;
     text-indent: 24px;
     color: #CCC;
 }
+
+/*******************************************************************************
+ * Model rule
+ ******************************************************************************/
+fieldset.model-rule {
+    border: #E9E9E9 solid 1px;
+    margin: 0 10px 10px 10px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+fieldset.model-rule legend {
+    margin-left: 30px;
+    display: inline;
+    padding: 4px 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border: #E9E9E9 solid 1px;
+    font-weight: bold;
+}
+
+fieldset.model-rule .form-group:last-child {
+    background: none;
+}
+
 /*******************************************************************************
  * Layer 定制
  ******************************************************************************/
 body .layer-grid-view .layui-layer-content {
     padding: 1px;
 }
+
 /*******************************************************************************
  * Footer
  ******************************************************************************/
@@ -930,10 +1147,12 @@ body .layer-grid-view .layui-layer-content {
     color: #666666;
     padding: 10px;
 }
+
 #footer p {
     margin: 0;
     padding: 0;
 }
+
 #footer a {
     color: #666666;
     margin: 0 12px;

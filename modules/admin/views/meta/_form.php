@@ -38,7 +38,7 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
         <div class="tab-panel" id="tab-panel-rules" style="display: none;">
-            <fieldset v-for="item in metaValidators">
+            <fieldset class="model-rule" v-for="item in metaValidators">
                 <legend>
                     <input class="control-label" type="checkbox" id="meta-validator-name-{{ item.name }}" name="Meta[validatorsList][{{ item.name }}][name]" v-model="item.active" value="{{ item.name }}" />
                     <label for="meta-validator-name-{{ item.name }}">{{ item.label }}</label>
