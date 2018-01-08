@@ -11,7 +11,6 @@ use app\modules\admin\forms\RegisterForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\helpers\Inflector;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -74,22 +73,7 @@ class UsersController extends GlobalController
         $model->status = User::STATUS_ACTIVE;
         $model->loadDefaultValues();
 
-        $attributes = [];
-        $attributeLabels = [];
-        $metaItems = Meta::getItems($model, 0);
-        foreach ($metaItems as $name => $meta) {
-            $attributes[] = $name;
-            $attributeLabels[$name] = isset($meta['i18n']) && $meta['i18n'] ? Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_'))) : $meta['label'];
-        }
-
-        $dynamicModel = new DynamicForm($attributes, [
-            'dynamicAttributeLabels' => $attributeLabels,
-        ]);
-        foreach ($metaItems as $name => $meta) {
-            foreach ($meta['rules'] as $rule => $options) {
-                $dynamicModel->addRule($name, $rule, $options);
-            }
-        }
+        $dynamicModel = new DynamicForm(Meta::getItems($model, 0));
 
         $post = Yii::$app->getRequest()->post();
         if (($model->load($post) && $model->validate()) && ($dynamicModel->load($post) && $dynamicModel->validate())) {
@@ -103,7 +87,6 @@ class UsersController extends GlobalController
 
         return $this->render('create', [
             'model' => $model,
-            'metaItems' => $metaItems,
             'dynamicModel' => $dynamicModel,
         ]);
     }
@@ -111,22 +94,7 @@ class UsersController extends GlobalController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        $metaItems = Meta::getItems($model, $model->id);
-        $attributes = [];
-        $attributeLabels = [];
-        foreach ($metaItems as $name => $meta) {
-            $attributes[$name] = $meta['value'];
-            $attributeLabels[$name] = isset($meta['i18n']) && $meta['i18n'] ? Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_'))) : $meta['label'];
-        }
-        $dynamicModel = new DynamicForm($attributes, [
-            'dynamicAttributeLabels' => $attributeLabels,
-        ]);
-        foreach ($metaItems as $name => $meta) {
-            foreach ($meta['rules'] as $rule => $options) {
-                $dynamicModel->addRule($name, $rule, $options);
-            }
-        }
+        $dynamicModel = new DynamicForm(Meta::getItems($model, $model->id));
 
         $post = Yii::$app->getRequest()->post();
         if (($model->load($post) && $model->validate()) && ($dynamicModel->load($post) && $dynamicModel->validate())) {
@@ -137,7 +105,6 @@ class UsersController extends GlobalController
         } else {
             return $this->render('update', [
                 'model' => $model,
-                'metaItems' => $metaItems,
                 'dynamicModel' => $dynamicModel,
             ]);
         }

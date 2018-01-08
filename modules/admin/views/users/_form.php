@@ -26,7 +26,7 @@ use app\models\User;
 
         <?= $form->field($model, 'status')->dropDownList(User::statusOptions(), ['prompt' => '']) ?>
 
-        <?php foreach ($metaItems as $metaItem): ?>
+        <?php foreach ($dynamicModel->getMetaOptions() as $metaItem): ?>
             <?= $form->field($dynamicModel, $metaItem['key'])->$metaItem['input_type'](['value' => $metaItem['value']])->label($metaItem['label']) ?>
         <?php endforeach; ?>
 

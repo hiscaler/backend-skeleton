@@ -15,7 +15,6 @@ $this->params['menus'] = [
     <?=
     $this->render('_form', [
         'model' => $model,
-        'metaItems' => $metaItems,
         'dynamicModel' => $dynamicModel,
     ])
     ?>
