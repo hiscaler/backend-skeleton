@@ -8,10 +8,8 @@ use app\models\User;
 /* @var $model app\models\User */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-
 <div class="form-outside">
     <div class="form user-form">
-
         <?php $form = ActiveForm::begin(); ?>
 
         <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
@@ -28,11 +26,13 @@ use app\models\User;
 
         <?= $form->field($model, 'status')->dropDownList(User::statusOptions(), ['prompt' => '']) ?>
 
+        <?php foreach ($metaItems as $metaItem): ?>
+            <?= $form->field($dynamicModel, $metaItem['key'])->$metaItem['input_type'](['value' => $metaItem['value']])->label($metaItem['label']) ?>
+        <?php endforeach; ?>
+
         <div class="form-group buttons">
             <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>
-
         <?php ActiveForm::end(); ?>
-
     </div>
 </div>

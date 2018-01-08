@@ -11,13 +11,12 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
 ];
 ?>
-
 <div class="user-create">
-
     <?=
     $this->render('_form', [
         'model' => $model,
+        'metaItems' => $metaItems,
+        'dynamicModel' => $dynamicModel,
     ])
     ?>
-
 </div>

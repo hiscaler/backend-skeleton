@@ -2,20 +2,18 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\Meta;
 use app\models\User;
 use app\models\UserSearch;
-use app\models\Yad;
 use app\modules\admin\forms\ChangePasswordForm;
+use app\modules\admin\forms\DynamicForm;
 use app\modules\admin\forms\RegisterForm;
-use PDO;
-use yadjet\helpers\ArrayHelper;
 use Yii;
-use yii\base\Security;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Inflector;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
 
 /**
  * 系统用户管理
@@ -76,15 +74,40 @@ class UsersController extends GlobalController
         $model->status = User::STATUS_ACTIVE;
         $model->loadDefaultValues();
 
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
-            $model->password_hash = (new Security())->generatePasswordHash($model->password);
+        $attributes = [];
+        $attributeLabels = [];
+        $metaItems = Meta::getItems($model, 0);
+        foreach ($metaItems as $name => $meta) {
+            $attributes[] = $name;
+            $attributeLabels[$name] = Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_')));
+        }
+
+        $dynamicModel = new DynamicForm($attributes, [
+            'dynamicAttributeLabels' => $attributeLabels,
+        ]);
+        foreach ($metaItems as $name => $meta) {
+            foreach ($meta['rules'] as $rule) {
+                $dynamicModel->addRule($rule[0], $rule[1]);
+            }
+        }
+
+        $post = Yii::$app->getRequest()->post();
+        if ($model->load($post) && $model->validate()) {
+            $model->setPassword($model->password);
             if ($model->save()) {
+                $dynamicModel->load($post);
+                if (isset($post['DynamicForm'])) {
+                    Meta::saveValues($model, $dynamicModel, true);
+                }
+
                 return $this->redirect(['index']);
             }
         }
 
         return $this->render('create', [
             'model' => $model,
+            'metaItems' => $metaItems,
+            'dynamicModel' => $dynamicModel,
         ]);
     }
 
@@ -92,11 +115,34 @@ class UsersController extends GlobalController
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
+        $metaItems = Meta::getItems($model, $model->id);
+        $attributes = [];
+        $attributeLabels = [];
+        foreach ($metaItems as $name => $meta) {
+            $attributes[$name] = $meta['value'];
+            $attributeLabels[$name] = Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_')));
+        }
+        $dynamicModel = new DynamicForm($attributes, [
+            'dynamicAttributeLabels' => $attributeLabels,
+        ]);
+        foreach ($metaItems as $name => $meta) {
+            foreach ($meta['rules'] as $rule) {
+                $dynamicModel->addRule($rule[0], $rule[1]);
+            }
+        }
+
+        $post = Yii::$app->getRequest()->post();
+        if ($model->load($post) && $model->save()) {
+            if (isset($post['DynamicForm']) && $dynamicModel->load($post)) {
+                Meta::saveValues($model, $dynamicModel, true);
+            }
+
             return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'metaItems' => $metaItems,
+                'dynamicModel' => $dynamicModel,
             ]);
         }
     }
