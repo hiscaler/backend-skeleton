@@ -12,7 +12,6 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Inflector;
-use yii\helpers\VarDumper;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -80,7 +79,7 @@ class UsersController extends GlobalController
         $metaItems = Meta::getItems($model, 0);
         foreach ($metaItems as $name => $meta) {
             $attributes[] = $name;
-            $attributeLabels[$name] = Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_')));
+            $attributeLabels[$name] = isset($meta['i18n']) && $meta['i18n'] ? Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_'))) : $meta['label'];
         }
 
         $dynamicModel = new DynamicForm($attributes, [
@@ -118,7 +117,7 @@ class UsersController extends GlobalController
         $attributeLabels = [];
         foreach ($metaItems as $name => $meta) {
             $attributes[$name] = $meta['value'];
-            $attributeLabels[$name] = Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_')));
+            $attributeLabels[$name] = isset($meta['i18n']) && $meta['i18n'] ? Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_'))) : $meta['label'];
         }
         $dynamicModel = new DynamicForm($attributes, [
             'dynamicAttributeLabels' => $attributeLabels,
