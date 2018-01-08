@@ -227,10 +227,10 @@ yadjet.actions.gridColumnConfig();
 $(function () {
     $('.tabs-common li a').on('click', function () {
         var $t = $(this),
-            $widget = $t.parent().parent().parent().parent();
+            $widget = $t.parent().parent().parent();
         $t.parent().siblings().removeClass('active');
         $t.parent().addClass('active');
-        $widget.find('.tab-pane').hide();
+        $widget.find('.tab-panel').hide();
         $widget.find('#' + $t.attr('data-toggle')).show();
         return false;
     });
@@ -291,6 +291,3 @@ var vm = new Vue({
         }
     }
 });
-
-Vue.http.options.root = '/root';
-Vue.http.headers.common['Authorization'] = 'Basic YXBpOnBhc3N3b3Jk';

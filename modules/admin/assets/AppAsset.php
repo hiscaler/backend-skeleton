@@ -29,8 +29,8 @@ class AppAsset extends AssetBundle
     public $js = [
         'js/doT.min.js',
         'layer/layer.js',
-        'js/vue/vue.js',
-        'js/vue/vue-resource.min.js',
+        'js/vue.js',
+        'js/axios.min.js',
         'js/application.js',
         'js/underscore-min.js',
     ];
