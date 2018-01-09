@@ -2,12 +2,8 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\Specification;
-use app\models\TypeProperty;
-use app\models\Yad;
+use app\models\Lookup;
 use Yii;
-use yii\db\Query;
-use yii\web\Response;
 
 /**
  * 接口
@@ -21,25 +17,25 @@ class ApiController extends \yii\rest\Controller
     {
         if (parent::beforeAction($action)) {
             $formatter = Yii::$app->getFormatter();
-            $language = Yad::getLanguage();
+            $language = Lookup::getValue('language', 'zh-CN');
             if ($language) {
                 Yii::$app->language = $language;
             }
-            $timezone = Yad::getTimezone();
+            $timezone = Lookup::getValue('timezone', 'PRC');
             if ($timezone) {
                 Yii::$app->timeZone = $timezone;
             }
 
             $formatter->defaultTimeZone = Yii::$app->timeZone;
-            $dateFormat = Yad::getTenantValue('dateFormat', 'php:Y-m-d');
+            $dateFormat = Lookup::getValue('dateFormat', 'php:Y-m-d');
             if ($dateFormat) {
                 $formatter->dateFormat = $dateFormat;
             }
-            $timeFormat = Yad::getTenantValue('timeFormat', 'php:H:i:s');
+            $timeFormat = Lookup::getValue(('timeFormat', 'php:H:i:s');
             if ($timeFormat) {
                 $formatter->timeFormat = $timeFormat;
             }
-            $datetimeFormat = Yad::getTenantValue('datetimeFormat', 'php:Y-m-d H:i:s');
+            $datetimeFormat = Lookup::getValue(('datetimeFormat', 'php:Y-m-d H:i:s');
             if ($datetimeFormat) {
                 $formatter->datetimeFormat = $datetimeFormat;
             }
@@ -55,7 +51,7 @@ class ApiController extends \yii\rest\Controller
     /**
      * 数据验证规则
      *
-     * @return Response
+     * @return array
      */
     public function actionValidators()
     {
@@ -121,8 +117,9 @@ class ApiController extends \yii\rest\Controller
     /**
      * 指定数据的验证规则
      *
-     * @param integer $metaId
-     * @return yii\web\Response
+     * @param $metaId
+     * @return array
+     * @throws \yii\db\Exception
      */
     public function actionMetaValidators($metaId)
     {
