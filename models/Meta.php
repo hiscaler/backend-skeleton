@@ -456,6 +456,129 @@ class Meta extends \yii\db\ActiveRecord
         return $value;
     }
 
+    /**
+     * 更新自定义表单数据值
+     *
+     * @param $objectName
+     * @param $key
+     * @param $objectId
+     * @param $value
+     * @return bool
+     * @throws \yii\db\Exception
+     */
+    public static function updateValue($objectName, $key, $objectId, $value)
+    {
+        $success = false;
+        $db = Yii::$app->getDb();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName AND [[key]] = :key', [':objectName' => strtolower(trim($objectName)), ':key' => trim($key)])->queryScalar();
+        if ($metaId) {
+            $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar() ?: null;
+            // @todo 验证 objectId 是否有效
+            if ($v === null) {
+                // insert
+                $db->createCommand()->insert('{{%meta_value}}', [
+                    'meta_id' => $metaId,
+                    'object_id' => $objectId,
+                    'value' => $value,
+                ])->execute();
+                $success = true;
+            } else {
+                // Update
+                $db->createCommand()->insert('{{%meta_value}}', [
+                    'value' => $value,
+                ], [
+                    'meta_id' => $metaId,
+                    'object_id' => $objectId
+                ])->execute();
+                $success = true;
+            }
+        }
+
+        return $success;
+    }
+
+    /**
+     * 增加自定义表单项目值
+     *
+     * @param $objectName
+     * @param $key
+     * @param $objectId
+     * @param $value
+     * @return int|null
+     * @throws \yii\db\Exception
+     */
+    public static function increaseValue($objectName, $key, $objectId, $value)
+    {
+        $result = null;
+        $db = Yii::$app->getDb();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName AND [[key]] = :key', [':objectName' => strtolower(trim($objectName)), ':key' => trim($key)])->queryScalar();
+        if ($metaId) {
+            $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
+            // @todo 验证 objectId 是否有效
+            if ($v === false) {
+                // Insert
+                $db->createCommand()->insert('{{%meta_value}}', [
+                    'value' => (int) $value,
+                    'meta_id' => $metaId,
+                    'object_id' => $objectId
+                ])->execute();
+            } else {
+                $value = intval($v) + (int) $value;
+                // Update
+                $db->createCommand()->update('{{%meta_value}}', [
+                    'value' => $value,
+                ], [
+                    'meta_id' => $metaId,
+                    'object_id' => $objectId
+                ])->execute();
+                $result = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * 减少自定义表单项目值
+     *
+     * @param $objectName
+     * @param $key
+     * @param $objectId
+     * @param $value
+     * @return int|null
+     * @throws \yii\db\Exception
+     */
+    public static function decreaseValue($objectName, $key, $objectId, $value)
+    {
+        $result = null;
+        $db = Yii::$app->getDb();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName AND [[key]] = :key', [':objectName' => strtolower(trim($objectName)), ':key' => trim($key)])->queryScalar();
+        if ($metaId) {
+            $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
+            // @todo 验证 objectId 是否有效
+            if ($v === false) {
+                // Insert
+                $db->createCommand()->insert('{{%meta_value}}', [
+                    'value' => (int) $value,
+                    'meta_id' => $metaId,
+                    'object_id' => $objectId
+                ])->execute();
+            } else {
+                $value = intval($v) - (int) $value;
+                // Update
+                $db->createCommand()->update('{{%meta_value}}', [
+                    'value' => $value,
+                ], [
+                    'meta_id' => $metaId,
+                    'object_id' => $objectId
+                ])->execute();
+                $result = $value;
+            }
+        }
+
+        return $result;
+    }
+
     // Events
     public function beforeSave($insert)
     {
