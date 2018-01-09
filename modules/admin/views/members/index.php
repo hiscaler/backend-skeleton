@@ -48,7 +48,10 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'mobile-phone'],
             ],
             // 'register_ip',
-            // 'login_count',
+            [
+                'attribute' => 'login_count',
+                'contentOptions' => ['class' => 'number'],
+            ],
             // 'last_login_ip',
             // 'last_login_time:datetime',
             // 'status',
