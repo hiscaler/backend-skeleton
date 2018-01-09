@@ -38,7 +38,7 @@ class ModulesController extends Controller
             throw new InvalidParamException("Unable to open directory: {$baseDirectory}");
         }
         while (($dir = readdir($handle)) !== false) {
-            if ($dir === '.' || $dir === '..' || $dir === 'admin' || !file_exists($baseDirectory . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'Module.php')) {
+            if ($dir === '.' || $dir === '..' || $dir === 'admin' || $dir == 'api' || !file_exists($baseDirectory . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'Module.php')) {
                 continue;
             }
             // @todo 需要检测类的有效性

@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </ul>
 
     <div class="panels">
-        <div id="panel-installed" class="tab-pane">
+        <div id="panel-installed" class="tab-panel">
             <ul>
                 <?php foreach ($installedModules as $i => $module): ?>
                     <li id="module-<?= $module['alias'] ?>" class="widget-module">
@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php endforeach; ?>
             </ul>
         </div>
-        <div id="panel-notinstalled" class="tab-pane" style="display: none">
+        <div id="panel-notinstalled" class="tab-panel" style="display: none">
             <ul>
                 <?php foreach ($notInstalledModules as $i => $module): ?>
                     <li id="module-<?= $module['alias'] ?>" class="widget-module">
