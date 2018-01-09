@@ -14,16 +14,22 @@ use yii\helpers\VarDumper;
 class DynamicForm extends DynamicModel
 {
 
-    private $_metaItems = [];
+    private $_metaOptions = [];
     private $_attributeLabels = [];
 
-    public function __construct($metaItems)
+    public function __construct(array $metaOptions)
     {
-        $this->_metaItems = $metaItems;
+        $this->_metaOptions = $metaOptions;
         $attributes = $attributeLabels = [];
-        foreach ($this->_metaItems as $name => $meta) {
+        foreach ($this->_metaOptions as $name => $meta) {
             $attributes[$name] = isset($meta['value']) ? $meta['value'] : null;
-            $attributeLabels[$name] = isset($meta['i18n']) && $meta['i18n'] ? Yii::t('news', Inflector::camel2words(Inflector::id2camel($name, '_'))) : $meta['label'];
+            $label = null;
+            if (isset($meta['i18n']) && $meta['i18n']) {
+                $label = Yii::t('metaConfig', Inflector::camel2words(Inflector::id2camel($name, '_')));
+            } elseif (isset($meta['label'])) {
+                $label = $meta['label'];
+            }
+            $label && $attributeLabels[$name] = $label;
 
             // Add rule
             foreach ($meta as $key => $value) {
@@ -35,13 +41,13 @@ class DynamicForm extends DynamicModel
             }
         }
 
-        $this->_attributeLabels = $attributeLabels;
+        $attributeLabels && $this->_attributeLabels = $attributeLabels;
         parent::__construct($attributes, []);
     }
 
     public function getMetaOptions()
     {
-        return $this->_metaItems;
+        return $this->_metaOptions;
     }
 
     /**
