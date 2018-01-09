@@ -5,7 +5,7 @@ namespace app\modules\example\controllers;
 use yii\web\Controller;
 
 /**
- * Default controller forthe `example` module
+ * Default controller for the `example` module
  */
 class DefaultController extends Controller
 {
