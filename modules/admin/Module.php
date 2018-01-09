@@ -57,7 +57,7 @@ class Module extends \yii\base\Module
                 ],
             ],
         ]);
-        \Yii::$app->errorHandler->errorAction = 'admin/default/error';
+        \Yii::$app->getErrorHandler()->errorAction = '/admin/default/error';
     }
 
 }
