@@ -32,6 +32,7 @@ use yii\web\IdentityInterface;
  */
 class Member extends \yii\db\ActiveRecord implements IdentityInterface
 {
+
     /**
      * 用户状态
      */
@@ -94,7 +95,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'last_login_time' => '最后登录时间',
             'status' => '状态',
             'remark' => '备注',
-            'created_at' => '添加时间',
+            'created_at' => '注册时间',
             'created_by' => '添加人',
             'updated_at' => '更新时间',
             'updated_by' => '更新人',
@@ -209,7 +210,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return Yii::$app->security->validatePassword($password, $this->password_hash);
+        return Yii::$app->getSecurity()->validatePassword($password, $this->password_hash);
     }
 
     /**
@@ -219,7 +220,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function setPassword($password)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($password);
     }
 
     /**
