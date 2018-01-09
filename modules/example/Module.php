@@ -5,7 +5,7 @@ namespace app\modules\example;
 /**
  * 测试模块
  */
-class Module extends \yii\base\Module
+class Module extends \app\modules\admin\Module
 {
 
     /**
@@ -13,4 +13,16 @@ class Module extends \yii\base\Module
      */
     public $controllerNamespace = 'app\modules\example\controllers';
 
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->modules = [
+            'api' => [
+                'class' => 'app\modules\example\modules\api\Module',
+            ]
+        ];
+    }
 }
