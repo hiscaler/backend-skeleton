@@ -33,7 +33,8 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'serial-number'],
             ],
             [
-                'attribute' => 'type_text',
+                'attribute' => 'type',
+                'format' => 'fileUploadConfigType',
                 'contentOptions' => ['class' => 'center', 'style' => 'width: 40px'],
             ],
             [

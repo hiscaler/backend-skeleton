@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 
 $this->title = $model->model_name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'File Upload Configs'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $model->model_name;
+$this->params['breadcrumbs'][] = $model->attribute;
 
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
@@ -21,8 +21,8 @@ $this->params['menus'] = [
     DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'type_text',
-//            'model_name:modelName',
+            'type:fileUploadConfigType',
+            'model_name:modelName',
             'attribute',
             'extensions',
             [

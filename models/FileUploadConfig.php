@@ -126,13 +126,6 @@ class FileUploadConfig extends BaseActiveRecord
         ];
     }
 
-    public function getType_text()
-    {
-        $options = self::typeOptions();
-
-        return isset($options[$this->type]) ? $options[$this->type] : null;
-    }
-
     /**
      * 默认配置
      *
