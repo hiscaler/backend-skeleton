@@ -31,11 +31,11 @@ class ApiController extends \yii\rest\Controller
             if ($dateFormat) {
                 $formatter->dateFormat = $dateFormat;
             }
-            $timeFormat = Lookup::getValue(('timeFormat', 'php:H:i:s');
+            $timeFormat = Lookup::getValue('timeFormat','php:H:i:s');
             if ($timeFormat) {
                 $formatter->timeFormat = $timeFormat;
             }
-            $datetimeFormat = Lookup::getValue(('datetimeFormat', 'php:Y-m-d H:i:s');
+            $datetimeFormat = Lookup::getValue('datetimeFormat', 'php:Y-m-d H:i:s');
             if ($datetimeFormat) {
                 $formatter->datetimeFormat = $datetimeFormat;
             }
