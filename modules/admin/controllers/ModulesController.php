@@ -9,7 +9,6 @@ use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -26,12 +25,11 @@ class ModulesController extends Controller
      * @var array
      */
     private $_localModules = [];
-    private $_installedModules = [];
 
     public function init()
     {
         parent::init();
-        $defaultIcon = Yii::$app->getRequest()->getBaseUrl() . '/images/default-module-icon.png';
+        $defaultIcon = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/default-module-icon.png';
         $localModules = [];
         $baseDirectory = Yii::getAlias('@app/modules');
         $handle = opendir($baseDirectory);
@@ -39,7 +37,7 @@ class ModulesController extends Controller
             throw new InvalidParamException("Unable to open directory: {$baseDirectory}");
         }
         while (($dir = readdir($handle)) !== false) {
-            if ($dir === '.' || $dir === '..' || $dir === 'admin' || $dir == 'api' || !file_exists($baseDirectory . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'Module.php')) {
+            if ($dir === '.' || $dir === '..' || $dir === 'admin' || $dir === 'api' || !file_exists($baseDirectory . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'Module.php')) {
                 continue;
             }
             // @todo 需要检测类的有效性
@@ -90,7 +88,7 @@ class ModulesController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'install', 'uninstall'],
+                        'actions' => ['index', 'install', 'uninstall'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -99,7 +97,8 @@ class ModulesController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'install' => ['POST'],
+                    'uninstall' => ['POST'],
                 ],
             ],
         ];
@@ -125,72 +124,6 @@ class ModulesController extends Controller
             'installedModules' => $installedModules,
             'notInstalledModules' => $notInstalledModules,
         ]);
-    }
-
-    /**
-     * Displays a single Module model.
-     *
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new Module model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Module();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Updates an existing Module model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Deletes an existing Module model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     /**
@@ -275,20 +208,4 @@ class ModulesController extends Controller
         ]);
     }
 
-    /**
-     * Finds the Module model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param integer $id
-     * @return Module the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Module::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
 }

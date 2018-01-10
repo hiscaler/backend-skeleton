@@ -73,6 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $('.install, .uninstall').on('click', function () {
             var $t = $(this), url = $t.attr('href');
             $.ajax({
+                type: 'POST',
                 url: url,
                 dataType: 'json',
                 success: function (response) {
