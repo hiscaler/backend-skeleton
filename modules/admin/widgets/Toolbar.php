@@ -18,12 +18,12 @@ class Toolbar extends Widget
         if (!$user->isGuest) {
             $items[] = [
                 'label' => $user->getIdentity()->username . (($user->getIdentity()->role == User::ROLE_ADMINISTRATOR) ? ' [ M ]' : ''),
-                'url' => ['default/profile'],
+                'url' => ['/admin/default/profile'],
             ];
 
             $items[] = [
                 'label' => Yii::t('app', 'Logout'),
-                'url' => ['default/logout'],
+                'url' => ['/admin/default/logout'],
                 'template' => '<a id="logout" href="{url}">{label}</a>'
             ];
         }
