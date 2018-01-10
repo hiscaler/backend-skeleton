@@ -24,17 +24,15 @@ AppAsset::register($this);
         <?php $this->beginBody() ?>
 
         <div id="page-hd">
-            <?= \app\widgets\Navigate::widget() ?>
             <?= Header::widget() ?>
         </div>
         <div id="page-bd">
             <div class="container">
                 <div id="page-left">
                     <div class="wrapper">
-                        <?= app\widgets\LatestNews::widget() ?>
+
                     </div>
                     <div class="clearfix">
-                        <?= app\widgets\HotNews::widget() ?>
                     </div>
                 </div>
                 <div id="page-right">
@@ -65,18 +63,7 @@ AppAsset::register($this);
         <div id="page-ft">
             <?= app\widgets\Footer::widget() ?>
         </div>
-        <?= app\widgets\QQOnline::widget() ?>
         <?php $this->endBody() ?>
-        <script type="text/javascript">
-            $(function () {
-                Mai.urls.shoppingCart = {
-                    index: '<?= Url::toRoute(['/shopping-cart/index']) ?>',
-                    add: '<?= Url::toRoute(['/shopping-cart/add', 'itemId' => '_itemId']) ?>',
-                    'delete': '<?= Url::toRoute(['/shopping-cart/delete', 'itemId' => '_itemId']) ?>',
-                    changeQuantity: '<?= Url::toRoute(['/shopping-cart/change-quantity', 'itemId' => '_itemId']) ?>'
-                };
-            });
-        </script>
     </body>
 </html>
 <?php $this->endPage() ?>
