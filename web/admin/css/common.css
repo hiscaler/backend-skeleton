@@ -565,3 +565,7 @@ ul.pagination li.disabled span {
 .glyphicon-trash {
     background-position: -816px -16px;
 }
+
+.glyphicon-add-child {
+    background-position: -16px -16px;
+}

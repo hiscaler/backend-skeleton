@@ -4,12 +4,9 @@ namespace app\modules\admin\controllers;
 
 use app\models\Category;
 use app\models\CategorySearch;
-use app\models\Yad;
-use PDO;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -55,7 +52,6 @@ class CategoriesController extends GlobalController
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -66,7 +62,7 @@ class CategoriesController extends GlobalController
      *
      * @return mixed
      */
-    public function actionCreate($type, $parentId = 0, $ordering = 1)
+    public function actionCreate($type = 0, $parentId = 0, $ordering = 1)
     {
         $model = new Category();
         $model->type = $type;
@@ -113,12 +109,7 @@ class CategoriesController extends GlobalController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $exists = Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%item}} WHERE [[category_id]] = :categoryId', [':categoryId' => $model['id']])->queryScalar();
-        if ($exists) {
-            throw new ForbiddenHttpException('该分类已有商品使用，禁止删除。');
-        } else {
-            $model->delete();
-        }
+        $model->delete();
 
         return $this->redirect(['index', 'CategorySearch[type]' => $model->type]);
     }
