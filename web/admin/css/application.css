@@ -481,10 +481,6 @@ ul.list li em {
     background-color: #417BB6;
 }
 
-#header-account-manage li.change-tenant ul {
-    display: none;
-}
-
 #header-account-manage li ul {
     width: 200px;
     background-color: #1F4E7C;
@@ -958,85 +954,6 @@ ul.list li em {
 }
 
 /*******************************************************************************
- * 租赁站点选择列表
- ******************************************************************************/
-#tenants-list {
-    width: 320px;
-    margin: 50px auto 40px auto;
-    border-radius: 5px;
-}
-
-#tenants-list .bd {
-    padding: 5px 0;
-}
-
-#tenants-list li {
-    display: block;
-    float: left;
-    margin: 5px 10px;
-    padding: 0;
-    line-height: 100%;
-    background: none;
-    width: 300px;
-}
-
-#tenants-list li .base a {
-    display: block;
-    border-radius: 5px;
-    border: #999 solid 1px;
-    text-align: center;
-    background-color: #F5F5F5;
-}
-
-#tenants-list li a:hover {
-    border-color: #4362BF;
-    background-color: #EEE;
-    text-decoration: none;
-}
-
-#tenants-list li a span {
-    display: block;
-    height: 30px;
-    line-height: 30px;
-    text-align: left;
-    padding: 0 10px;
-}
-
-#tenants-list li a span.name {
-    border-bottom: #999 solid 1px;
-    font-weight: bold;
-}
-
-#tenants-list li a span.name em {
-    float: right;
-}
-
-#tenants-list li a span.description {
-    color: #666666;
-}
-
-#tenants-list li .actions {
-    margin-left: 5px;
-}
-
-#tenants-list li .actions a {
-    display: inline-block;
-    border: #999 solid 1px;
-    border-top: none;
-    border-right: none;
-    padding: 3px 10px;
-}
-
-#tenants-list li .actions a.first {
-    border-radius: 0 0 0 3px;
-}
-
-#tenants-list li .actions a.last {
-    border-radius: 0 0 3px 0;
-    border-right: #999 solid 1px;
-}
-
-/*******************************************************************************
  * 模块信息
  ******************************************************************************/
 .widget-module {
@@ -1129,6 +1046,16 @@ fieldset.model-rule legend {
 
 fieldset.model-rule .form-group:last-child {
     background: none;
+}
+
+fieldset.model-rule .list-group li.list-group-item {
+    line-height: 30px;
+    padding-left: 10px;
+    border-bottom: #f5f5f5 solid 1px;
+}
+
+fieldset.model-rule .list-group li.list-group-item label {
+    font-weight: bold;
 }
 
 /*******************************************************************************

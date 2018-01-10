@@ -2,16 +2,19 @@
 .grid-view-loading {
     background: url(../images/loading.gif) no-repeat;
 }
+
 .grid-view {
     width: 100%;
     overflow: auto;
 }
+
 .grid-view table.table {
     width: 100%;
     background: white;
     border-collapse: collapse;
     margin-bottom: 0;
 }
+
 .grid-view table.table th, .grid-view table.table td {
     border-bottom: 1px #E9E9E9 solid;
     padding: 6px 5px;
@@ -21,18 +24,22 @@
     word-break: keep-all; /* for ie */
     white-space: nowrap; /* for chrome */
 }
+
 .grid-view table.table th.nowrap, .grid-view table.table td.nowrap {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
+
 .grid-view table.table th.wrap, .grid-view table.table td.wrap {
     word-break: break-all; /* for ie */
     white-space: normal; /* for chrome */
 }
+
 .grid-view table.table th.pointer, .grid-view table.table td.pointer {
     cursor: pointer;
 }
+
 .grid-view table.table th {
     border-top: 1px #E9E9E9 solid;
     background: #F5F5F5 url(../images/grid-view-header-bg.gif) no-repeat right center;
@@ -44,9 +51,11 @@
     white-space: nowrap;
     font-weight: bold;
 }
+
 .grid-view table.table th.last {
     background: #F5F5F5;
 }
+
 .grid-view table.table caption .btn-circle {
     margin: 7px 0 0 2px;
     font-size: 18px;
@@ -62,10 +71,12 @@
     color: #FFF;
     vertical-align: top;
 }
+
 .grid-view table.table caption .btn-circle:hover {
     text-decoration: none;
     font-weight: bold;
 }
+
 .grid-view table.table td label.circle {
     display: inline;
     float: left;
@@ -75,46 +86,59 @@
     padding: 3px 10px;
     background-color: #F5F5F5;
 }
+
 .grid-view table.table th a {
     color: #7d8389;
     font-weight: bold;
     text-decoration: none;
 }
+
 .grid-view table.table th a:hover {
     color: #3b5998;
 }
+
 .grid-view table.table th a.asc {
     background: url(../images/up.gif) right center no-repeat;
     padding-right: 10px;
 }
+
 .grid-view table.table th a.desc {
     background: url(../images/down.gif) right center no-repeat;
     padding-right: 10px;
 }
+
 .grid-view table.table tr.enabled {
     background: #FFF;
 }
+
 .grid-view table.table tr.disabled {
     background: #F5F5F5;
 }
+
 .grid-view table.table tr.new {
     background: #FFF6BF;
 }
+
 .grid-view table.table tr.even {
     background: #FAFCFF;
 }
+
 .grid-view table.table tr.odd {
     background: #FFF;
 }
+
 .grid-view table.table tr.block {
     background: #FFF6BF;
 }
+
 .grid-view table.table tr.selected td {
     background: #FFFFEF;
 }
+
 .grid-view table.table tr.root .name {
     font-weight: bold;
 }
+
 .grid-view table.table tr.children-2 .name,
 .grid-view table.table tr.children-3 .name,
 .grid-view table.table tr.children-4 .name {
@@ -123,32 +147,41 @@
     background-position: 24px center;
     padding-left: 40px;
 }
+
 .grid-view table.table tr.children-3 .name {
     background-position: 40px center;
     padding-left: 56px;
 }
+
 .grid-view table.table tr.children-4 .name {
     background-position: 56px center;
     padding-left: 72px;
 }
+
 .grid-view table.table tr:hover {
     background: #ECFBD4;
 }
+
 .grid-view table.table tr td img {
     border: none;
 }
+
 .grid-view .link-column img {
     border: 0;
 }
+
 .grid-view .button-column {
     text-align: center;
 }
+
 .grid-view .button-column img {
     border: 0;
 }
+
 .grid-view .checkbox-column {
     width: 15px;
 }
+
 .grid-view .summary {
     margin: 0 0 5px 0;
     line-height: 31px;
@@ -156,41 +189,52 @@
     text-align: right;
     color: #7d8389;
 }
+
 .grid-view .summary b {
     margin: 0 5px;
 }
-.grid-view .pager {}
+
+.grid-view .pager {
+}
+
 .grid-view .empty {
     background: #FFFCC9 url(../images/notice.png) no-repeat 5px center;
     padding: 2px 5px 2px 25px;
     height: 24px;
     line-height: 24px;
 }
+
 .grid-view tr.filters td {
     padding: 2px 0 2px 5px;
     margin: 0;
 }
+
 .grid-view .filters input {
     border: 1px solid #E9E9E9;
     padding: 4px 5px;
 }
+
 .grid-view table.table td.center {
     text-align: center;
 }
+
 .grid-view table.table td.pk {
     width: 50px;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #999;
 }
+
 .grid-view table.table td a.picture {
     padding-right: 20px;
     background: url(../images/picture.png) no-repeat right center;
 }
+
 .grid-view table.table td.checkbox {
     width: 20px;
     text-align: center;
 }
+
 .grid-view table.table td.serial-number {
     width: 30px;
     text-overflow: ellipsis;
@@ -198,161 +242,218 @@
     color: #999;
     text-align: center;
 }
+
 .grid-view table.table td.alias {
     width: 80px;
 }
+
 .grid-view table.table td.pk a {
     color: #999;
 }
+
 .grid-view table.table td.date {
     width: 65px;
     text-align: center;
 }
+
 .grid-view table.table td.datetime {
     width: 160px;
     text-align: center;
 }
+
 .grid-view table.table td.begin-end-date {
     width: 180px;
     text-align: center;
 }
+
 .grid-view table.table td.group-name {
     width: 100px;
 }
+
 .grid-view table.table td.username {
     width: 60px;
     text-align: center;
 }
+
 .grid-view table.table td.firstname {
     width: 60px;
 }
+
 .grid-view table.table td.lastname {
     width: 80px;
 }
+
 .grid-view table.table td.user-role {
     width: 120px;
     text-align: center;
 }
+
 .grid-view table.table td.user-group-alias {
     width: 80px;
 }
+
 .grid-view table.table td.user-group-name {
     width: 120px;
 }
+
 .grid-view table.table td.date-time-ago {
     width: 85px;
     text-align: center;
 }
+
 .grid-view table.table td.ip-address {
     width: 96px;
     text-align: center;
 }
+
 .grid-view table.table td.ordering {
     width: 40px;
     text-align: center;
 }
+
 .grid-view table.table td.ordering input {
     width: 40px;
 }
+
 .grid-view table.table td.icon {
     width: 34px;
     text-align: center;
 }
+
 .grid-view table.table td.boolean {
     width: 30px;
     text-align: center;
 }
+
 .grid-view table.table td.number {
     width: 60px;
     text-align: center;
 }
+
 .grid-view table.table td.industry {
     width: 160px;
 }
+
 .grid-view table.table td.group-name {
     width: 72px;
 }
+
 .grid-view table.table td.url-open-target {
     width: 100px;
 }
+
 .grid-view table.table td.url {
     width: 160px;
 }
+
 .grid-view table.table td.node-name {
     width: 80px;
 }
+
 .grid-view table.table td.data-status {
     width: 66px;
     text-align: center;
 }
+
 .grid-view table.table td.model-name {
     width: 100px;
 }
+
 .grid-view table.table td.mobile-phone {
     width: 90px;
     text-align: center;
 }
+
 .grid-view table.table td.tel {
     width: 90px;
 }
+
 .grid-view table.table td.category-name {
     width: 90px;
 }
+
 /* Ad */
 .grid-view table.table td.ad-space-alias {
     width: 100px;
 }
+
 .grid-view table.table td.ad-space-name {
     width: 120px;
 }
+
 .grid-view table.table td.ad-space-size {
     width: 100px;
 }
+
 .grid-view table.table td.ad-type {
     width: 80px;
     text-align: center;
 }
+
 /* base code */
 .grid-view table.table td.base-code-code {
     width: 60px;
     text-align: center;
 }
+
 .grid-view table.table td.base-code-value {
     width: 80px;
 }
+
 /* Lookup */
 .grid-view table.table td.lookup-label {
     width: 100px;
 }
+
 .grid-view table.table td.lookup-return-type {
     width: 80px;
 }
+
 /* Group options */
 .grid-view table.table td.group-options-group-name {
     width: 150px;
 }
+
 .grid-view table.table td.group-options-text {
     width: 100px;
 }
+
 .grid-view table.table td.group-options-value {
     width: 60px;
 }
+
 /* Node */
 .grid-view table.table td.node-tree {
     padding: 0;
     height: 30px;
     line-height: 30px;
 }
+
 .grid-view table.table td.node-tree .level {
     background: url(../images/node-tree.png) no-repeat -109px 0;
     display: inline-block;
     width: 20px;
 }
-.grid-view table.table td.node-tree .level-0 {}
-.grid-view table.table td.node-tree .level-1 { margin-left: 24px; }
-.grid-view table.table td.node-tree .level-2 { margin-left: 48px; }
-.grid-view table.table td.node-tree .level-3 { margin-left: 96px; }
-.grid-view table.table td.node-tree .level-4 { margin-left: 120px; }
+
+.grid-view table.table td.node-tree .level-0 {
+}
+
+.grid-view table.table td.node-tree .level-1 {
+    margin-left: 24px;
+}
+
+.grid-view table.table td.node-tree .level-2 {
+    margin-left: 48px;
+}
+
+.grid-view table.table td.node-tree .level-3 {
+    margin-left: 96px;
+}
+
+.grid-view table.table td.node-tree .level-4 {
+    margin-left: 120px;
+}
+
 .grid-view table.table td.node-tree span.node-parameters {
     display: inline-block;
     width: 16px;
@@ -360,97 +461,97 @@
     background: url(../images/node-parameters.png) no-repeat center center;
     cursor: pointer;
 }
+
 /* article */
 .grid-view table.table td.article-alias {
     width: 100px;
 }
+
 /* workflow */
 .grid-view table.table td.workflow-rule-name {
     width: 120px;
 }
+
 .grid-view table.table td.workflow-task-status {
     width: 80px;
     text-align: center;
 }
-/* Tenant */
-.grid-view table.table td.tenant-key {
-    width: 80px;
-    text-align: center;
-}
-.grid-view table.table td.tenant-name {
-    width: 120px;
-}
-.grid-view table.table td.domain-name {
-    width: 80px;
-}
-.grid-view table.table td.tenant-language {
-    width: 60px;
-    text-align: center;
-}
-.grid-view table.table td.timezone {
-    width: 80px;
-}
-.grid-view table.table td.access-token {
-    width: 280px;
-}
+
 /* meta */
 .grid-view table.table td.meta-object-name {
-    width: 80px;
-}.grid-view table.table td.meta-form-field-type {
+    width: 190px;
+}
+
+.grid-view table.table td.meta-form-field-type {
     width: 90px;
 }
+
 .grid-view table.table td.meta-key {
     width: 100px;
 }
+
 .grid-view table.table td.meta-label {
     width: 100px;
 }
+
 .grid-view table.table td.meta-label span {
     color: #ccc;
     margin-left: 10px;
     font-size: 12px;
 }
+
 .grid-view table.table td.meta-input-type {
     width: 60px;
 }
+
 .grid-view table.table td.meta-return-value-type {
     width: 60px;
 }
+
 .grid-view table.table td.meta-default-value {
     width: 60px;
 }
+
 /* file upload configs */
 .grid-view table.table td.file-upload-config-attribute {
     width: 130px;
 }
+
 .grid-view table.table td.file-upload-config-thumb,
 .grid-view table.table td.file-upload-config-size {
     width: 100px;
 }
+
 .grid-view table.table td.order-sn {
     width: 150px;
     text-align: center;
 }
+
 .grid-view table.table td.price {
     width: 60px;
     text-align: center;
 }
+
 .grid-view table.table td.quantity {
     width: 60px;
     text-align: center;
 }
+
 .grid-view table.table td.amount {
     width: 80px;
     text-align: center;
 }
+
 .grid-view table.table td a.preview {
     padding-left: 20px;
     background: url(../images/preview.gif) no-repeat;
 }
+
 .grid-view table.table td span.pk {
     color: #E7002E;
     margin-right: 5px;
 }
+
 .grid-view table.table td span.alias {
     color: #000;
     background-color: #f5f5f5;
@@ -459,31 +560,76 @@
     padding: 0 5px;
     margin-left: 10px;
 }
+
 .grid-view table.table td span.attributes {
     color: #E7002E;
     float: right;
 }
+
 .grid-view table.table th.actions, .grid-view table.table td.actions {
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 .grid-view table.table td a.float-update {
     padding-right: 20px;
 }
+
 .grid-view table.table td a.float-update:hover {
     background: url(../images/update.png) no-repeat right center;
 }
-.grid-view table.table th.button-1 { width: 20px; _width: 30px; }
-.grid-view table.table th.buttons-2 { width: 40px; _width: 40px; }
-.grid-view table.table th.buttons-3 { width: 60px; _width: 70px; }
-.grid-view table.table th.buttons-4 { width: 80px; _widht: 90px; }
-.grid-view table.table th.buttons-5 { width: 100px; _widht: 110px; }
-.grid-view table.table th.buttons-6 { width: 120px; _widht: 130px; }
-.grid-view table.table th.buttons-7 { width: 140px; _widht: 150px; }
-.grid-view table.table th.buttons-8 { width: 160px; _widht: 170px; }
-.grid-view table.table th.buttons-9 { width: 180px; _widht: 190px; }
-.grid-view table.table th.buttons-10 { width: 200px; _widht: 210px; }
+
+.grid-view table.table th.button-1 {
+    width: 20px;
+    _width: 30px;
+}
+
+.grid-view table.table th.buttons-2 {
+    width: 40px;
+    _width: 40px;
+}
+
+.grid-view table.table th.buttons-3 {
+    width: 60px;
+    _width: 70px;
+}
+
+.grid-view table.table th.buttons-4 {
+    width: 80px;
+    _widht: 90px;
+}
+
+.grid-view table.table th.buttons-5 {
+    width: 100px;
+    _widht: 110px;
+}
+
+.grid-view table.table th.buttons-6 {
+    width: 120px;
+    _widht: 130px;
+}
+
+.grid-view table.table th.buttons-7 {
+    width: 140px;
+    _widht: 150px;
+}
+
+.grid-view table.table th.buttons-8 {
+    width: 160px;
+    _widht: 170px;
+}
+
+.grid-view table.table th.buttons-9 {
+    width: 180px;
+    _widht: 190px;
+}
+
+.grid-view table.table th.buttons-10 {
+    width: 200px;
+    _widht: 210px;
+}
+
 /*******************************************************************************
  * 商品评论
  ******************************************************************************/
@@ -491,12 +637,14 @@
     width: 60px;
     text-align: center;
 }
+
 /*******************************************************************************
  * IP Access Rule
  ******************************************************************************/
 .ip-access-rule-type {
     width: 60px;
 }
+
 #grid-goods-images table .btn {
     border-color: #E9E9E9;
     border-bottom: none;
@@ -504,15 +652,18 @@
     margin-left: -5px;
     background-color: #F5F5F5;
 }
+
 /*******************************************************************************
  * 商品规格选择表单
  ******************************************************************************/
 #mai3-item-specification-values-combination-render td {
     text-align: center;
 }
+
 #mai3-item-specification-values-combination-render td.error input {
     border-bottom: #E7002E solid 1px;
 }
+
 #mai3-item-specification-values-combination-render input {
     background: none;
     border: none;
@@ -520,27 +671,34 @@
     border-radius: 0;
     text-align: center;
 }
+
 #mai3-item-specification-values-combination-render td.item-specification-values {
     width: 160px;
     text-align: left;
 }
+
 #mai3-item-specification-values-combination-render th.item-sn {
     width: 150px;
 }
+
 #mai3-item-specification-values-combination-render input.sn {
     text-align: left;
     width: 130px;
 }
+
 #mai3-item-specification-values-combination-render input.name {
     text-align: left;
     width: 100%;
 }
+
 #mai3-item-specification-values-combination-render input.ordering {
     width: 30px;
 }
+
 #mai3-item-specification-values-combination-render th.price {
     width: 80px;
 }
+
 #mai3-item-specification-values-combination-render input.price {
     width: 60px;
     margin: 0 auto;
