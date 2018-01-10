@@ -1008,8 +1008,8 @@ ul.list li em {
 }
 
 .widget-module .bd .misc {
-    height: 24px;
     line-height: 24px;
+    padding-left: 42px;
 }
 
 .widget-module .bd .misc span {

@@ -453,22 +453,33 @@ div.form .buttons {
     border-color: #3b7fc4;
 }
 
-/*******************************************************************************
- * Lookup form
- ******************************************************************************/
 #form-lookup label {
     width: 120px;
 }
 
 /*******************************************************************************
- * specifications form
+ * Lookup form
  ******************************************************************************/
-.specifications-form #tab-values table select {
-    width: 60px;
+.error-summary {
+    border: #c60000 solid 1px;
+    background-color: #f5f5f5;
+    padding: 0 10px 10px 10px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    margin: 10px;
 }
 
-.specifications-form #tab-values table .form-group {
-    padding: 0;
-    margin: 0;
-    background: none;
+.error-summary p {
+    height: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    border-bottom: #c60000 solid 1px;
+    color: #c60000;
+}
+
+.error-summary ul li {
+    line-height: 24px;
+    background: url("../images/bullet-blue.png") no-repeat left center;
+    padding-left: 10px;
 }
