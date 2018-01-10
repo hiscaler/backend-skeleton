@@ -38,7 +38,7 @@ $this->params['menus'] = [
                 <?php
                 foreach ($items as $group => $data):
                     ?>
-                    <div class="tab-pane" id="tab-group-<?= $group ?>"<?= $activeGroup == $group ? '' : ' style="display: none"' ?>>
+                    <div class="tab-panel" id="tab-group-<?= $group ?>"<?= $activeGroup == $group ? '' : ' style="display: none"' ?>>
                         <?php if ($data) : ?>
                             <?php foreach ($data as $d) : ?>
                                 <div class="form-group">
