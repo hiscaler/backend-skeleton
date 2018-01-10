@@ -94,7 +94,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'template' => '{create} {update} {delete}',
                 'buttons' => [
                     'create' => function ($url, $model, $key) use ($baseUrl) {
-                        return Html::a('<span class="glyphicon glyphicon-add-child"></span>', ['create', 'type' => $model['type'], 'parentId' => $model['id']], ['data-pjax' => 0, 'title' => 'Ìí¼Ó×ÓÏî']);
+                        return Html::a('<span class="glyphicon glyphicon-add-child"></span>', ['create', 'type' => $model['type'], 'parentId' => $model['id']], ['data-pjax' => 0, 'title' => 'æ·»åŠ å­é¡¹']);
                     }
                 ],
                 'headerOptions' => array('class' => 'buttons-2 last'),
