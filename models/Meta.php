@@ -176,7 +176,7 @@ class Meta extends \yii\db\ActiveRecord
                         $instance = $class->newInstanceWithoutConstructor();
                         $tableName = strtr($instance->tableName(), ['{' => '', '}' => '', '%' => '']);
                         if ($instance instanceof \yii\db\ActiveRecord && in_array($tableName, $tables)) {
-                            $names[$tableName] = Yii::t('model', \yii\helpers\Inflector::camel2words($name));
+                            $names[$tableName] = Yii::t('model', \yii\helpers\Inflector::camel2words($name)) . " [ $tableName ]";
                         }
                     }
                 } catch (Exception $exc) {
@@ -194,7 +194,7 @@ class Meta extends \yii\db\ActiveRecord
      */
     public function getObject_name_formatted()
     {
-        return Yii::t('model', \yii\helpers\Inflector::camel2words($this->object_name));
+        return Yii::t('model', \yii\helpers\Inflector::camel2words($this->object_name)) . " [ $this->object_name ]";
     }
 
     /**

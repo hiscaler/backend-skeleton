@@ -38,7 +38,6 @@ return array(
     'Relation Node' => '关联节点',
     'Model Name' => '模型名称',
     'Draft' => '草稿',
-    'Tenant ID' => '站点编号',
     'Content Image Number' => '获取图片',
     // action
     'List' => '列表',
@@ -105,8 +104,6 @@ return array(
     'Downloads' => '下载管理',
     'Videos' => '视频管理',
     'Friendly Links' => '友情链接管理',
-    'Tenants' => '站点管理',
-    'Tenant Access Tokens' => '站点访问令牌管理',
     'Members' => '会员管理',
     'Modules' => '模块管理',
     'Users' => '用户管理',
@@ -129,7 +126,6 @@ return array(
     'E-Newsletter' => '电子快讯',
     'Email User Groups' => '邮箱用户分组',
     'Email Users' => '邮箱用户',
-    'Tenant List' => '站点列表',
     'Votes' => '投票管理',
     'Categories' => '分类管理',
     // yii

@@ -63,43 +63,4 @@ class Option
         ];
     }
 
-    public static function modelNameOptions()
-    {
-        $options = [];
-        $tenantModules = Tenant::modules();
-        $contentModels = ArrayHelper::getValue(Yii::$app->params, 'contentModules', []);
-        foreach ($contentModels as $modelName => $item) {
-            if (in_array($modelName, $tenantModules)) {
-                $options[$modelName] = Yii::t('app', $item['label']);
-            }
-        }
-
-        return $options;
-    }
-
-    /**
-     * 模块列表
-     *
-     * @param boolean $all // 是否返回所有模块
-     * @return array
-     */
-    public static function modulesOptions($all = false)
-    {
-        $options = [];
-        if ($all === true) {
-            $tenantModules = Tenant::modules();
-        }
-        $contentModels = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
-        foreach ($contentModels as $group => $item) {
-            foreach ($item as $key => $value) {
-                if ((isset($value['forceEmbed']) && $value['forceEmbed']) || ($all === false && in_array($group, $tenantModules))) {
-                    continue;
-                }
-                $options[$key] = Yii::t('app', $value['label']);
-            }
-        }
-
-        return $options;
-    }
-
 }

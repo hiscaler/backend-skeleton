@@ -77,9 +77,6 @@ Number.prototype.toFixed = function (d) {
 })(jQuery);
 
 $(function () {
-    $('#header-account-manage li.change-tenant a:first').on('click', function () {
-        $(this).parent().find('ul').show();
-    });
     $(document).on('pjax:error', function (xhr, textStatus, error, options) {
         console.log(xhr);
         console.log(textStatus);

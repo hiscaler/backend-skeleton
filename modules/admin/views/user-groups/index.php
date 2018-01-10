@@ -29,7 +29,7 @@ $this->params['menus'] = [
     </ul>
 
     <div class="panels">
-        <div id="panel-user-group-<?= \app\models\UserGroup::TYPE_USER_GROUP ?>" class="tab-pane">
+        <div id="panel-user-group-<?= \app\models\UserGroup::TYPE_USER_GROUP ?>" class="tab-panel">
 
             <?=
             GridView::widget([
@@ -81,7 +81,7 @@ $this->params['menus'] = [
 
         </div>
 
-        <div id="panel-user-group-<?= \app\models\UserGroup::TYPE_SYSTEM_GROUP ?>" class="tab-pane" style="display: none">
+        <div id="panel-user-group-<?= \app\models\UserGroup::TYPE_SYSTEM_GROUP ?>" class="tab-panel" style="display: none">
 
             <?=
             GridView::widget([

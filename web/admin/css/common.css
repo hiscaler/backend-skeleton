@@ -1,6 +1,7 @@
 input[type=text].disabled, select.disabled, input[type=password].disabled, input.disabled, textarea.disabled {
     background: #F5F5F5;
 }
+
 .g-text {
     background: url(../images/input-bg.png) repeat-x scroll 0 -130px #fff;
     border: 1px solid #AAAAAA;
@@ -8,15 +9,19 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     padding: 5px 5px 6px;
     width: 180px;
 }
+
 .g-text-username {
     width: 80px;
 }
+
 .g-text-tel {
     width: 80px;
 }
+
 .g-text:focus {
     border-color: #999;
 }
+
 .g-text-area {
     background: url(../images/input-bg.png) repeat-x scroll 0 -130px #fff;
     border: 1px solid #AAAAAA;
@@ -28,22 +33,27 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     padding: 5px 5px 6px;
     resize: none;
 }
+
 .g-text-area:focus {
     border-color: #999;
 }
+
 .g-editor {
     background-color: #ccc;
     width: 600px;
     height: 200px;
 }
+
 .icon-date-picker {
     width: 100px;
-    background: #FFF url(../images/calendar.png) no-repeat 90px 50%!important;
+    background: #FFF url(../images/calendar.png) no-repeat 90px 50% !important;
 }
+
 .icon-datetime-picker {
     width: 140px;
-    background: #FFF url(../images/calendar.png) no-repeat 120px 50%!important;
+    background: #FFF url(../images/calendar.png) no-repeat 120px 50% !important;
 }
+
 .button {
     border: #ccc solid 1px;
     border-radius: 3px;
@@ -53,21 +63,27 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     cursor: pointer;
     color: #4362BF;
 }
+
 .large-button {
     padding: 5px 10px;
 }
+
 .button:hover {
     border-color: #3b7fc4;
 }
+
 .loading, .processing, .running, .running-c-c {
     background: url(../images/loading.gif) no-repeat;
 }
+
 .running-c-c {
     background-position: center center;
 }
+
 .lock-ui {
     background: url(../images/lock-ui-running.gif) no-repeat center center;
 }
+
 #infscr-loading {
     border: #ccc solid 1px;
     border-radius: 3px;
@@ -78,22 +94,26 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     width: 300px;
     margin: 0 auto;
 }
+
 /*******************************************************************************
  * 通用 Tabs 样式
  ******************************************************************************/
 .tabs-common {
     margin: 0;
 }
+
 .tabs-common {
     display: block;
     height: 25px;
     border-bottom: 1px solid #E9E9E9;
 }
+
 .tabs-common li {
     float: left;
     list-style: none outside none;
     margin: 0 6px;
 }
+
 .tabs-common li.active a {
     background: none repeat scroll 0 0 #F5F5F5;
     border-top: #DD4B39 solid 2px;
@@ -101,9 +121,11 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     color: #4362BF;
     font-weight: bold;
 }
+
 .tabs-common a:hover {
     background: none repeat scroll 0 0 #F5F5F5;
 }
+
 .tabs-common a {
     -moz-border-bottom-colors: none;
     -moz-border-image: none;
@@ -121,9 +143,11 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     padding: 0.25em 1em;
     text-decoration: none;
 }
+
 .tabs-common li .badges {
     margin-left: 5px;
 }
+
 .panels {
     border: 1px solid #E9E9E9;
     border-top: none;
@@ -139,25 +163,31 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     float: left;
     padding: 3px 5px;
 }
+
 .label-active, .label:hover {
     border-bottom: #205081 solid 2px;
 }
+
 .label:hover {
     text-decoration: none;
 }
+
 /*******************************************************************************
  * Site error
  ******************************************************************************/
 .site-error {
     padding: 50px 140px;
 }
+
 .site-error h1 {
     background: url(../images/error-message.png) no-repeat left center;
     padding-left: 40px;
 }
+
 .site-error .message {
     color: #e4393c;
 }
+
 /*******************************************************************************
  * Message box
  ******************************************************************************/
@@ -166,29 +196,35 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     margin: 10px;
     border: 1px solid #ddd;
 }
+
 .alert a, .notice a, .success a, .info a {
     color: #4362BF;
 }
+
 .alert {
     background: #fbe3e4;
     color: #8a1f11;
     border-color: #fbc2c4;
 }
+
 .notice {
     background: #fff6bf;
     color: #514721;
     border-color: #ffd324;
 }
+
 .success {
     background: #e6efc2;
     color: #264409;
     border-color: #c6d880;
 }
+
 .info {
     background: #d5edf8;
     color: #205791;
     border-color: #92cae4;
 }
+
 /*******************************************************************************
  * Badges
  ******************************************************************************/
@@ -196,35 +232,43 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     border-radius: 3px;
     padding: 0 4px;
 }
+
 .badges:hover {
     color: #FFF;
 }
+
 .badges-blue {
     background-color: #4362BF;
     color: #FFF;
 }
+
 .badges-bright-blue {
     background-color: #3b73af;
     color: #FFF;
 }
+
 .badges-gray {
     background-color: #CCCCCC;
     color: #333333;
 }
+
 .badges-light-gray {
     background-color: #3b73af;
     color: #f5f5f5;
 }
+
 .badges-red {
     background-color: #d04437;
     color: #FFF;
 }
+
 /*******************************************************************************
  * List view
  ******************************************************************************/
 .list-view-loading {
-    background:url(../images/loading.gif) no-repeat center center;
+    background: url(../images/loading.gif) no-repeat center center;
 }
+
 .list-view .summary {
     margin: 0 0 5px 0;
     text-align: right;
@@ -234,30 +278,36 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     margin: 0 0 5px 0;
     text-align: right;
 }
+
 .list-view .sorter {
     font-size: 0.9em;
 }
+
 .list-view .sorter ul {
     display: inline;
-    list-style-image:none;
-    list-style-position:outside;
-    list-style-type:none;
-    margin:0;
-    padding:0;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
+
 .list-view .sorter li {
     display: inline;
     margin: 0 0 0 5px;
     padding: 0;
 }
+
 .list-view .sorter a.asc {
     background: url(../images/up.gif) right center no-repeat;
     padding-right: 10px;
 }
+
 .list-view .sorter a.desc {
     background: url(../images/down.gif) right center no-repeat;
     padding-right: 10px;
 }
+
 .list-view span.empty {
     display: block;
     background: #fff6bf url(../images/notice.png) no-repeat 10px 50%;
@@ -266,6 +316,7 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     margin: 10px;
     border: 1px solid #ffd324;
 }
+
 /*******************************************************************************
  * Pagination
  ******************************************************************************/
@@ -275,11 +326,13 @@ ul.pagination {
     padding: 0;
     margin: 5px 0;
 }
+
 ul.pagination li {
     display: inline;
     margin: 0;
     float: left;
 }
+
 ul.pagination a,
 ul.pagination span {
     padding: 0 10px;
@@ -293,23 +346,28 @@ ul.pagination span {
     border-right: none;
     float: left;
 }
+
 ul.pagination li.prev a,
 ul.pagination li.prev span {
     border-radius: 3px 0 0 3px;
 }
+
 ul.pagination li.next a,
 ul.pagination li.next span {
     border-right: solid 1px #E9E9E9;
     border-radius: 0 3px 3px 0;
 }
+
 ul.pagination a:hover,
 ul.pagination li.active {
     background: #EEE;
     color: #4362BF;
 }
+
 ul.pagination li.disabled span {
     color: #E9E9E9;
 }
+
 /*******************************************************************************
  * Message box
  ******************************************************************************/
@@ -319,6 +377,7 @@ ul.pagination li.disabled span {
     border: 1px solid #FFD324;
     background: #FFF6BF;
 }
+
 .message-box .hd {
     height: 30px;
     line-height: 30px;
@@ -330,10 +389,12 @@ ul.pagination li.disabled span {
     font-weight: bold;
     color: #487BB7;
 }
+
 .message-box .hd em {
     float: right;
     font-size: 12px;
 }
+
 .message-box .hd em a.close-button {
     border: #FFD324 solid 1px;
     padding: 0 5px;
@@ -341,24 +402,30 @@ ul.pagination li.disabled span {
     font-weight: bold;
     text-decoration: none;
 }
+
 .message-box .hd em a.close-button:hover {
     color: #6C7B81;
     border: #6C7B81 solid 1px;
 }
+
 .message-box .bd {
     padding: 5px 25px;
 }
+
 .message-box .bd li {
     line-height: 24px;
-    background: url(../images/bullet-blue.png) no-repeat 0 9px ;
+    background: url(../images/bullet-blue.png) no-repeat 0 9px;
     padding-left: 12px;
 }
+
 .message-box .bd li.warning {
     color: #d04437;
 }
+
 .message-box .bd li.bold {
     font-weight: bold;
 }
+
 /*******************************************************************************
  * Error message
  ******************************************************************************/
@@ -366,11 +433,13 @@ ul.pagination li.disabled span {
     background: #F5F5F5;
     margin-bottom: -10px;
 }
+
 .message-error .inner {
     width: 600px;
     margin: 0 auto;
     padding: 100px 0;
 }
+
 .message-error h2 {
     background: url(../images/error-message.png) no-repeat left center;
     padding: 0 0 0 40px;
@@ -378,11 +447,13 @@ ul.pagination li.disabled span {
     line-height: 40px;
     margin: 0;
 }
+
 .message-error .content {
     border: #B7320F solid 1px;
     padding: 15px 10px;
     background-color: #fbc2c4;
 }
+
 /*******************************************************************************
  * 水平垂直居中
  ******************************************************************************/
@@ -393,12 +464,14 @@ ul.pagination li.disabled span {
     width: 100%;
     display: table;
 }
+
 #hv-center-outer[id] {
     display: table;
     position: static;
     *position: relative;
     _position: static;
 }
+
 #hv-center-middle {
     position: absolute;
     top: 50%;
@@ -415,6 +488,7 @@ ul.pagination li.disabled span {
     _display:;
     _width:;
 }
+
 #hv-center-middle[id] {
     display: table-cell;
     vertical-align: middle;
@@ -425,20 +499,24 @@ ul.pagination li.disabled span {
     *position: absolute;
     _position: ;
 }
+
 #hv-center-inner {
     position: relative;
     top: -50%;
     margin: 0 auto;
     text-align: center;
 }
-#hv-center-content{
+
+#hv-center-content {
     margin: 0 auto;
-    text-align:left;
+    text-align: left;
 }
+
 #hv-center-content #login {
     width: 500px;
     height: 320px;
 }
+
 /*******************************************************************************
  * Smart text input
  ******************************************************************************/
@@ -447,6 +525,7 @@ ul.pagination li.disabled span {
     width: 60%;
     padding: 3px;
 }
+
 .icon {
     display: inline-block !important;
     width: 16px;
@@ -457,6 +536,7 @@ ul.pagination li.disabled span {
     background-repeat: no-repeat;
     font-size: 0;
 }
+
 /* glyphicon */
 .glyphicon {
     position: relative;
@@ -473,12 +553,15 @@ ul.pagination li.disabled span {
     background-image: url(../images/icons.png);
     background-repeat: no-repeat;
 }
+
 .glyphicon-eye-open {
     background-position: -1904px -16px;
 }
+
 .glyphicon-pencil {
     background-position: -1166px -16px;
 }
+
 .glyphicon-trash {
     background-position: -816px -16px;
 }

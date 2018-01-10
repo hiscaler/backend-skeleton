@@ -84,8 +84,6 @@ class DefaultController extends Controller
     public function actionLogout()
     {
         Yii::$app->getUser()->logout();
-        // 清理 COOKIE 信息
-        Yii::$app->getResponse()->getCookies()->remove('_tenant');
 
         return $this->goHome();
     }

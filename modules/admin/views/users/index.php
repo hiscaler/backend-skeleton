@@ -46,11 +46,6 @@ $this->params['menus'] = [
                 'class' => 'yii\grid\SerialColumn',
                 'contentOptions' => ['class' => 'serial-number']
             ],
-//            [
-//                'attribute' => 'user_group_name',
-//                'label' => Yii::t('tenantUser', 'User Group'),
-//                'contentOptions' => ['class' => 'user-group-name']
-//            ],
             [
                 'attribute' => 'username',
                 'format' => 'raw',
@@ -67,11 +62,6 @@ $this->params['menus'] = [
 //                'attribute' => 'role',
 //                'format' => 'userRole',
 //                'contentOptions' => ['class' => 'user-role'],
-//            ],
-//            [
-//                'attribute' => 'rule_name',
-//                'label' => Yii::t('tenantUser', 'Rule'),
-//                'contentOptions' => ['class' => 'workflow-rule-name'],
 //            ],
             'email:email',
             [

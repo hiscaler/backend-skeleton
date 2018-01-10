@@ -132,13 +132,7 @@ class CategoriesController extends GlobalController
     {
         $id = Yii::$app->getRequest()->post('id');
         $db = Yii::$app->getDb();
-        $command = $db->createCommand('SELECT [[enabled]] FROM {{%category}} WHERE [[id]] = :id AND [[tenant_id]] = :tenantId');
-        $command->bindValues([
-            ':id' => (int) $id,
-            ':tenantId' => Yad::getTenantId(),
-        ]);
-        $command->bindValue(':id', (int) $id, PDO::PARAM_INT);
-        $value = $command->queryScalar();
+        $value = $db->createCommand('SELECT [[enabled]] FROM {{%category}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
         if ($value !== null) {
             $value = !$value;
             $now = time();

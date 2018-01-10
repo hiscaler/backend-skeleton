@@ -20,7 +20,6 @@ class m161108_145450_create_grid_column_config_table extends Migration
             'css_class' => $this->string(120)->comment('CSS 样式'),
             'visible' => $this->boolean()->notNull()->comment('是否可见'),
             'user_id' => $this->integer()->notNull()->comment('用户 id'),
-            'tenant_id' => $this->integer()->notNull()->comment('站点 id'),
         ]);
     }
 

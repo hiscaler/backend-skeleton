@@ -39,7 +39,7 @@ $this->params['menus'] = [
             ],
             [
                 'attribute' => 'object_name_formatted',
-                'contentOptions' => ['class' => 'meta-object-name center'],
+                'contentOptions' => ['class' => 'meta-object-name'],
             ],
             [
                 'attribute' => 'key',
@@ -64,7 +64,7 @@ $this->params['menus'] = [
             ],
             [
                 'attribute' => 'default_value',
-                'contentOptions' => ['class' => 'meta-default-value'],
+                'contentOptions' => ['class' => 'meta-default-value center'],
             ],
             [
                 'attribute' => 'enabled',

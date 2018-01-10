@@ -135,10 +135,7 @@ class MetaController extends Controller
     {
         $id = Yii::$app->getRequest()->post('id');
         $db = Yii::$app->getDb();
-        $value = $db->createCommand('SELECT [[enabled]] FROM {{%meta}} WHERE [[id]] = :id AND [[tenant_id]] = :tenantId')->bindValues([
-            ':id' => (int) $id,
-            ':tenantId' => Yad::getTenantId(),
-        ])->queryScalar();
+        $value = $db->createCommand('SELECT [[enabled]] FROM {{%meta}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
         if ($value !== null) {
             $value = !$value;
             $now = time();
