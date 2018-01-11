@@ -11,7 +11,9 @@ use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 
 /**
- * FileUploadConfigsController implements the CRUD actions for UploadConfig model.
+ * 附件上传设定管理
+ *
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class FileUploadConfigsController extends GlobalController
 {
@@ -23,7 +25,7 @@ class FileUploadConfigsController extends GlobalController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view', 'delete'],
+                        'actions' => ['index', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -55,21 +57,8 @@ class FileUploadConfigsController extends GlobalController
     }
 
     /**
-     * Displays a single FileUploadConfig model.
-     *
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
      * Creates a new FileUploadConfig model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      *
      * @return mixed
      */
@@ -79,7 +68,7 @@ class FileUploadConfigsController extends GlobalController
         $model->loadDefaultValues();
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -89,7 +78,7 @@ class FileUploadConfigsController extends GlobalController
 
     /**
      * Updates an existing FileUploadConfig model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      *
      * @param integer $id
      * @return mixed
@@ -99,7 +88,7 @@ class FileUploadConfigsController extends GlobalController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,

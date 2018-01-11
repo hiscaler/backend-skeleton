@@ -41,7 +41,7 @@ class FileUploadConfigSearch extends FileUploadConfig
      */
     public function search($params)
     {
-        $query = FileUploadConfig::find()->with(['creater', 'updater', 'deleter'])->asArray(true);
+        $query = FileUploadConfig::find()->with(['creater', 'updater'])->asArray(true);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

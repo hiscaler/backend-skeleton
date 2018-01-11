@@ -18,9 +18,7 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="upload-config-index">
-
     <?= $this->render('_search', ['model' => $searchModel]); ?>
-
     <?php
     Pjax::begin([
         'formSelector' => '#form-upload-configs-search',
@@ -90,18 +88,6 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'date']
             ],
             [
-                'attribute' => 'deleted_by',
-                'value' => function ($model) {
-                    return $model['deleter']['nickname'];
-                },
-                'contentOptions' => ['class' => 'username']
-            ],
-            [
-                'attribute' => 'deleted_at',
-                'format' => 'date',
-                'contentOptions' => ['class' => 'date']
-            ],
-            [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update} {delete}',
                 'headerOptions' => ['class' => 'buttons-2 last'],
@@ -110,5 +96,4 @@ $this->params['menus'] = [
     ]);
     Pjax::end();
     ?>
-
 </div>

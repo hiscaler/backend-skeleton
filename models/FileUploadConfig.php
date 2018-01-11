@@ -22,8 +22,6 @@ use yii\helpers\Inflector;
  * @property integer $created_at
  * @property integer $updated_by
  * @property integer $updated_at
- * @property integer $deleted_by
- * @property integer $deleted_at
  */
 class FileUploadConfig extends BaseActiveRecord
 {
@@ -56,7 +54,7 @@ class FileUploadConfig extends BaseActiveRecord
             ['attribute', 'match', 'pattern' => '/^[a-zA-Z0-9_]+$/'],
             ['attribute', 'checkAttribute'],
             [['model_name', 'attribute'], 'unique', 'targetAttribute' => ['model_name', 'attribute']],
-            [['type', 'min_size', 'max_size', 'thumb_width', 'thumb_height', 'created_by', 'created_at', 'updated_by', 'updated_at', 'deleted_by', 'deleted_at'], 'integer'],
+            [['type', 'min_size', 'max_size', 'thumb_width', 'thumb_height', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             ['min_size', 'default', 'value' => 100],
             ['max_size', 'default', 'value' => 200],
             ['max_size', 'checkMaxSize'],
@@ -161,7 +159,7 @@ class FileUploadConfig extends BaseActiveRecord
             foreach ($pairs as $key => $value) {
                 $configs[$key . '@' . $value] = self::defaultConfig();
             }
-            $rawData = Yii::$app->getDb()->createCommand('SELECT [[type]], [[model_name]], [[attribute]], [[extensions]], [[min_size]], [[max_size]], [[thumb_width]], [[thumb_height]] FROM ' . static::tableName() . ' WHERE [[deleted_at]] IS NULL')->queryAll();
+            $rawData = Yii::$app->getDb()->createCommand('SELECT [[type]], [[model_name]], [[attribute]], [[extensions]], [[min_size]], [[max_size]], [[thumb_width]], [[thumb_height]] FROM ' . static::tableName())->queryAll();
             foreach ($rawData as $data) {
                 $key = $data['model_name'] . '@' . $data['attribute'];
                 $configs[$key] = [

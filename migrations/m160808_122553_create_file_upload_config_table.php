@@ -27,8 +27,6 @@ class m160808_122553_create_file_upload_config_table extends Migration
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
-            'deleted_by' => $this->integer()->comment('删除人'),
-            'deleted_at' => $this->integer()->defaultValue(0)->comment('删除时间'),
         ]);
     }
 
