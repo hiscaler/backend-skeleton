@@ -3,10 +3,10 @@
 /* @var $model app\models\Label */
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
-        'modelClass' => Yii::t('model', 'Labels'),
+        'modelClass' => Yii::t('model', 'Label'),
     ]) . ' ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Labels'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $model->name . ' [ ' . Yii::t('app', 'Update') . ' ]';
+$this->params['breadcrumbs'][] = Yii::t('app', 'Update') . " {$model->name}";
 
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
@@ -14,11 +14,9 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="attribute-update">
-
     <?=
     $this->render('_form', [
         'model' => $model,
     ])
     ?>
-
 </div>

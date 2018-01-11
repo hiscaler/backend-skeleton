@@ -120,8 +120,9 @@ class LabelsController extends GlobalController
             $db = Yii::$app->getDb();
             $transaction = $db->beginTransaction();
             try {
-                $db->createCommand('DELETE FROM {{%label}} WHERE id = :id', [':id' => (int) $id])->execute();
-                $db->createCommand('DELETE FROM {{%entity_label}} WHERE label_id = :labelId', [':labelId' => (int) $id])->execute();
+                $cmd = $db->createCommand();
+                $cmd->delete('{{%label}}', ['id' => $id])->execute();
+                $cmd->delete('{{%entity_label}}', ['label_id' => $id])->execute();
                 $transaction->commit();
             } catch (Exception $e) {
                 $transaction->rollBack();
@@ -141,13 +142,8 @@ class LabelsController extends GlobalController
     {
         $id = Yii::$app->getRequest()->post('id');
         $db = Yii::$app->getDb();
-        $command = $db->createCommand('SELECT [[enabled]] FROM {{%label}} WHERE [[id]] = :id');
-        $command->bindValues([
-            ':id' => (int) $id,
-        ]);
-        $command->bindValue(':id', (int) $id, PDO::PARAM_INT);
-        $value = $command->queryScalar();
-        if ($value !== null) {
+        $value = $db->createCommand('SELECT [[enabled]] FROM {{%label}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if ($value !== false) {
             $value = !$value;
             $now = time();
             $db->createCommand()->update('{{%label}}', ['enabled' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], '[[id]] = :id', [':id' => (int) $id])->execute();
