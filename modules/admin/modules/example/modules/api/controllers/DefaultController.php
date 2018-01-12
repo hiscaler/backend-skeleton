@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\example\modules\api\controllers;
+namespace app\modules\admin\modules\example\modules\api\controllers;
 
 /**
  * Default controller for the `api` module

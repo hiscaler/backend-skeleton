@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\example;
+namespace app\modules\admin\modules\example;
 
 /**
  * 测试模块
@@ -11,7 +11,7 @@ class Module extends \app\modules\admin\Module
     /**
      * @inheritdoc
      */
-    public $controllerNamespace = 'app\modules\example\controllers';
+    public $controllerNamespace = 'app\modules\admin\modules\example\controllers';
 
     /**
      * @inheritdoc
@@ -21,7 +21,7 @@ class Module extends \app\modules\admin\Module
         parent::init();
         $this->modules = [
             'api' => [
-                'class' => 'app\modules\example\modules\api\Module',
+                'class' => 'app\modules\admin\modules\example\modules\api\Module',
             ]
         ];
     }
