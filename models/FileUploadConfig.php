@@ -284,6 +284,10 @@ class FileUploadConfig extends BaseActiveRecord
             $this->model_name = $modelAttribute[0];
             $this->attribute = $modelAttribute[1];
 
+            if ($this->type == self::TYPE_FILE) {
+                $this->thumb_width = $this->thumb_height = null;
+            }
+
             return true;
         } else {
             return false;
