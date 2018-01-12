@@ -42,6 +42,7 @@ class Label extends BaseActiveRecord
             ['alias', 'unique', 'targetAttribute' => ['alias']],
             [['enabled'], 'boolean'],
             [['frequency', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+            [['alias', 'name'], 'trim'],
             [['alias', 'name'], 'string', 'max' => 255]
         ];
     }
