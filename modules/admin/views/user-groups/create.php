@@ -13,11 +13,9 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="user-group-create">
-
     <?=
     $this->render('_form', [
         'model' => $model,
     ])
     ?>
-
 </div>

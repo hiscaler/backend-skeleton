@@ -9,14 +9,11 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
 ];
 ?>
-
 <div class="user-create">
-
     <?=
     $this->render('_changePasswordForm', [
         'user' => $user,
         'model' => $model,
     ]);
     ?>
-
 </div>

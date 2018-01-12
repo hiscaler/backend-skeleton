@@ -7,10 +7,8 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\UserGroup */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-
 <div class="form-outside">
     <div class="user-group-form form">
-
         <?php $form = ActiveForm::begin(); ?>
 
         <?= $form->field($model, 'type')->dropDownList(app\models\UserGroup::typeOptions()) ?>
@@ -24,12 +22,9 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'min_credits')->textInput() ?>
 
         <?= $form->field($model, 'max_credits')->textInput() ?>
-
         <div class="form-group buttons">
             <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>
-
         <?php ActiveForm::end(); ?>
-
     </div>
 </div>

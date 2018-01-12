@@ -11,13 +11,10 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
 ];
 ?>
-
 <div class="user-create">
-
     <?=
     $this->render('_addCreditForm', [
         'model' => $model,
     ]);
     ?>
-
 </div>

@@ -12,7 +12,6 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Attributes');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
     <div class="entity-labels-list">
         <ul class="clearfix">
             <li<?= empty($labelId) ? ' class="active"' : '' ?>><?= Html::a(Yii::t('app', 'List'), ['entities', 'modelName' => $modelName]); ?></li>
@@ -33,9 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php endforeach; ?>
         </ul>
     </div>
-
     <div class="attribute-index">
-
         <?php
         Pjax::begin();
         echo GridView::widget([
@@ -74,8 +71,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);
         Pjax::end();
         ?>
-
     </div>
-
 <?php
 $this->registerJs('yadjet.actions.toggle("table td.enabled-handler img", "' . Url::toRoute('toggle') . '");');

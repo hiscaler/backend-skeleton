@@ -4,7 +4,6 @@
 
 $this->title = '首页';
 ?>
-
 <?php
 $dependency = [
     'class' => 'yii\caching\DbDependency',

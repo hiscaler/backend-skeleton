@@ -17,7 +17,6 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="member-view">
-
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -39,5 +38,4 @@ $this->params['menus'] = [
             'updated_at:datetime',
         ],
     ]) ?>
-
 </div>

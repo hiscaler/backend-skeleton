@@ -8,12 +8,10 @@ $this->title = Yii::t('app', 'Modules');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="module-index">
-
     <ul class="tabs-common">
         <li class="active"><a href="javascript:;" data-toggle="panel-installed"><?= Yii::t('module', 'Installed modules') ?></a></li>
         <li><a href="javascript:;" data-toggle="panel-notinstalled"><?= Yii::t('module', 'Pending install modules') ?></a></li>
     </ul>
-
     <div class="panels">
         <div id="panel-installed" class="tab-panel">
             <ul>
@@ -62,9 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </ul>
         </div>
     </div>
-
 </div>
-
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
     $(function () {

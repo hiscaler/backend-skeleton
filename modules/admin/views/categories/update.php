@@ -4,7 +4,7 @@
 /* @var $model app\models\Category */
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
-        'modelClass' => 'Category',
+        'modelClass' => Yii::t('model', 'Category'),
     ]) . ' ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Categories'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name];

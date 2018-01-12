@@ -16,9 +16,7 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="member-update">
-
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-
 </div>

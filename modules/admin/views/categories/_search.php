@@ -7,9 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\CategorySearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-
 <div class="category-search">
-
     <?php
     $form = ActiveForm::begin([
         'action' => ['index'],
@@ -28,12 +26,9 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'parent_id') ?>
 
     <?php // echo $form->field($model, 'enabled') ?>
-
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
     </div>
-
     <?php ActiveForm::end(); ?>
-
 </div>

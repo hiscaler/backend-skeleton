@@ -33,14 +33,14 @@ $this->params['menus'] = [
             ],
             [
                 'attribute' => 'key',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return \yii\helpers\Html::a($model['key'], ['update', 'id' => $model['id']]);
+                },
                 'contentOptions' => ['style' => 'width: 120px;'],
             ],
             [
                 'attribute' => 'label',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    return \yii\helpers\Html::a($model['label'], ['update', 'id' => $model['id']]);
-                },
                 'contentOptions' => ['class' => 'lookup-label'],
             ],
             'description',

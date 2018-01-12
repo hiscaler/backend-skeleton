@@ -54,7 +54,7 @@ use yii\widgets\ActiveForm;
             var type = $(this).val();
             if (!$('#fileuploadconfig-extensions').val()) {
                 if (type == 0) {
-                   $('#fileuploadconfig-extensions').val('zip,doc,docx,xls,xlsx,pdf');
+                    $('#fileuploadconfig-extensions').val('zip,doc,docx,xls,xlsx,pdf');
                 } else if (type == 1) {
                     $('#fileuploadconfig-extensions').val('jpg,jpeg,png,gif');
                 }

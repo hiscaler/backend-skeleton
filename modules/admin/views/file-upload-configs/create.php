@@ -3,7 +3,7 @@
 /* @var $model app\models\FileUploadConfig */
 
 $this->title = Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'File Upload Config',
+    'modelClass' => Yii::t('model', 'File Upload Config'),
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'File Upload Configs'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Create');
@@ -13,11 +13,9 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="file-upload-config-create">
-
     <?=
     $this->render('_form', [
         'model' => $model,
     ])
     ?>
-
 </div>

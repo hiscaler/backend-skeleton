@@ -19,9 +19,7 @@ $this->params['menus'] = [
 ];
 ?>
     <div class="labels-index">
-
         <?= $this->render('_search', ['model' => $searchModel]) ?>
-
         <?php
         Pjax::begin([
             'formSelector' => '#form-attribute-search',
@@ -39,13 +37,17 @@ $this->params['menus'] = [
                 ],
                 [
                     'attribute' => 'alias',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return Html::a($model['alias'], ['update', 'id' => $model['id']]);
+                    },
                     'contentOptions' => ['style' => 'width: 60px'],
                 ],
                 [
                     'attribute' => 'name',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        return "<span class=\"pk\">[ {$model['id']} ]</span>" . Html::a($model['name'], ['update', 'id' => $model['id']]);
+                        return "<span class=\"pk\">[ {$model['id']} ]</span>" . $model['name'];
                     }
                 ],
                 [
@@ -90,9 +92,7 @@ $this->params['menus'] = [
         ]);
         Pjax::end();
         ?>
-
     </div>
-
 <?php \app\modules\admin\components\JsBlock::begin() ?>
     <script type="text/javascript">
         yadjet.actions.toggle("table td.enabled-handler img", "<?= Url::toRoute('toggle') ?>");

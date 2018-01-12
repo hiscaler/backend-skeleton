@@ -29,7 +29,6 @@ use app\models\User;
         <?php foreach ($dynamicModel->getMetaOptions() as $metaItem): ?>
             <?= $form->field($dynamicModel, $metaItem['key'])->$metaItem['input_type'](['value' => $metaItem['value']])->label($metaItem['label']) ?>
         <?php endforeach; ?>
-
         <div class="form-group buttons">
             <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>

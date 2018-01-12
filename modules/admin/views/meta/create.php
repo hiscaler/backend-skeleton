@@ -2,7 +2,9 @@
 /* @var $this yii\web\View */
 /* @var $model app\models\Meta */
 
-$this->title = Yii::t('app', 'Create');
+$this->title = Yii::t('app', 'Create {modelClass}', [
+    'modelClass' => Yii::t('model', 'Meta'),
+]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('model', 'Meta'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -12,11 +14,9 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="meta-create">
-
     <?=
     $this->render('_form', [
         'model' => $model,
     ])
     ?>
-
 </div>

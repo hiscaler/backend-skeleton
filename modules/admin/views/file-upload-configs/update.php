@@ -3,8 +3,8 @@
 /* @var $model app\models\FileUploadConfig */
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'File Upload Config',
-]);
+        'modelClass' => Yii::t('model', 'File Upload Config'),
+    ]) . $model->attribute;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'File Upload Configs'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update') . " {$model->attribute}";

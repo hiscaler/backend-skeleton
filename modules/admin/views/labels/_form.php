@@ -9,7 +9,6 @@ use yii\widgets\ActiveForm;
 ?>
 <div class="form-outside">
     <div class="attribute-form form">
-
         <?php $form = ActiveForm::begin(); ?>
 
         <?= $form->field($model, 'ordering')->dropDownList(\app\models\Option::orderingOptions()) ?>
@@ -19,12 +18,9 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'enabled')->checkbox([], false) ?>
-
         <div class="form-group buttons">
             <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>
-
         <?php ActiveForm::end(); ?>
-
     </div>
 </div>

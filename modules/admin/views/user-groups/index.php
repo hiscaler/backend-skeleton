@@ -16,7 +16,6 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="user-group-index">
-
     <ul class="tabs-common">
         <?php
         $i = 1;
@@ -27,10 +26,8 @@ $this->params['menus'] = [
             <li<?php echo $cssClass; ?>><a href="javascript:;" data-toggle="panel-user-group-<?= $key ?>"><?= $name ?></a></li>
         <?php endforeach; ?>
     </ul>
-
     <div class="panels">
         <div id="panel-user-group-<?= \app\models\UserGroup::TYPE_USER_GROUP ?>" class="tab-panel">
-
             <?=
             GridView::widget([
                 'dataProvider' => $userGroupDataProvider,
@@ -78,11 +75,8 @@ $this->params['menus'] = [
                 ],
             ]);
             ?>
-
         </div>
-
         <div id="panel-user-group-<?= \app\models\UserGroup::TYPE_SYSTEM_GROUP ?>" class="tab-panel" style="display: none">
-
             <?=
             GridView::widget([
                 'dataProvider' => $systemGroupDataProvider,
@@ -130,8 +124,6 @@ $this->params['menus'] = [
                 ],
             ]);
             ?>
-
         </div>
-
     </div>
 </div>

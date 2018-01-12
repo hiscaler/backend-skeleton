@@ -12,11 +12,8 @@ $this->title = $name;
 $this->params['breadcrumbs'][] = Yii::t('app', 'Prompt Message');
 ?>
 <div class="site-error">
-
     <h1><?= Html::encode($this->title) ?></h1>
-
     <div class="message">
         <?= nl2br(Html::encode($message)) ?>
     </div>
-
 </div>

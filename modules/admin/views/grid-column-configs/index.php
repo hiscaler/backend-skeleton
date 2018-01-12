@@ -8,9 +8,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\GridColumnConfigSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
-
 <div class="grid-column-config-index">
-
     <?php
     Pjax::begin([
         'linkSelector' => '#pjax-grid-column-configs a',
@@ -47,5 +45,4 @@ use yii\widgets\Pjax;
     $this->registerJs('yadjet.actions.toggle("table td.visible-handler img", "' . Url::toRoute('toggle') . '", {"name": "' . $name . '"});');
     Pjax::end();
     ?>
-
 </div>

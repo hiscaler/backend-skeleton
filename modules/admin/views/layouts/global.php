@@ -4,7 +4,6 @@ use yii\widgets\Breadcrumbs;
 
 $this->beginContent('@app/modules/admin/views/layouts/base.php');
 ?>
-
     <div class="layout grid-s6m0e0">
         <div class="col-main">
             <div class="main-wrap">
@@ -39,5 +38,4 @@ $this->beginContent('@app/modules/admin/views/layouts/base.php');
             <?= \app\modules\admin\widgets\GlobalControlPanel::widget() ?>
         </div>
     </div>
-
 <?php $this->endContent(); ?>

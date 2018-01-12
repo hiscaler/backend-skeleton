@@ -22,7 +22,6 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
     </head>
     <body id="mts-app">
     <?php $this->beginBody() ?>
-
     <div id="page-hd">
         <div id="page">
             <!-- Header -->
@@ -48,7 +47,6 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             Copyright &copy; <?= date('Y'); ?> by <?= \app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name ?> All Rights Reserved.
         </div>
     </div>
-
     <?php $this->endBody() ?>
     <script type="text/javascript">
         yadjet.icons.boolean = ['<?= $baseUrl ?>/images/no.png', '<?= $baseUrl ?>/images/yes.png'];
