@@ -44,6 +44,7 @@ class Category extends BaseActiveRecord
     {
         return [
             [['name', 'ordering'], 'required'],
+            [['alias', 'name', 'description'], 'trim'],
             [['type', 'parent_id', 'level', 'enabled', 'ordering', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['type', 'parent_id', 'level'], 'default', 'value' => 0],
             [['enabled'], 'boolean'],
