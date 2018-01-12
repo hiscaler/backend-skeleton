@@ -71,7 +71,7 @@ class Lookup extends BaseActiveRecord
     {
         return [
             [['key', 'label', 'value', 'return_type', 'input_method', 'enabled'], 'required'],
-            [['label', 'value', 'description'], 'trim'],
+            [['key', 'label', 'value', 'description'], 'trim'],
             [['group'], 'integer'],
             [['group'], 'default', 'value' => self::GROUP_CUSTOM],
             [['type'], 'boolean'],
@@ -235,11 +235,9 @@ class Lookup extends BaseActiveRecord
             case 'array':
                 $value = (array) $value;
                 break;
-
         }
 
         return $value;
-
     }
 
     // Events
