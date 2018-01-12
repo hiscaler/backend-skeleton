@@ -67,8 +67,8 @@
 div.form .form-group {
     clear: both;
     padding: 6px 0;
-    background: transparent url(../images/dot.gif) repeat-x left bottom;
     display: block;
+    background: transparent url(../images/dot.gif) repeat-x left bottom;
 }
 
 .form-layout-column .entry .form-group {
@@ -89,10 +89,9 @@ form .form-group label {
     display: block;
     float: left;
     font-weight: bold;
-    padding: 5px 15px 5px 5px;
+    padding: 5px 15px 5px 10px;
     position: relative;
     width: 100px;
-    padding-left: 10px;
     margin-left: 10px;
     text-align: right;
     color: #999999;
@@ -105,7 +104,6 @@ form .form-group label {
 form .form-group div label {
     display: inline-block;
     width: auto;
-    padding-left: 0;
     margin-left: 0;
     font-weight: normal;
     padding: 0 10px;
@@ -171,6 +169,7 @@ select {
 }
 
 input[type="text"],
+input[type="password"],
 .g-text {
     border: 1px solid #d5d5d5;
     border-radius: 3px;
@@ -231,7 +230,6 @@ textarea.blur, input.blur {
 
 .form div.help-block {
     color: #C00;
-    background: none;
     line-height: 30px;
     padding-left: 156px;
     background: url(../images/error.png) no-repeat 136px 50%;
@@ -344,8 +342,9 @@ div.form .form-group .image-preview .btn-remove:hover {
     border: none;
     border-top: 1px solid #FBC2C4;
     margin-top: 0;
-    moz-border-radius: 0;
-    webkit-border-radius: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
 
 #simple-form .success {
@@ -436,7 +435,6 @@ div.form .buttons {
     border-radius: 3px;
     background: #F5F5F5;
     display: inline-block;
-    padding: 3px 5px;
     cursor: pointer;
     color: #4362BF;
     padding: 5px 10px;

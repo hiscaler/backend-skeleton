@@ -104,7 +104,7 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
 
 .tabs-common {
     display: block;
-    height: 25px;
+    height: 28px;
     border-bottom: 1px solid #E9E9E9;
 }
 
@@ -133,11 +133,10 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
     -moz-border-right-colors: none;
     -moz-border-top-colors: none;
     background: none repeat scroll 0 0 #FFF;
-    border-color: #E9E9E9;
-    border-style: solid solid none;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    border-width: 1px 1px medium;
+    border: 1px solid #E9E9E9;
+    border-bottom: medium none;
     color: #666677;
     display: block;
     padding: 0.25em 1em;
@@ -285,9 +284,7 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
 
 .list-view .sorter ul {
     display: inline;
-    list-style-image: none;
-    list-style-position: outside;
-    list-style-type: none;
+    list-style: none outside none;
     margin: 0;
     padding: 0;
 }
@@ -532,8 +529,7 @@ ul.pagination li.disabled span {
     height: 16px;
     overflow: hidden;
     vertical-align: middle;
-    background-image: url(../images/icons.png);
-    background-repeat: no-repeat;
+    background: url(../images/icons.png) no-repeat;
     font-size: 0;
 }
 
@@ -550,8 +546,7 @@ ul.pagination li.disabled span {
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-image: url(../images/icons.png);
-    background-repeat: no-repeat;
+    background: url(../images/icons.png) no-repeat;
 }
 
 .glyphicon-eye-open {
