@@ -58,6 +58,15 @@ class Module extends \yii\base\Module
             ],
         ]);
         \Yii::$app->getErrorHandler()->errorAction = '/admin/default/error';
+
+        // 载入模块
+        $installedModules = \app\models\Module::getInstalledModules();
+        foreach ($installedModules as $module) {
+            $this->setModule($module['alias'], [
+                'class' => 'app\\modules\\admin\\modules\\' . $module['alias'] . '\\Module',
+                'layout' => '@app/modules/admin/views/layouts/main.php',
+            ]);
+        }
     }
 
 }

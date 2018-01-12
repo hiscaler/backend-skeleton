@@ -64,7 +64,7 @@ class GlobalControlPanel extends Widget
             foreach ($installedModules as $module) {
                 $items['installedModules']['items'][] = [
                     'label' => $module['name'],
-                    'url' => ['/' . $module['alias'] . '/default/index'],
+                    'url' => ['/admin/' . $module['alias'] . '/default/index'],
                     'active' => $moduleId == $module['alias'],
                 ];
             }

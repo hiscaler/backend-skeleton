@@ -31,7 +31,7 @@ class ModulesController extends Controller
         parent::init();
         $defaultIcon = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/default-module-icon.png';
         $localModules = [];
-        $baseDirectory = Yii::getAlias('@app/modules');
+        $baseDirectory = Yii::getAlias('@app/modules/admin/modules');
         $handle = opendir($baseDirectory);
         if ($handle === false) {
             throw new InvalidParamException("Unable to open directory: {$baseDirectory}");

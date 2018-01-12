@@ -9,12 +9,4 @@ require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 
 $config = require(__DIR__ . '/../config/web.php');
 
-$application = new yii\web\Application($config);
-$installedModules = \app\models\Module::getInstalledModules();
-foreach ($installedModules as $module) {
-    $application->setModule($module['alias'], [
-        'class' => 'app\\modules\\' . $module['alias'] . '\\Module',
-        'layout' => '@app/modules/admin/views/layouts/main.php',
-    ]);
-}
-$application->run();
+(new yii\web\Application($config))->run();
