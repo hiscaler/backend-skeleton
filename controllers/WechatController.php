@@ -25,6 +25,7 @@ class WechatController extends Controller
                 $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
                 if (!$memberId) {
                     $member = new Member();
+                    $member->setPassword('1234567890');
                     $member->username = $user->nickname;
                     $member->nickname = $user->nickname;
                     $member->avatar = $user->headimgurl;
@@ -57,7 +58,6 @@ class WechatController extends Controller
         } else {
             $redirectUrl = StringHelper::base64UrlDecode($redirectUrl);
         }
-
 
         $this->redirect($redirectUrl);
     }
