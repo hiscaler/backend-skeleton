@@ -6,8 +6,12 @@ use app\models\Constant;
 use app\models\Module;
 use Yii;
 use yii\base\InvalidParamException;
+use yii\console\controllers\MigrateController;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use yii\helpers\FileHelper;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -105,6 +109,107 @@ class ModulesController extends Controller
     }
 
     /**
+     * 迁移数据库脚本
+     *
+     * @param $moduleId
+     * @param string $action
+     * @return string
+     * @throws \yii\base\InvalidRouteException
+     * @throws \yii\console\Exception
+     */
+    private function _migrate($moduleId, $action = 'up')
+    {
+        if (!defined('STDIN')) {
+            define('STDIN', fopen("php://stdin", "r"));
+        }
+        if (!defined('STDOUT')) {
+            define('STDOUT', fopen('/tmp/stdout', 'w'));
+        }
+        $migrationFilesPath = Yii::getAlias('@app/modules/admin/modules/' . $moduleId . '/migrations/');
+        Yii::setAlias('@migrations', $migrationFilesPath);
+        if (!file_exists($migrationFilesPath)) {
+            return null;
+        }
+
+        ob_start();
+        $migration = new MigrateController('migrate', Yii::$app);
+        if ($action == 'up') {
+            $migration->runAction('up', ['migrationPath' => '@migrations', 'interactive' => false]);
+        } else {
+            // Down
+            $query = (new Query())
+                ->select(['version', 'apply_time'])
+                ->from($migration->migrationTable)
+                ->orderBy(['apply_time' => SORT_DESC, 'version' => SORT_DESC]);
+
+            if (empty($migration->migrationNamespaces)) {
+                $rows = $query->all();
+                $history = ArrayHelper::map($rows, 'version', 'apply_time');
+                unset($history[$migration::BASE_MIGRATION]);
+            } else {
+                $rows = $query->all($migration->db);
+
+                $history = [];
+                foreach ($rows as $key => $row) {
+                    if ($row['version'] === $migration::BASE_MIGRATION) {
+                        continue;
+                    }
+                    if (preg_match('/m?(\d{6}_?\d{6})(\D.*)?$/is', $row['version'], $matches)) {
+                        $time = str_replace('_', '', $matches[1]);
+                        $row['canonicalVersion'] = $time;
+                    } else {
+                        $row['canonicalVersion'] = $row['version'];
+                    }
+                    $row['apply_time'] = (int) $row['apply_time'];
+                    $history[] = $row;
+                }
+
+                usort($history, function ($a, $b) {
+                    if ($a['apply_time'] === $b['apply_time']) {
+                        if (($compareResult = strcasecmp($b['canonicalVersion'], $a['canonicalVersion'])) !== 0) {
+                            return $compareResult;
+                        }
+
+                        return strcasecmp($b['version'], $a['version']);
+                    }
+
+                    return ($a['apply_time'] > $b['apply_time']) ? -1 : +1;
+                });
+
+                $history = ArrayHelper::map($history, 'version', 'apply_time');
+            }
+
+            $files = FileHelper::findFiles($migrationFilesPath);
+            $migration->interactive = false;
+            $migration->db = Yii::$app->getDb();
+            $cmd = $migration->db->createCommand();
+            foreach ($files as $i => $file) {
+                $version = basename($file, '.php');
+                if (!isset($history[$version])) {
+                    continue;
+                }
+
+                // delete and add
+                $cmd->delete($migration->migrationTable, ['version' => $version])->execute();
+                $cmd->insert($migration->migrationTable, ['version' => $version, 'apply_time' => time()])->execute();
+                sleep(1);
+
+                $migration->runAction('down', ['migrationPath' => '@migrations', 'interactive' => false]);
+            }
+        }
+
+        ob_clean();
+        $handle = fopen('/tmp/stdout', 'r');
+        $message = '';
+        while (($buffer = fgets($handle, 4096)) !== false) {
+            $message .= $buffer . "<br>";
+        }
+        fclose($handle);
+
+        return $message;
+    }
+
+    /**
      * Lists all Module models.
      *
      * @return mixed
@@ -146,23 +251,28 @@ class ModulesController extends Controller
             if ($module === null) {
                 $errorMessage = '安装模块不存在。';
             } else {
-                $now = time();
-                $userId = Yii::$app->getUser()->getId();
-                $db->createCommand()->insert('{{%module}}', [
-                    'alias' => $alias,
-                    'name' => $module['name'],
-                    'author' => $module['author'],
-                    'version' => $module['version'],
-                    'icon' => $module['icon'],
-                    'url' => $module['url'],
-                    'description' => $module['description'],
-                    'enabled' => Constant::BOOLEAN_TRUE,
-                    'created_at' => $now,
-                    'created_by' => $userId,
-                    'updated_at' => $now,
-                    'updated_by' => $userId,
-                ])->execute();
-                $success = true;
+                try {
+                    $now = time();
+                    $userId = Yii::$app->getUser()->getId();
+                    $db->createCommand()->insert('{{%module}}', [
+                        'alias' => $alias,
+                        'name' => $module['name'],
+                        'author' => $module['author'],
+                        'version' => $module['version'],
+                        'icon' => $module['icon'],
+                        'url' => $module['url'],
+                        'description' => $module['description'],
+                        'enabled' => Constant::BOOLEAN_TRUE,
+                        'created_at' => $now,
+                        'created_by' => $userId,
+                        'updated_at' => $now,
+                        'updated_by' => $userId,
+                    ])->execute();
+                    $this->_migrate($alias, 'up');
+                    $success = true;
+                } catch (\Exception $ex) {
+                    $errorMessage = $ex->getMessage();
+                }
             }
         }
 
@@ -191,8 +301,13 @@ class ModulesController extends Controller
         $db = Yii::$app->getDb();
         $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
         if ($moduleId) {
-            $db->createCommand()->delete('{{%module}}', ['id' => $moduleId])->execute();
-            $success = true;
+            try {
+                $this->_migrate($alias, 'down');
+                $db->createCommand()->delete('{{%module}}', ['id' => $moduleId])->execute();
+                $success = true;
+            } catch (\Exception $ex) {
+                $errorMessage = $ex->getMessage();
+            }
         } else {
             $errorMessage = '该模块不存在。';
         }
