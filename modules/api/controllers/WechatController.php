@@ -74,15 +74,24 @@ class WechatController extends Controller
      * JsSdk 配置值
      *
      * @param null $url
+     * @param string $apis
+     * @param bool $debug
+     * @param bool $beta
      * @return array|string
      */
-    public function actionJssdk($url = null)
+    public function actionJssdk($url = null, $apis = '', $debug = false, $beta = true)
     {
+        $validApis = ['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'];
+        $apis = array_filter(explode(',', $apis), function ($api) use ($validApis) {
+            return $api && in_array($api, $validApis);
+        });
+        empty($apis) && $apis = ['checkJsApi'];
+
         $wechatConfig = Yii::$app->params['wechat'];
         $js = new Js($wechatConfig['appid'], $wechatConfig['secret']);
         $url = $url ? urldecode($url) : Yii::$app->getRequest()->getHostInfo();
         $js->setUrl($url);
-        $config = $js->config(array('checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage'), false, true);
+        $config = $js->config($apis, $debug, $beta);
 
         return $config;
     }
