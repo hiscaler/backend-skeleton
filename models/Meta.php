@@ -484,7 +484,7 @@ class Meta extends \yii\db\ActiveRecord
                 $success = true;
             } else {
                 // Update
-                $db->createCommand()->insert('{{%meta_value}}', [
+                $db->createCommand()->update('{{%meta_value}}', [
                     'value' => $value,
                 ], [
                     'meta_id' => $metaId,
