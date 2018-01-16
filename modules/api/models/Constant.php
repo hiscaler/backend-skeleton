@@ -26,4 +26,18 @@ class Constant
     const STATUS_PENDING = 0;
     /** 激活 */
     const STATUS_ACTIVE = 1;
+
+    /**
+     * 未知性别
+     */
+    const SEX_UNKNOWN = 0;
+    /**
+     * 男
+     */
+    const SEX_MALE = 1;
+    /**
+     * 女
+     */
+    const SEX_FEMALE = 2;
+
 }
