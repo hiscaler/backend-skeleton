@@ -23,6 +23,7 @@ use Yii;
  */
 class WechatMember extends \yii\db\ActiveRecord
 {
+
     /**
      * @inheritdoc
      */
@@ -38,7 +39,7 @@ class WechatMember extends \yii\db\ActiveRecord
     {
         return [
             [['member_id', 'subscribe', 'sex', 'subscribe_time'], 'integer'],
-            [['openid', 'nickname', 'subscribe_time'], 'required'],
+            [['openid', 'nickname'], 'required'],
             [['openid'], 'string', 'max' => 28],
             [['nickname', 'country', 'province', 'city', 'language'], 'string', 'max' => 50],
             [['headimgurl'], 'string', 'max' => 200],
@@ -64,7 +65,7 @@ class WechatMember extends \yii\db\ActiveRecord
             'city' => '城市',
             'language' => '语言',
             'headimgurl' => '头像',
-            'subscribe_time' => '头像',
+            'subscribe_time' => '关注时间',
             'unionid' => 'unionid',
         ];
     }

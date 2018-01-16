@@ -9,6 +9,7 @@ use yii\db\Migration;
  */
 class m171206_153127_create_wechat_member_table extends Migration
 {
+
     /**
      * @inheritdoc
      */
@@ -26,7 +27,7 @@ class m171206_153127_create_wechat_member_table extends Migration
             'city' => $this->string(50)->comment('城市'),
             'language' => $this->string(50)->comment('语言'),
             'headimgurl' => $this->string(200)->comment('头像'),
-            'subscribe_time' => $this->integer()->notNull()->comment('头像'),
+            'subscribe_time' => $this->integer()->comment('关注时间'),
             'unionid' => $this->string(29)->comment('unionid'),
         ]);
     }
