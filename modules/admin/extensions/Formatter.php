@@ -60,6 +60,23 @@ class Formatter extends \yii\i18n\Formatter
     }
 
     /**
+     * 性别
+     *
+     * @param $value
+     * @return null|string
+     */
+    public function asSex($value)
+    {
+        if ($value === null) {
+            return $this->nullDisplay;
+        }
+
+        $options = Option::sexes();
+
+        return isset($options[$value]) ? $options[$value] : null;
+    }
+
+    /**
      * 下载按钮
      *
      * @param string $value

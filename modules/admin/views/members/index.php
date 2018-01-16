@@ -27,6 +27,14 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'serial-number']
             ],
             [
+                'attribute' => 'avatar',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Html::a(Html::img($model['avatar'], ['class' => 'avatar']), ['view', 'id' => $model['id']]);
+                },
+                'contentOptions' => ['class' => 'avatar'],
+            ],
+            [
                 'attribute' => 'username',
                 'contentOptions' => ['class' => 'username'],
             ],
@@ -34,10 +42,6 @@ $this->params['menus'] = [
                 'attribute' => 'nickname',
                 'contentOptions' => ['class' => 'username'],
             ],
-//            'avatar:image',
-            // 'auth_key',
-            // 'password_hash',
-            // 'password_reset_token',
             'email:email',
             [
                 'attribute' => 'tel',
@@ -67,8 +71,8 @@ $this->params['menus'] = [
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update} {delete}',
-                'headerOptions' => ['class' => 'buttons-2 last'],
+                'template' => '{view} {update} {delete}',
+                'headerOptions' => ['class' => 'buttons-3 last'],
             ],
         ],
     ]); ?>

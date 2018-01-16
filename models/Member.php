@@ -252,6 +252,16 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         $this->access_token = $this->access_token_expire_datetime = null;
     }
 
+    /**
+     * 微信资料
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getWechat()
+    {
+        return $this->hasOne(WechatMember::className(), ['member_id' => 'id']);
+    }
+
     // Events
     public function beforeSave($insert)
     {
