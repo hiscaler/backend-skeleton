@@ -55,6 +55,8 @@ class Article extends BaseActiveRecord
             'keyword' => '关键词',
             'description' => '描述',
             'content' => '正文',
+            'creater.nickname' => Yii::t('app', 'Created By'),
+            'updater.nickname' => Yii::t('app', 'Updated By'),
         ]);
     }
 

@@ -15,7 +15,7 @@ use yii\web\NotFoundHttpException;
 class ArticlesController extends Controller
 {
 
-    public $modelClass = 'app\modules\admin\modules\article\modules\api\models\RedPacket';
+    public $modelClass = 'app\modules\admin\modules\article\modules\api\models\Article';
 
     /**
      * 红包列表

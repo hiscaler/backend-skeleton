@@ -2,9 +2,7 @@
 
 namespace app\modules\admin\modules\article\modules\api\models;
 
-use app\models\BaseActiveRecord;
-use Yii;
-use yii\helpers\Inflector;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%article}}".
@@ -20,7 +18,7 @@ use yii\helpers\Inflector;
  * @property int $updated_at 更新时间
  * @property int $updated_by 更新人
  */
-class Article extends BaseActiveRecord
+class Article extends ActiveRecord
 {
 
     /**
