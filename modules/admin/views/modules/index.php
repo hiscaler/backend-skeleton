@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php foreach ($installedModules as $i => $module): ?>
                     <li id="module-<?= $module['alias'] ?>" class="widget-module">
                         <div class="hd">
-                            <?= $module['name'] ?>
+                            <em><?= $module['name'] ?></em>
                             <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
                             <span class="buttons"><?= Html::a(Yii::t('module', 'Uninstall'), ['uninstall', 'alias' => $module['alias']], ['class' => 'uninstall', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['install', 'alias' => $module['alias']])]) ?></span>
                         </div>
@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php foreach ($notInstalledModules as $i => $module): ?>
                     <li id="module-<?= $module['alias'] ?>" class="widget-module">
                         <div class="hd">
-                            <?= $module['name'] ?>
+                            <em><?= $module['name'] ?></em>
                             <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
                             <span class="buttons"><?= Html::a(Yii::t('module', 'Install'), ['install', 'alias' => $module['alias']], ['class' => 'install', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['uninstall', 'alias' => $module['alias']])]) ?></span>
                         </div>
@@ -66,12 +66,34 @@ $this->params['breadcrumbs'][] = $this->title;
     $(function () {
         var installText = '<?= Yii::t('module', 'Install')?>',
             uninstallText = '<?= Yii::t('module', 'Uninstall')?>';
+
         $('.install, .uninstall').on('click', function () {
-            var $t = $(this), url = $t.attr('href');
+            var $t = $(this);
+            if ($t.hasClass('install')) {
+                _doInstallUninstall($t);
+            } else {
+                layer.confirm('您是否确定卸载"' + $t.parent().parent().find('em').html() + '"模块？卸载后将同步删除模块相关数据表！！！', {
+                    btn: ['确定卸载', '取消'] //按钮
+                }, function (index) {
+                    _doInstallUninstall($t);
+                    layer.close(index);
+                }, function () {
+                });
+            }
+
+            return false;
+        });
+
+        function _doInstallUninstall($t) {
+            var url = $t.attr('href');
+            console.info(url);
             $.ajax({
                 type: 'POST',
                 url: url,
                 dataType: 'json',
+                beforeSend: function (xhr) {
+                    $.fn.lock();
+                },
                 success: function (response) {
                     if (response.success) {
                         var isInstall = $t.hasClass('install'),
@@ -87,11 +109,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     } else {
                         layer.alert(response.error.message);
                     }
+                    $.fn.unlock();
                 }
             });
-
-            return false;
-        });
+        }
     });
 </script>
 <?php \app\modules\admin\components\JsBlock::end() ?>

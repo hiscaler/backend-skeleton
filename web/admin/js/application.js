@@ -59,20 +59,11 @@ Number.prototype.toFixed = function (d) {
  */
 (function ($) {
     $.fn.lock = function () {
-        return this.unlock().each(function () {
-            if ($.css(this, 'position') === 'static') {
-                this.style.position = 'relative';
-            }
-            if ($.browser.msie) {
-                this.style.zoom = 1;
-            }
-            $(this).append('<div id="widget-lock-ui" class="lock-ui" style="position:absolute;width:100%;height:100%;top:0;left:0;z-index:1000;background-color:#000;cursor:wait;opacity:.7;filter: alpha(opacity=70);"><div>');
-        });
+        this.unlock();
+        $('body').append('<div id="widget-lock-ui" class="lock-ui" style="position:absolute;width:100%;height:100%;top:0;left:0;z-index:1000;background-color:#000;cursor:wait;opacity:.7;filter: alpha(opacity=70);"><div>');
     };
     $.fn.unlock = function () {
-        return this.each(function () {
-            $('#widget-lock-ui', this).remove();
-        });
+        $('#widget-lock-ui').remove();
     };
 })(jQuery);
 
@@ -112,7 +103,7 @@ function clone(myObj) {
     for (var i in myObj) {
         newObj[i] = clone(myObj[i]);
     }
-
+    
     return newObj;
 }
 
@@ -186,7 +177,7 @@ yadjet.actions = yadjet.actions || {
                     $this.show().parent().removeClass('running-c-c');
                 }
             });
-
+            
             return false;
         });
     },
@@ -213,7 +204,7 @@ yadjet.actions = yadjet.actions || {
                     $.fn.unlock();
                 }
             });
-
+            
             return false;
         });
     }
@@ -241,7 +232,7 @@ $(document).on('click', '.search-button a', function () {
         $t.attr('data-toggle', 'show');
         $('.form-search').show();
     }
-
+    
     return false;
 });
 
@@ -260,8 +251,8 @@ var vm = new Vue({
     methods: {
         // 判断对象是否为空
         isEmptyObject: function (e) {
-            var t;  
-            for (t in e)  
+            var t;
+            for (t in e)
                 return !1;
             return !0;
         }
@@ -283,7 +274,7 @@ var vm = new Vue({
                 }
                 validators.push(validator);
             }
-
+            
             return validators;
         }
     }
