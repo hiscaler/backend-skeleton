@@ -174,7 +174,7 @@ input[type="password"],
     border: 1px solid #d5d5d5;
     border-radius: 3px;
     padding: 5px 5px;
-    width: 200px;
+    width: 600px;
     background: url(../images/input-bg.png) repeat-x scroll 0 -127px #FAFAFA;
 }
 
@@ -480,4 +480,10 @@ div.form .buttons {
     line-height: 24px;
     background: url("../images/bullet-blue.png") no-repeat left center;
     padding-left: 10px;
+}
+
+/* editor */
+.editor {
+    float: left;
+    width: 610px;
 }
