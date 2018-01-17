@@ -24,7 +24,7 @@ $this->params['menus'] = [
             'title',
             'keyword',
             'description:raw',
-            'content:ntext',
+            'content:raw',
             'created_at:datetime',
             'creater.nickname',
             'updated_at:datetime',
