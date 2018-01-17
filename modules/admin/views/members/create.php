@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 /* @var $model app\models\Member */
 
-$this->title = Yii::t('app', 'Create {modelClass}: ', [
+$this->title = Yii::t('app', 'Create {modelClass}', [
     'modelClass' => Yii::t('model', 'Member'),
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Members'), 'url' => ['index']];
