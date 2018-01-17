@@ -283,6 +283,21 @@
     width: 80px;
 }
 
+.grid-view table.table td.avatar {
+    width: 30px;
+    text-align: center;
+}
+.grid-view table.table td.avatar img {
+    width: 30px;
+    height: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+}
+.grid-view table.table td.avatar p {
+    line-height: 24px;
+}
+
 .grid-view table.table td.user-role {
     width: 120px;
     text-align: center;

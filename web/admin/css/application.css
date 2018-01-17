@@ -235,6 +235,14 @@ table.detail-view td img.thumbnail {
     max-width: 80%;
 }
 
+table.detail-view td.avatar img {
+    width: 60px;
+    height: 60px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+}
+
 /*******************************************************************************
  * data list
  ******************************************************************************/
