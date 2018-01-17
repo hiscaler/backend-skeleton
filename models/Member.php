@@ -16,6 +16,7 @@ use yii\web\IdentityInterface;
  * @property string $auth_key
  * @property string $password_hash
  * @property string $password_reset_token
+ * @property string $access_token
  * @property string $email
  * @property string $tel
  * @property string $mobile_phone
@@ -68,6 +69,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['tel'], 'string', 'max' => 30],
             [['mobile_phone'], 'string', 'max' => 35],
             [['username'], 'unique'],
+            [['access_token'], 'string'],
+            [['access_token'], 'unique'],
             [['password_reset_token'], 'unique'],
         ];
     }
@@ -115,10 +118,28 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        if ($type == 'app\modules\api\extensions\yii\filters\auth\WechatAuth') {
-            $userId = Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%member}} WHERE [[access_token]] = :token', [':token' => $token])->queryScalar();
+        if ($type == 'app\modules\api\extensions\yii\filters\auth\AccessTokenAuth') {
+            $tokens = explode('.', $token);
+            if (count($tokens) == 3) {
+                $tokenType = strtolower($tokens[0]);
+                $tokenValue = $tokens[1];
+                $tokenExpireDate = $tokens[2];
+            } else {
+                $tokenType = $tokenExpireDate = null;
+                $tokenValue = $token;
+            }
+            switch ($tokenType) {
+                case 'wxapp':
+                    break;
 
-            return $userId ? static::findOne(['id' => $userId]) : null;
+                case 'wechat':
+                    break;
+
+                default:
+                    break;
+            }
+
+            return static::findOne(['access_token' => $tokenValue]);
         } else {
             $user = static::findOne(['access_token' => $token]);
             if ($user) {
