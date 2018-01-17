@@ -12,14 +12,14 @@ use yii\widgets\ActiveForm;
         <?php
         $form = ActiveForm::begin([
             'id' => 'form-lookups',
-            'action' => ['form'],
+            'action' => ['index'],
             'method' => 'get',
         ]);
         ?>
         <div class="entry">
-            <?= $form->field($model, 'label') ?>
+            <?= $form->field($model, 'key') ?>
 
-            <?= $form->field($model, 'description') ?>
+            <?= $form->field($model, 'label') ?>
         </div>
         <div class="entry">
             <?= $form->field($model, 'return_type')->dropDownList(\app\models\Lookup::returnTypeOptions(), ['prompt' => '']) ?>
