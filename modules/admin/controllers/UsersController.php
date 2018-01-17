@@ -73,13 +73,13 @@ class UsersController extends GlobalController
         $model->status = User::STATUS_ACTIVE;
         $model->loadDefaultValues();
 
-        $dynamicModel = new DynamicForm(Meta::getItems($model, 0));
+        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
         $post = Yii::$app->getRequest()->post();
-        if (($model->load($post) && $model->validate()) && ($dynamicModel->load($post) && $dynamicModel->validate())) {
+        if (($model->load($post) && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
             $model->setPassword($model->password);
             if ($model->save()) {
-                Meta::saveValues($model, $dynamicModel, true);
+                $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
 
                 return $this->redirect(['index']);
             }
@@ -94,12 +94,12 @@ class UsersController extends GlobalController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $dynamicModel = new DynamicForm(Meta::getItems($model, $model->id));
+        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
         $post = Yii::$app->getRequest()->post();
-        if (($model->load($post) && $model->validate()) && ($dynamicModel->load($post) && $dynamicModel->validate())) {
+        if (($model->load($post) && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
             $model->save(false);
-            Meta::saveValues($model, $dynamicModel, true);
+            $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
 
             return $this->redirect(['index']);
         } else {
