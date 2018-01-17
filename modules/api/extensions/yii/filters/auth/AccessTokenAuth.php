@@ -5,11 +5,11 @@ namespace app\modules\api\extensions\yii\filters\auth;
 use yii\filters\auth\AuthMethod;
 
 /**
- * WechatAuth 用于微信用户有效性验证
+ * AccessTokenAuth 用于第三方用户有效性验证
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class WechatAuth extends AuthMethod
+class AccessTokenAuth extends AuthMethod
 {
 
     /**

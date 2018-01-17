@@ -2,7 +2,7 @@
 
 namespace app\modules\api\controllers;
 
-use app\modules\api\extensions\yii\filters\auth\WechatAuth;
+use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use yii\filters\auth\QueryParamAuth;
 
 class AuthController extends Controller
@@ -13,7 +13,7 @@ class AuthController extends Controller
         $behaviors = parent::behaviors();
         $token = \Yii::$app->getRequest()->get('accessToken');
         if (!empty($token)) {
-            $class = WechatAuth::className();
+            $class = AccessTokenAuth::className();
         } else {
             $class = QueryParamAuth::className();
         }

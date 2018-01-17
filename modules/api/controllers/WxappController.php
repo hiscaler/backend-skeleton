@@ -6,6 +6,7 @@ use app\models\Meta;
 use app\modules\api\models\Constant;
 use app\modules\api\models\Member;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
 use yii\base\InvalidValueException;
 
@@ -54,10 +55,13 @@ class WxappController extends Controller
             throw new InvalidParamException('info 值无效。');
         }
 
-        $options = Yii::$app->params['wechat'];
+        $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : null;
+        if (!is_array($options) || !isset($options['appid']) || !isset($options['secret'])) {
+            throw new InvalidConfigException('无效的微信参数配置（请在 params.php 中配置 wechat 项，并赋予 appid 和 secret 正确值）。');
+        }
         $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$options['appid']}&secret={$options['secret']}&js_code={$code}&grant_type=authorization_code";
         $token = file_get_contents($url);
-        $token = json_decode($token, true);
+        $token && $token = json_decode($token, true);
         if (empty($token) || isset($token['errcode'])) {
             throw new InvalidValueException('微信接口访问出错（' . $token['errmsg'] . '）。');
         }
@@ -66,7 +70,7 @@ class WxappController extends Controller
             throw new InvalidValueException('openid 无效。');
         }
 
-        $sessionKey = md5($openid . $token['session_key']);
+        $accessTokenValue = 'wxapp.' . md5($openid . $token['session_key']);
         $now = time();
         $db = \Yii::$app->getDb();
         $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
@@ -78,6 +82,7 @@ class WxappController extends Controller
             $member->nickname = $nickname;
             $member->last_login_time = $now;
             $member->login_count += 1;
+            $member->access_token = $accessTokenValue;
             $isNewRecord = false;
         } else {
             // 添加新会员
@@ -88,6 +93,7 @@ class WxappController extends Controller
             $member->username = substr(md5($openid), -20);
             $member->last_login_time = $now;
             $member->login_count = 1;
+            $member->access_token = $accessTokenValue;
             $isNewRecord = true;
         }
         if ($member->validate() && $member->save()) {
@@ -111,11 +117,11 @@ class WxappController extends Controller
                 $db->createCommand()->update('{{%wechat_member}}', $wechatMember, ['openid' => $openid])->execute();
             }
 
-            Meta::updateValue('wechat_member', 'wxapp_session_key', $member->id, $sessionKey);
+            Meta::updateValue('wechat_member', 'wxapp_session_key', $member->id, $accessTokenValue);
             Meta::updateValue('wechat_member', 'wxapp_session_time', $member->id, $now + 86400);
 
             return [
-                'session' => $sessionKey,
+                'session' => $accessTokenValue,
             ];
         } else {
             Yii::$app->getResponse()->setStatusCode(400);
