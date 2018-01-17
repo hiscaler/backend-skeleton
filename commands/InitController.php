@@ -38,7 +38,7 @@ class InitController extends Controller
                 'password_hash' => $security->generatePasswordHash('admin'),
                 'password_reset_token' => null,
                 'email' => 'admin@example.com',
-                'role' => 10,
+                'role' => User::ROLE_ADMINISTRATOR,
                 'register_ip' => '::1',
                 'login_count' => 0,
                 'last_login_ip' => null,
@@ -59,7 +59,6 @@ class InitController extends Controller
 
         return 0;
     }
-
 
     /**
      * 初始化配置资料
@@ -224,6 +223,12 @@ class InitController extends Controller
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
                     'value' => 0,
                 ],
+                // 用户角色
+                'system.user.role' => [
+                    'returnType' => Lookup::RETURN_TYPE_ARRAY,
+                    'inputMethod' => Lookup::INPUT_METHOD_DROPDOWNLIST,
+                    'value' => 0,
+                ],
             ],
         ];
         $cmd = $db->createCommand();
@@ -262,7 +267,6 @@ class InitController extends Controller
                     'input_method' => isset($item['inputMethod']) ? $item['inputMethod'] : Lookup::INPUT_METHOD_TEXT,
                     'input_value' => isset($item['inputValue']) ? $item['inputValue'] : '',
                     'enabled' => Constant::BOOLEAN_TRUE,
-
                     'created_by' => $this->_userId,
                     'created_at' => $now,
                     'updated_by' => $this->_userId,
