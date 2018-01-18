@@ -55,11 +55,11 @@ $this->params['menus'] = [
                 'attribute' => 'nickname',
                 'contentOptions' => ['class' => 'username']
             ],
-//            [
-//                'attribute' => 'role',
-//                'format' => 'userRole',
-//                'contentOptions' => ['class' => 'user-role'],
-//            ],
+            [
+                'attribute' => 'role',
+                'format' => 'userRole',
+                'contentOptions' => ['class' => 'user-role'],
+            ],
             'email:email',
             [
                 'attribute' => 'login_count',

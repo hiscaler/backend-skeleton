@@ -59,7 +59,6 @@ class User extends ActiveRecord implements IdentityInterface
      * 用户角色
      */
     const ROLE_ADMINISTRATOR = 1;
-    const ROLE_USER = 2;
 
     private $_fileUploadConfig;
 
@@ -95,7 +94,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'email'],
             [['password_reset_token'], 'unique'],
             ['status', 'default', 'value' => self::STATUS_PENDING],
-            ['role', 'default', 'value' => self::ROLE_USER],
+            ['role', 'default', 'value' => 0],
             ['status', 'in', 'range' => array_keys(self::statusOptions())],
             ['avatar', 'file',
                 'extensions' => $this->_fileUploadConfig['extensions'],
@@ -273,6 +272,7 @@ class User extends ActiveRecord implements IdentityInterface
             'nickname' => Yii::t('user', 'Nickname'),
             'avatar' => Yii::t('user', 'Avatar'),
             'email' => Yii::t('user', 'Email'),
+            'role' => Yii::t('user', 'Role'),
             'enabled' => Yii::t('app', 'Enabled'),
             'credits_count' => Yii::t('user', 'Credits Count'),
             'user_group' => Yii::t('user', 'User Group'),
@@ -290,12 +290,16 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    /**
+     * 用户角色选项
+     *
+     * @return array|mixed
+     */
     public static function roleOptions()
     {
-        return [
-            self::ROLE_ADMINISTRATOR => '系统管理员',
-            self::ROLE_USER => '普通用户',
-        ];
+        $roles = Lookup::getValue('system.user.role');
+
+        return is_array($roles) ? $roles : [];
     }
 
     /**
