@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\models\Lookup;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -19,7 +18,7 @@ class LookupSearch extends Lookup
     {
         return [
             [['enabled'], 'integer'],
-            [['label', 'description', 'return_type'], 'safe'],
+            [['key', 'label', 'return_type'], 'safe'],
         ];
     }
 
@@ -61,8 +60,8 @@ class LookupSearch extends Lookup
             'enabled' => $this->enabled,
         ]);
 
-        $query->andFilterWhere(['like', 'label', $this->label])
-            ->andFilterWhere(['like', 'description', $this->description]);
+        $query->andFilterWhere(['like', 'key', $this->key])
+            ->andFilterWhere(['like', 'label', $this->label]);
 
         return $dataProvider;
     }
