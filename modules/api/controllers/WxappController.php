@@ -70,8 +70,8 @@ class WxappController extends Controller
             throw new InvalidValueException('openid 无效。');
         }
 
-        $accessTokenValue = 'wxapp.' . md5($openid . $token['session_key']);
         $now = time();
+        $accessTokenValue = 'wxapp.' . md5($openid . $token['session_key']) . '.' . ($now + 7200);
         $db = \Yii::$app->getDb();
         $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
         $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $info["nickName"]);
@@ -127,6 +127,30 @@ class WxappController extends Controller
             Yii::$app->getResponse()->setStatusCode(400);
 
             return $member->errors;
+        }
+    }
+
+    /**
+     * 验证 session 值是否有效
+     *
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public function actionCheckSession()
+    {
+        $session = Yii::$app->getRequest()->get("session");
+        if (empty($session)) {
+            throw new InvalidParamException("Session value can't empty.");
+        }
+        $accessToken = Yii::$app->getDb()->createCommand('SELECT [[access_token]] FROM {{%member}} WHERE [[access_token]] = :accessToken', [':accessToken' => $session])->queryScalar();
+        if ($accessToken) {
+            list(, , $timestamp) = explode(',', $accessToken['access_token']);
+
+            return [
+                'valid' => $timestamp <= time()
+            ];
+        } else {
+            throw new NotFoundHttpException('Member data is not exists.');
         }
     }
 
