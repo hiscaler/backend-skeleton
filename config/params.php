@@ -6,9 +6,12 @@ return [
     'fromMailAddress' => [
         'admin@example.com' => 'you name',
     ],
+    // 微信公众号设置
     'wechat' => [
         'appid' => '',
         'secret' => '',
+        'mch_id' => '',
+        'mch_key' => '',
     ],
     'modules' => [
         /**
