@@ -136,7 +136,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
                     break;
             }
 
-            return static::findOne(['access_token' => $tokenValue]);
+            return static::findOne(['access_token' => $token]);
         } else {
             $user = static::findOne(['access_token' => $token]);
             if ($user) {
