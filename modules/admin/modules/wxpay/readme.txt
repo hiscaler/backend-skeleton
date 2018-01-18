@@ -1,0 +1,5 @@
+name:微信支付订单
+author:hiscaler
+version:0.0.1
+description:微信支付订单管理
+url:https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1
