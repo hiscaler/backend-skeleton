@@ -5,7 +5,6 @@ namespace app\modules\admin\controllers;
 use app\models\BaseActiveRecord;
 use app\models\Constant;
 use app\models\GridColumnConfig;
-use app\models\Yad;
 use Yii;
 use yii\base\InvalidCallException;
 use yii\data\ArrayDataProvider;

@@ -6,7 +6,6 @@ use app\models\Attribute;
 use app\models\BaseActiveRecord;
 use app\models\Constant;
 use app\models\Label;
-use app\models\Yad;
 use PDO;
 use Yii;
 use yii\data\ActiveDataProvider;

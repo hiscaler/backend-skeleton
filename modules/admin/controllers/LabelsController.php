@@ -5,8 +5,6 @@ namespace app\modules\admin\controllers;
 use app\models\Constant;
 use app\models\Label;
 use app\models\LabelSearch;
-use app\models\Yad;
-use PDO;
 use Yii;
 use yii\db\Exception;
 use yii\filters\AccessControl;

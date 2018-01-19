@@ -2,19 +2,12 @@
 
 namespace app\modules\admin\controllers;
 
+use app\modules\admin\extensions\BaseController;
+
 /**
  * Controller base class
  */
-class Controller extends \yii\web\Controller
+class Controller extends BaseController
 {
-
-    public function beforeAction($action)
-    {
-        if (parent::beforeAction($action)) {
-            return true;
-        }
-
-        return false;
-    }
 
 }

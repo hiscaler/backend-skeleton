@@ -12,7 +12,6 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
-use yii\web\Controller;
 use yii\web\Response;
 
 /**
