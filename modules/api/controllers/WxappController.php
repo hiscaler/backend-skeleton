@@ -8,11 +8,14 @@ use Overtrue\Wechat\Payment;
 use Overtrue\Wechat\Payment\Business;
 use Overtrue\Wechat\Payment\Order;
 use Overtrue\Wechat\Payment\UnifiedOrder;
+use SimpleXMLElement;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
 use yii\base\InvalidValueException;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * 小程序认证处理
@@ -82,24 +85,21 @@ class WxappController extends Controller
         if ($memberId) {
             // 更新会员的相关信息
             $member = Member::findOne($memberId);
-            $member->avatar = $info["avatarUrl"];
-            $member->nickname = $nickname;
-            $member->last_login_time = $now;
             $member->login_count += 1;
-            $member->access_token = $accessToken;
             $isNewRecord = false;
         } else {
             // 添加新会员
             $member = new Member();
             $member->setPassword(substr($openid, -10));
-            $member->avatar = $info["avatarUrl"];
-            $member->nickname = $nickname;
             $member->username = substr(md5($openid), -20);
-            $member->last_login_time = $now;
+            $member->nickname = $nickname ?: $member->username;
             $member->login_count = 1;
-            $member->access_token = $accessToken;
             $isNewRecord = true;
         }
+        $nickname && $member->nickname = $nickname;
+        $member->last_login_time = $now;
+        $member->last_login_ip = ip2long(Yii::$app->getRequest()->getUserIP());
+        $member->access_token = $accessToken;
         if ($member->validate() && $member->save()) {
             $wechatMember = [
                 'openid' => $openid,
@@ -169,7 +169,7 @@ class WxappController extends Controller
             throw new InvalidConfigException('无效的微信公众号配置。');
         }
         $request = Yii::$app->getRequest();
-        $body = trim($request->post('body', ''));
+        $body = trim($request->post('body', '')) ?: ' ';
         $outTradeNo = trim($request->post('out_trade_no'));
         $outTradeNo || $outTradeNo = date('YmdHis') . mt_rand(1000, 9999);
         $totalFee = (int) $request->post('total_fee');
@@ -184,28 +184,86 @@ class WxappController extends Controller
         if (!$exist) {
             throw new InvalidParamException("openid $openid 不存在。");
         }
-        $notifyUrl = $request->post('notify_url');
-        if (!$notifyUrl || !filter_var($notifyUrl, FILTER_VALIDATE_URL)) {
-            throw new InvalidParamException('无效的 notify_url 参数值。');
-        }
         $order = new Order();
+        $order->product_id = $request->post('product_id');
         $order->body = $body;
         $order->out_trade_no = $outTradeNo;
         $order->total_fee = $totalFee;
         $order->openid = $openid;
-        $order->notify_url = $notifyUrl;
+        $order->notify_url = Url::toRoute(['wxapp/notify'], true);
 
         $unifiedOrder = new UnifiedOrder(new Business($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key']), $order);
         $payment = new Payment($unifiedOrder);
+        $configJssdk = $payment->getConfigJssdk(false);
 
         // 创建订单
         $columns = $order->toArray();
         unset($columns['notify_url']);
-        $columns['create_time'] = time();
+        $columns['appid'] = $options['appid'];
+        $columns['mch_id'] = $options['mch_id'];
+        $columns['nonce_str'] = $configJssdk['nonceStr'];
+        $columns['sign'] = $configJssdk['paySign'];
+        $columns['sign_type'] = $configJssdk['signType'];
+        $columns['time_start'] = time();
         $columns['status'] = \app\modules\admin\modules\wxpay\models\Order::STATUS_PENDING;
         \Yii::$app->getDb()->createCommand()->insert('{{%wx_order}}', $columns)->execute();
 
-        return $payment->getConfigJssdk(false);
+        return $configJssdk;
+    }
+
+    /**
+     * 支付结果通知
+     *
+     * @throws \yii\base\ExitException
+     * @throws \yii\db\Exception
+     */
+    public function actionNotify()
+    {
+        $code = 'FAIL';
+        $msg = 'DATA ERROR';
+        $returnXml = <<<EOT
+<xml>
+  <return_code><![CDATA[{code}]]></return_code>
+  <return_msg><![CDATA[{msg}]]></return_msg>
+</xml>
+EOT;
+        $responseXml = Yii::$app->getRequest()->getRawBody();
+        if ($responseXml) {
+            $responseXml = (array) simplexml_load_string($responseXml);
+            $success = false;
+            foreach ($responseXml as $key => &$data) {
+                // @todo 需要处理代金卷
+                if ($data instanceof SimpleXMLElement) {
+                    $data = (string) $data;
+                    if ($key == 'result_code' && $data == 'SUCCESS') {
+                        $code = 'SUCCESS';
+                        $msg = 'OK';
+                        $success = true;
+                    }
+                }
+            }
+            if ($success) {
+                $db = \Yii::$app->getDb();
+                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wx_order}} WHERE [[appid]] = :appId AND [[nonce_str]] = :nonceStr AND [[out_trade_no]] = :outTradeNo AND [[openid]] = :openid', [':appId' => $responseXml['appid'], ':nonceStr' => $responseXml['nonce_str'], ':outTradeNo' => $responseXml['out_trade_no'], ':openid' => $responseXml['openid']])->queryScalar();
+                if ($orderId) {
+                    $columns = [
+                        'transaction_id' => $responseXml['transaction_id'],
+                        'time_expire' => $responseXml['time_end'],
+                    ];
+                    $db->createCommand()->update('{{%wx_order}}', $columns, ['id' => $orderId])->execute();
+                } else {
+                    $msg = 'ORDER NOT FOUND';
+                }
+            } else {
+                Yii::error('wechat-notfiy');
+            }
+        } else {
+            Yii::error('wechat-notfiy');
+        }
+
+        Yii::$app->getResponse()->format = Response::FORMAT_RAW;
+        echo strtr($returnXml, ['{code}' => $code, '{msg}' => $msg]);
+        Yii::$app->end();
     }
 
 }
