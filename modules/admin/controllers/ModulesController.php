@@ -32,7 +32,7 @@ class ModulesController extends Controller
     public function init()
     {
         parent::init();
-        $defaultIcon = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/default-module-icon.png';
+        $defaultIcon = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/module-icons/default-module-icon.png';
         $localModules = [];
         $baseDirectory = Yii::getAlias('@app/modules/admin/modules');
         $handle = opendir($baseDirectory);
@@ -71,8 +71,9 @@ class ModulesController extends Controller
                     }
                 }
                 if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'icon.png')) {
-                    $t = Yii::$app->getModule($dir);
-                    $t && $m['icon'] = $t->getBasePath() . '/icon.png';
+                    $dest = Yii::getAlias('@webroot') . "/admin/images/module-icons/{$dir}-icon.png";
+                    !file_exists($dest) && copy($fullDirectory . DIRECTORY_SEPARATOR . 'icon.png', $dest);
+                    $m['icon'] = "/admin/images/module-icons/{$dir}-icon.png";
                 }
                 $localModules[$dir] = $m;
             }
