@@ -87,10 +87,40 @@ $this->params['menus'] = [
             [
                 'attribute' => 'status',
                 'format' => 'orderStatus',
-                'headerOptions' => ['class' => 'last'],
                 'contentOptions' => ['style' => 'width: 80px;']
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {query}',
+                'buttons' => [
+                    'query' => function ($url, $model, $key) {
+                        return \yii\helpers\Html::a('<span class="glyphicon glyphicon-query"></span>', $url, ['pjax' => 0, 'class' => 'order-query', 'data-key' => $model['id']]);
+                    },
+                ],
+                'headerOptions' => ['class' => 'buttons-2 last'],
             ],
         ],
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
+<?php \app\modules\admin\components\JsBlock::begin() ?>
+<script type="text/javascript">
+    $(function () {
+        var queryUrl = '<?= \yii\helpers\Url::toRoute(['orders/query', 'id' => '_id']) ?>';
+        $('.order-query').on('click', function () {
+            var $t = $(this);
+            layer.open({
+                type: 2,
+                title: '订单查询结果',
+                area: ['400px', '150px'],
+                shade: 0.8,
+                closeBtn: 1,
+                shadeClose: true,
+                content: queryUrl.replace('_id', $t.attr('data-key'))
+            });
+
+            return false;
+        });
+    });
+</script>
+<?php \app\modules\admin\components\JsBlock::end() ?>

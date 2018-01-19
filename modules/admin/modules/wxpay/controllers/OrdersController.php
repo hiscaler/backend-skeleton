@@ -5,6 +5,8 @@ namespace app\modules\admin\modules\wxpay\controllers;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\wxpay\models\Order;
 use app\modules\admin\modules\wxpay\models\OrderSearch;
+use Exception;
+use Overtrue\Wechat\Payment\QueryOrder;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -28,7 +30,7 @@ class OrdersController extends BaseController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'update', 'delete'],
+                        'actions' => ['index', 'view', 'update', 'delete', 'query'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -107,6 +109,48 @@ class OrdersController extends BaseController
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * 微信商户平台订单查询
+     *
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
+     */
+    public function actionQuery($id)
+    {
+        $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : [];
+        if (!isset($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key'])) {
+            throw new InvalidConfigException('无效的微信公众号配置。');
+        }
+
+        $db = \Yii::$app->getDb();
+        $outTradeNo = $db->createCommand('SELECT [[out_trade_no]] FROM {{%wx_order}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if ($outTradeNo) {
+            try {
+                $queryOrder = new QueryOrder($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key']);
+                $response = $queryOrder->getTransaction($outTradeNo, true);
+                if ($response !== false) {
+                    $response = $response->toArray();
+                    if ($response['trade_state'] == 'SUCCESS') {
+                        $db->createCommand()->update('{{%wx_order}}', ['transaction_id' => $response['transaction_id'], 'status' => Order::STATUS_NOTIFIED], ['id' => (int) $id])->execute();
+                    }
+
+                    $this->layout = '@app/modules/admin/views/layouts/ajax';
+
+                    return $this->render('query', [
+                        'outTradeNo' => $outTradeNo,
+                        'data' => $response,
+                    ]);
+                }
+            } catch (Exception $ex) {
+                echo $ex->getMessage();
+            }
+        } else {
+            throw new NotFoundHttpException('订单不存在。');
+        }
     }
 
     /**

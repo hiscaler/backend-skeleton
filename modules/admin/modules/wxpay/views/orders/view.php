@@ -42,7 +42,7 @@ $this->params['menus'] = [
             'product_id',
             'limit_pay',
             'openid',
-            'status',
+            'status:orderStatus',
         ],
     ]) ?>
 </div>
