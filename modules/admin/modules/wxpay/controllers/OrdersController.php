@@ -2,20 +2,20 @@
 
 namespace app\modules\admin\modules\wxpay\controllers;
 
-use Yii;
+use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\wxpay\models\Order;
 use app\modules\admin\modules\wxpay\models\OrderSearch;
+use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * 微信支付订单管理
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class OrdersController extends Controller
+class OrdersController extends BaseController
 {
 
     /**

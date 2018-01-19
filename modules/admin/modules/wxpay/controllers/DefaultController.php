@@ -2,13 +2,13 @@
 
 namespace app\modules\admin\modules\wxpay\controllers;
 
+use app\modules\admin\extensions\BaseController;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 
 /**
  * Default controller for the `wxpay` module
  */
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
 
     /**

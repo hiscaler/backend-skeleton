@@ -2,11 +2,11 @@
 
 namespace app\modules\admin\modules\article\controllers;
 
+use app\modules\admin\extensions\BaseController;
 use Yii;
 use app\modules\admin\modules\article\models\Article;
 use app\modules\admin\modules\article\models\ArticleSearch;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -15,7 +15,7 @@ use yii\filters\VerbFilter;
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
 
     /**
