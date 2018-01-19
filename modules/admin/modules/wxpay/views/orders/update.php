@@ -1,21 +1,20 @@
 <?php
 
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
 /* @var $model app\modules\admin\modules\wxpay\models\Order */
 
 $this->title = 'Update Order: {nameAttribute}';
-$this->params['breadcrumbs'][] = ['label' => 'Orders', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = ['label' => '微信支付订单管理', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->out_trade_no, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = '更新';
+
+$this->params['menus'] = [
+    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
+    ['label' => Yii::t('app', 'View'), 'url' => ['view', 'id' => $model->id]]
+];
 ?>
 <div class="order-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-
 </div>

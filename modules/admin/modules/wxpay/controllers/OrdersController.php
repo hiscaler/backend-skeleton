@@ -11,7 +11,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * OrdersController implements the CRUD actions for Order model.
+ * 微信支付订单管理
+ *
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class OrdersController extends Controller
 {

@@ -35,7 +35,7 @@ class Order extends \yii\db\ActiveRecord
 {
 
     const STATUS_PENDING = 0;
-    const STATUS_PAID = 1;
+    const STATUS_NOTIFIED = 1;
     const STATUS_REFUND = 2;
     const STATUS_PARTIAL_REFUND = 3;
     const STATUS_CANCEL = 4;
@@ -70,7 +70,7 @@ class Order extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => '编号',
             'appid' => 'appid',
             'mch_id' => '商户号',
             'device_info' => '设备号',
@@ -82,8 +82,8 @@ class Order extends \yii\db\ActiveRecord
             'body' => '商品描述',
             'detail' => '商品详情',
             'attach' => '附加数据',
-            'fee_type' => '标价币种',
-            'total_fee' => '标价金额',
+            'fee_type' => '币种',
+            'total_fee' => '金额',
             'spbill_create_ip' => '终端IP',
             'time_start' => '交易起始时间',
             'time_expire' => '交易结束时间',
@@ -104,8 +104,8 @@ class Order extends \yii\db\ActiveRecord
     public static function statusOptions()
     {
         return [
-            self::STATUS_PENDING => '待处理',
-            self::STATUS_PAID => '已支付',
+            self::STATUS_PENDING => '待通知',
+            self::STATUS_NOTIFIED => '已通知',
             self::STATUS_REFUND => '已退款',
             self::STATUS_PARTIAL_REFUND => '部分退款',
             self::STATUS_CANCEL => '取消',

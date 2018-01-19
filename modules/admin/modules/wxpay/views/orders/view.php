@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -9,6 +8,10 @@ use yii\widgets\DetailView;
 $this->title = $model->out_trade_no;
 $this->params['breadcrumbs'][] = ['label' => '微信支付订单管理', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$this->params['menus'] = [
+    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
+];
 ?>
 <div class="order-view">
     <?= DetailView::widget([
@@ -27,7 +30,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'detail:ntext',
             'attach',
             'fee_type',
-            'total_fee',
+            [
+                'attribute' => 'total_fee',
+                'value' => $model['total_fee'] / 100
+            ],
             'spbill_create_ip',
             'time_start:datetime',
             'time_expire:datetime',
