@@ -91,13 +91,16 @@ $this->params['menus'] = [
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {query}',
+                'template' => '{view} {query} {refund}',
                 'buttons' => [
                     'query' => function ($url, $model, $key) {
-                        return \yii\helpers\Html::a('<span class="glyphicon glyphicon-query"></span>', $url, ['pjax' => 0, 'class' => 'order-query', 'data-key' => $model['id']]);
+                        return \yii\helpers\Html::a('<span class="glyphicon glyphicon-query"></span>', $url, ['pjax' => 0, 'class' => 'order-query', 'data-key' => $model['id'], 'title' => '微信商户平台订单查询']);
+                    },
+                    'refund' => function ($url, $model, $key) {
+                        return \yii\helpers\Html::a('<span class="glyphicon glyphicon-refund"></span>', $url, ['pjax' => 0, 'class' => 'order-refund', 'data-key' => $model['id'], 'data-total-fee' => $model['total_fee'], 'title' => '退款']);
                     },
                 ],
-                'headerOptions' => ['class' => 'buttons-2 last'],
+                'headerOptions' => ['class' => 'buttons-3 last'],
             ],
         ],
     ]); ?>
@@ -106,6 +109,7 @@ $this->params['menus'] = [
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
     $(function () {
+        // 微信商户平台订单查询
         var queryUrl = '<?= \yii\helpers\Url::toRoute(['orders/query', 'id' => '_id']) ?>';
         $('.order-query').on('click', function () {
             var $t = $(this);
@@ -117,6 +121,37 @@ $this->params['menus'] = [
                 closeBtn: 1,
                 shadeClose: true,
                 content: queryUrl.replace('_id', $t.attr('data-key'))
+            });
+            
+            return false;
+        });
+
+        // 微信商户平台退款
+        var refundUrl = '<?= \yii\helpers\Url::toRoute(['orders/refund', 'id' => '_id', 'refundFee' => '_refundFee']) ?>';
+        $('.order-refund').on('click', function () {
+            var $t = $(this);
+            layer.confirm('是否确认进行退款操作？', {
+                btn: ['确定', '取消'] //按钮
+            }, function () {
+                layer.prompt({title: '请确认退款金额', formType: 0, value: $t.attr('data-total-fee') / 100}, function (refundFee, index) {
+                    layer.close(index);
+                    refundUrl = refundUrl.replace('_id', $t.attr('data-key')).replace('_refundFee', parseFloat(refundFee));
+                    $.ajax({
+                        type: "POST",
+                        url: refundUrl,
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.success) {
+                                layer.msg('退款操作成功。');
+                            } else {
+                                layer.alert(response.error.message);
+                            }
+                        }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText);
+                        }
+                    });
+                });
+            }, function () {
             });
 
             return false;
