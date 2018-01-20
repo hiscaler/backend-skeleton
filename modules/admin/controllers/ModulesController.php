@@ -54,17 +54,54 @@ class ModulesController extends Controller
                     'url' => null,
                     'icon' => $defaultIcon,
                     'description' => null,
+                    'menus' => [],
+                    'depends' => []
                 ];
-                if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'readme.txt')) {
-                    $readme = file($fullDirectory . DIRECTORY_SEPARATOR . 'readme.txt');
-                    if ($readme !== false) {
-                        foreach ($readme as $row) {
-                            if (stripos($row, ':') !== false) {
-                                $row = array_map('trim', explode(':', $row));
-                                $key = array_shift($row);
-                                $value = implode('', $row);
-                                if ($key && $value && $key != 'alias' && array_key_exists($key, $m)) {
-                                    $m[$key] = $value;
+                if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'conf.json')) {
+                    $readme = file_get_contents($fullDirectory . DIRECTORY_SEPARATOR . 'conf.json');
+                    if ($readme !== false && ($configs = json_decode($readme, true)) !== false) {
+                        $requireItems = ['name', 'author', 'version'];
+                        foreach ($requireItems as $item) {
+                            if (!isset($configs[$item]) || empty($configs[$item])) {
+                                continue 2;
+                            }
+                        }
+                        foreach ($configs as $key => $value) {
+                            if (array_key_exists($key, $m)) {
+                                switch ($key) {
+                                    case 'menus':
+                                        if (is_array($value)) {
+                                            $links = [];
+                                            foreach ($value as $link) {
+                                                if (
+                                                    !isset($link['label'], $link['url']) ||
+                                                    empty($link['url']) ||
+                                                    !isset($link['url'][0]) ||
+                                                    !is_string($link['url'][0])
+                                                ) {
+                                                    continue;
+                                                }
+                                                $t = ["/admin/{$link['url'][0]}"];
+                                                if (isset($link['url'][1]) && is_array($link['url'][1])) {
+                                                    foreach ($link['url'][1] as $k => $v) {
+                                                        $t[$k] = (string) $v;
+                                                    }
+                                                }
+                                                $links[] = [
+                                                    'label' => $link['label'],
+                                                    'url' => $t,
+                                                ];
+                                            }
+                                            $value = $links;
+                                        } else {
+                                            continue;
+                                        }
+                                        break;
+                                    case 'depends':
+                                        if (!is_array($value)) {
+                                            continue;
+                                        }
+                                        break;
                                 }
                             }
                         }

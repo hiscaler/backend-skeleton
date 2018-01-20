@@ -1,0 +1,28 @@
+{
+    "name": "模块示例",
+    "author": "hiscaler",
+    "version": "0.0.1",
+    "description": "仅做测试用，无实际用途",
+    "url": "http://www.example.com",
+    "menus": [
+        {
+            "label": "菜单 1",
+            "url": [
+                "example/default/index",
+                {
+                    "key": "1"
+                }
+            ]
+        },
+        {
+            "label": "菜单 2",
+            "url": [
+                "example/default/index",
+                {
+                    "key": "2"
+                }
+            ]
+        }
+    ],
+    "depends": []
+}
