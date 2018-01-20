@@ -103,6 +103,7 @@ class ModulesController extends Controller
                                         }
                                         break;
                                 }
+                                $m[$key] = $value;
                             }
                         }
                     }
@@ -299,6 +300,7 @@ class ModulesController extends Controller
                         'icon' => $module['icon'],
                         'url' => $module['url'],
                         'description' => $module['description'],
+                        'menus' => $module['menus'] ? json_encode($module['menus']) : null,
                         'enabled' => Constant::BOOLEAN_TRUE,
                         'created_at' => $now,
                         'created_by' => $userId,

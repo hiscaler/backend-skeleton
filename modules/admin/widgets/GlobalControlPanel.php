@@ -61,8 +61,7 @@ class GlobalControlPanel extends Widget
                 'items' => [],
             ];
             foreach ($installedModules as $module) {
-                $moduleMenus = json_decode($module['menus'], true);
-                if ($moduleMenus) {
+                if (!empty($module['menus']) && ($moduleMenus = json_decode($module['menus'], true))) {
                     $items['installedModules']['items'] = array_merge($items['installedModules']['items'], $moduleMenus);
                 } else {
                     $items['installedModules']['items'][] = [
