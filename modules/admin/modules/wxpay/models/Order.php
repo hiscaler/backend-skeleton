@@ -2,8 +2,6 @@
 
 namespace app\modules\admin\modules\wxpay\models;
 
-use Yii;
-
 /**
  * This is the model class for table "{{%wx_order}}".
  *

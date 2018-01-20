@@ -2,10 +2,8 @@
 
 namespace app\modules\admin\modules\wxpay\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\admin\modules\wxpay\models\OrderRefund;
 
 /**
  * OrderRefundSearch represents the model behind the search form of `app\modules\admin\modules\wxpay\models\OrderRefund`.
@@ -48,6 +46,11 @@ class OrderRefundSearch extends OrderRefund
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ]
         ]);
 
         $this->load($params);

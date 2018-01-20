@@ -3,7 +3,6 @@
 namespace app\modules\admin\modules\wxpay\models;
 
 use app\models\User;
-use Yii;
 
 /**
  * This is the model class for table "{{%wx_order_refund}}".
