@@ -2,7 +2,6 @@
 
 namespace app\modules\admin\widgets;
 
-
 use app\models\Module;
 use Yii;
 use yii\base\Widget;
@@ -62,14 +61,17 @@ class GlobalControlPanel extends Widget
                 'items' => [],
             ];
             foreach ($installedModules as $module) {
-                $items['installedModules']['items'][] = [
-                    'label' => $module['name'],
-                    'url' => ['/admin/' . $module['alias'] . '/default/index'],
-                    'active' => $moduleId == $module['alias'],
-                ];
+                if (!empty($module['menus']) && ($moduleMenus = json_decode($module['menus'], true))) {
+                    $items['installedModules']['items'] = array_merge($items['installedModules']['items'], $moduleMenus);
+                } else {
+                    $items['installedModules']['items'][] = [
+                        'label' => $module['name'],
+                        'url' => ['/admin/' . $module['alias'] . '/default/index'],
+                        'active' => $moduleId == $module['alias'],
+                    ];
+                }
             }
         }
-
 
         return $items;
     }
