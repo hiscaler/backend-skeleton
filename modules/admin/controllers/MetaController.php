@@ -4,7 +4,6 @@ namespace app\modules\admin\controllers;
 
 use app\models\Meta;
 use app\models\MetaSearch;
-use app\models\Yad;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;

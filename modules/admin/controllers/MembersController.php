@@ -6,7 +6,6 @@ use Yii;
 use app\models\Member;
 use app\models\MemberSearch;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
