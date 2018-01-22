@@ -15,6 +15,7 @@ use Yii;
  * @property string $icon
  * @property string $url
  * @property string $description
+ * @property string $menus
  * @property integer $enabled
  * @property integer $created_at
  * @property integer $created_by
@@ -44,13 +45,14 @@ class Module extends \yii\db\ActiveRecord
     {
         return [
             [['alias', 'name', 'author', 'version'], 'required'],
-            [['alias', 'name', 'author', 'version', 'url', 'description'], 'trim'],
+            [['alias', 'name', 'author', 'version', 'url', 'description', 'menus'], 'trim'],
             [['enabled', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['alias', 'author'], 'string', 'max' => 20],
             [['name'], 'string', 'max' => 30],
             [['version'], 'string', 'max' => 10],
             [['icon', 'url'], 'string', 'max' => 100],
             [['description'], 'string', 'max' => 255],
+            [['menus'], 'string'],
             [['alias'], 'unique'],
         ];
     }
