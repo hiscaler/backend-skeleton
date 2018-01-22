@@ -2,12 +2,12 @@
 
 namespace app\modules\admin\modules\example\controllers;
 
-use yii\web\Controller;
+use app\modules\admin\extensions\BaseController;
 
 /**
  * Default controller for the `example` module
  */
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
 
     /**
