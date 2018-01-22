@@ -2,7 +2,10 @@
 
 namespace app\modules\admin\modules\wxpay\controllers;
 
+<<<<<<< HEAD
 use app\models\Lookup;
+=======
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\wxpay\models\Order;
 use app\modules\admin\modules\wxpay\models\OrderSearch;
@@ -132,6 +135,7 @@ class OrdersController extends BaseController
         }
 
         $db = \Yii::$app->getDb();
+<<<<<<< HEAD
         $order = $db->createCommand('SELECT [[out_trade_no]], [[trade_state]] FROM {{%wx_order}} WHERE [[id]] = :id', [':id' => (int) $id])->queryOne();
         if ($order) {
             try {
@@ -145,12 +149,27 @@ class OrdersController extends BaseController
                             'trade_state' => $response['trade_state'],
                             'trade_state_desc' => $response['trade_state_desc'],
                         ], ['id' => (int) $id])->execute();
+=======
+        $outTradeNo = $db->createCommand('SELECT [[out_trade_no]] FROM {{%wx_order}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if ($outTradeNo) {
+            try {
+                $queryOrder = new QueryOrder($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key']);
+                $response = $queryOrder->getTransaction($outTradeNo, true);
+                if ($response !== false) {
+                    $response = $response->toArray();
+                    if ($response['trade_state'] == 'SUCCESS') {
+                        $db->createCommand()->update('{{%wx_order}}', ['transaction_id' => $response['transaction_id'], 'status' => Order::STATUS_NOTIFIED], ['id' => (int) $id])->execute();
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
                     }
 
                     $this->layout = '@app/modules/admin/views/layouts/ajax';
 
                     return $this->render('query', [
+<<<<<<< HEAD
                         'outTradeNo' => $order['out_trade_no'],
+=======
+                        'outTradeNo' => $outTradeNo,
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
                         'data' => $response,
                     ]);
                 }
@@ -177,9 +196,14 @@ class OrdersController extends BaseController
                 $errorMessage = null;
                 $business = new Business($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key']);
                 // @see https://stackoverflow.com/questions/24611640/curl-60-ssl-certificate-unable-to-get-local-issuer-certificate
+<<<<<<< HEAD
                 $webrootPath = Yii::getAlias('@webroot');
                 $business->setClientCert($webrootPath . Lookup::getValue('custom.wxapp.cert.cert'));
                 $business->setClientKey($webrootPath . Lookup::getValue('custom.wxapp.cert.key'));
+=======
+                $business->setClientCert(Yii::getAlias('@webroot/certs/apiclient_cert.pem'));
+                $business->setClientKey(Yii::getAlias('@webroot/certs/apiclient_key.pem'));
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
 
                 $refund = new Refund($business);
                 $outRefundNo = md5(uniqid(microtime()));

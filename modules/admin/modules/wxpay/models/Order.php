@@ -2,8 +2,11 @@
 
 namespace app\modules\admin\modules\wxpay\models;
 
+<<<<<<< HEAD
 use app\models\WechatMember;
 
+=======
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
 /**
  * This is the model class for table "{{%wx_order}}".
  *
@@ -115,7 +118,11 @@ class Order extends \yii\db\ActiveRecord
             'detail' => '商品详情',
             'attach' => '附加数据',
             'fee_type' => '币种',
+<<<<<<< HEAD
             'total_fee' => '订单金额',
+=======
+            'total_fee' => '金额',
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
             'spbill_create_ip' => '终端IP',
             'time_start' => '交易起始时间',
             'time_expire' => '交易结束时间',

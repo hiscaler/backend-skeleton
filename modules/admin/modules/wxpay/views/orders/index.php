@@ -40,7 +40,11 @@ $this->params['menus'] = [
 //            'appid',
 //            'mch_id',
 //            'device_info',
+<<<<<<< HEAD
 
+=======
+            'nonce_str',
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
             //'sign',
             //'sign_type',
             [
@@ -67,6 +71,7 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'number'],
             ],
             [
+<<<<<<< HEAD
                 'attribute' => 'refund_times',
                 'contentOptions' => ['class' => 'number'],
             ],
@@ -78,6 +83,8 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'number'],
             ],
             [
+=======
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
                 'attribute' => 'spbill_create_ip',
                 'contentOptions' => ['class' => 'ip-address']
             ],
@@ -96,6 +103,7 @@ $this->params['menus'] = [
             //'product_id',
             //'limit_pay',
             [
+<<<<<<< HEAD
                 'attribute' => 'wechatMember.nickname',
                 'contentOptions' => ['class' => 'username']
             ],
@@ -104,6 +112,16 @@ $this->params['menus'] = [
                 'contentOptions' => ['style' => 'width: 80px;']
             ],
             'trade_state_desc',
+=======
+                'attribute' => 'openid',
+                'contentOptions' => ['class' => 'openid']
+            ],
+            [
+                'attribute' => 'status',
+                'format' => 'orderStatus',
+                'contentOptions' => ['style' => 'width: 80px;']
+            ],
+>>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {query} {refund}',

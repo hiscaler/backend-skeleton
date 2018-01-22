@@ -564,3 +564,11 @@ ul.pagination li.disabled span {
 .glyphicon-add-child {
     background-position: -16px -16px;
 }
+
+.glyphicon-query {
+    background-position: -2542px -16px;
+}
+
+.glyphicon-refund {
+    background-position: -2766px -16px;
+}

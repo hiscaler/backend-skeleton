@@ -979,6 +979,12 @@ ul.list li em {
     width: 32px;
     height: 32px;
     margin: 4px 10px 0 0;
+    background: none;
+}
+
+.widget-module .hd span.icon img {
+    width: 32px;
+    height: 32px;
 }
 
 .widget-module .hd span.buttons {
