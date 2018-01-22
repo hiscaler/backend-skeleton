@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * 微信支付订单管理
  *
- * @see https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1
+ * @link https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1
  * @author hiscaler <hiscaler@gmail.com>
  */
 class m180118_062429_create_wx_order_table extends Migration
@@ -29,8 +29,8 @@ class m180118_062429_create_wx_order_table extends Migration
             'body' => $this->string(128)->comment('商品描述'),
             'detail' => $this->text()->comment('商品详情'),
             'attach' => $this->string(127)->comment('附加数据'),
-            'fee_type' => $this->string(16)->notNull()->defaultValue('CNY')->comment('标价币种'),
-            'total_fee' => $this->integer()->notNull()->comment('标价金额'),
+            'fee_type' => $this->string(16)->notNull()->defaultValue('CNY')->comment('货币种类'),
+            'total_fee' => $this->integer()->notNull()->comment('订单金额'),
             'spbill_create_ip' => $this->string(16)->notNull()->comment('终端IP'),
             'time_start' => $this->integer()->notNull()->comment('交易起始时间'),
             'time_expire' => $this->integer()->comment('交易结束时间'),
@@ -39,6 +39,8 @@ class m180118_062429_create_wx_order_table extends Migration
             'product_id' => $this->string(32)->comment('商品ID'),
             'limit_pay' => $this->string(32)->comment('指定支付方式'),
             'openid' => $this->string(128)->notNull()->comment('用户标识'),
+            'trade_state' => $this->string(32)->comment('交易状态'),
+            'trade_state_desc' => $this->string(256)->comment('交易状态描述'),
             'status' => $this->smallInteger()->defaultValue(0)->comment('状态'),
         ]);
     }

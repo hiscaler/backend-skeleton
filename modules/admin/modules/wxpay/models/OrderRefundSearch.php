@@ -6,9 +6,9 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * OrderSearch represents the model behind the search form of `app\modules\admin\modules\wxpay\models\Order`.
+ * OrderRefundSearch represents the model behind the search form of `app\modules\admin\modules\wxpay\models\OrderRefund`.
  */
-class OrderSearch extends Order
+class OrderRefundSearch extends OrderRefund
 {
 
     /**
@@ -17,8 +17,8 @@ class OrderSearch extends Order
     public function rules()
     {
         return [
-            [['id', 'total_fee', 'time_start', 'time_expire', 'status'], 'integer'],
-            [['appid', 'mch_id', 'device_info', 'nonce_str', 'sign', 'sign_type', 'transaction_id', 'out_trade_no', 'body', 'detail', 'attach', 'fee_type', 'spbill_create_ip', 'goods_tag', 'trade_type', 'product_id', 'limit_pay', 'openid', 'trade_state'], 'safe'],
+            [['id', 'order_id', 'total_fee', 'refund_fee', 'created_at', 'created_by'], 'integer'],
+            [['appid', 'mch_id', 'nonce_str', 'sign', 'sign_type', 'transaction_id', 'out_trade_no', 'out_refund_no', 'refund_id', 'refund_fee_type', 'refund_desc', 'refund_account'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class OrderSearch extends Order
      */
     public function search($params)
     {
-        $query = Order::find();
+        $query = OrderRefund::find();
 
         // add conditions that should always apply here
 
@@ -64,33 +64,26 @@ class OrderSearch extends Order
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'order_id' => $this->order_id,
             'total_fee' => $this->total_fee,
-            'time_start' => $this->time_start,
-            'time_expire' => $this->time_expire,
-            'status' => $this->status,
+            'refund_fee' => $this->refund_fee,
+            'created_at' => $this->created_at,
+            'created_by' => $this->created_by,
         ]);
 
         $query->andFilterWhere(['like', 'appid', $this->appid])
             ->andFilterWhere(['like', 'mch_id', $this->mch_id])
-            ->andFilterWhere(['like', 'device_info', $this->device_info])
             ->andFilterWhere(['like', 'nonce_str', $this->nonce_str])
             ->andFilterWhere(['like', 'sign', $this->sign])
             ->andFilterWhere(['like', 'sign_type', $this->sign_type])
             ->andFilterWhere(['like', 'transaction_id', $this->transaction_id])
             ->andFilterWhere(['like', 'out_trade_no', $this->out_trade_no])
-            ->andFilterWhere(['like', 'body', $this->body])
-            ->andFilterWhere(['like', 'detail', $this->detail])
-            ->andFilterWhere(['like', 'attach', $this->attach])
-            ->andFilterWhere(['like', 'fee_type', $this->fee_type])
-            ->andFilterWhere(['like', 'spbill_create_ip', $this->spbill_create_ip])
-            ->andFilterWhere(['like', 'goods_tag', $this->goods_tag])
-            ->andFilterWhere(['like', 'trade_type', $this->trade_type])
-            ->andFilterWhere(['like', 'product_id', $this->product_id])
-            ->andFilterWhere(['like', 'limit_pay', $this->limit_pay])
-            ->andFilterWhere(['like', 'openid', $this->openid])
-            ->andFilterWhere(['=', 'trade_state', $this->trade_state]);
+            ->andFilterWhere(['like', 'out_refund_no', $this->out_refund_no])
+            ->andFilterWhere(['like', 'refund_id', $this->refund_id])
+            ->andFilterWhere(['like', 'refund_fee_type', $this->refund_fee_type])
+            ->andFilterWhere(['like', 'refund_desc', $this->refund_desc])
+            ->andFilterWhere(['like', 'refund_account', $this->refund_account]);
 
         return $dataProvider;
     }
-
 }

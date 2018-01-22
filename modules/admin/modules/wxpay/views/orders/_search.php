@@ -10,6 +10,7 @@ use yii\widgets\ActiveForm;
 <div class="form-outside form-search form-layout-column" style="display: none">
     <div class="order-search form">
         <?php $form = ActiveForm::begin([
+            'id' => 'form-orders',
             'action' => ['index'],
             'method' => 'get',
             'options' => [
@@ -26,7 +27,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'out_trade_no') ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'status')->dropDownList(\app\modules\admin\modules\wxpay\models\Order::statusOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'trade_state')->dropDownList(\app\modules\admin\modules\wxpay\models\Order::tradeStateOptions(), ['prompt' => '']) ?>
         </div>
         <?php // $form->field($model, 'device_info') ?>
 
