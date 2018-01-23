@@ -2,11 +2,8 @@
 
 namespace app\modules\admin\modules\wxpay\models;
 
-<<<<<<< HEAD
 use app\models\WechatMember;
 
-=======
->>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
 /**
  * This is the model class for table "{{%wx_order}}".
  *
@@ -118,11 +115,7 @@ class Order extends \yii\db\ActiveRecord
             'detail' => '商品详情',
             'attach' => '附加数据',
             'fee_type' => '币种',
-<<<<<<< HEAD
             'total_fee' => '订单金额',
-=======
-            'total_fee' => '金额',
->>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
             'spbill_create_ip' => '终端IP',
             'time_start' => '交易起始时间',
             'time_expire' => '交易结束时间',
@@ -182,7 +175,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public function getRefund_times()
     {
-        return \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%wx_order_refund}} WHERE [[order_id]] = :orderId', [':orderId' => $this->id])->queryScalar();
+        return \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%wx_refund_order}} WHERE [[order_id]] = :orderId', [':orderId' => $this->id])->queryScalar();
     }
 
     /**
@@ -193,7 +186,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public function getRefund_total_fee()
     {
-        return \Yii::$app->getDb()->createCommand('SELECT SUM([[refund_fee]]) FROM {{%wx_order_refund}} WHERE [[order_id]] = :orderId', [':orderId' => $this->id])->queryScalar() ?: 0;
+        return \Yii::$app->getDb()->createCommand('SELECT SUM([[refund_fee]]) FROM {{%wx_refund_order}} WHERE [[order_id]] = :orderId', [':orderId' => $this->id])->queryScalar() ?: 0;
     }
 
     /**

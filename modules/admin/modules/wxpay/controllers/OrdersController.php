@@ -2,18 +2,14 @@
 
 namespace app\modules\admin\modules\wxpay\controllers;
 
-<<<<<<< HEAD
 use app\models\Lookup;
-=======
->>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\wxpay\models\Order;
 use app\modules\admin\modules\wxpay\models\OrderSearch;
+use EasyWeChat\Foundation\Application;
 use Exception;
-use Overtrue\Wechat\Payment\Business;
-use Overtrue\Wechat\Payment\QueryOrder;
-use Overtrue\Wechat\Payment\Refund;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -129,18 +125,16 @@ class OrdersController extends BaseController
      */
     public function actionQuery($id)
     {
-        $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : [];
-        if (!isset($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key'])) {
-            throw new InvalidConfigException('无效的微信公众号配置。');
+        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
+            throw new InvalidConfigException('无效的微信参数配置。');
         }
 
         $db = \Yii::$app->getDb();
-<<<<<<< HEAD
         $order = $db->createCommand('SELECT [[out_trade_no]], [[trade_state]] FROM {{%wx_order}} WHERE [[id]] = :id', [':id' => (int) $id])->queryOne();
         if ($order) {
             try {
-                $queryOrder = new QueryOrder($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key']);
-                $response = $queryOrder->getTransaction($order['out_trade_no'], true);
+                $application = new Application(Yii::$app->params['wechat']);
+                $response = $application->payment->query($order['out_trade_no']);
                 if ($response !== false) {
                     $response = $response->toArray();
                     if ($response['trade_state'] != $order['trade_state']) {
@@ -149,27 +143,12 @@ class OrdersController extends BaseController
                             'trade_state' => $response['trade_state'],
                             'trade_state_desc' => $response['trade_state_desc'],
                         ], ['id' => (int) $id])->execute();
-=======
-        $outTradeNo = $db->createCommand('SELECT [[out_trade_no]] FROM {{%wx_order}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
-        if ($outTradeNo) {
-            try {
-                $queryOrder = new QueryOrder($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key']);
-                $response = $queryOrder->getTransaction($outTradeNo, true);
-                if ($response !== false) {
-                    $response = $response->toArray();
-                    if ($response['trade_state'] == 'SUCCESS') {
-                        $db->createCommand()->update('{{%wx_order}}', ['transaction_id' => $response['transaction_id'], 'status' => Order::STATUS_NOTIFIED], ['id' => (int) $id])->execute();
->>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
                     }
 
                     $this->layout = '@app/modules/admin/views/layouts/ajax';
 
                     return $this->render('query', [
-<<<<<<< HEAD
                         'outTradeNo' => $order['out_trade_no'],
-=======
-                        'outTradeNo' => $outTradeNo,
->>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
                         'data' => $response,
                     ]);
                 }
@@ -183,9 +162,8 @@ class OrdersController extends BaseController
 
     public function actionRefund($id, $refundFee)
     {
-        $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : [];
-        if (!isset($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key'])) {
-            throw new InvalidConfigException('无效的微信公众号配置。');
+        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
+            throw new InvalidConfigException('无效的微信参数配置。');
         }
 
         $db = \Yii::$app->getDb();
@@ -194,26 +172,27 @@ class OrdersController extends BaseController
             try {
                 $success = false;
                 $errorMessage = null;
-                $business = new Business($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key']);
-                // @see https://stackoverflow.com/questions/24611640/curl-60-ssl-certificate-unable-to-get-local-issuer-certificate
-<<<<<<< HEAD
-                $webrootPath = Yii::getAlias('@webroot');
-                $business->setClientCert($webrootPath . Lookup::getValue('custom.wxapp.cert.cert'));
-                $business->setClientKey($webrootPath . Lookup::getValue('custom.wxapp.cert.key'));
-=======
-                $business->setClientCert(Yii::getAlias('@webroot/certs/apiclient_cert.pem'));
-                $business->setClientKey(Yii::getAlias('@webroot/certs/apiclient_key.pem'));
->>>>>>> e71eb3c985a11be691c8d04c2af1136371cd972c
-
-                $refund = new Refund($business);
                 $outRefundNo = md5(uniqid(microtime()));
                 $refundFee = $refundFee * 100;
-                $refund->out_refund_no = $outRefundNo;
-                $refund->total_fee = $order['total_fee'];
-                $refund->refund_fee = $refundFee;
-                $refund->out_trade_no = $order['out_trade_no'];
-                $refund->refund_account = 'REFUND_SOURCE_RECHARGE_FUNDS';
-                $response = $refund->getResponse();
+                $webrootPath = Yii::getAlias('@webroot');
+                $application = new Application(Yii::$app->params['wechat']);
+                // @see https://stackoverflow.com/questions/24611640/curl-60-ssl-certificate-unable-to-get-local-issuer-certificate
+                $application['config']->set('payment.cert_path', $webrootPath . Lookup::getValue('custom.wxapp.cert.cert'));
+                $application['config']->set('payment.key_path', $webrootPath . Lookup::getValue('custom.wxapp.cert.key'));
+                $response = $application->payment->refund($order['out_trade_no'], $outRefundNo, $order['total_fee'], $refundFee, null, 'out_trade_no', 'REFUND_SOURCE_RECHARGE_FUNDS');
+
+//                $business->setClientCert($webrootPath . Lookup::getValue('custom.wxapp.cert.cert'));
+//                $business->setClientKey($webrootPath . Lookup::getValue('custom.wxapp.cert.key'));
+
+//                $refund = new Refund($business);
+//                $outRefundNo = md5(uniqid(microtime()));
+//                $refundFee = $refundFee * 100;
+//                $refund->out_refund_no = $outRefundNo;
+//                $refund->total_fee = $order['total_fee'];
+//                $refund->refund_fee = $refundFee;
+//                $refund->out_trade_no = $order['out_trade_no'];
+//                $refund->refund_account = 'REFUND_SOURCE_RECHARGE_FUNDS';
+//                $response = $refund->getResponse();
                 if ($response['return_code'] == 'SUCCESS') {
                     if ($response['result_code'] == 'SUCCESS') {
                         $columns = [
@@ -232,7 +211,7 @@ class OrdersController extends BaseController
                             'created_at' => time(),
                             'created_by' => \Yii::$app->getUser()->getId(),
                         ];
-                        $db->createCommand()->insert('{{%wx_order_refund}}', $columns)->execute();
+                        $db->createCommand()->insert('{{%wx_refund_order}}', $columns)->execute();
                         $success = true;
                     } else {
                         $errorMessage = $response['err_code'] . ': ' . $response['err_code_desc'];
