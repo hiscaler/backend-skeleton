@@ -2,6 +2,7 @@
 
 namespace app\modules\api\models;
 
+use app\models\Meta;
 use Yii;
 use yii\web\IdentityInterface;
 
@@ -94,6 +95,9 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'lastLoginIp' => 'last_login_ip',
             'lastLoginTime' => 'last_login_time',
             'status' => 'status',
+            'money' => function () {
+                return Meta::getValue('member', 'money', $this->id);
+            },
             'remark' => 'remark',
             'createdAt' => 'created_at',
             'createdBy' => 'created_by',

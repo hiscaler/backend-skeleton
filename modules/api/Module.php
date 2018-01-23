@@ -41,10 +41,12 @@ class Module extends \yii\base\Module
                         ];
                         $response->statusCode = 200;
                     } else {
-                        $response->data = [
-                            'success' => false,
-                            'error' => $response->data,
-                        ];
+                        if ($response->format != Response::FORMAT_RAW) {
+                            $response->data = [
+                                'success' => false,
+                                'error' => $response->data,
+                            ];
+                        }
                     }
                 },
             ],

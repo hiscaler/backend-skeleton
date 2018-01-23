@@ -2,18 +2,20 @@
 
 namespace app\modules\api\controllers;
 
+use app\models\Lookup;
+use app\models\Meta;
 use app\modules\api\models\Constant;
 use app\modules\api\models\Member;
-use Overtrue\Wechat\Payment;
-use Overtrue\Wechat\Payment\Business;
-use Overtrue\Wechat\Payment\Order;
-use Overtrue\Wechat\Payment\UnifiedOrder;
-use SimpleXMLElement;
+use BadMethodCallException;
+use EasyWeChat\Foundation\Application;
+use yadjet\helpers\TreeFormatHelper;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
 use yii\base\InvalidValueException;
 use yii\helpers\Url;
+use yii\helpers\VarDumper;
+use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -27,6 +29,32 @@ use yii\web\Response;
  */
 class WxappController extends Controller
 {
+
+    /* @var \EasyWeChat\Foundation\Application */
+    private $wechatApplication;
+
+    public function init()
+    {
+        parent::init();
+        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
+            throw new InvalidConfigException('无效的微信参数配置。');
+        }
+
+        $this->wechatApplication = new Application(Yii::$app->params['wechat']);
+    }
+
+    /**
+     * XML to array
+     *
+     * @param $xml
+     * @return mixed
+     */
+    private function _xml2array($xml)
+    {
+        $xml = simplexml_load_string($xml, "SimpleXMLElement", LIBXML_NOCDATA);
+
+        return json_decode(json_encode($xml), true);
+    }
 
     /**
      * 根据小程序提供的 key 获取用户的登录资料
@@ -63,10 +91,10 @@ class WxappController extends Controller
         }
 
         $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : null;
-        if (!is_array($options) || !isset($options['appid']) || !isset($options['secret'])) {
+        if (!is_array($options) || !isset($options['app_id']) || !isset($options['secret'])) {
             throw new InvalidConfigException('无效的微信参数配置（请在 params.php 中配置 wechat 项，并赋予 appid 和 secret 正确值）。');
         }
-        $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$options['appid']}&secret={$options['secret']}&js_code={$code}&grant_type=authorization_code";
+        $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$options['app_id']}&secret={$options['secret']}&js_code={$code}&grant_type=authorization_code";
         $token = file_get_contents($url);
         $token && $token = json_decode($token, true);
         if (empty($token) || isset($token['errcode'])) {
@@ -158,15 +186,17 @@ class WxappController extends Controller
     }
 
     /**
+     * 微信付款
+     *
      * @return array|string
+     * @throws BadRequestHttpException
      * @throws InvalidConfigException
      * @throws \yii\db\Exception
      */
     public function actionPayment()
     {
-        $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : [];
-        if (!isset($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key'])) {
-            throw new InvalidConfigException('无效的微信公众号配置。');
+        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
+            throw new InvalidConfigException('无效的微信参数配置。');
         }
         $request = Yii::$app->getRequest();
         $body = trim($request->post('body', '')) ?: ' ';
@@ -184,41 +214,148 @@ class WxappController extends Controller
         if (!$exist) {
             throw new InvalidParamException("openid $openid 不存在。");
         }
-        $order = new Order();
-        $order->product_id = $request->post('product_id');
-        $order->body = $body;
-        $order->out_trade_no = $outTradeNo;
-        $order->total_fee = $totalFee;
-        $order->openid = $openid;
-        $order->notify_url = Url::toRoute(['wxapp/notify'], true);
 
-        $unifiedOrder = new UnifiedOrder(new Business($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key']), $order);
-        $payment = new Payment($unifiedOrder);
-        $configJssdk = $payment->getConfigJssdk(false);
+        $application = new Application(Yii::$app->params['wechat']);
+        $attributes = [
+            'trade_type' => 'JSAPI',
+            'body' => $body,
+            'out_trade_no' => $outTradeNo,
+            'total_fee' => $totalFee,
+            'openid' => $openid,
+            'notify_url' => Url::toRoute(['wxapp/payment-notify'], true),
+        ];
+        $order = new \EasyWeChat\Payment\Order($attributes);
+        $payment = $application->payment;
+        $response = $payment->prepare($order);
+        if ($response->return_code == 'SUCCESS' && $response->result_code == 'SUCCESS') {
+            $prepayId = $response->prepay_id;
+            $config = $payment->configForJSSDKPayment($prepayId);
 
-        // 创建订单
-        $columns = $order->toArray();
-        unset($columns['notify_url']);
-        $columns['appid'] = $options['appid'];
-        $columns['mch_id'] = $options['mch_id'];
-        $columns['nonce_str'] = $configJssdk['nonceStr'];
-        $columns['sign'] = $configJssdk['paySign'];
-        $columns['sign_type'] = $configJssdk['signType'];
-        $columns['time_start'] = time();
-        $columns['status'] = \app\modules\admin\modules\wxpay\models\Order::STATUS_PENDING;
-        \Yii::$app->getDb()->createCommand()->insert('{{%wx_order}}', $columns)->execute();
+            // 创建商户订单
+            $columns = $attributes;
+            unset($columns['notify_url']);
+            $wechatOptions = Yii::$app->params['wechat'];
+            $columns['appid'] = $wechatOptions['app_id'];
+            $columns['mch_id'] = $wechatOptions['payment']['merchant_id'];
+            $columns['nonce_str'] = $config['nonceStr'];
+            $columns['sign'] = $config['paySign'];
+            $columns['sign_type'] = $config['signType'];
+            $columns['time_start'] = time();
+            $columns['status'] = \app\modules\admin\modules\wxpay\models\Order::STATUS_PENDING;
+            $columns['spbill_create_ip'] = Yii::$app->getRequest()->getUserIP();
+            \Yii::$app->getDb()->createCommand()->insert('{{%wx_order}}', $columns)->execute();
 
-        return $configJssdk;
+            return $config;
+        } else {
+            throw new BadRequestHttpException('支付失败。');
+        }
     }
 
     /**
-     * 支付结果通知
+     * 支付回调通知
      *
-     * @throws \yii\base\ExitException
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws InvalidConfigException
+     * @throws \EasyWeChat\Core\Exceptions\FaultException
+     */
+    public function actionPaymentNotify()
+    {
+        Yii::error('wechat callback');
+        file_put_contents(__DIR__ . '/c.txt', 'd');
+//        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
+//            throw new InvalidConfigException('无效的微信参数配置。');
+//        }
+
+        $response = $this->wechatApplication->payment->handleNotify(function ($notify, $successful) {
+            if ($successful) {
+                $db = \Yii::$app->getDb();
+                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wx_order}} WHERE [[appid]] = :appId AND [[nonce_str]] = :nonceStr AND [[out_trade_no]] = :outTradeNo AND [[openid]] = :openid', [':appId' => $notify['appid'], ':nonceStr' => $notify['nonce_str'], ':outTradeNo' => $notify['out_trade_no'], ':openid' => $notify['openid']])->queryScalar();
+                if ($orderId) {
+                    $columns = [
+                        'transaction_id' => $notify['transaction_id'],
+                        'time_expire' => $notify['time_end'],
+                    ];
+                    if (isset($notify['trade_state'])) {
+                        $columns['trade_state'] = $notify['trade_state'];
+                        $columns['trade_state_desc'] = $notify['trade_state_desc'];
+                    }
+                    $db->createCommand()->update('{{%wx_order}}', $columns, ['id' => $orderId])->execute();
+
+                    return true;
+                } else {
+                    throw new NotFoundHttpException('ORDER NOT FOUND');
+                }
+            } else {
+                return false;
+            }
+        });
+
+        Yii::$app->getResponse()->format = Response::FORMAT_RAW;
+        Yii::$app->getResponse()->content = ($response->getContent());
+        Yii::$app->end();
+    }
+
+    /**
+     * 退款
+     *
+     * @param $outTradeNo
+     * @throws BadRequestHttpException
+     * @throws InvalidConfigException
+     * @throws NotFoundHttpException
      * @throws \yii\db\Exception
      */
-    public function actionNotify()
+    public function actionRefund($outTradeNo)
     {
+        $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : [];
+        if (!isset($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key'])) {
+            throw new InvalidConfigException('无效的微信公众号配置。');
+        }
+
+        $db = \Yii::$app->getDb();
+        $order = $db->createCommand('SELECT * FROM {{%wx_order}} WHERE [[out_trade_no]] = :outTradeNo', [':outTradeNo' => $outTradeNo])->queryOne();
+        if ($order) {
+            if (!in_array($order['status'], [\app\modules\admin\modules\wxpay\models\Order::STATUS_PENDING, \app\modules\admin\modules\wxpay\models\Order::STATUS_CANCEL])) {
+                throw new BadRequestHttpException('该订单不能退款。');
+            } elseif ($order['total']) {
+            }
+        } else {
+            throw new NotFoundHttpException("订单 $outTradeNo 不存在。");
+        }
+    }
+
+    /**
+     * 退款回调通知
+     *
+     * @see https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_16#menu1
+     * @throws \yii\base\ExitException
+     */
+    public function actionRefundNotify()
+    {
+        $response = $this->wechatApplication->payment->handleRefundedNotify(function ($message, $fail) {
+            if ($fail) {
+                $fail('参数格式校验错误');
+            } else {
+                $db = \Yii::$app->getDb();
+                $reqInfo = $this->reqInfo();
+                $outTradeNo = $reqInfo['out_trade_no'];
+                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wx_order}} WHERE [[out_trade_no]] = :outTradeNo', [':outTradeNo' => $outTradeNo])->queryScalar();
+                if ($orderId) {
+                    $columns = [
+                        'refund_id' => $reqInfo['refund_id'],
+                    ];
+                    $db->createCommand()->update('{{%wx_refund_order}}', $columns, ['id' => $orderId])->execute();
+
+                    return true;
+                } else {
+                    throw new NotFoundHttpException("Order not found.");
+                }
+            }
+        });
+
+        Yii::$app->getResponse()->format = Response::FORMAT_RAW;
+        Yii::$app->getResponse()->content = ($response->getContent());
+        Yii::$app->end();
+
         $code = 'FAIL';
         $msg = 'DATA ERROR';
         $returnXml = <<<EOT
@@ -227,43 +364,84 @@ class WxappController extends Controller
   <return_msg><![CDATA[{msg}]]></return_msg>
 </xml>
 EOT;
-        $responseXml = Yii::$app->getRequest()->getRawBody();
+        $xml = <<<EOT
+<xml>
+<return_code>SUCCESS</return_code>
+   <appid><![CDATA[wx2421b1c4370ec43b]]></appid>
+   <mch_id><![CDATA[10000100]]></mch_id>
+   <nonce_str><![CDATA[TeqClE3i0mvn3DrK]]></nonce_str>
+   <req_info><![CDATA[T87GAHG17TGAHG1TGHAHAHA1Y1CIOA9UGJH1GAHV871HAGAGQYQQPOOJMXNBCXBVNMNMAJAA]]></req_info>
+</xml>
+EOT;
+        $xml = Yii::$app->getRequest()->getRawBody();
+        $xml = file_get_contents("php://input");
+        file_put_contents(__DIR__ . '/a.txt', $xml);
+        $responseXml = $this->_xml2array($xml);
         if ($responseXml) {
-            $responseXml = (array) simplexml_load_string($responseXml);
-            $success = false;
-            foreach ($responseXml as $key => &$data) {
-                // @todo 需要处理代金卷
-                if ($data instanceof SimpleXMLElement) {
-                    $data = (string) $data;
-                    if ($key == 'result_code' && $data == 'SUCCESS') {
-                        $code = 'SUCCESS';
-                        $msg = 'OK';
-                        $success = true;
-                    }
-                }
-            }
-            if ($success) {
-                $db = \Yii::$app->getDb();
-                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wx_order}} WHERE [[appid]] = :appId AND [[nonce_str]] = :nonceStr AND [[out_trade_no]] = :outTradeNo AND [[openid]] = :openid', [':appId' => $responseXml['appid'], ':nonceStr' => $responseXml['nonce_str'], ':outTradeNo' => $responseXml['out_trade_no'], ':openid' => $responseXml['openid']])->queryScalar();
-                if ($orderId) {
-                    $columns = [
-                        'transaction_id' => $responseXml['transaction_id'],
-                        'time_expire' => $responseXml['time_end'],
-                    ];
-                    $db->createCommand()->update('{{%wx_order}}', $columns, ['id' => $orderId])->execute();
-                } else {
-                    $msg = 'ORDER NOT FOUND';
+            if ($responseXml['return_code'] == 'SUCCESS') {
+                /**
+                 * 解密步骤如下：
+                 * （1）对加密串A做base64解码，得到加密串B
+                 *（2）对商户key做md5，得到32位小写key* ( key设置路径：微信商户平台(pay.weixin.qq.com)-->账户设置-->API安全-->密钥设置 )
+                 *（3）用key*对加密串B做AES-256-ECB解密（PKCS7Padding）
+                 */
+                $reqInfo = base64_decode($responseXml['req_info']);
+                $key = md5('mF6VNVY7oit9j3SZWIBwMtLihfeRsFRa');
+                $reqInfo = openssl_decrypt($reqInfo, 'aes-256-ecb', $key, OPENSSL_RAW_DATA);
+                if ($reqInfo !== false) {
                 }
             } else {
-                Yii::error('wechat-notfiy');
+                $msg = $responseXml['return_msg'];
             }
         } else {
-            Yii::error('wechat-notfiy');
+            throw new BadMethodCallException('无效的请求。');
         }
-
         Yii::$app->getResponse()->format = Response::FORMAT_RAW;
         echo strtr($returnXml, ['{code}' => $code, '{msg}' => $msg]);
         Yii::$app->end();
+    }
+
+    /**
+     * 微信提现（企业付款）
+     *
+     * @param $openid
+     * @param $amount
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
+     */
+    public function actionTransfer($openid, $amount)
+    {
+        $db = \Yii::$app->getDb();
+        $wechatMember = $db->createCommand('SELECT * FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryOne();
+        if ($wechatMember && $wechatMember['member_id'] == \Yii::$app->getUser()->getId()) {
+            $money = (int) Meta::getValue('member', 'money', $wechatMember['member_id']);
+            if ($money && $money >= $amount) {
+                $artnerTradeNo = md5(uniqid(microtime()));
+                $amount = $amount * 100;
+                $merchantPayData = [
+                    'partner_trade_no' => $artnerTradeNo,
+                    'openid' => $openid,
+                    'check_name' => 'NO_CHECK',
+                    'amount' => $amount,
+                    'desc' => '提现测试',
+                    'spbill_create_ip' => Yii::$app->getRequest()->getUserIP(),
+                ];
+                $webrootPath = Yii::getAlias('@webroot');
+                // @see https://stackoverflow.com/questions/24611640/curl-60-ssl-certificate-unable-to-get-local-issuer-certificate
+                $this->wechatApplication['config']->set('payment.cert_path', $webrootPath . Lookup::getValue('custom.wxapp.cert.cert'));
+                $this->wechatApplication['config']->set('payment.key_path', $webrootPath . Lookup::getValue('custom.wxapp.cert.key'));
+                $merchantPay = $this->wechatApplication->merchant_pay;
+                $response = $merchantPay->send($merchantPayData);
+                VarDumper::dump($response, 111, true);
+                exit;
+                $db->createCommand()->insert('{{%wx_pay_order}}', $columns)->execute();
+            } else {
+                throw new BadRequestHttpException('提现金额不能大于用户的剩余金额。');
+            }
+        } else {
+            throw new NotFoundHttpException('Member is not exists.');
+        }
     }
 
 }
