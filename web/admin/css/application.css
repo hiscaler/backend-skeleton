@@ -664,7 +664,7 @@ ul.list li em {
 }
 
 .control-panel .shortcuts li li {
-    height: 30px;
+    /*height: 30px;*/
     overflow: hidden;
 }
 
@@ -709,6 +709,12 @@ ul.list li em {
 .control-panel .shortcuts li ul li.active a {
     color: #d04437;
     padding-left: 5px;
+}
+
+.control-panel .shortcuts li ul li ul {
+    display: block;
+    border-left: #ccc solid 2px;
+    padding-left: 6px;
 }
 
 /*******************************************************************************

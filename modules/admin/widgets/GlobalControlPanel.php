@@ -61,15 +61,15 @@ class GlobalControlPanel extends Widget
                 'items' => [],
             ];
             foreach ($installedModules as $module) {
+                $t = [
+                    'label' => $module['name'],
+                    'url' => ['/admin/' . $module['alias'] . '/default/index'],
+                    'active' => $moduleId == $module['alias'],
+                ];
                 if (!empty($module['menus']) && ($moduleMenus = json_decode($module['menus'], true))) {
-                    $items['installedModules']['items'] = array_merge($items['installedModules']['items'], $moduleMenus);
-                } else {
-                    $items['installedModules']['items'][] = [
-                        'label' => $module['name'],
-                        'url' => ['/admin/' . $module['alias'] . '/default/index'],
-                        'active' => $moduleId == $module['alias'],
-                    ];
+                    $t['items'] = $moduleMenus;
                 }
+                $items['installedModules']['items'][] = $t;
             }
         }
 
