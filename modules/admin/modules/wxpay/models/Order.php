@@ -22,8 +22,9 @@ use app\models\WechatMember;
  * @property string $fee_type 标价币种
  * @property int $total_fee 标价金额
  * @property string $spbill_create_ip 终端IP
- * @property int $time_start 交易起始时间
- * @property int $time_expire 交易结束时间
+ * @property int $time_start 订单生成时间
+ * @property int $time_expire 订单失效时间
+ * @property int $time_end 订单结束时间
  * @property string $goods_tag 订单优惠标记
  * @property string $trade_type 交易类型
  * @property string $product_id 商品ID
@@ -87,7 +88,7 @@ class Order extends \yii\db\ActiveRecord
         return [
             [['appid', 'mch_id', 'nonce_str', 'sign', 'out_trade_no', 'total_fee', 'spbill_create_ip', 'time_start', 'openid'], 'required'],
             [['detail'], 'string'],
-            [['total_fee', 'time_start', 'time_expire', 'status'], 'integer'],
+            [['total_fee', 'time_start', 'time_expire', 'time_end', 'status'], 'integer'],
             [['appid', 'mch_id', 'device_info', 'nonce_str', 'sign', 'sign_type', 'transaction_id', 'out_trade_no', 'goods_tag', 'product_id', 'limit_pay', 'trade_state_desc'], 'string', 'max' => 32],
             [['body', 'openid'], 'string', 'max' => 128],
             [['attach'], 'string', 'max' => 127],
@@ -117,8 +118,9 @@ class Order extends \yii\db\ActiveRecord
             'fee_type' => '币种',
             'total_fee' => '订单金额',
             'spbill_create_ip' => '终端IP',
-            'time_start' => '交易起始时间',
-            'time_expire' => '交易结束时间',
+            'time_start' => '订单生成时间',
+            'time_expire' => '订单失效时间',
+            'time_end' => '订单结束时间',
             'goods_tag' => '订单优惠标记',
             'trade_type' => '交易类型',
             'product_id' => '商品ID',

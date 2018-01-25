@@ -16,6 +16,12 @@
             "url": [
                 "wxpay/order-refunds/index"
             ]
+        },
+        {
+            "label": "对账单",
+            "url": [
+                "wxpay/bill/index"
+            ]
         }
     ]
 }

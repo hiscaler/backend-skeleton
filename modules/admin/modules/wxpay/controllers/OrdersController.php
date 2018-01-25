@@ -6,6 +6,7 @@ use app\models\Lookup;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\wxpay\models\Order;
 use app\modules\admin\modules\wxpay\models\OrderSearch;
+use DateTime;
 use EasyWeChat\Foundation\Application;
 use Exception;
 use Yii;
@@ -33,7 +34,7 @@ class OrdersController extends BaseController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'update', 'delete', 'query', 'refund'],
+                        'actions' => ['index', 'view', 'update', 'delete', 'query', 'refund', 'refund-query'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -120,6 +121,7 @@ class OrdersController extends BaseController
      *
      * @param $id
      * @return string
+     * @throws InvalidConfigException
      * @throws NotFoundHttpException
      * @throws \yii\db\Exception
      */
@@ -134,24 +136,29 @@ class OrdersController extends BaseController
         if ($order) {
             try {
                 $application = new Application(Yii::$app->params['wechat']);
-                $response = $application->payment->query($order['out_trade_no']);
-                if ($response !== false) {
-                    $response = $response->toArray();
-                    if ($response['trade_state'] != $order['trade_state']) {
-                        $db->createCommand()->update('{{%wx_order}}', [
-                            'transaction_id' => $response['transaction_id'],
-                            'trade_state' => $response['trade_state'],
-                            'trade_state_desc' => $response['trade_state_desc'],
-                        ], ['id' => (int) $id])->execute();
+                $payment = $application->payment;
+                $paymentResponse = $payment->query($order['out_trade_no']);
+                if ($paymentResponse !== false) {
+                    $paymentResponse = $paymentResponse->toArray();
+                    if ($paymentResponse['trade_state'] != $order['trade_state']) {
+                        $columns = ['trade_state' => $paymentResponse['trade_state']];
+                        isset($paymentResponse['trade_state_desc']) && $columns['trade_state_desc'] = $paymentResponse['trade_state_desc'];
+                        isset($paymentResponse['transaction_id']) && $columns['transaction_id'] = $paymentResponse['transaction_id'];
+                        isset($paymentResponse['time_end']) && $columns['time_end'] = (new DateTime($paymentResponse['time_end']))->getTimestamp();
+                        $db->createCommand()->update('{{%wx_order}}', $columns, ['id' => (int) $id])->execute();
                     }
-
-                    $this->layout = '@app/modules/admin/views/layouts/ajax';
-
-                    return $this->render('query', [
-                        'outTradeNo' => $order['out_trade_no'],
-                        'data' => $response,
-                    ]);
                 }
+
+                $refundResponse = $payment->queryRefund($order['out_trade_no'])->toArray();
+
+                $this->layout = '@app/modules/admin/views/layouts/ajax';
+
+                return $this->render('query', [
+                    'outTradeNo' => $order['out_trade_no'],
+                    'payment' => $paymentResponse,
+                    'refund' => $refundResponse,
+
+                ]);
             } catch (Exception $ex) {
                 echo $ex->getMessage();
             }
@@ -160,6 +167,16 @@ class OrdersController extends BaseController
         }
     }
 
+    /**
+     * 订单退款
+     *
+     * @param $id
+     * @param $refundFee
+     * @return Response
+     * @throws InvalidConfigException
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
+     */
     public function actionRefund($id, $refundFee)
     {
         if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
@@ -180,41 +197,36 @@ class OrdersController extends BaseController
                 $application['config']->set('payment.cert_path', $webrootPath . Lookup::getValue('custom.wxapp.cert.cert'));
                 $application['config']->set('payment.key_path', $webrootPath . Lookup::getValue('custom.wxapp.cert.key'));
                 $response = $application->payment->refund($order['out_trade_no'], $outRefundNo, $order['total_fee'], $refundFee, null, 'out_trade_no', 'REFUND_SOURCE_RECHARGE_FUNDS');
-
-//                $business->setClientCert($webrootPath . Lookup::getValue('custom.wxapp.cert.cert'));
-//                $business->setClientKey($webrootPath . Lookup::getValue('custom.wxapp.cert.key'));
-
-//                $refund = new Refund($business);
-//                $outRefundNo = md5(uniqid(microtime()));
-//                $refundFee = $refundFee * 100;
-//                $refund->out_refund_no = $outRefundNo;
-//                $refund->total_fee = $order['total_fee'];
-//                $refund->refund_fee = $refundFee;
-//                $refund->out_trade_no = $order['out_trade_no'];
-//                $refund->refund_account = 'REFUND_SOURCE_RECHARGE_FUNDS';
-//                $response = $refund->getResponse();
                 if ($response['return_code'] == 'SUCCESS') {
                     if ($response['result_code'] == 'SUCCESS') {
-                        $columns = [
-                            'order_id' => $order['id'],
-                            'appid' => $response['appid'],
-                            'mch_id' => $response['mch_id'],
-                            'nonce_str' => $response['nonce_str'],
-                            'sign' => $order['sign'],
-                            'sign_type' => $order['sign_type'],
-                            'transaction_id' => $response['transaction_id'],
-                            'out_trade_no' => $response['out_trade_no'],
-                            'out_refund_no' => $outRefundNo,
-                            'total_fee' => $response['total_fee'],
-                            'refund_fee' => $refundFee,
-                            'refund_account' => 'REFUND_SOURCE_RECHARGE_FUNDS',
-                            'created_at' => time(),
-                            'created_by' => \Yii::$app->getUser()->getId(),
-                        ];
-                        $db->createCommand()->insert('{{%wx_refund_order}}', $columns)->execute();
-                        $success = true;
+                        $transaction = $db->getTransaction();
+                        try {
+                            $columns = [
+                                'order_id' => $order['id'],
+                                'appid' => $response['appid'],
+                                'mch_id' => $response['mch_id'],
+                                'nonce_str' => $response['nonce_str'],
+                                'sign' => $order['sign'],
+                                'sign_type' => $order['sign_type'],
+                                'transaction_id' => $response['transaction_id'],
+                                'out_trade_no' => $response['out_trade_no'],
+                                'out_refund_no' => $outRefundNo,
+                                'total_fee' => $response['total_fee'],
+                                'refund_fee' => $refundFee,
+                                'refund_account' => 'REFUND_SOURCE_RECHARGE_FUNDS',
+                                'created_at' => time(),
+                                'created_by' => \Yii::$app->getUser()->getId(),
+                            ];
+                            $db->createCommand()->insert('{{%wx_refund_order}}', $columns)->execute();
+                            $db->createCommand()->update('{{%wx_order}}', ['trade_state' => Order::TRADE_STATE_REFUND], ['id' => $order['id']])->execute();
+                            $transaction->commit();
+                            $success = true;
+                        } catch (\Exception $ex) {
+                            $transaction->rollBack();
+                            $errorMessage = $ex->getMessage();
+                        }
                     } else {
-                        $errorMessage = $response['err_code'] . ': ' . $response['err_code_desc'];
+                        $errorMessage = $response['err_code'] . ': ' . $response['err_code_des'];
                     }
                 } else {
                     $errorMessage = $response['return_msg'];

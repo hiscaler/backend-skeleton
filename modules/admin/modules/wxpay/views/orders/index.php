@@ -40,7 +40,6 @@ $this->params['menus'] = [
 //            'appid',
 //            'mch_id',
 //            'device_info',
-
             //'sign',
             //'sign_type',
             [
@@ -55,10 +54,10 @@ $this->params['menus'] = [
             'body',
             //'detail:ntext',
             //'attach',
-            [
-                'attribute' => 'fee_type',
-                'contentOptions' => ['style' => 'width: 40px; text-align: center']
-            ],
+//            [
+//                'attribute' => 'fee_type',
+//                'contentOptions' => ['style' => 'width: 40px; text-align: center']
+//            ],
             [
                 'attribute' => 'total_fee',
                 'value' => function ($model) {
@@ -77,17 +76,22 @@ $this->params['menus'] = [
                 },
                 'contentOptions' => ['class' => 'number'],
             ],
-            [
-                'attribute' => 'spbill_create_ip',
-                'contentOptions' => ['class' => 'ip-address']
-            ],
+//            [
+//                'attribute' => 'spbill_create_ip',
+//                'contentOptions' => ['class' => 'ip-address']
+//            ],
             [
                 'attribute' => 'time_start',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime']
             ],
+//            [
+//                'attribute' => 'time_expire',
+//                'format' => 'datetime',
+//                'contentOptions' => ['class' => 'datetime']
+//            ],
             [
-                'attribute' => 'time_expire',
+                'attribute' => 'time_end',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime']
             ],
@@ -109,7 +113,7 @@ $this->params['menus'] = [
                 'template' => '{view} {query} {refund}',
                 'buttons' => [
                     'query' => function ($url, $model, $key) {
-                        return \yii\helpers\Html::a('<span class="glyphicon glyphicon-query"></span>', $url, ['pjax' => 0, 'class' => 'order-query', 'data-key' => $model['id'], 'title' => '微信商户平台订单查询']);
+                        return \yii\helpers\Html::a('<span class="glyphicon glyphicon-query"></span>', $url, ['pjax' => 0, 'class' => 'order-query', 'data-key' => $model['id'], 'data-outTradeNo' => $model['out_trade_no'], 'title' => '微信商户平台订单查询']);
                     },
                     'refund' => function ($url, $model, $key) {
                         return \yii\helpers\Html::a('<span class="glyphicon glyphicon-refund"></span>', $url, ['pjax' => 0, 'class' => 'order-refund', 'data-key' => $model['id'], 'data-total-fee' => $model['total_fee'], 'title' => '退款']);
@@ -130,8 +134,8 @@ $this->params['menus'] = [
             var $t = $(this);
             layer.open({
                 type: 2,
-                title: '订单查询结果',
-                area: ['400px', '150px'],
+                title: '微信商户平台订单 [ ' + $t.attr('data-outTradeNo') + ' ] 查询结果',
+                area: ['800px', '300px'],
                 shade: 0.8,
                 closeBtn: 1,
                 shadeClose: true,

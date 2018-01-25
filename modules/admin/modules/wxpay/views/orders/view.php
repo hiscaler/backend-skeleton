@@ -37,6 +37,7 @@ $this->params['menus'] = [
             'spbill_create_ip',
             'time_start:datetime',
             'time_expire:datetime',
+            'time_end:datetime',
             'goods_tag',
             'trade_type',
             'product_id',
