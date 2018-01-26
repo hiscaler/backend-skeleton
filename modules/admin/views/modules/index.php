@@ -20,7 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="hd">
                             <em><?= $module['name'] ?></em>
                             <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
-                            <span class="buttons"><?= Html::a(Yii::t('module', 'Uninstall'), ['uninstall', 'alias' => $module['alias']], ['class' => 'uninstall', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['install', 'alias' => $module['alias']])]) ?></span>
+                            <span class="buttons">
+                                <?= Html::a(Yii::t('module', 'Uninstall'), ['uninstall', 'alias' => $module['alias']], ['class' => 'uninstall', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['install', 'alias' => $module['alias']])]) ?>
+                                <?= Html::a(Yii::t('module', 'Upgrade'), ['upgrade', 'alias' => $module['alias']], ['class' => 'upgrade', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['upgrade', 'alias' => $module['alias']])]) ?>
+                            </span>
                         </div>
                         <div class="bd">
                             <p class="misc">
@@ -113,6 +116,29 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             });
         }
+
+        // 模块升级
+        $('.upgrade').on('click', function () {
+            var $t = $(this);
+            $.ajax({
+                type: 'POST',
+                url: $t.attr('data-url'),
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    $.fn.lock();
+                },
+                success: function (response) {
+                    if (response.success) {
+                        layer.alert('升级成功。');
+                    } else {
+                        layer.alert(response.error.message);
+                    }
+                    $.fn.unlock();
+                }
+            });
+
+            return false;
+        });
     });
 </script>
 <?php \app\modules\admin\components\JsBlock::end() ?>

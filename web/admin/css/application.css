@@ -1008,7 +1008,8 @@ ul.list li em {
     color: #FFFFEF;
 }
 
-.widget-module .hd span.buttons a.install {
+.widget-module .hd span.buttons a.install,
+.widget-module .hd span.buttons a.upgrade {
     border-color: #00aa00;
     background-color: #00aa00;
 }

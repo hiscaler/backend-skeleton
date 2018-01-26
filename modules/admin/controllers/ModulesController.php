@@ -130,7 +130,7 @@ class ModulesController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'install', 'uninstall'],
+                        'actions' => ['index', 'install', 'uninstall', 'upgrade'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -300,7 +300,7 @@ class ModulesController extends Controller
                         'icon' => $module['icon'],
                         'url' => $module['url'],
                         'description' => $module['description'],
-                        'menus' => $module['menus'] ? json_encode($module['menus']) : null,
+                        'menus' => $module['menus'] ? json_encode($module['menus'], JSON_UNESCAPED_UNICODE + JSON_NUMERIC_CHECK) : null,
                         'enabled' => Constant::BOOLEAN_TRUE,
                         'created_at' => $now,
                         'created_by' => $userId,
@@ -346,6 +346,60 @@ class ModulesController extends Controller
                 $success = true;
             } catch (\Exception $ex) {
                 $errorMessage = $ex->getMessage();
+            }
+        } else {
+            $errorMessage = '该模块不存在。';
+        }
+
+        $responseBody = ['success' => $success];
+        if (!$success) {
+            $responseBody['error']['message'] = $errorMessage;
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseBody,
+        ]);
+    }
+
+    /**
+     * 升级模块
+     *
+     * @todo 数据及文件的处理
+     *
+     * @param $alias
+     * @return Response
+     * @throws \yii\db\Exception
+     */
+    public function actionUpgrade($alias)
+    {
+        $success = false;
+        $errorMessage = null;
+        $db = Yii::$app->getDb();
+        $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
+        if ($moduleId) {
+            $module = isset($this->_localModules[$alias]) ? $this->_localModules[$alias] : null;
+            if ($module === null) {
+                $errorMessage = '安装模块不存在。';
+            } else {
+                try {
+                    $now = time();
+                    $userId = Yii::$app->getUser()->getId();
+                    $db->createCommand()->update('{{%module}}', [
+                        'name' => $module['name'],
+                        'author' => $module['author'],
+                        'version' => $module['version'],
+                        'icon' => $module['icon'],
+                        'url' => $module['url'],
+                        'description' => $module['description'],
+                        'menus' => $module['menus'] ? json_encode($module['menus'], JSON_UNESCAPED_UNICODE + JSON_NUMERIC_CHECK) : null,
+                        'updated_at' => $now,
+                        'updated_by' => $userId,
+                    ], ['id' => $moduleId])->execute();
+                    $success = true;
+                } catch (\Exception $ex) {
+                    $errorMessage = $ex->getMessage();
+                }
             }
         } else {
             $errorMessage = '该模块不存在。';
