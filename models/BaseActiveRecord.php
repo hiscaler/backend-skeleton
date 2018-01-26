@@ -17,6 +17,8 @@ use yii\web\HttpException;
  * @property string $entityNodeIds
  * @property string $entityNodeNames
  * @property integer $isDraft
+ *
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class BaseActiveRecord extends ActiveRecord
 {
@@ -70,59 +72,45 @@ class BaseActiveRecord extends ActiveRecord
             ['isDraft', 'boolean'],
             ['content_image_number', 'safe']
         ];
+
         if ($this->hasAttribute('node_id')) {
             $rules = array_merge($rules, [
                 [['node_id'], 'integer'],
                 [['node_id'], 'default', 'value' => 0],
             ]);
         }
+
         if ($this->hasAttribute('tags')) {
             $rules[] = [['tags'], 'trim'];
             $rules[] = [['tags'], 'string', 'max' => 255];
-            $rules[] = [['tags'], 'normalizeTags'];
+            $rules[] = [['tags'], 'normalizeWords'];
         }
+
         if ($this->hasAttribute('keywords')) {
             $rules[] = [['keywords'], 'trim'];
             $rules[] = [['keywords'], 'string', 'max' => 255];
-            $rules[] = [['keywords'], 'normalizeKeywords'];
+            $rules[] = [['keywords'], 'normalizeWords'];
         }
 
         return $rules;
     }
 
-    private function normalizeWords($value)
-    {
-        if (!empty($value)) {
-            $value = UtilHelper::array2string(array_unique(UtilHelper::string2array(StringHelper::makeSemiangle($value))));
-        }
-
-        return $value;
-    }
-
     /**
-     * Normalizes the user-entered tags.
+     * Normalizes the user-entered Words.
+     *
+     * @param $attribute
+     * @param $params
      */
-    public function normalizeTags($attribute, $params)
+    public function normalizeWords($attribute, $params)
     {
-        if (!empty($this->tags)) {
-            $this->tags = $this->normalizeWords($this->tags);
+        if (!empty($this->$attribute)) {
+            $value = $this->$attribute;
+            if (!empty($value)) {
+                $value = UtilHelper::array2string(array_unique(UtilHelper::string2array(StringHelper::makeSemiangle($value))));
+            }
+            $this->$attribute = $value;
         }
     }
-
-    /**
-     * Normalizes the user-entered keywords.
-     */
-    public function normalizeKeywords($attribute, $params)
-    {
-        if (!empty($this->keywords)) {
-            $this->keywords = $this->normalizeWords($this->keywords);
-        }
-    }
-
-//    public function getNode()
-//    {
-//        return $this->hasOne(Node::className(), ['id' => 'node_id'])->select(['id', 'name']);
-//    }
 
     /**
      * 数据关联的推送位
@@ -135,8 +123,7 @@ class BaseActiveRecord extends ActiveRecord
             ->select(['id', 'name'])
             ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
                 $query->where(['entity_name' => static::className2Id()]);
-            }
-            );
+            });
     }
 
     /**
@@ -238,31 +225,14 @@ class BaseActiveRecord extends ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $userId = \Yii::$app->getUser()->getId() ?: 0;
+            $now = time();
             if ($insert) {
-                $this->created_by = Yii::$app->getUser()->getId() ?: 0;
-                $this->created_at = time();
-                if ($this->hasAttribute('updated_at')) {
-                    $this->updated_by = $this->created_by;
-                    $this->updated_at = $this->created_at;
-                }
-            } else {
-                if ($this->hasAttribute('updated_at')) {
-                    $this->updated_by = $this->updated_by ?: Yii::$app->getUser()->getId();
-                    $this->updated_at = time();
-                }
+                $this->hasAttribute('created_at') && $this->created_at = $now;
+                $this->hasAttribute('created_by') && $this->created_by = $userId;
             }
-            if ($this->hasAttribute('deleted_by') && $this->hasAttribute('deleted_at')) {
-                if ($this->hasAttribute('status')) {
-                    if ($this->status == Option::STATUS_DELETED) {
-                        $this->deleted_by = Yii::$app->getUser()->getId();
-                        $this->deleted_at = time();
-                    } else {
-                        $this->deleted_by = $this->deleted_at = null;
-                    }
-                } else {
-                    $this->deleted_by = $this->deleted_at = null;
-                }
-            }
+            $this->hasAttribute('updated_at') && $this->updated_at = $now;
+            $this->hasAttribute('updated_by') && $this->updated_by = $userId;
 
             return true;
         } else {
@@ -273,24 +243,6 @@ class BaseActiveRecord extends ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        // Node Id
-        if ($this->hasAttribute('node_id')) {
-            if ($insert) {
-                if ($this->node_id) {
-                    Node::updateAllCounters(['direct_data_count' => 1], 'id = :id', ['id' => (int) $this->node_id]);
-                }
-            } else {
-                if ($this->node_id != $this->_oldNodeId) {
-                    if ($this->node_id) {
-                        Node::updateAllCounters(['direct_data_count' => 1], 'id = :id', ['id' => (int) $this->node_id]);
-                    }
-                    if ($this->_oldNodeId) {
-                        Node::updateAllCounters(['direct_data_count' => -1], 'id = :id', ['id' => (int) $this->_oldNodeId]);
-                    }
-                }
-            }
-        }
-
         // Entity attributes
         $entityAttributes = $this->entityAttributes;
         if (!is_array($this->_oldEntityAttributes)) {
@@ -344,24 +296,14 @@ class BaseActiveRecord extends ActiveRecord
     {
         parent::afterDelete();
         // Delete attribute relation data and update attribute frequency value
-        $labels = Yii::$app->getDb()->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[entity_name]] = :entityName')->bindValues([
+        $db = Yii::$app->getDb();
+        $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[entity_name]] = :entityName', [
             ':entityId' => $this->id,
             ':entityName' => static::className2Id()
         ])->queryAll();
         if ($labels) {
-            Yii::$app->getDb()->createCommand('DELETE FROM {{%entity_label}} WHERE [[id]] IN (' . implode(', ', ArrayHelper::getColumn($labels, 'id')) . ')')->execute();
+            $db->createCommand('DELETE FROM {{%entity_label}} WHERE [[id]] IN (' . implode(', ', ArrayHelper::getColumn($labels, 'id')) . ')')->execute();
             Label::updateAll(['frequency' => -1], ['id' => ArrayHelper::getColumn($labels, 'label_id')]);
-        }
-
-        // Update node staticstic data
-        if ($this->hasAttribute('node_id')) {
-            if ($this->node_id) {
-                Node::updateAllCounters(['direct_data_count' => -1], 'id = :id', ['id' => (int) $this->node_id]);
-            }
-            $entityNodeIds = !empty($this->entityNodeIds) ? explode(',', $this->entityNodeIds) : [];
-            if ($entityNodeIds) {
-                Node::updateAllCounters(['relation_data_count' => -1], ['id' => $entityNodeIds]);
-            }
         }
     }
 
