@@ -58,8 +58,8 @@ class ModulesController extends Controller
                     'depends' => []
                 ];
                 if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'conf.json')) {
-                    $readme = file_get_contents($fullDirectory . DIRECTORY_SEPARATOR . 'conf.json');
-                    if ($readme !== false && ($configs = json_decode($readme, true)) !== false) {
+                    $rawConfig = file_get_contents($fullDirectory . DIRECTORY_SEPARATOR . 'conf.json');
+                    if ($rawConfig !== false && ($configs = json_decode($rawConfig, true)) !== false) {
                         $requireItems = ['name', 'author', 'version'];
                         foreach ($requireItems as $item) {
                             if (!isset($configs[$item]) || empty($configs[$item])) {
@@ -383,8 +383,6 @@ class ModulesController extends Controller
                 $errorMessage = '安装模块不存在。';
             } else {
                 try {
-                    $now = time();
-                    $userId = Yii::$app->getUser()->getId();
                     $db->createCommand()->update('{{%module}}', [
                         'name' => $module['name'],
                         'author' => $module['author'],
@@ -393,8 +391,8 @@ class ModulesController extends Controller
                         'url' => $module['url'],
                         'description' => $module['description'],
                         'menus' => $module['menus'] ? json_encode($module['menus'], JSON_UNESCAPED_UNICODE + JSON_NUMERIC_CHECK) : null,
-                        'updated_at' => $now,
-                        'updated_by' => $userId,
+                        'updated_at' => time(),
+                        'updated_by' => Yii::$app->getUser()->getId(),
                     ], ['id' => $moduleId])->execute();
                     $success = true;
                 } catch (\Exception $ex) {

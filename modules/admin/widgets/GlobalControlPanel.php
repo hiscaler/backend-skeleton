@@ -56,20 +56,17 @@ class GlobalControlPanel extends Widget
         // 启用的模块
         $installedModules = Module::getInstalledModules();
         if ($installedModules) {
-            $items['installedModules'] = [
-                'label' => '模块管理',
-                'items' => [],
-            ];
             foreach ($installedModules as $module) {
                 $t = [
                     'label' => $module['name'],
                     'url' => ['/admin/' . $module['alias'] . '/default/index'],
+                    'template' => '<a id="control-panel-module-' . $module['alias'] . '" href="{url}">{label}</a>',
                     'active' => $moduleId == $module['alias'],
                 ];
                 if (!empty($module['menus']) && ($moduleMenus = json_decode($module['menus'], true))) {
                     $t['items'] = $moduleMenus;
                 }
-                $items['installedModules']['items'][] = $t;
+                $items[] = $t;
             }
         }
 

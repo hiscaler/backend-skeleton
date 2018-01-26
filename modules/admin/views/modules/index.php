@@ -108,7 +108,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             .addClass(isInstall ? 'uninstall' : 'install');
                         var $tmp = $obj.clone(true, true);
                         $obj.remove();
-                        $(isInstall ? '#panel-installed ul' : '#panel-notinstalled ul').append($tmp);
+                        if (isInstall) {
+                            $('#panel-installed ul').append($tmp);
+                        } else {
+                            $('#panel-notinstalled ul').append($tmp);
+                            $('#control-panel-module-' + $t.attr('data-key')).parent().remove();
+                        }
                     } else {
                         layer.alert(response.error.message);
                     }

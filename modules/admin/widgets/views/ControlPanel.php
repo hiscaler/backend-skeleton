@@ -1,9 +1,8 @@
 <div class="control-panel">
     <div class="inner">
-        <div class="title shortcut">MTS</div>
+        <div class="title shortcut">E2</div>
         <div class="shortcuts">
-            <?php
-            echo yii\widgets\Menu::widget([
+            <?= yii\widgets\Menu::widget([
                 'items' => $items,
                 'itemOptions' => ['class' => 'clearfix'],
                 'firstItemCssClass' => 'first',
