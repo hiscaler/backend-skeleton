@@ -6,13 +6,12 @@ use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\wxpay\forms\BillDownload;
 use EasyWeChat\Foundation\Application;
 use Yii;
-use yii\helpers\VarDumper;
 
 /**
  * 对账单管理
  *
  * @package app\modules\admin\modules\wxpay\controllers
- * @author hiscaler <hsicaler@gmail.com>
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class BillController extends BaseController
 {
