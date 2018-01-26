@@ -7,12 +7,7 @@ return [
         'admin@example.com' => 'you name',
     ],
     // 微信公众号设置
-    'wechat' => [
-        'appid' => '',
-        'secret' => '',
-        'mch_id' => '',
-        'mch_key' => '',
-    ],
+    'wechat' => require(__DIR__ . '/wechat.php'),
     'modules' => [
         /**
         'app-models-Article' => [
