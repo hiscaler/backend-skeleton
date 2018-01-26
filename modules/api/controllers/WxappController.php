@@ -241,9 +241,9 @@ class WxappController extends Controller
             $columns['sign'] = $config['paySign'];
             $columns['sign_type'] = $config['signType'];
             $columns['time_start'] = time();
-            $columns['status'] = \app\modules\admin\modules\wxpay\models\Order::STATUS_PENDING;
+            $columns['status'] = \app\modules\admin\modules\wechat\models\Order::STATUS_PENDING;
             $columns['spbill_create_ip'] = Yii::$app->getRequest()->getUserIP();
-            \Yii::$app->getDb()->createCommand()->insert('{{%wx_order}}', $columns)->execute();
+            \Yii::$app->getDb()->createCommand()->insert('{{%wechat_order}}', $columns)->execute();
 
             return $config;
         } else {
@@ -269,7 +269,7 @@ class WxappController extends Controller
         $response = $this->wechatApplication->payment->handleNotify(function ($notify, $successful) {
             if ($successful) {
                 $db = \Yii::$app->getDb();
-                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wx_order}} WHERE [[appid]] = :appId AND [[nonce_str]] = :nonceStr AND [[out_trade_no]] = :outTradeNo AND [[openid]] = :openid', [':appId' => $notify['appid'], ':nonceStr' => $notify['nonce_str'], ':outTradeNo' => $notify['out_trade_no'], ':openid' => $notify['openid']])->queryScalar();
+                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wechat_order}} WHERE [[appid]] = :appId AND [[nonce_str]] = :nonceStr AND [[out_trade_no]] = :outTradeNo AND [[openid]] = :openid', [':appId' => $notify['appid'], ':nonceStr' => $notify['nonce_str'], ':outTradeNo' => $notify['out_trade_no'], ':openid' => $notify['openid']])->queryScalar();
                 if ($orderId) {
                     $columns = [
                         'transaction_id' => $notify['transaction_id'],
@@ -279,7 +279,7 @@ class WxappController extends Controller
                         $columns['trade_state'] = $notify['trade_state'];
                         $columns['trade_state_desc'] = $notify['trade_state_desc'];
                     }
-                    $db->createCommand()->update('{{%wx_order}}', $columns, ['id' => $orderId])->execute();
+                    $db->createCommand()->update('{{%wechat_order}}', $columns, ['id' => $orderId])->execute();
 
                     return true;
                 } else {
@@ -312,9 +312,9 @@ class WxappController extends Controller
         }
 
         $db = \Yii::$app->getDb();
-        $order = $db->createCommand('SELECT * FROM {{%wx_order}} WHERE [[out_trade_no]] = :outTradeNo', [':outTradeNo' => $outTradeNo])->queryOne();
+        $order = $db->createCommand('SELECT * FROM {{%wechat_order}} WHERE [[out_trade_no]] = :outTradeNo', [':outTradeNo' => $outTradeNo])->queryOne();
         if ($order) {
-            if (!in_array($order['status'], [\app\modules\admin\modules\wxpay\models\Order::STATUS_PENDING, \app\modules\admin\modules\wxpay\models\Order::STATUS_CANCEL])) {
+            if (!in_array($order['status'], [\app\modules\admin\modules\wechat\models\Order::STATUS_PENDING, \app\modules\admin\modules\wechat\models\Order::STATUS_CANCEL])) {
                 throw new BadRequestHttpException('该订单不能退款。');
             } elseif ($order['total']) {
             }
@@ -338,12 +338,12 @@ class WxappController extends Controller
                 $db = \Yii::$app->getDb();
                 $reqInfo = $this->reqInfo();
                 $outTradeNo = $reqInfo['out_trade_no'];
-                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wx_order}} WHERE [[out_trade_no]] = :outTradeNo', [':outTradeNo' => $outTradeNo])->queryScalar();
+                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wechat_order}} WHERE [[out_trade_no]] = :outTradeNo', [':outTradeNo' => $outTradeNo])->queryScalar();
                 if ($orderId) {
                     $columns = [
                         'refund_id' => $reqInfo['refund_id'],
                     ];
-                    $db->createCommand()->update('{{%wx_refund_order}}', $columns, ['id' => $orderId])->execute();
+                    $db->createCommand()->update('{{%wechat_refund_order}}', $columns, ['id' => $orderId])->execute();
 
                     return true;
                 } else {
@@ -435,7 +435,7 @@ EOT;
                 $response = $merchantPay->send($merchantPayData);
                 VarDumper::dump($response, 111, true);
                 exit;
-                $db->createCommand()->insert('{{%wx_pay_order}}', $columns)->execute();
+                $db->createCommand()->insert('{{%wechat_pay_order}}', $columns)->execute();
             } else {
                 throw new BadRequestHttpException('提现金额不能大于用户的剩余金额。');
             }

@@ -1,0 +1,27 @@
+{
+    "name": "微信管理",
+    "author": "hiscaler",
+    "version": "0.0.1",
+    "description": "微信管理",
+    "url": "https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1",
+    "menus": [
+        {
+            "label": "订单管理",
+            "url": [
+                "wechat/orders/index"
+            ]
+        },
+        {
+            "label": "退款管理",
+            "url": [
+                "wechat/refund-orders/index"
+            ]
+        },
+        {
+            "label": "对账单",
+            "url": [
+                "wechat/bill/index"
+            ]
+        }
+    ]
+}
