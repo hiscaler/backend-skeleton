@@ -129,7 +129,7 @@ class FileUploadConfig extends BaseActiveRecord
      *
      * @return array
      */
-    public static function defaultConfig()
+    private static function defaultConfig()
     {
         return [
             'extensions' => null,
@@ -239,7 +239,7 @@ class FileUploadConfig extends BaseActiveRecord
         $options = [];
         $db = Yii::$app->getDb();
         $tablePrefix = $db->tablePrefix;
-        $tableSchemas = $db->schema->tableSchemas;
+        $tableSchemas = $db->getSchema()->getTableSchemas();
         $modules = [];
         $modulesRawData = isset(Yii::$app->params['modules']) ? Yii::$app->params['modules'] : [];
         foreach ($modulesRawData as $ms) {
@@ -250,11 +250,14 @@ class FileUploadConfig extends BaseActiveRecord
             $modelName = Inflector::id2camel(str_replace($tablePrefix, '', $tableSchema->name), '_');
             $modelName = 'app-models-' . $modelName;
             if (isset($modules[$modelName])) {
-                $attributeLabels = Yii::createObject(BaseActiveRecord::id2ClassName($modelName))->attributeLabels();
-                foreach ($rawColumns as $name => $column) {
-                    if ($column->type === 'string' && strpos($name, '_path') !== false) {
-                        $options[$modelName . ':' . $name] = '「' . Yii::t('app', $modules[$modelName]['label']) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name);
+                try {
+                    $attributeLabels = Yii::createObject(BaseActiveRecord::id2ClassName($modelName))->attributeLabels();
+                    foreach ($rawColumns as $name => $column) {
+                        if ($column->type === 'string' && strpos($name, '_path') !== false) {
+                            $options[$modelName . ':' . $name] = '「' . Yii::t('app', $modules[$modelName]['label']) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name);
+                        }
                     }
+                } catch (\Exception $ex) {
                 }
             }
         }
