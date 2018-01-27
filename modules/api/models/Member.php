@@ -95,21 +95,14 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'lastLoginIp' => 'last_login_ip',
             'lastLoginTime' => 'last_login_time',
             'status' => 'status',
+            'money' => function () {
+                return Meta::getValue('member', 'money', $this->id);
+            },
             'remark' => 'remark',
             'createdAt' => 'created_at',
             'createdBy' => 'created_by',
             'updatedAt' => 'updated_at',
             'updatedBy' => 'updated_by',
-            'metas' => function () {
-                $metas = [];
-                $objectName = strtr(static::tableName(), ['{{%' => '', '}}' => '']);
-                $items = \Yii::$app->getDb()->createCommand('SELECT [[m.key]], [[t.value]] FROM {{%meta_value}} t LEFT JOIN {{%meta}} m ON [[t.meta_id]] = [[m.id]] WHERE [[t.object_id]] = :objectId AND [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName)', [':objectId' => $this->id, ':objectName' => $objectName])->queryAll();
-                foreach ($items as $item) {
-                    $metas[$item['key']] = $item['value'];
-                }
-
-                return $metas;
-            }
         ];
     }
 

@@ -3,7 +3,6 @@
 namespace app\modules\admin\modules\wechat\controllers;
 
 use app\models\Lookup;
-use app\models\Option;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\wechat\models\Order;
 use app\modules\admin\modules\wechat\models\OrderSearch;
@@ -14,7 +13,6 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -59,8 +57,6 @@ class OrdersController extends BaseController
      */
     public function actionIndex()
     {
-//        $a = Option::models();
-//        VarDumper::dump($a, 111, true);exit;
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
