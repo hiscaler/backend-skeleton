@@ -120,7 +120,7 @@ class Option
                 $moduleName = strtolower($moduleName);
                 $modelName = Inflector::id2camel($modelName, '_');
                 if ($moduleName !== false && file_exists($path . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $modelName . '.php')) {
-                    $models[$table] = "app\\modules\\$moduleName\\models\\$modelName";
+                    $models[$table] = "app\\modules\\admin\\modules\\$moduleName\\models\\$modelName";
                 }
             }
         }
