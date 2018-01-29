@@ -126,7 +126,7 @@ class Option
                 $modelName = Inflector::id2camel($modelName, '_');
                 if ($moduleName !== false && file_exists($path . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $modelName . '.php')) {
                     if ($namespace) {
-                        $models[$table] = "app\\modules\\$moduleName\\models\\$modelName";
+                        $models[$table] = "app\\modules\\admin\\modules\\$moduleName\\models\\$modelName";
                     } else {
                         $models[$table] = "$moduleName: " . Yii::t("$moduleName.model", Inflector::camel2words($modelName));
                     }
