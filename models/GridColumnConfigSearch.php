@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\models\GridColumnConfig;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 

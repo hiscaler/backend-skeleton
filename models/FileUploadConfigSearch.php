@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\models\FileUploadConfig;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
