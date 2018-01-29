@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\models\Category;
 use yadjet\helpers\ArrayHelper;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;

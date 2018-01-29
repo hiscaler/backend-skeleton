@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use yadjet\behaviors\FileUploadBehavior;
 use yadjet\helpers\TreeFormatHelper;
 use Yii;
 use yii\helpers\Inflector;
@@ -29,6 +30,14 @@ use yii\helpers\Inflector;
 class Category extends BaseActiveRecord
 {
 
+    private $_fileUploadConfig;
+
+    public function init()
+    {
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::className2Id(), 'icon_path');
+        parent::init();
+    }
+
     /**
      * @inheritdoc
      */
@@ -53,9 +62,24 @@ class Category extends BaseActiveRecord
             [['alias'], 'string', 'max' => 120],
             ['alias', 'match', 'pattern' => '/^[a-z]+[a-z-\/]+[a-z]$/'],
             [['name'], 'string', 'max' => 30],
-            [['parent_ids', 'icon_path'], 'string', 'max' => 100],
+            [['parent_ids'], 'string', 'max' => 100],
             [['parent_names'], 'string', 'max' => 255],
             ['alias', 'unique', 'targetAttribute' => ['alias']],
+            ['icon_path', 'file',
+                'extensions' => $this->_fileUploadConfig['extensions'],
+                'minSize' => $this->_fileUploadConfig['size']['min'],
+                'maxSize' => $this->_fileUploadConfig['size']['max'],
+            ],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => FileUploadBehavior::className(),
+                'attribute' => 'icon_path'
+            ],
         ];
     }
 

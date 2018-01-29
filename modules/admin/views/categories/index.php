@@ -45,6 +45,12 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 },
             ],
             [
+                'header' => Yii::t('category', 'Icon'),
+                'attribute' => 'icon_path',
+                'format' => 'image',
+                'contentOptions' => ['class' => 'icon-img']
+            ],
+            [
                 'attribute' => 'description',
                 'header' => Yii::t('category', 'Description'),
                 'format' => 'ntext',
