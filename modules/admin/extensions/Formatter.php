@@ -134,14 +134,11 @@ class Formatter extends \yii\i18n\Formatter
         if ($value === null) {
             return $this->nullDisplay;
         }
-        $modules = isset(Yii::$app->params['modules']) ? Yii::$app->params['modules'] : [];
-        foreach ($modules as $ms) {
-            foreach ($ms as $key => $item) {
-                if ($value == $key) {
-                    $value = Yii::t('app', $item['label']);
-                    break;
-                }
-            }
+        if (($index = stripos($value, "app\models")) !== false) {
+            $value = Yii::t('model', substr($value, 11));
+        } else {
+            list($moduleName, $modelName) = explode('\models\\', substr($value, 26));
+            $value = Yii::t("$moduleName.model", $modelName);
         }
 
         return $value;

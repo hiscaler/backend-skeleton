@@ -49,10 +49,9 @@ class FileUploadConfig extends BaseActiveRecord
     {
         return array_merge(parent::rules(), [
             [['type', 'model_attribute', 'extensions', 'min_size', 'max_size'], 'required'],
-            ['model_name', 'match', 'pattern' => '/^[a-zA-Z-]+$/'],
+            ['model_name', 'match', 'pattern' => '/^[a-zA-Z\\\]+$/'],
             ['extensions', 'match', 'pattern' => '/^[a-z0-9,]+$/'],
             ['attribute', 'match', 'pattern' => '/^[a-zA-Z0-9_]+$/'],
-            ['attribute', 'checkAttribute'],
             [['model_name', 'attribute'], 'unique', 'targetAttribute' => ['model_name', 'attribute']],
             [['type', 'min_size', 'max_size', 'thumb_width', 'thumb_height', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             ['min_size', 'default', 'value' => 100],
@@ -68,30 +67,6 @@ class FileUploadConfig extends BaseActiveRecord
         if (!$this->hasErrors()) {
             if ($this->max_size < $this->min_size) {
                 $this->addError('max_size', '文件最大值不能小于最小值。');
-            }
-        }
-    }
-
-    /**
-     * @deprecated since version 1.0
-     * Check attribute value is exists in db table columns, and must is `string` type.
-     * @param string $attribute
-     * @param array $params
-     */
-    public function checkAttribute($attribute, $params)
-    {
-        if (!empty($this->model_name) && !empty($this->attribute)) {
-            $tableName = Yad::modelName2TableName(self::id2ClassName($this->model_name));
-            if ($tableName) {
-                $allTableNames = Yii::$app->getDb()->getSchema()->getTableNames('', true);
-                if (in_array($tableName, $allTableNames)) {
-                    $columns = Yii::$app->getDb()->getTableSchema($tableName)->columns;
-                    if (!isset($columns[$this->attribute]) || $columns[$this->attribute]->type !== 'string') {
-                        $this->addError($attribute, '{value} 在数据库（' . $tableName . '）中不存在或者字段为非字符型，禁止添加。');
-                    }
-                } else {
-                    $this->addError($attribute, '数据库表（' . $tableName . '）不存在。');
-                }
             }
         }
     }
@@ -240,9 +215,8 @@ class FileUploadConfig extends BaseActiveRecord
         $options = [];
         $db = Yii::$app->getDb();
         $tablePrefix = $db->tablePrefix;
-        $tableSchemas = $db->getSchema()->getTableSchemas();
         $coreTables = ['category', 'entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'member', 'meta', 'meta_validator', 'meta_value', 'migration', 'module', 'user', 'user_auth_category', 'user_credit_log', 'user_group', 'user_login_log', 'wechat_member'];
-        foreach ($tableSchemas as $tableSchema) {
+        foreach ($db->getSchema()->getTableSchemas() as $tableSchema) {
             $tableName = str_replace($tablePrefix, '', $tableSchema->name);
             if ($tableName == 'migration') {
                 continue;
@@ -269,14 +243,7 @@ class FileUploadConfig extends BaseActiveRecord
                 $attributeLabels = Yii::createObject($modelNamespace)->attributeLabels();
                 foreach ($tableSchema->columns as $name => $column) {
                     if ($column->type === 'string' && (in_array($name, ['avatar', 'icon', 'picture', 'pic', 'image', 'img']) || strpos($name, '_path') !== false)) {
-                        $label = '「';
-                        if ($isCore) {
-                            $label .= Yii::t('model', Inflector::camel2words($modelName));
-                        } else {
-                            $label .= Yii::t("$moduleName.model", Inflector::camel2words($modelName));
-                        }
-                        $label .= '」';
-                        $options[$modelName . ':' . $name] = $label . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
+                        $options[$modelNamespace . ':' . $name] = '「' . Yii::t($isCore ? 'model' : "$moduleName.model", Inflector::camel2words($modelName)) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
                     }
                 }
             } catch (\Exception $ex) {
