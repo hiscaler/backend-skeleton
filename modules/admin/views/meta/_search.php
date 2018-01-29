@@ -17,8 +17,7 @@ use yii\widgets\ActiveForm;
         ]);
         ?>
         <div class="entry">
-            <?= $form->field($model, 'object_name')->dropDownList(app\models\Meta::getObjectNames(), ['prompt' => '']) ?>
-
+            <?= $form->field($model, 'object_name')->dropDownList(app\models\Option::models(), ['prompt' => '']) ?>
 
             <?= $form->field($model, 'key') ?>
         </div>

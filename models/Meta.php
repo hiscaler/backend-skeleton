@@ -154,40 +154,6 @@ class Meta extends \yii\db\ActiveRecord
     }
 
     /**
-     * 对象集合
-     *
-     * @return array
-     */
-    public static function getObjectNames()
-    {
-        $names = [];
-        $db = Yii::$app->getDb();
-        $tables = array_map(function ($v) use ($db) {
-            return str_replace($db->tablePrefix, '', $v);
-        }, $db->getSchema()->getTableNames());
-
-        $files = \yii\helpers\FileHelper::findFiles(\Yii::getAlias('@app/models'));
-        foreach ($files as $file) {
-            $name = basename($file, '.php');
-            if (substr($name, -6) != 'Search') {
-                try {
-                    $class = new \ReflectionClass("\\app\\models\\{$name}");
-                    if ($class->hasMethod('tableName')) {
-                        $instance = $class->newInstanceWithoutConstructor();
-                        $tableName = strtr($instance->tableName(), ['{' => '', '}' => '', '%' => '']);
-                        if ($instance instanceof \yii\db\ActiveRecord && in_array($tableName, $tables)) {
-                            $names[$tableName] = Yii::t('model', \yii\helpers\Inflector::camel2words($name)) . " [ $tableName ]";
-                        }
-                    }
-                } catch (Exception $exc) {
-                }
-            }
-        }
-
-        return $names;
-    }
-
-    /**
      * 格式化之后的对对象名称
      *
      * @return string
