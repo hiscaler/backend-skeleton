@@ -233,6 +233,7 @@ class FileUploadConfig extends BaseActiveRecord
      * 获取可设置上传设定的模型和字段属性名称列表
      *
      * @return array
+     * @throws \yii\base\NotSupportedException
      */
     public static function modelAttributeOptions()
     {
@@ -240,25 +241,45 @@ class FileUploadConfig extends BaseActiveRecord
         $db = Yii::$app->getDb();
         $tablePrefix = $db->tablePrefix;
         $tableSchemas = $db->getSchema()->getTableSchemas();
-        $modules = [];
-        $modulesRawData = isset(Yii::$app->params['modules']) ? Yii::$app->params['modules'] : [];
-        foreach ($modulesRawData as $ms) {
-            $modules = array_merge($modules, $ms);
-        }
+        $coreTables = ['category', 'entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'member', 'meta', 'meta_validator', 'meta_value', 'migration', 'module', 'user', 'user_auth_category', 'user_credit_log', 'user_group', 'user_login_log', 'wechat_member'];
         foreach ($tableSchemas as $tableSchema) {
-            $rawColumns = $tableSchema->columns;
-            $modelName = Inflector::id2camel(str_replace($tablePrefix, '', $tableSchema->name), '_');
-            $modelName = 'app-models-' . $modelName;
-            if (isset($modules[$modelName])) {
-                try {
-                    $attributeLabels = Yii::createObject(BaseActiveRecord::id2ClassName($modelName))->attributeLabels();
-                    foreach ($rawColumns as $name => $column) {
-                        if ($column->type === 'string' && strpos($name, '_path') !== false) {
-                            $options[$modelName . ':' . $name] = '「' . Yii::t('app', $modules[$modelName]['label']) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name);
-                        }
-                    }
-                } catch (\Exception $ex) {
+            $tableName = str_replace($tablePrefix, '', $tableSchema->name);
+            if ($tableName == 'migration') {
+                continue;
+            }
+            $modelName = Inflector::id2camel($tableName, '_');
+            $moduleName = null;
+            if (in_array($tableName, $coreTables)) {
+                $isCore = true;
+                $modelNamespace = "app\\models\\$modelName";
+            } else {
+                $isCore = false;
+                $index = stripos($tableName, '_');
+                if ($index === false) {
+                    $moduleName = $modelName = $tableName;
+                } else {
+                    $moduleName = substr($tableName, 0, $index);
+                    $modelName = substr($tableName, $index + 1);
                 }
+                $moduleName = strtolower($moduleName);
+                $modelName = Inflector::id2camel($modelName, '_');
+                $modelNamespace = "app\\modules\\admin\\modules\\$moduleName\\models\\$modelName";
+            }
+            try {
+                $attributeLabels = Yii::createObject($modelNamespace)->attributeLabels();
+                foreach ($tableSchema->columns as $name => $column) {
+                    if ($column->type === 'string' && (in_array($name, ['avatar', 'icon', 'picture', 'pic', 'image', 'img']) || strpos($name, '_path') !== false)) {
+                        $label = '「';
+                        if ($isCore) {
+                            $label .= Yii::t('model', Inflector::camel2words($modelName));
+                        } else {
+                            $label .= Yii::t("$moduleName.model", Inflector::camel2words($modelName));
+                        }
+                        $label .= '」';
+                        $options[$modelName . ':' . $name] = $label . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
+                    }
+                }
+            } catch (\Exception $ex) {
             }
         }
 
