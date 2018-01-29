@@ -110,7 +110,7 @@ class Option
             $modelName = Inflector::id2camel($table, '_');
             if (in_array($table, $coreTables) && file_exists($path . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $modelName . '.php')) {
                 if ($namespace) {
-                    $models[$table] = "app\\model\\$modelName";
+                    $models[$table] = "app\\models\\$modelName";
                 } else {
                     $models[$table] = Yii::t('model', Inflector::camel2words($modelName));
                 }
