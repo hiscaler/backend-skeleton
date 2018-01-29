@@ -92,10 +92,11 @@ class Option
     /**
      * 获取所有数据模型
      *
+     * @param bool $namespace value 值是否为模型的命名空间地址
      * @return array
      * @throws \yii\base\NotSupportedException
      */
-    public static function models()
+    public static function models($namespace = false)
     {
         $models = [];
         $tablePrefix = \Yii::$app->getDb()->tablePrefix;
@@ -108,7 +109,11 @@ class Option
             }
             $modelName = Inflector::id2camel($table, '_');
             if (in_array($table, $coreTables) && file_exists($path . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $modelName . '.php')) {
-                $models[$table] = "app\\model\\$modelName";
+                if ($namespace) {
+                    $models[$table] = "app\\model\\$modelName";
+                } else {
+                    $models[$table] = Yii::t('model', Inflector::camel2words($modelName));
+                }
             } else {
                 $index = stripos($table, '_');
                 if ($index === false) {
@@ -120,7 +125,11 @@ class Option
                 $moduleName = strtolower($moduleName);
                 $modelName = Inflector::id2camel($modelName, '_');
                 if ($moduleName !== false && file_exists($path . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $modelName . '.php')) {
-                    $models[$table] = "app\\modules\\admin\\modules\\$moduleName\\models\\$modelName";
+                    if ($namespace) {
+                        $models[$table] = "app\\modules\\$moduleName\\models\\$modelName";
+                    } else {
+                        $models[$table] = "$moduleName: " . Yii::t("$moduleName.model", Inflector::camel2words($modelName));
+                    }
                 }
             }
         }
