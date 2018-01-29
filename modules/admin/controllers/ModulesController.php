@@ -394,6 +394,13 @@ class ModulesController extends Controller
                         'updated_at' => time(),
                         'updated_by' => Yii::$app->getUser()->getId(),
                     ], ['id' => $moduleId])->execute();
+
+                    // 更新翻译文本
+                    $messagePath = Yii::getAlias('@app/modules/admin/modules/' . $alias . '/messages');
+                    if (file_exists($messagePath)) {
+                        FileHelper::copyDirectory($messagePath, Yii::getAlias('@app/messages'));
+                    }
+
                     $success = true;
                 } catch (\Exception $ex) {
                     $errorMessage = $ex->getMessage();
