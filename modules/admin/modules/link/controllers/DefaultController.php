@@ -3,15 +3,16 @@
 namespace app\modules\admin\modules\link\controllers;
 
 use app\modules\admin\extensions\BaseController;
+use app\modules\admin\modules\link\models\Link;
+use app\modules\admin\modules\link\models\LinkSearch;
 use Yii;
-use app\modules\admin\modules\article\models\Article;
-use app\modules\admin\modules\article\models\ArticleSearch;
 use yii\filters\AccessControl;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
- * 单文章管理
+ * 友情链接管理
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -28,7 +29,7 @@ class DefaultController extends BaseController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'toggle'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -44,13 +45,13 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Lists all Article models.
+     * Lists all Link models.
      *
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ArticleSearch();
+        $searchModel = new LinkSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -60,7 +61,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Displays a single Article model.
+     * Displays a single Link model.
      *
      * @param integer $id
      * @return mixed
@@ -74,14 +75,14 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Creates a new Article model.
+     * Creates a new Link model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Article();
+        $model = new Link();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -93,7 +94,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Updates an existing Article model.
+     * Updates an existing Link model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
      * @param integer $id
@@ -114,7 +115,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Deletes an existing Article model.
+     * Deletes an existing Link model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
      * @param integer $id
@@ -129,16 +130,55 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Finds the Article model based on its primary key value.
+     * 切换是否激活开关
+     *
+     * @return Response
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
+    public function actionToggle()
+    {
+        $id = Yii::$app->getRequest()->post('id');
+        $db = Yii::$app->getDb();
+        $value = $db->createCommand('SELECT [[enabled]] FROM {{%link}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if ($value !== null) {
+            $value = !$value;
+            $now = time();
+            $db->createCommand()->update('{{%link}}', ['enabled' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], ['id' => (int) $id])->execute();
+            $responseData = [
+                'success' => true,
+                'data' => [
+                    'value' => $value,
+                    'updatedAt' => Yii::$app->getFormatter()->asDate($now),
+                    'updatedBy' => Yii::$app->getUser()->getIdentity()->username,
+                ],
+            ];
+        } else {
+            $responseData = [
+                'success' => false,
+                'error' => [
+                    'message' => '数据有误',
+                ],
+            ];
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseData,
+        ]);
+    }
+
+    /**
+     * Finds the Link model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param integer $id
-     * @return Article the loaded model
+     * @return Link the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Article::findOne($id)) !== null) {
+        if (($model = Link::findOne($id)) !== null) {
             return $model;
         }
 

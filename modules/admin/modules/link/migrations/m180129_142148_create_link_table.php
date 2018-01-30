@@ -7,7 +7,7 @@ use yii\db\Migration;
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class m180129_142148_create_friendly_link_table extends Migration
+class m180129_142148_create_link_table extends Migration
 {
 
     /**
@@ -15,7 +15,7 @@ class m180129_142148_create_friendly_link_table extends Migration
      */
     public function up()
     {
-        $this->createTable('{{%friendly_link}}', [
+        $this->createTable('{{%link}}', [
             'id' => $this->primaryKey(),
             'category_id' => $this->integer()->notNull()->defaultValue(0)->comment('分类'),
             'type' => $this->smallInteger()->notNull()->defaultValue(0)->comment('类型'),
@@ -38,6 +38,6 @@ class m180129_142148_create_friendly_link_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('{{%friendly_link}}');
+        $this->dropTable('{{%link}}');
     }
 }

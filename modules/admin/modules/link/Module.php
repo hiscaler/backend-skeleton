@@ -11,7 +11,7 @@ class Module extends \yii\base\Module
     /**
      * @inheritdoc
      */
-    public $controllerNamespace = 'app\modules\admin\modules\article\controllers';
+    public $controllerNamespace = 'app\modules\admin\modules\link\controllers';
 
     /**
      * @inheritdoc
@@ -19,10 +19,11 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        $this->modules = [
-            'api' => [
-                'class' => 'app\modules\admin\modules\article\modules\api\Module',
-            ]
-        ];
+        \Yii::$app->setComponents([
+            'formatter' => [
+                'class' => 'app\modules\admin\modules\link\extensions\Formatter',
+            ],
+        ]);
     }
+
 }
