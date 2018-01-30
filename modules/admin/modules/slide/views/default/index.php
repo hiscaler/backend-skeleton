@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\SlideSearch */
+/* @var $searchModel \app\modules\admin\modules\slide\models\SlideSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Slides');
@@ -18,10 +18,7 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="slide-index">
-
-
     <?= $this->render('_search', ['model' => $searchModel]); ?>
-
     <?php
     Pjax::begin([
         'formSelector' => '#form-slide-search',
@@ -43,8 +40,8 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'ordering'],
             ],
             [
-                'attribute' => 'group_name',
-                'contentOptions' => ['class' => 'group-name'],
+                'attribute' => 'category.name',
+                'contentOptions' => ['class' => 'category-name'],
             ],
             [
                 'attribute' => 'title',

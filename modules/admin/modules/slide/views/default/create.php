@@ -1,6 +1,6 @@
 <?php
 /* @var $this yii\web\View */
-/* @var $model app\models\Slide */
+/* @var $model \app\modules\admin\modules\slide\models\Slide */
 
 $this->title = Yii::t('app', 'Create');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Slides'), 'url' => ['index']];
@@ -12,11 +12,9 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="slide-create">
-
     <?=
     $this->render('_form', [
         'model' => $model,
     ])
     ?>
-
 </div>

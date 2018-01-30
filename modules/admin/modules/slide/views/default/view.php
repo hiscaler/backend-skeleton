@@ -16,14 +16,13 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="slide-view">
-
     <?=
     DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
             'ordering',
-            'group_name',
+            'category.name',
             'title',
             'url:url',
             'url_open_target_text',
@@ -43,5 +42,4 @@ $this->params['menus'] = [
         ],
     ])
     ?>
-
 </div>
