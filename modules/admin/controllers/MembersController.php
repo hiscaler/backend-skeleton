@@ -2,10 +2,13 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\Meta;
+use app\modules\admin\forms\DynamicForm;
 use Yii;
 use app\models\Member;
 use app\models\MemberSearch;
 use yii\filters\AccessControl;
+use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -79,12 +82,20 @@ class MembersController extends Controller
     {
         $model = new Member();
         $model->loadDefaultValues();
+        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $post = Yii::$app->getRequest()->post();
+        if (($model->load($post) && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
+            $model->setPassword($model->password);
+            if ($model->save()) {
+                $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'dynamicModel' => $dynamicModel,
             ]);
         }
     }
@@ -99,12 +110,18 @@ class MembersController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
+        $post = Yii::$app->getRequest()->post();
+        if (($model->load($post) && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
+            $model->save(false);
+            $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'dynamicModel' => $dynamicModel,
             ]);
         }
     }

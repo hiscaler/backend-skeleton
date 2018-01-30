@@ -16,5 +16,6 @@ $this->params['menus'] = [
 <div class="member-create">
     <?= $this->render('_form', [
         'model' => $model,
+        'dynamicModel' => $dynamicModel,
     ]) ?>
 </div>
