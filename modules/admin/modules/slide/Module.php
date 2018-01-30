@@ -19,10 +19,10 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        $this->modules = [
-            'api' => [
-                'class' => 'app\modules\admin\modules\slide\modules\api\Module',
-            ]
-        ];
+        \Yii::$app->setComponents([
+            'formatter' => [
+                'class' => 'app\modules\admin\modules\slide\extensions\Formatter',
+            ],
+        ]);
     }
 }
