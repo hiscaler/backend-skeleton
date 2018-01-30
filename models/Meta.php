@@ -3,7 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\base\ErrorException;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 
 /**
  * This is the model class for table "{{%meta}}".
@@ -38,6 +40,7 @@ class Meta extends \yii\db\ActiveRecord
     const INPUT_TYPE_DROPDOWNLIST = 2;
     const INPUT_TYPE_CHECKBOXLIST = 3;
     const INPUT_TYPE_RADIOLIST = 4;
+    const INPUT_TYPE_FILE = 5;
 
     /**
      * 数据值返回类型
@@ -112,6 +115,7 @@ class Meta extends \yii\db\ActiveRecord
             self::INPUT_TYPE_DROPDOWNLIST => '下拉框',
             self::INPUT_TYPE_CHECKBOXLIST => '复选框',
             self::INPUT_TYPE_RADIOLIST => '单选框',
+            self::INPUT_TYPE_FILE => '文件上传',
         ];
     }
 
@@ -172,8 +176,7 @@ class Meta extends \yii\db\ActiveRecord
     public static function getItems(ActiveRecord $activeRecord)
     {
         $items = [];
-        $query = new \yii\db\Query();
-        $rawData = $query->select(['id', 'key', 'label', 'description', 'input_type', 'input_candidate_value', 'default_value'])
+        $rawData = (new Query())->select(['id', 'key', 'label', 'description', 'input_type', 'input_candidate_value', 'default_value'])
             ->from(static::tableName())
             ->where([
                 'object_name' => strtr($activeRecord->tableName(), ['{{%' => '', '}}' => '']),
@@ -209,6 +212,22 @@ class Meta extends \yii\db\ActiveRecord
             $values = [];
         }
 
+        $rawRules = [];
+        $validators = (new Query())->select(['meta_id', 'name', 'options'])
+            ->from('{{%meta_validator}}')
+            ->where(['meta_id' => array_keys($rawData)])
+            ->all();
+        foreach ($validators as $validator) {
+            $options = unserialize($validator['options']) ?: [];
+            foreach ($options as $key => $value) {
+                if (trim($value) == '') {
+                    unset($options[$key]);
+                }
+            }
+            !isset($rawRules[$validator['meta_id']]) && $rawRules[$validator['meta_id']] = [];
+            $options && $rawRules[$validator['meta_id']][$validator['name']] = $options;
+        }
+
         foreach ($rawData as $data) {
             $data['value'] = $values && isset($values["{$data['id']}.{$objectId}"]) ? $values["{$data['id']}.{$objectId}"] : null;
             switch ($data['input_type']) {
@@ -242,13 +261,17 @@ class Meta extends \yii\db\ActiveRecord
                     $data['input_candidate_value'] = $inputCandidateValue;
                     break;
 
+                case self::INPUT_TYPE_FILE:
+                    $data['input_type'] = 'fileInput';
+                    $data['input_candidate_value'] = [];
+                    break;
+
                 default:
                     $data['input_type'] = 'textInput';
                     $data['input_candidate_value'] = [];
                     break;
             }
-            $rules = self::getMetaRules($data['id']);
-            $data['rules'] = $rules ?: [[$data['key'], 'safe']];
+            $data['rules'] = (isset($rawRules[$data['id']]) && $rawRules[$data['id']]) ? $rawRules[$data['id']] : ['safe' => []];
             $items[$data['key']] = $data;
         }
 
@@ -282,8 +305,9 @@ class Meta extends \yii\db\ActiveRecord
     /**
      * 获取 Meta 对象的验证规则
      *
-     * @param integer $metaId
-     * @return arrya
+     * @param $metaId
+     * @return array
+     * @throws \yii\db\Exception
      */
     public static function getMetaRules($metaId)
     {
@@ -313,52 +337,95 @@ class Meta extends \yii\db\ActiveRecord
      */
     public static function saveValues(\yii\db\ActiveRecord $activeRecord, \yii\base\DynamicModel $dynamicModel, $throwException = false)
     {
+        $db = \Yii::$app->getDb();
+        $command = $db->createCommand();
+        $transaction = $db->beginTransaction();
         try {
             $attributes = $dynamicModel->attributes;
             if (!$attributes) {
                 return null;
             }
-            $command = Yii::$app->getDb()->createCommand();
             $objectId = $activeRecord->getPrimaryKey();
-            $metaList = (new \yii\db\Query())
+            $metaList = (new Query())
                 ->select('id')
                 ->from('{{%meta}}')
                 ->indexBy('key')
                 ->where([
                     'key' => array_keys($attributes),
-                    'object_name' => strtr($activeRecord->tableName(), ['{{%' => '', '}}' => '']),
                 ])
                 ->column();
-            if (!$activeRecord->isNewRecord) {
-                $command->delete('{{%meta_value}}', ['object_id' => $objectId, 'meta_id' => array_values($metaList)])->execute();
-            }
 
             $batchInsertRows = [];
+            $reservedMetaIds = [];
+            $validators = $dynamicModel->validators;
             foreach ($attributes as $key => $value) {
-                if (!isset($metaList[$key]) || $value === null || $value == '') {
+                $isFile = false;
+                foreach ($validators as $validator) {
+                    if ($validator instanceof \yii\validators\FileValidator) {
+                        $validatorAttributes = $validator->attributes;
+                        foreach ($validatorAttributes as $attr) {
+                            if ($key == $attr) {
+                                $isFile = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if ($isFile) {
+                    $file = \yii\web\UploadedFile::getInstance($dynamicModel, $key);
+                    if ($file) {
+                        $directory = Yii::getAlias('@webroot');
+                        $path = '/uploads/' . date('Ymd');
+                        if (!is_dir($directory . $path)) {
+                            FileHelper::createDirectory($directory . $path);
+                        }
+                        $filename = Yii::$app->getSecurity()->generateRandomString() . '.' . $file->getExtension();
+                        $file->saveAs($directory . $path . '/' . $filename);
+                        $value = $path . '/' . $filename;
+                    } else {
+                        if ($activeRecord->isNewRecord) {
+                            continue;
+                        } else {
+                            $value = null;
+                            $reservedMetaIds[] = $metaList[$key];
+                        }
+                    }
+                } else {
+                    $value = (string) $value;
+                }
+                if (!isset($metaList[$key]) || $value === '' || $value === null || (is_string($value) && trim($value) === '') || ($value == '' && !$isFile)) {
                     continue;
                 }
-                if (is_string($value)) {
-                    $value = [$value];
-                }
-                $columns = [
-                    'meta_id' => $metaList[$key],
+                $batchInsertRows[] = [
                     'object_id' => $objectId,
+                    'meta_id' => $metaList[$key],
+                    'value' => $value,
                 ];
-                foreach ($value as $v) {
-                    $columns['value'] = $v;
-                    $batchInsertRows[] = $columns;
+            }
+
+            if (!$activeRecord->isNewRecord) {
+                $deleteMetaIds = array_values($metaList);
+                if ($reservedMetaIds) {
+                    $deleteMetaIds = array_diff($deleteMetaIds, $reservedMetaIds);
                 }
+                $condition = ['object_id' => $objectId];
+                if ($deleteMetaIds) {
+                    $condition['meta_id'] = $deleteMetaIds;
+                }
+                $command->delete('{{%meta_value}}', $condition)->execute();
             }
 
             if ($batchInsertRows) {
-                $command->batchInsert('{{%meta_value}}', ['meta_id', 'object_id', 'value'], $batchInsertRows)->execute();
+                $command->batchInsert('{{%meta_value}}', array_keys($batchInsertRows[0]), $batchInsertRows)->execute();
             }
+
+            $transaction->commit();
 
             return true;
         } catch (\Exception $exc) {
+            $transaction->rollBack();
             if ($throwException) {
-                throw new \yii\base\ErrorException($exc->getMessage());
+                throw new ErrorException($exc->getMessage());
             } else {
                 return false;
             }
@@ -555,6 +622,20 @@ class Meta extends \yii\db\ActiveRecord
             } else {
                 $this->updated_at = time();
                 $this->updated_by = Yii::$app->getUser()->getId();
+            }
+
+            // Fixed `return value type`
+            switch ($this->input_type) {
+                case self::INPUT_TYPE_TEXTAREA:
+                case self::INPUT_TYPE_FILE:
+                    $this->return_value_type = self::RETURN_VALUE_TYPE_STRING;
+                    break;
+
+                case self::INPUT_TYPE_DROPDOWNLIST:
+                case self::INPUT_TYPE_CHECKBOXLIST:
+                case self::INPUT_TYPE_RADIOLIST:
+                    $this->return_value_type = self::RETURN_VALUE_TYPE_ARRAY;
+                    break;
             }
 
             return true;
