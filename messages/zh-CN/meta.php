@@ -34,4 +34,8 @@ return [
     'Date Validator' => '验证是否为有效的日期',
     'Date Format' => '格式',
     'Date TimeZone' => '时区',
+    // 图片验证规则
+    'Image Extensions' => '允许的图片扩展名',
+    // 文件验证规则
+    'File Extensions' => '允许的文件扩展名',
 ];

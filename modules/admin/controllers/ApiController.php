@@ -31,7 +31,7 @@ class ApiController extends \yii\rest\Controller
             if ($dateFormat) {
                 $formatter->dateFormat = $dateFormat;
             }
-            $timeFormat = Lookup::getValue('timeFormat','php:H:i:s');
+            $timeFormat = Lookup::getValue('timeFormat', 'php:H:i:s');
             if ($timeFormat) {
                 $formatter->timeFormat = $timeFormat;
             }
@@ -94,6 +94,20 @@ class ApiController extends \yii\rest\Controller
                 'options' => [
                     'format' => null,
                     'timeZone' => Yii::$app->getTimeZone(),
+                ]
+            ],
+            'image' => [
+                'class' => '\yii\validators\ImageValidator',
+                'label' => Yii::t('meta', 'Image Extensions'),
+                'options' => [
+                    'extensions' => 'jpg,jpeg,png,gif',
+                ]
+            ],
+            'file' => [
+                'class' => '\yii\validators\FileValidator',
+                'label' => Yii::t('meta', 'File Extensions'),
+                'options' => [
+                    'extensions' => '',
                 ]
             ],
         ];
