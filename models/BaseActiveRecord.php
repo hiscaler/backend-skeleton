@@ -127,6 +127,16 @@ class BaseActiveRecord extends ActiveRecord
     }
 
     /**
+     * 所属分类
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategory()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+    }
+
+    /**
      * Creater relational
      *
      * @return ActiveQueryInterface the relational query object.
