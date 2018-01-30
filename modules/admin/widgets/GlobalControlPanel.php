@@ -64,6 +64,12 @@ class GlobalControlPanel extends Widget
                     'active' => $moduleId == $module['alias'],
                 ];
                 if (!empty($module['menus']) && ($moduleMenus = json_decode($module['menus'], true))) {
+                    foreach ($moduleMenus as $key => $menu) {
+                        if (isset($menu['url'][0])) {
+                            list($ctl,) = explode('/', substr($menu['url'][0], 8 + strlen($module['alias'])));
+                            $moduleMenus[$key]['active'] = $moduleId == $module['alias'] && $ctl == $controllerId;
+                        }
+                    }
                     $t['items'] = $moduleMenus;
                 }
                 $items[] = $t;
