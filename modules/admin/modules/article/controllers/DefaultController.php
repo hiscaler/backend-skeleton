@@ -2,13 +2,15 @@
 
 namespace app\modules\admin\modules\article\controllers;
 
+use app\models\Meta;
 use app\modules\admin\extensions\BaseController;
-use Yii;
+use app\modules\admin\forms\DynamicForm;
 use app\modules\admin\modules\article\models\Article;
 use app\modules\admin\modules\article\models\ArticleSearch;
+use Yii;
 use yii\filters\AccessControl;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * 单文章管理
@@ -82,13 +84,20 @@ class DefaultController extends BaseController
     public function actionCreate()
     {
         $model = new Article();
+        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $post = Yii::$app->getRequest()->post();
+
+        if (($model->load($post) && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
+            $model->save(false);
+            $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'dynamicModel' => $dynamicModel,
         ]);
     }
 
@@ -103,13 +112,19 @@ class DefaultController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $post = Yii::$app->getRequest()->post();
+        if (($model->load($post) && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
+            $model->save(false);
+            $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'dynamicModel' => $dynamicModel,
         ]);
     }
 

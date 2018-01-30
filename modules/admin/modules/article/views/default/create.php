@@ -14,5 +14,6 @@ $this->params['menus'] = [
 <div class="article-create">
     <?= $this->render('_form', [
         'model' => $model,
+        'dynamicModel' => $dynamicModel,
     ]) ?>
 </div>
