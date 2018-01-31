@@ -151,7 +151,11 @@ class Category extends BaseActiveRecord
     }
 
     /**
-     * 生成数据缓存
+     * 获取未整理的分类数据
+     *
+     * @param bool $tree
+     * @return array
+     * @throws \yii\db\Exception
      */
     private static function rawData($tree = true)
     {
