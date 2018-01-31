@@ -16,7 +16,7 @@ use yii\helpers\Inflector;
 class InitController extends Controller
 {
 
-    private $_userId = null;
+    private $_userId = 0;
 
     /**
      * 初始化默认管理用户
@@ -51,13 +51,12 @@ class InitController extends Controller
             ];
             $db->createCommand()->insert('{{%user}}', $columns)->execute();
             $this->_userId = $db->getLastInsertID();
-
-            return $this->_userId;
         } else {
+            $this->_userId = $userId;
             echo "'{$username}' is exists." . PHP_EOL;
         }
 
-        return 0;
+        return $this->_userId;
     }
 
     /**
@@ -95,28 +94,6 @@ class InitController extends Controller
                     'returnType' => Lookup::RETURN_TYPE_STRING,
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
                     'value' => null,
-                ],
-                // 分类可选择类型
-                'custom.models.category.type.news' => [
-                    'returnType' => Lookup::RETURN_TYPE_ARRAY,
-                    'inputMethod' => Lookup::INPUT_METHOD_TEXTAREA,
-                    'inputValue' => implode(PHP_EOL, [
-                        '1:资讯',
-                        '2:商品',
-                    ]),
-                    'value' => null,
-                ],
-                // 资讯分类类型
-                'custom.models.category.type.news' => [
-                    'returnType' => Lookup::RETURN_TYPE_STRING,
-                    'inputMethod' => Lookup::INPUT_METHOD_TEXT,
-                    'value' => 1,
-                ],
-                // 商品分类类型
-                'custom.models.category.type.product' => [
-                    'returnType' => Lookup::RETURN_TYPE_STRING,
-                    'inputMethod' => Lookup::INPUT_METHOD_TEXT,
-                    'value' => 2,
                 ],
             ],
             Lookup::GROUP_SEO => [
