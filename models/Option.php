@@ -140,40 +140,4 @@ class Option
         return $models;
     }
 
-    /**
-     * 获取分类展示树
-     *
-     * @param null $enabled
-     * @return array
-     */
-    public static function categoryTree($enabled = null)
-    {
-        $tree = [];
-        $moduleName = Yii::$app->controller->module->id;
-        if (!$moduleName) {
-            return $tree;
-        }
-
-        $where = [
-            'module_name' => $moduleName
-        ];
-        if ($enabled !== null) {
-            $where['enabled'] = boolval($enabled) ? Constant::BOOLEAN_TRUE : Constant::BOOLEAN_FALSE;
-        }
-        $categories = (new Query())
-            ->select(['id', 'name', 'parent_id'])
-            ->from('{{%category}}')
-            ->where($where)
-            ->all();
-
-        if ($categories) {
-            $categories = TreeFormatHelper::dumpArrayTree(\yadjet\helpers\ArrayHelper::toTree($categories, 'id'));
-            foreach ($categories as $category) {
-                $tree[$category['id']] = "{$category['levelstr']} {$category['name']}";
-            }
-        }
-
-        return $tree;
-    }
-
 }
