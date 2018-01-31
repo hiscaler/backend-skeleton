@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\Query;
 
 /**
  * This is the model class for table "www_module".
@@ -88,6 +89,21 @@ class Module extends \yii\db\ActiveRecord
     public static function getInstalledModules()
     {
         return Yii::$app->getDb()->createCommand('SELECT * FROM {{%module}}')->queryAll();
+    }
+
+    /**
+     * 获取模块别名和名称键值对
+     *
+     * @return array
+     */
+    public static function getModules()
+    {
+        return (new Query())
+            ->select(['name'])
+            ->from('{{%module}}')
+            ->where([])
+            ->indexBy('alias')
+            ->column();
     }
 
     // Events
