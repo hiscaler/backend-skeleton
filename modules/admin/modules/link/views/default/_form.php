@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
             ]
         ]); ?>
 
-        <?= $form->field($model, 'category_id')->dropDownList(\app\models\Option::categoryTree(), ['prompt' => '']) ?>
+        <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree(), ['prompt' => '']) ?>
 
         <?= $form->field($model, 'type')->dropDownList(\app\modules\admin\modules\link\models\Link::typeOptions()) ?>
 
