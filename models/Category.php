@@ -3,15 +3,16 @@
 namespace app\models;
 
 use yadjet\behaviors\FileUploadBehavior;
+use yadjet\helpers\ArrayHelper;
 use yadjet\helpers\TreeFormatHelper;
 use Yii;
+use yii\db\Query;
 use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "{{%category}}".
  *
  * @property integer $id
- * @property integer $type
  * @property string $module_name
  * @property string $alias
  * @property string $name
@@ -30,6 +31,19 @@ use yii\helpers\Inflector;
  */
 class Category extends BaseActiveRecord
 {
+
+    /**
+     * 全部的
+     */
+    const RETURN_TYPE_ALL = 'all';
+    /**
+     * 仅分配给个人的
+     */
+    const RETURN_TYPE_PRIVATE = 'private';
+    /**
+     * 公有的
+     */
+    const RETURN_TYPE_PUBLIC = 'public';
 
     private $_fileUploadConfig;
 
@@ -55,13 +69,13 @@ class Category extends BaseActiveRecord
         return [
             [['module_name', 'name', 'ordering'], 'required'],
             [['alias', 'name', 'description'], 'trim'],
-            [['type', 'parent_id', 'level', 'enabled', 'ordering', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['type', 'parent_id', 'level'], 'default', 'value' => 0],
+            [['parent_id', 'level', 'enabled', 'ordering', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['parent_id', 'level'], 'default', 'value' => 0],
             [['enabled'], 'boolean'],
             [['enabled'], 'default', 'value' => Constant::BOOLEAN_TRUE],
             [['description'], 'string'],
             [['alias'], 'string', 'max' => 120],
-            ['alias', 'match', 'pattern' => '/^[a-z]+[a-z-\/]+[a-z]$/'],
+            ['alias', 'match', 'pattern' => '/^[a-z]+[a-z-\/]*[a-z]$/'],
             [['module_name'], 'string', 'max' => 20],
             [['module_name'], 'checkModuleName'],
             [['name'], 'string', 'max' => 30],
@@ -87,8 +101,8 @@ class Category extends BaseActiveRecord
     public function checkModuleName($attribute, $params)
     {
         if ($this->module_name && $this->parent_id == 0) {
-            $exists = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%category}} WHERE [[module_name]] = :moduleName AND [[parent_id]] = 0', [':moduleName' => $this->module_name])->queryScalar();
-            if ($exists) {
+            $count = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%category}} WHERE [[module_name]] = :moduleName AND [[parent_id]] = 0', [':moduleName' => $this->module_name])->queryScalar();
+            if ($count && ($this->isNewRecord || (!$this->isNewRecord) && $count > 1)) {
                 $this->addError('module_name', $this->module_name . ' 已经启用分类。');
             }
         }
@@ -123,7 +137,6 @@ class Category extends BaseActiveRecord
     public function attributeLabels()
     {
         return array_merge(parent::attributeLabels(), [
-            'type' => Yii::t('category', 'Type'),
             'module_name' => Yii::t('category', 'Module Name'),
             'alias' => Yii::t('category', 'Alias'),
             'name' => Yii::t('category', 'Name'),
@@ -138,137 +151,68 @@ class Category extends BaseActiveRecord
     }
 
     /**
-     * 类别选项
-     *
-     * @return array
-     */
-    public static function typeOptions()
-    {
-        return Lookup::getValue('system.models.category.type', [], 'array');
-    }
-
-    /**
      * 生成数据缓存
      */
-    public static function generateCache($toTree = false)
+    private static function rawData($tree = true)
     {
         $items = [];
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[id]], [[type]], [[alias]], [[name]], [[parent_id]], [[icon_path]], [[enabled]] FROM {{%category}} ORDER BY [[level]] ASC')->queryAll();
+        $rawData = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[description]], [[parent_id]], [[level]], [[icon_path]], [[enabled]] FROM {{%category}}')->queryAll();
         foreach ($rawData as $data) {
             $items[$data['id']] = [
                 'id' => $data['id'],
-                'type' => $data['type'],
                 'alias' => $data['alias'],
                 'name' => $data['name'],
+                'description' => $data['description'],
                 'parent' => $data['parent_id'],
+                'level' => $data['level'],
                 'icon' => $data['icon_path'],
                 'enabled' => $data['enabled'] ? true : false,
-                'hasChildren' => false
             ];
-            if ($data['parent_id'] && isset($items[$data['parent_id']])) {
-                $items[$data['parent_id']]['hasChildren'] = true;
-            }
-        }
-        $cache = Yii::$app->getCache();
-        $cache->set('__category_items_common_', $items);
-        if ($toTree) {
-            $items = \yadjet\helpers\ArrayHelper::toTree($items, 'id', 'parent', 'children');
-            $cache->set('__category_items_tree_', $items);
         }
 
-        return $items;
+        return $tree ? ArrayHelper::toTree($items, 'id', 'parent') : $items;
     }
 
     /**
-     * 处理并生成分类数据缓存，供后续代码调取
+     * 获取分类展示树
      *
-     * @param boolean $toTree
+     * @param string $returnType
+     * @param null $enabled
      * @return array
      */
-    private static function getRawItems($toTree = false)
+    public static function tree($returnType = self::RETURN_TYPE_PUBLIC, $enabled = null)
     {
-        $key = '__category_items';
-        $key = $toTree ? '_tree_' : '_common_';
-        $cache = Yii::$app->getCache();
-        $items = $cache->get($key);
-        if ($items === false) {
-            $items = self::generateCache($toTree);
+        $tree = [];
+        $moduleName = Yii::$app->controller->module->id;
+        if ($returnType != self::RETURN_TYPE_ALL && !$moduleName) {
+            return $tree;
         }
 
-        return $items;
-    }
-
-    private static function getRawItemsByType($type = 0, $all = false, $toTree = false)
-    {
-        $items = [];
-        foreach (self::getRawItems($toTree) as $key => $item) {
-            if ($item['type'] == $type) {
-                if ($all || $item['enabled']) {
-                    $items[$key] = $item;
-                }
+        $where = [];
+        if ($returnType != self::RETURN_TYPE_ALL) {
+            $where['module_name'] = $moduleName;
+            if ($enabled !== null) {
+                $where['enabled'] = boolval($enabled) ? Constant::BOOLEAN_TRUE : Constant::BOOLEAN_FALSE;
+            }
+            if ($returnType == self::RETURN_TYPE_PRIVATE) {
+                $where = ['AND', $where, ['IN', 'id', (new Query())->select('category_id')->from(' {{%user_auth_category}}')->where(['user_id' => \Yii::$app->getUser()->getId()])]];
             }
         }
 
-        return $items;
-    }
+        $categories = (new Query())
+            ->select(['id', 'name', 'parent_id'])
+            ->from('{{%category}}')
+            ->where($where)
+            ->all();
 
-    /**
-     * 获取分类项目
-     *
-     * @param integer $type
-     * @param mixed $prompt
-     * @param boolean $all
-     * @return string
-     */
-    public static function getTree($type, $prompt = null, $all = false)
-    {
-        $items = [];
-        if ($prompt) {
-            $items[] = $prompt;
-        }
-        $rawData = self::getRawItemsByType($type, $all, true);
-        if ($rawData) {
-            $rawData = TreeFormatHelper::dumpArrayTree($rawData);
-            foreach ($rawData as $data) {
-                $items[$data['id']] = $data['levelstr'] . $data['name'];
+        if ($categories) {
+            $categories = TreeFormatHelper::dumpArrayTree(\yadjet\helpers\ArrayHelper::toTree($categories, 'id'));
+            foreach ($categories as $category) {
+                $tree[$category['id']] = "{$category['levelstr']} {$category['name']}";
             }
         }
 
-        return $items;
-    }
-
-    /**
-     * 获取用户可操作分类项目
-     *
-     * @param integer $type
-     * @param mixed $prompt
-     * @param boolean $all
-     * @param mixed|integer $userId
-     * @return string
-     */
-    public static function getOwnerTree($type, $prompt = null, $all = false, $userId = null)
-    {
-        $items = [];
-        if ($prompt) {
-            $items[] = $prompt;
-        }
-        $rawData = self::getRawItemsByType($type, $all, false);
-        $ownerCategoryIds = Yii::$app->getDb()->createCommand('SELECT [[category_id]] FROM {{%user_auth_category}} WHERE [[user_id]] = :userId', [':userId' => $userId ?: Yii::$app->getUser()->getId()])->queryColumn();
-        if ($ownerCategoryIds) {
-            foreach ($rawData as $key => $data) {
-                if (!in_array($data['id'], $ownerCategoryIds)) {
-                    unset($rawData[$key]);
-                }
-            }
-            if ($rawData) {
-                $rawData = TreeFormatHelper::dumpArrayTree(\yadjet\helpers\ArrayHelper::toTree($rawData, 'id', 'parent'));
-                foreach ($rawData as $data) {
-                    $items[$data['id']] = $data['levelstr'] . $data['name'];
-                }
-            }
-        }
-
-        return $items;
+        return $tree;
     }
 
     public static function sortItems($tree)
@@ -308,16 +252,24 @@ class Category extends BaseActiveRecord
     }
 
     /**
-     * 判断是否有子节点
+     * 获取子节点数据
      *
-     * @param integer $id
-     * @return boolean
+     * @param $items
+     * @param $parent
+     * @return array
      */
-    private static function hasChildren($id)
+    private static function _getChildren($items, $parent)
     {
-        $rawData = self::getRawItems();
+        $children = [];
+        foreach ($items as $i => $item) {
+            if ($item['parent'] == $parent) {
+                $children[] = $item;
+                unset($items[$i]);
+                $children = array_merge($children, self::_getChildren($items, $item['id']));
+            }
+        }
 
-        return isset($rawData[$id]) && $rawData[$id]['hasChildren'];
+        return $children;
     }
 
     /**
@@ -328,23 +280,7 @@ class Category extends BaseActiveRecord
      */
     public static function getChildren($parent = 0)
     {
-        $children = [];
-        $parent = (int) $parent;
-        $rawItems = self::getRawItems(true);
-        if ($parent) {
-            foreach ($rawItems as $item) {
-                if ($item['id'] == $parent) {
-                    if ($item['hasChildren'] && $item['children']) {
-                        foreach ($item['children'] as $child) {
-                            $children = array_merge($children, \yadjet\helpers\ArrayHelper::treeToArray($child));
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        return $children;
+        return self::_getChildren(self::rawData(false), (int) $parent);
     }
 
     /**
@@ -397,34 +333,27 @@ class Category extends BaseActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        self::generateCache();
         if (!$insert && ($this->_alias != $this->alias || $this->_moduleName != $this->module_name)) {
             // 更新子栏目别名
-            $childrenIds = self::getChildrenIds($this->id);
-
-            if ($childrenIds) {
+            $children = self::getChildren($this->id);
+            if ($children) {
                 $db = Yii::$app->getDb();
                 $cmd = $db->createCommand();
                 if ($this->_alias != $this->alias) {
-                    $children = $db->createCommand('SELECT [[id]], [[alias]] FROM {{%category}} WHERE [[id]] IN (' . implode(', ', $childrenIds) . ')')->queryAll();
                     foreach ($children as $child) {
-                        $prefix = $this->parent_id ? '/' : '';
-                        /* @todo 需要验证子栏目雷同的名称如何处理 */
-                        $alias = str_replace($prefix . $this->_alias . '/', $prefix . $this->alias . '/', $child['alias']);
+                        $childAlias = explode('/', $child['alias']);
+                        foreach (explode('/', $this->alias) as $key => $value) {
+                            $childAlias[$key] = $value;
+                        }
+                        $alias = implode('/', $childAlias);
                         $cmd->update('{{%category}}', ['alias' => $alias], ['id' => $child['id']])->execute();
                     }
                 }
                 if ($this->_moduleName != $this->module_name) {
-                    $cmd->update('{{%category}}', ['module_name' => $this->module_name], ['id' => $childrenIds])->execute();
+                    $cmd->update('{{%category}}', ['module_name' => $this->module_name], ['id' => \yii\helpers\ArrayHelper::getColumn($children, 'id')])->execute();
                 }
             }
         }
-    }
-
-    public function afterDelete()
-    {
-        parent::afterDelete();
-        self::generateCache();
     }
 
 }

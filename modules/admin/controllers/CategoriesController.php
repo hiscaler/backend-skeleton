@@ -67,7 +67,7 @@ class CategoriesController extends GlobalController
         $model = new Category();
         $model->loadDefaultValues();
         if ($parentId) {
-            $parent = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[type]], [[module_name]], [[ordering]] FROM {{%category}} WHERE [[id]] = :parentId', [':parentId' => (int) $parentId])->queryOne();
+            $parent = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[module_name]], [[ordering]] FROM {{%category}} WHERE [[id]] = :parentId', [':parentId' => (int) $parentId])->queryOne();
             if ($parent) {
                 $parent['parent_id'] = $parent['id'];
                 $parent['ordering'] += 1;
@@ -96,7 +96,7 @@ class CategoriesController extends GlobalController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            return $this->redirect(['index', 'CategorySearch[type]' => $model->type]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -116,7 +116,7 @@ class CategoriesController extends GlobalController
         $model = $this->findModel($id);
         $model->delete();
 
-        return $this->redirect(['index', 'CategorySearch[type]' => $model->type]);
+        return $this->redirect(['index']);
     }
 
     /**

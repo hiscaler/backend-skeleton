@@ -19,7 +19,7 @@ class CategorySearch extends Category
     public function rules()
     {
         return [
-            [['id', 'type', 'parent_id', 'level', 'enabled'], 'integer'],
+            [['parent_id', 'level', 'enabled'], 'integer'],
             [['alias', 'name'], 'safe'],
         ];
     }
@@ -46,8 +46,6 @@ class CategorySearch extends Category
 
         if ($this->load($params)) {
             $query->andFilterWhere([
-                'id' => $this->id,
-                'type' => $this->type,
                 'parent_id' => $this->parent_id,
                 'level' => $this->level,
                 'enabled' => $this->enabled,

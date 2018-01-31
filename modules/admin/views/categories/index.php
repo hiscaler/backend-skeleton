@@ -10,17 +10,10 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Categories');
 $this->params['breadcrumbs'][] = $this->title;
 
-$menus = [];
-$typeOptions = \app\models\Category::typeOptions();
-
-foreach ($typeOptions as $key => $value) {
-    $menus[] = ['label' => $value . Yii::t('app', 'Categories'), 'url' => ['index', 'CategorySearch[type]' => $key]];
-    $menus[] = ['label' => Yii::t('app', 'Create') . $value . Yii::t('model', 'Category'), 'url' => ['create', 'type' => $key]];
-}
-if (!$typeOptions) {
-    $menus[] = ['label' => Yii::t('app', 'Create'), 'url' => ['create']];
-}
-$this->params['menus'] = $menus;
+$this->params['menus'] = [
+    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
+    ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
+];
 $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 ?>
 <div class="categories-index">
@@ -104,7 +97,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'template' => '{create} {update} {delete}',
                 'buttons' => [
                     'create' => function ($url, $model, $key) use ($baseUrl) {
-                        return Html::a('<span class="glyphicon glyphicon-add-child"></span>', ['create', 'type' => $model['type'], 'parentId' => $model['id']], ['data-pjax' => 0, 'title' => '添加子项']);
+                        return Html::a('<span class="glyphicon glyphicon-add-child"></span>', ['create', 'parentId' => $model['id']], ['data-pjax' => 0, 'title' => '添加子项']);
                     }
                 ],
                 'headerOptions' => array('class' => 'buttons-2 last'),

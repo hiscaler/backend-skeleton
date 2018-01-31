@@ -8,16 +8,10 @@ $this->title = Yii::t('app', 'Create {modelClass}', [
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Categories'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$menus = [];
-$typeOptions = \app\models\Category::typeOptions();
-foreach ($typeOptions as $key => $value) {
-    $menus[] = ['label' => $value . Yii::t('app', 'Categories'), 'url' => ['index', 'CategorySearch[type]' => $key]];
-    $menus[] = ['label' => Yii::t('app', 'Create') . $value . Yii::t('model', 'Category'), 'url' => ['create', 'type' => $key]];
-}
-if (!$typeOptions) {
-    $menus[] = ['label' => Yii::t('app', 'Create'), 'url' => ['create']];
-}
-$this->params['menus'] = $menus;
+$this->params['menus'] = [
+    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
+    ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
+];
 ?>
 <div class="category-create">
     <?=
