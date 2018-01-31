@@ -2,10 +2,7 @@ Options +FollowSymLinks
 IndexIgnore */* 
 RewriteEngine on
  
-# if a directory or a file exists, use it directly
 RewriteCond %{REQUEST_FILENAME} !-f [NC]
 RewriteCond %{REQUEST_FILENAME} !-d [NC]
 
-# otherwise forward it to index.php 
 RewriteRule . index.php
-#RewriteRule /(?!css)(?!images)(?!js)(?!uploads)(.*)$ index.php
