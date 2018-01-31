@@ -15,6 +15,7 @@ class m151114_032819_create_category_table extends Migration
         $this->createTable('{{%category}}', [
             'id' => $this->primaryKey(),
             'type' => $this->smallInteger()->notNull()->defaultValue(0)->comment('分类类型'),
+            'module_name' => $this->string(20)->notNull()->comment('模块名'),
             'alias' => $this->string(120)->notNull()->comment('分类别名'),
             'name' => $this->string(30)->notNull()->comment('名称'),
             'parent_id' => $this->integer()->notNull()->defaultValue(0)->comment('父级'),

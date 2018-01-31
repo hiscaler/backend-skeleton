@@ -62,16 +62,21 @@ class CategoriesController extends GlobalController
      *
      * @return mixed
      */
-    public function actionCreate($type = 0, $parentId = 0, $ordering = 1)
+    public function actionCreate($parentId = 0)
     {
         $model = new Category();
-        $model->type = $type;
-        $model->parent_id = (int) $parentId;
-        $model->ordering = (int) $ordering;
         $model->loadDefaultValues();
+        if ($parentId) {
+            $parent = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[type]], [[module_name]], [[ordering]] FROM {{%category}} WHERE [[id]] = :parentId', [':parentId' => (int) $parentId])->queryOne();
+            if ($parent) {
+                $parent['parent_id'] = $parent['id'];
+                $parent['ordering'] += 1;
+                $model->load($parent, '');
+            }
+        }
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            return $this->redirect(['create', 'type' => $model->type, 'parentId' => $model->parent_id, 'ordering' => $model['ordering'] + 1]);
+            return $this->redirect(['create', 'parentId' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,

@@ -12,6 +12,7 @@ use yii\helpers\Inflector;
  *
  * @property integer $id
  * @property integer $type
+ * @property string $module_name
  * @property string $alias
  * @property string $name
  * @property integer $parent_id
@@ -52,7 +53,7 @@ class Category extends BaseActiveRecord
     public function rules()
     {
         return [
-            [['name', 'ordering'], 'required'],
+            [['module_name', 'name', 'ordering'], 'required'],
             [['alias', 'name', 'description'], 'trim'],
             [['type', 'parent_id', 'level', 'enabled', 'ordering', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['type', 'parent_id', 'level'], 'default', 'value' => 0],
@@ -61,7 +62,10 @@ class Category extends BaseActiveRecord
             [['description'], 'string'],
             [['alias'], 'string', 'max' => 120],
             ['alias', 'match', 'pattern' => '/^[a-z]+[a-z-\/]+[a-z]$/'],
+            [['module_name'], 'string', 'max' => 20],
+            [['module_name'], 'checkModuleName'],
             [['name'], 'string', 'max' => 30],
+            [['parent_id'], 'checkParent'],
             [['parent_ids'], 'string', 'max' => 100],
             [['parent_names'], 'string', 'max' => 255],
             ['alias', 'unique', 'targetAttribute' => ['alias']],
@@ -71,6 +75,36 @@ class Category extends BaseActiveRecord
                 'maxSize' => $this->_fileUploadConfig['size']['max'],
             ],
         ];
+    }
+
+    /**
+     * 验证模块名称有效性
+     *
+     * @param $attribute
+     * @param $params
+     * @throws \yii\db\Exception
+     */
+    public function checkModuleName($attribute, $params)
+    {
+        if ($this->module_name && $this->parent_id == 0) {
+            $exists = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%category}} WHERE [[module_name]] = :moduleName AND [[parent_id]] = 0', [':moduleName' => $this->module_name])->queryScalar();
+            if ($exists) {
+                $this->addError('module_name', $this->module_name . ' 已经启用分类。');
+            }
+        }
+    }
+
+    /**
+     * 验证上级分类有效性
+     *
+     * @param $attribute
+     * @param $params
+     */
+    public function checkParent($attribute, $params)
+    {
+        if (!$this->isNewRecord && $this->parent_id == $this->id) {
+            $this->addError('parent_id', '上级分类选择有误。');
+        }
     }
 
     public function behaviors()
@@ -90,6 +124,7 @@ class Category extends BaseActiveRecord
     {
         return array_merge(parent::attributeLabels(), [
             'type' => Yii::t('category', 'Type'),
+            'module_name' => Yii::t('category', 'Module Name'),
             'alias' => Yii::t('category', 'Alias'),
             'name' => Yii::t('category', 'Name'),
             'parent_id' => Yii::t('category', 'Parent ID'),
@@ -330,11 +365,13 @@ class Category extends BaseActiveRecord
 
     // 事件
     private $_alias;
+    private $_moduleName;
 
     public function afterFind()
     {
         parent::afterFind();
         $this->_alias = $this->alias;
+        $this->_moduleName = $this->module_name;
     }
 
     public function beforeSave($insert)
@@ -343,9 +380,12 @@ class Category extends BaseActiveRecord
             if (empty($this->alias) && !empty($this->name)) {
                 $this->alias = Inflector::slug($this->name);
             }
-            if ($this->parent_id && strpos($this->alias, '/') === false) {
-                $parentAlias = Yii::$app->getDb()->createCommand('SELECT [[alias]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $this->parent_id])->queryScalar();
-                $this->alias = "{$parentAlias}/{$this->alias}";
+            if ($this->parent_id) {
+                $parent = Yii::$app->getDb()->createCommand('SELECT [[module_name]], [[alias]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $this->parent_id])->queryOne();
+                $this->module_name = $parent['module_name'];
+                if (strpos($this->alias, '/') === false) {
+                    $this->alias = "{$parent['alias']}/{$this->alias}";
+                }
             }
 
             return true;
@@ -358,19 +398,24 @@ class Category extends BaseActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         self::generateCache();
-        if (!$insert && $this->_alias != $this->alias) {
+        if (!$insert && ($this->_alias != $this->alias || $this->_moduleName != $this->module_name)) {
             // 更新子栏目别名
             $childrenIds = self::getChildrenIds($this->id);
 
             if ($childrenIds) {
                 $db = Yii::$app->getDb();
                 $cmd = $db->createCommand();
-                $children = $db->createCommand('SELECT [[id]], [[alias]] FROM {{%category}} WHERE [[id]] IN (' . implode(', ', $childrenIds) . ')')->queryAll();
-                foreach ($children as $child) {
-                    $prefix = $this->parent_id ? '/' : '';
-                    /* @todo 需要验证子栏目雷同的名称如何处理 */
-                    $alias = str_replace($prefix . $this->_alias . '/', $prefix . $this->alias . '/', $child['alias']);
-                    $cmd->update('{{%category}}', ['alias' => $alias], ['id' => $child['id']])->execute();
+                if ($this->_alias != $this->alias) {
+                    $children = $db->createCommand('SELECT [[id]], [[alias]] FROM {{%category}} WHERE [[id]] IN (' . implode(', ', $childrenIds) . ')')->queryAll();
+                    foreach ($children as $child) {
+                        $prefix = $this->parent_id ? '/' : '';
+                        /* @todo 需要验证子栏目雷同的名称如何处理 */
+                        $alias = str_replace($prefix . $this->_alias . '/', $prefix . $this->alias . '/', $child['alias']);
+                        $cmd->update('{{%category}}', ['alias' => $alias], ['id' => $child['id']])->execute();
+                    }
+                }
+                if ($this->_moduleName != $this->module_name) {
+                    $cmd->update('{{%category}}', ['module_name' => $this->module_name], ['id' => $childrenIds])->execute();
                 }
             }
         }

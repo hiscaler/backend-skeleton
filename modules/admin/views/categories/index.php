@@ -56,6 +56,11 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'format' => 'ntext',
             ],
             [
+                'attribute' => 'module_name',
+                'header' => Yii::t('category', 'Module Name'),
+                'contentOptions' => ['style' => 'width: 60px;']
+            ],
+            [
                 'attribute' => 'ordering',
                 'header' => Yii::t('app', 'Ordering'),
                 'contentOptions' => ['class' => 'ordering'],
