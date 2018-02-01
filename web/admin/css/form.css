@@ -281,6 +281,15 @@ div.form .form-group .image-preview .btn-remove:hover {
     border-color: #C00;
 }
 
+.form-layout-column input[type="text"],
+.form-layout-column input[type="password"],
+.form-layout-column .g-text,
+.form-layout-column .g-text-large,
+.form-layout-column textarea,
+.form-layout-column .g-text-area {
+    width: 400px !important;
+}
+
 /*******************************************************************************
  * Simple form
  ******************************************************************************/
