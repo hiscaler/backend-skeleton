@@ -237,7 +237,7 @@ class UsersController extends GlobalController
                 ]);
             }
 
-            $nodes = $db->createCommand('SELECT [[id]], [[parent_id]] AS [[pId]], [[name]] FROM {{%category}}')->queryAll();
+            $nodes = $db->createCommand('SELECT [[id]], [[parent_id]] AS [[pId]], [[name]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
             if ($existingCategoryIds) {
                 foreach ($nodes as $key => $node) {
                     if (in_array($node['id'], $existingCategoryIds)) {
