@@ -436,7 +436,7 @@ div.form .form-group .image-preview .btn-remove:hover {
 /* form buttons */
 div.form .buttons {
     background: none;
-    padding-left: 135px;
+    padding-left: 155px;
 }
 
 .form .btn {
@@ -447,6 +447,7 @@ div.form .buttons {
     cursor: pointer;
     color: #4362BF;
     padding: 5px 10px;
+    font-weight: bold;
 }
 
 .form .btn-lookup-update {
