@@ -42,7 +42,7 @@ class CategorySearch extends Category
      */
     public function search($params)
     {
-        $query = Category::find()->with(['creater', 'updater'])->asArray();
+        $query = Category::find()->with(['creater', 'updater'])->orderBy(['ordering' => SORT_ASC])->asArray();
 
         if ($this->load($params)) {
             $query->andFilterWhere([

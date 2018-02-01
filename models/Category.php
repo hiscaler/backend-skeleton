@@ -144,7 +144,7 @@ class Category extends BaseActiveRecord
      */
     private static function rawData($tree = true)
     {
-        $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}}')->queryAll();
+        $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
 
         return $tree ? ArrayHelper::toTree($items, 'id', 'parent') : $items;
     }
