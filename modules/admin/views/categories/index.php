@@ -34,12 +34,12 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'header' => Yii::t('category', 'Name'),
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return "<span class=\"pk\">[ {$model['id']} ]</span>" . Html::a($model['name'], ['update', 'id' => $model['id']]) . '<span class="alias">' . $model['alias'] . '</span>';
+                    return "<span class=\"pk\">[ {$model['ordering']} ]</span>" . Html::a($model['name'], ['update', 'id' => $model['id']]) . ' <span class="badges badges-gray">' . $model['short_name'] . '</span>' . ' <span class="badges badges-gray">#' . $model['id'] . '</span>' . ($model['sign'] ? ' <span class="badges badges-red">' . $model['sign'] . '</span>' : '') . '<span class="alias">' . $model['alias'] . '</span>';
                 },
             ],
             [
                 'header' => Yii::t('category', 'Icon'),
-                'attribute' => 'icon_path',
+                'attribute' => 'icon',
                 'format' => 'image',
                 'contentOptions' => ['class' => 'icon-img']
             ],
@@ -47,16 +47,6 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'attribute' => 'description',
                 'header' => Yii::t('category', 'Description'),
                 'format' => 'ntext',
-            ],
-            [
-                'attribute' => 'module_name',
-                'header' => Yii::t('category', 'Module Name'),
-                'contentOptions' => ['style' => 'width: 60px;']
-            ],
-            [
-                'attribute' => 'ordering',
-                'header' => Yii::t('app', 'Ordering'),
-                'contentOptions' => ['class' => 'ordering'],
             ],
             [
                 'attribute' => 'enabled',

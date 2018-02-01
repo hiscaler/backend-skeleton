@@ -5,6 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\Category;
 use app\models\CategorySearch;
 use Yii;
+use yii\base\InvalidCallException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -67,12 +68,8 @@ class CategoriesController extends GlobalController
         $model = new Category();
         $model->loadDefaultValues();
         if ($parentId) {
-            $parent = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[module_name]], [[ordering]] FROM {{%category}} WHERE [[id]] = :parentId', [':parentId' => (int) $parentId])->queryOne();
-            if ($parent) {
-                $parent['parent_id'] = $parent['id'];
-                $parent['ordering'] += 1;
-                $model->load($parent, '');
-            }
+            $ordering = \Yii::$app->getDb()->createCommand('SELECT MAX([[ordering]]) FROM {{%category}} WHERE [[parent_id]] = :parentId', [':parentId' => (int) $parentId])->queryScalar();
+            $model['ordering'] = $ordering != null ? $ordering + 1 : 10;
         }
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
@@ -114,7 +111,12 @@ class CategoriesController extends GlobalController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->delete();
+        $children = Category::getChildrenIds($model['id']);
+        if ($children) {
+            throw new InvalidCallException('该分类有下级分类，禁止删除。');
+        } else {
+            $model->delete();
+        }
 
         return $this->redirect(['index']);
     }
@@ -132,8 +134,13 @@ class CategoriesController extends GlobalController
         if ($value !== null) {
             $value = !$value;
             $now = time();
-            $db->createCommand()->update('{{%category}}', ['enabled' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], '[[id]] = :id', [':id' => (int) $id])->execute();
-            Category::generateCache();
+            if (!$value) {
+                $ids = Category::getChildrenIds($id);
+                $ids[] = $id;
+            } else {
+                $ids = [$id];
+            }
+            $db->createCommand()->update('{{%category}}', ['enabled' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], ['id' => $ids])->execute();
             $responseData = [
                 'success' => true,
                 'data' => [
