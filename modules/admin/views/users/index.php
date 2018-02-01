@@ -84,10 +84,10 @@ $this->params['menus'] = [
                 'template' => '{update} {change-password} {auth} {delete}',
                 'buttons' => [
                     'change-password' => function ($url, $model, $key) use ($baseUrl) {
-                        return Html::a(Html::img($baseUrl . '/images/change-password.png'), $url);
+                        return Html::a(Html::img($baseUrl . '/images/change-password.png'), $url, ['title' => Yii::t('app', 'Change Password')]);
                     },
                     'auth' => function ($url, $model, $key) use ($baseUrl) {
-                        return Html::a(Html::img($baseUrl . '/images/auth.png'), $url, ['data-pjax' => 0, 'class' => 'user-auth', 'data-name' => $model['username']]);
+                        return Html::a(Html::img($baseUrl . '/images/auth.png'), $url, ['data-pjax' => 0, 'class' => 'user-auth', 'data-name' => $model['username'], 'title' => Yii::t('app', 'Please choice this user can manager categories')]);
                     },
                 ],
                 'headerOptions' => ['class' => 'buttons-4 last'],
