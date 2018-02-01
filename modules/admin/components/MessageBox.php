@@ -15,7 +15,7 @@ class MessageBox extends Widget
     public $title = null;
     public $showFooter = false;
     public $message;
-    public $showCloseButton = false;
+    public $showCloseButton = true;
 
     public function run()
     {
