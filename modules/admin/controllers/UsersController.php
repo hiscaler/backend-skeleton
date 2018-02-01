@@ -8,11 +8,14 @@ use app\models\UserSearch;
 use app\modules\admin\forms\ChangePasswordForm;
 use app\modules\admin\forms\DynamicForm;
 use app\modules\admin\forms\RegisterForm;
+use yadjet\helpers\ArrayHelper;
 use Yii;
+use yii\base\InvalidCallException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * 系统用户管理
@@ -136,10 +139,11 @@ class UsersController extends GlobalController
         return $this->redirect(['index']);
     }
 
-    /**
-     * 修改密码
+    /**修改密码
      *
-     * @return mixed
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionChangePassword($id)
     {
@@ -149,7 +153,6 @@ class UsersController extends GlobalController
         if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
             $user->setPassword($model->password);
             if ($user->save(false)) {
-//                Yii::$app->getDb()->createCommand('UPDATE {{%user}} SET [[last_change_password_time]] = :now WHERE [[id]] = :id', [':now' => time(), ':id' => $user->id])->execute();
                 Yii::$app->getSession()->setFlash('notice', "用户 {$user->username} 密码修改成功，请通知用户下次登录使用新的密码。");
 
                 return $this->redirect(['index']);
@@ -160,6 +163,96 @@ class UsersController extends GlobalController
             'user' => $user,
             'model' => $model,
         ]);
+    }
+
+    /**
+     * 设置用户可管理分类数据
+     *
+     * @param $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
+     */
+    public function actionAuth($id)
+    {
+        $userId = (int) $id;
+        $db = Yii::$app->getDb();
+        $userExists = $db->createCommand('SELECT COUNT(*) FROM {{%user}} WHERE [[id]] = :id', [':id' => $userId])->queryScalar();
+        if (!$userExists) {
+            throw new NotFoundHttpException('用户不存在。');
+        }
+        $existingCategoryIds = $db->createCommand('SELECT [[category_id]] FROM {{%user_auth_category}} WHERE [[user_id]] = :userId', [':userId' => $userId])->queryColumn();
+        $request = Yii::$app->getRequest();
+        if ($request->isAjax) {
+            if ($request->isPost) {
+                $choiceCategoryIds = $request->post('choiceCategoryIds');
+                if (!empty($choiceCategoryIds)) {
+                    $choiceCategoryIds = explode(',', $choiceCategoryIds);
+                    $insertCategoryIds = array_diff($choiceCategoryIds, $existingCategoryIds);
+                    $deleteCategoryIds = array_diff($existingCategoryIds, $choiceCategoryIds);
+                } else {
+                    $insertCategoryIds = [];
+                    $deleteCategoryIds = $existingCategoryIds; // 如果没有选择任何分类，表示删除所有已经存在分类
+                }
+
+                if ($insertCategoryIds || $deleteCategoryIds) {
+                    $transaction = $db->beginTransaction();
+                    try {
+                        if ($insertCategoryIds) {
+                            $insertRows = [];
+                            foreach ($insertCategoryIds as $nodeId) {
+                                $insertRows[] = [$userId, $nodeId];
+                            }
+                            if ($insertRows) {
+                                $db->createCommand()->batchInsert('{{%user_auth_category}}', ['user_id', 'category_id'], $insertRows)->execute();
+                            }
+                        }
+                        if ($deleteCategoryIds) {
+                            $db->createCommand()->delete('{{%user_auth_category}}', [
+                                'user_id' => $userId,
+                                'category_id' => $deleteCategoryIds
+                            ])->execute();
+                        }
+                        $transaction->commit();
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+
+                        return new Response([
+                            'format' => Response::FORMAT_JSON,
+                            'data' => [
+                                'success' => false,
+                                'error' => [
+                                    'message' => $e->getMessage()
+                                ]
+                            ],
+                        ]);
+                    }
+                }
+
+                return new Response([
+                    'format' => Response::FORMAT_JSON,
+                    'data' => [
+                        'success' => true
+                    ],
+                ]);
+            }
+
+            $nodes = $db->createCommand('SELECT [[id]], [[parent_id]] AS [[pId]], [[name]] FROM {{%category}}')->queryAll();
+            if ($existingCategoryIds) {
+                foreach ($nodes as $key => $node) {
+                    if (in_array($node['id'], $existingCategoryIds)) {
+                        $nodes[$key]['checked'] = true;
+                    }
+                }
+            }
+            $nodes = ArrayHelper::toTree($nodes, 'id', 'pId');
+
+            return $this->renderAjax('auth', [
+                'categories' => $nodes,
+            ]);
+        } else {
+            throw new InvalidCallException('无效的访问方式。');
+        }
     }
 
     /**

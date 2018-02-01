@@ -135,7 +135,7 @@ return array(
     'Create {modelClass}' => '添加{modelClass}',
     'Update {modelClass}: ' => '更新{modelClass}: ',
     // Other
-    'Please choice this user can manager nodes' => '请选择该用户可管理的节点',
+    'Please choice this user can manager categories' => '请选择该用户可管理的分类',
     'Are you sure you want to undo this item?' => '您确定要还原此项吗？',
     'Incorrect username or password.' => '错误的用户名或密码。',
     'User profile save successed.' => '用户资料保存成功。',

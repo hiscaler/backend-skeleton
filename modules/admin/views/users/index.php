@@ -100,7 +100,7 @@ $this->params['menus'] = [
 <?php
 $this->registerJs('yadjet.actions.toggle("table td.enabled-enable-handler img", "' . Url::toRoute('toggle') . '");');
 
-$title = Yii::t('app', 'Please choice this user can manager nodes');
+$title = Yii::t('app', 'Please choice this user can manager categories');
 
 \app\modules\admin\components\JsBlock::begin();
 ?>
