@@ -174,7 +174,7 @@ input[type="password"],
     border: 1px solid #d5d5d5;
     border-radius: 3px;
     padding: 5px 5px;
-    width: 600px;
+    width: 400px;
     background: url(../images/input-bg.png) repeat-x scroll 0 -127px #FAFAFA;
 }
 
@@ -195,7 +195,7 @@ textarea,
     background: url(../images/input-bg.png) repeat-x scroll 0 -127px #fff;
     border: 1px solid #d5d5d5;
     border-radius: 3px;
-    width: 600px;
+    width: 400px;
     height: 120px;
     max-height: 450px;
     font-size: 12px;
@@ -206,7 +206,7 @@ textarea,
 
 .g-editor {
     background-color: #ccc;
-    width: 600px;
+    width: 400px;
     height: 200px;
 }
 
@@ -279,15 +279,6 @@ div.form .form-group .image-preview .btn-remove {
 
 div.form .form-group .image-preview .btn-remove:hover {
     border-color: #C00;
-}
-
-.form-layout-column input[type="text"],
-.form-layout-column input[type="password"],
-.form-layout-column .g-text,
-.form-layout-column .g-text-large,
-.form-layout-column textarea,
-.form-layout-column .g-text-area {
-    width: 400px !important;
 }
 
 /*******************************************************************************
