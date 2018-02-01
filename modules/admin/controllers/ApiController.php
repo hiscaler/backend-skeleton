@@ -98,14 +98,14 @@ class ApiController extends \yii\rest\Controller
             ],
             'image' => [
                 'class' => '\yii\validators\ImageValidator',
-                'label' => Yii::t('meta', 'Image Extensions'),
+                'label' => Yii::t('meta', 'Image Validator'),
                 'options' => [
                     'extensions' => 'jpg,jpeg,png,gif',
                 ]
             ],
             'file' => [
                 'class' => '\yii\validators\FileValidator',
-                'label' => Yii::t('meta', 'File Extensions'),
+                'label' => Yii::t('meta', 'File Validator'),
                 'options' => [
                     'extensions' => '',
                 ]

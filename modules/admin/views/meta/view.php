@@ -44,7 +44,7 @@ $this->params['menus'] = [
                     ?>
                 </div>
             </div>
-            <div class="tab-panel" id="tab-panel-rules" style="display: none">
+            <div class="tab-panel clearfix" id="tab-panel-rules" style="display: none">
                 <div class="form">
                     <fieldset class="model-rule" v-for="item in metaValidators" v-show="item.active">
                         <legend>

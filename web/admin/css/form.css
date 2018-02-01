@@ -488,3 +488,10 @@ div.form .buttons {
     float: left;
     width: 610px;
 }
+
+#tab-panel-rules {}
+#tab-panel-rules fieldset {
+    width: 48%;
+    float: left;
+    display: inline-block;
+}
