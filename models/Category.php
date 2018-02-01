@@ -324,19 +324,17 @@ class Category extends BaseActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         if (!$insert && ($this->_alias != $this->alias)) {
-            // 更新子栏目别名
-            if ($this->_alias != $this->alias) {
-                $children = self::getChildren($this->id);
-                if ($children) {
-                    $cmd = Yii::$app->getDb()->createCommand();
-                    foreach ($children as $child) {
-                        $childAlias = explode('/', $child['alias']);
-                        foreach (explode('/', $this->alias) as $key => $value) {
-                            $childAlias[$key] = $value;
-                        }
-                        $alias = implode('/', $childAlias);
-                        $cmd->update('{{%category}}', ['alias' => $alias], ['id' => $child['id']])->execute();
+            // 更新子栏目别名数据
+            $children = self::getChildren($this->id);
+            if ($children) {
+                $cmd = Yii::$app->getDb()->createCommand();
+                foreach ($children as $child) {
+                    $childAlias = explode('/', $child['alias']);
+                    foreach (explode('/', $this->alias) as $key => $value) {
+                        $childAlias[$key] = $value;
                     }
+                    $alias = implode('/', $childAlias);
+                    $cmd->update('{{%category}}', ['alias' => $alias], ['id' => $child['id']])->execute();
                 }
             }
         }
