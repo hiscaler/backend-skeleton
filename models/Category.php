@@ -169,27 +169,30 @@ class Category extends BaseActiveRecord
         } else {
             $parentId = 0;
         }
-        $categories = self::getChildren($parentId);
-        if ($returnType == self::RETURN_TYPE_PRIVATE || $enabled !== null) {
-            if ($returnType == self::RETURN_TYPE_PRIVATE) {
-                $privateCategoryIds = $db->createCommand('SELECT [[category_id]] FROM {{%user_auth_category}} WHERE [[user_id]] = :userId', [':userId' => \Yii::$app->getUser()->getId()])->queryColumn();
-            } else {
-                $privateCategoryIds = [];
-            }
-            foreach ($categories as $key => $category) {
-                if ($returnType == self::RETURN_TYPE_PRIVATE && $privateCategoryIds && in_array($category['id'], $privateCategoryIds)) {
-                    unset($category[$key]);
+        if ($categories = self::getChildren($parentId)) {
+            // 数据过滤
+            if ($returnType == self::RETURN_TYPE_PRIVATE || $enabled !== null) {
+                if ($returnType == self::RETURN_TYPE_PRIVATE) {
+                    $privateCategoryIds = $db->createCommand('SELECT [[category_id]] FROM {{%user_auth_category}} WHERE [[user_id]] = :userId', [':userId' => \Yii::$app->getUser()->getId()])->queryColumn();
+                    if (empty($privateCategoryIds)) {
+                        return [];
+                    }
                 }
-                if ($enabled !== null && $category['enabled'] != $enabled) {
-                    unset($category[$key]);
+                foreach ($categories as $key => $category) {
+                    if ($returnType == self::RETURN_TYPE_PRIVATE && !in_array($category['id'], $privateCategoryIds)) {
+                        unset($categories[$key]);
+                    }
+                    if ($enabled !== null && $category['enabled'] != $enabled) {
+                        unset($categories[$key]);
+                    }
                 }
             }
-        }
 
-        if ($categories) {
-            $categories = TreeFormatHelper::dumpArrayTree(\yadjet\helpers\ArrayHelper::toTree($categories, 'id', 'parent'));
-            foreach ($categories as $category) {
-                $tree[$category['id']] = $category['levelstr'] . ($shortName ? $category['shortName'] : $category['name']);
+            if ($categories) {
+                $categories = TreeFormatHelper::dumpArrayTree(\yadjet\helpers\ArrayHelper::toTree($categories, 'id', 'parent'));
+                foreach ($categories as $category) {
+                    $tree[$category['id']] = $category['levelstr'] . ($shortName ? $category['shortName'] : $category['name']);
+                }
             }
         }
 
@@ -338,6 +341,12 @@ class Category extends BaseActiveRecord
                 }
             }
         }
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        \Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['category_id' => $this->id])->execute();
     }
 
 }
