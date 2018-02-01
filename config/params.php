@@ -25,12 +25,16 @@ return [
                 'url' => ['users/index'],
                 'forceEmbed' => true,
             ],
-        ],
-        'Site Manage' => [
             'app-models-Module' => [
                 'id' => 'modules',
                 'label' => 'Modules',
                 'url' => ['modules/index'],
+                'forceEmbed' => true,
+            ],
+            'app-models-meta' => [
+                'id' => 'meta',
+                'label' => 'Meta',
+                'url' => ['meta/index'],
                 'forceEmbed' => true,
             ],
             'app-models-Lookup' => [
@@ -57,12 +61,6 @@ return [
                 'url' => ['file-upload-configs/index'],
                 'forceEmbed' => true,
             ],
-            'app-models-meta' => [
-                'id' => 'meta',
-                'label' => 'Meta',
-                'url' => ['meta/index'],
-                'forceEmbed' => true,
-            ],
             'app-models-UserGroup' => [
                 'id' => 'user-group',
                 'label' => 'User Groups',
@@ -76,56 +74,6 @@ return [
                 'forceEmbed' => true,
             ],
         ],
-        'Content Manage' => [
-            'app-models-Article' => [
-                'id' => 'articles',
-                'label' => 'Articles',
-                'url' => ['articles/index'],
-                'enabled' => true,
-            ],
-            'app-models-News' => [
-                'id' => 'news',
-                'label' => 'News',
-                'url' => ['news/index'],
-                'enabled' => true,
-            ],
-            'app-models-Download' => [
-                'id' => 'downloads',
-                'label' => 'Downloads',
-                'url' => ['downloads/index'],
-                'enabled' => true,
-            ],
-            'app-models-FriendlyLink' => [
-                'id' => 'friendly-links',
-                'label' => 'Friendly Links',
-                'url' => ['friendly-links/index'],
-                'forceEmbed' => false,
-            ],
-            'app-models-Feedback' => [
-                'id' => 'feedbacks',
-                'label' => 'Feedbacks',
-                'url' => ['feedbacks/index'],
-                'forceEmbed' => false,
-            ],
-            'app-models-Slide' => [
-                'id' => 'slides',
-                'label' => 'Slides',
-                'url' => ['slides/index'],
-                'enabled' => true,
-            ],
-            'app-models-AdSpace' => [
-                'id' => 'ad-spaces',
-                'label' => 'Ad Spaces',
-                'url' => ['ad-spaces/index'],
-                'forceEmbed' => false,
-            ],
-            'app-models-Ad' => [
-                'id' => 'ads',
-                'label' => 'Ads',
-                'url' => ['ads/index'],
-                'forceEmbed' => false,
-            ],
-        ]
     ],
     'gridColumns' => [
         'app-models-Ad' => [
