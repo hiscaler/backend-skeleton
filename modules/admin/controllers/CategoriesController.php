@@ -80,7 +80,7 @@ class CategoriesController extends GlobalController
         }
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            return $this->redirect(['create', 'parentId' => $model->id]);
+            return $this->redirect(['create', 'parentId' => $parentId ?: $model->parent_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
