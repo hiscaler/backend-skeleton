@@ -75,7 +75,7 @@ class Category extends BaseActiveRecord
             [['enabled'], 'default', 'value' => Constant::BOOLEAN_TRUE],
             [['description'], 'string'],
             [['alias'], 'string', 'max' => 120],
-            ['alias', 'match', 'pattern' => '/^[a-z]+[a-z-\/]*[a-z]$/'],
+            ['alias', 'match', 'pattern' => '/^([a-z0-9\-]+[\/]{0,1})*[^\/]$/'],
             [['sign'], 'string', 'max' => 20],
             ['sign', 'match', 'pattern' => '/^[a-z]*[a-z]$/'],
             [['sign'], 'unique'],
@@ -144,21 +144,7 @@ class Category extends BaseActiveRecord
      */
     private static function rawData($tree = true)
     {
-        $items = [];
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[short_name]], [[description]], [[parent_id]], [[level]], [[icon]], [[enabled]] FROM {{%category}}')->queryAll();
-        foreach ($rawData as $data) {
-            $items[$data['id']] = [
-                'id' => $data['id'],
-                'alias' => $data['alias'],
-                'name' => $data['name'],
-                'shortName' => $data['short_name'],
-                'description' => $data['description'],
-                'parent' => $data['parent_id'],
-                'level' => $data['level'],
-                'icon' => $data['icon'],
-                'enabled' => $data['enabled'] ? true : false,
-            ];
-        }
+        $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}}')->queryAll();
 
         return $tree ? ArrayHelper::toTree($items, 'id', 'parent') : $items;
     }
@@ -194,7 +180,7 @@ class Category extends BaseActiveRecord
                 if ($returnType == self::RETURN_TYPE_PRIVATE && $privateCategoryIds && in_array($category['id'], $privateCategoryIds)) {
                     unset($category[$key]);
                 }
-                if ($enabled !== null && $category['enabled'] != boolval($enabled)) {
+                if ($enabled !== null && $category['enabled'] != $enabled) {
                     unset($category[$key]);
                 }
             }
@@ -323,11 +309,9 @@ class Category extends BaseActiveRecord
                 $this->alias = Inflector::slug($this->name);
             }
             empty($this->short_name) && $this->short_name = $this->name;
-            if ($this->parent_id) {
-                $parent = Yii::$app->getDb()->createCommand('SELECT [[alias]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $this->parent_id])->queryOne();
-                if (strpos($this->alias, ' / ') === false) {
-                    $this->alias = "{$parent['alias']}/{$this->alias}";
-                }
+            if ($this->parent_id && strpos($this->alias, '/') === false) {
+                $parentAlias = Yii::$app->getDb()->createCommand('SELECT [[alias]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $this->parent_id])->queryScalar();
+                $parentAlias && $this->alias = "$parentAlias/$this->alias";
             }
 
             return true;
@@ -341,11 +325,10 @@ class Category extends BaseActiveRecord
         parent::afterSave($insert, $changedAttributes);
         if (!$insert && ($this->_alias != $this->alias)) {
             // 更新子栏目别名
-            $children = self::getChildren($this->id);
-            if ($children) {
-                $db = Yii::$app->getDb();
-                $cmd = $db->createCommand();
-                if ($this->_alias != $this->alias) {
+            if ($this->_alias != $this->alias) {
+                $children = self::getChildren($this->id);
+                if ($children) {
+                    $cmd = Yii::$app->getDb()->createCommand();
                     foreach ($children as $child) {
                         $childAlias = explode('/', $child['alias']);
                         foreach (explode('/', $this->alias) as $key => $value) {

@@ -68,7 +68,14 @@ class CategoriesController extends GlobalController
         $model = new Category();
         $model->loadDefaultValues();
         if ($parentId) {
-            $ordering = \Yii::$app->getDb()->createCommand('SELECT MAX([[ordering]]) FROM {{%category}} WHERE [[parent_id]] = :parentId', [':parentId' => (int) $parentId])->queryScalar();
+            $db = \Yii::$app->getDb();
+            $parentId = $db->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $parentId])->queryScalar();
+            if ($parentId) {
+                $ordering = $db->createCommand('SELECT MAX([[ordering]]) FROM {{%category}} WHERE [[parent_id]] = :parentId', [':parentId' => (int) $parentId])->queryScalar();
+                $model['parent_id'] = $parentId;
+            } else {
+                $ordering = null;
+            }
             $model['ordering'] = $ordering != null ? $ordering + 1 : 10;
         }
 
