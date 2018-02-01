@@ -10,6 +10,13 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
 ];
+$session = Yii::$app->getSession();
+
+if ($session->hasFlash('notice')) {
+    echo \app\modules\admin\components\MessageBox::widget([
+        'message' => $session->getFlash('notice'),
+    ]);
+}
 ?>
 <div class="clearfix">
     <ul class="tabs-common">
@@ -28,7 +35,7 @@ $this->params['menus'] = [
         <?php endforeach; ?>
     </ul>
     <?php if ($items): ?>
-        <?php echo Html::beginForm(['index']); ?>
+        <?php echo Html::beginForm(['form', 'enctype' => 'multipart/form-data']); ?>
         <div class="panels">
             <div id="form-lookup" class="form form-layout-column">
                 <?php

@@ -73,6 +73,7 @@ class LookupsController extends Controller
                 }
             }
             Lookup::refreshCache();
+            Yii::$app->getSession()->setFlash('notice', '更新成功。');
         }
 
         $items = [];

@@ -11,7 +11,6 @@ use app\models\Lookup;
 <div class="form-outside">
     <div class="form lookup-form">
         <?php $form = ActiveForm::begin(); ?>
-        <?= $form->errorSummary($model) ?>
 
         <?php
         $options = ['maxlength' => true];
