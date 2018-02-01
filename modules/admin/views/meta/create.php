@@ -5,7 +5,7 @@
 $this->title = Yii::t('app', 'Create {modelClass}', [
     'modelClass' => Yii::t('model', 'Meta'),
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('model', 'Meta'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Meta'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [
