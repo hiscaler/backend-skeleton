@@ -102,8 +102,10 @@ class Link extends BaseActiveRecord
             'enabled' => '激活',
             'created_at' => '添加时间',
             'created_by' => '添加人',
+            'creater.nickname' => '添加人',
             'updated_at' => '更新时间',
             'updated_by' => '更新人',
+            'updater.nickname' => '更新人',
         ];
     }
 
