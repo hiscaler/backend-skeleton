@@ -9,6 +9,7 @@ use yii\helpers\Html;
 app\modules\admin\assets\AppAsset::register($this);
 
 $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
+$siteName = \app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name;
 ?>
 <?php $this->beginPage() ?>
     <!DOCTYPE html>
@@ -17,7 +18,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
         <meta charset="<?= Yii::$app->charset ?>">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?= Html::csrfMetaTags() ?>
-        <title><?= Html::encode($this->title) ?> - <?= Yii::$app->name ?></title>
+        <title><?= Html::encode($this->title) ?> - <?= $siteName ?></title>
         <?php $this->head() ?>
     </head>
     <body id="mts-app">
@@ -44,7 +45,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
     </div>
     <div id="page-ft">
         <div id="footer">
-            Copyright &copy; <?= date('Y'); ?> by <?= \app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name ?> All Rights Reserved.
+            Copyright &copy; <?= date('Y'); ?> by <?= $siteName ?> All Rights Reserved.
         </div>
     </div>
     <?php $this->endBody() ?>
