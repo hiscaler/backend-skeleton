@@ -16,7 +16,7 @@ class m160904_125620_create_lookup_table extends Migration
         $this->createTable('{{%lookup}}', [
             'id' => $this->primaryKey(),
             'type' => $this->boolean()->notNull()->defaultValue(1)->comment('类型（0:私有 1: 公有）'),
-            'group' => $this->smallInteger()->notNull()->defaultValue(1)->comment('分组（0: 自定义　1: 系统 2: SEO）'),
+            'group' => $this->smallInteger()->notNull()->defaultValue(0)->comment('分组（0: 自定义　1: 系统 2: SEO）'),
             'key' => $this->string(60)->notNull()->comment('键名'),
             'label' => $this->string(60)->notNull()->comment('标签'),
             'description' => $this->text()->comment('描述'),

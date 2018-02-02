@@ -46,7 +46,7 @@ class LookupSearch extends Lookup
             'query' => $query,
             'sort' => [
                 'defaultOrder' => [
-                    'label' => SORT_ASC,
+                    'key' => SORT_ASC,
                 ]
             ]
         ]);

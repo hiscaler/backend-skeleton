@@ -19,6 +19,7 @@ return [
     'DropdownList' => '下拉框',
     'Checkbox' => '复选框',
     'Radio' => '单选框',
+    'File' => '文件上传',
     // 自定义设置文本翻译
     // custom
     'Site Name' => '站点名称',

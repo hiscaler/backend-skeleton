@@ -35,7 +35,7 @@ if ($session->hasFlash('notice')) {
         <?php endforeach; ?>
     </ul>
     <?php if ($items): ?>
-        <?php echo Html::beginForm(['form', 'enctype' => 'multipart/form-data']); ?>
+        <?php echo Html::beginForm(['form'], 'POST', ['enctype' => 'multipart/form-data']); ?>
         <div class="panels">
             <div id="form-lookup" class="form form-layout-column">
                 <?php
@@ -76,6 +76,11 @@ if ($session->hasFlash('notice')) {
                                                     }
                                                 }
                                                 $input = Html::dropDownList($d['key'], unserialize($d['value']), $items, ['class' => 'form-control']);
+                                                break;
+
+                                            case \app\models\Lookup::INPUT_METHOD_FILE:
+                                                echo Html::hiddenInput($d['key'], unserialize($d['value']), ['class' => 'form-control']);
+                                                $input = Html::fileInput($d['key'], null, ['class' => 'form-control']);
                                                 break;
 
                                             default:

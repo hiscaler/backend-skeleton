@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\caching\DbDependency;
 
 /**
  * This is the model class for table "{{%lookup}}".
@@ -46,6 +47,8 @@ class Lookup extends BaseActiveRecord
     const RETURN_TYPE_STRING = 1;
     const RETURN_TYPE_ARRAY = 2;
     const RETURN_TYPE_BOOLEAN = 3;
+    const RETURN_TYPE_URL = 4;
+    const RETURN_TYPE_FILE_ABSOLUTE_PATH = 5;
 
     /**
      * Input methods
@@ -55,6 +58,7 @@ class Lookup extends BaseActiveRecord
     const INPUT_METHOD_DROPDOWNLIST = 'dropdownlist';
     const INPUT_METHOD_CHECKBOX = 'checkbox';
     const INPUT_METHOD_RADIO = 'radio';
+    const INPUT_METHOD_FILE = 'file';
 
     /**
      * @inheritdoc
@@ -145,6 +149,8 @@ class Lookup extends BaseActiveRecord
             self::RETURN_TYPE_STRING => '字符型',
             self::RETURN_TYPE_ARRAY => '数组',
             self::RETURN_TYPE_BOOLEAN => '布尔值',
+            self::RETURN_TYPE_URL => 'URL',
+            self::RETURN_TYPE_FILE_ABSOLUTE_PATH => '文件绝对路径',
         ];
     }
 
@@ -163,52 +169,75 @@ class Lookup extends BaseActiveRecord
             self::INPUT_METHOD_DROPDOWNLIST => Yii::t('lookup', 'DropdownList'),
             self::INPUT_METHOD_CHECKBOX => Yii::t('lookup', 'Checkbox'),
             self::INPUT_METHOD_RADIO => Yii::t('lookup', 'Radio'),
+            self::INPUT_METHOD_FILE => Yii::t('lookup', 'File'),
         ];
     }
 
     /**
-     * 刷新缓存
+     * 生成配置缓存
      *
      * @return array
+     * @throws \yii\db\Exception
      */
-    public static function refreshCache()
+    private static function getRawData()
     {
-        $keyValues = [];
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[key]], [[value]], [[return_type]], [[input_method]], [[input_value]] FROM ' . static::tableName() . ' WHERE [[enabled]] = :enabled', [':enabled' => Constant::BOOLEAN_TRUE])->queryAll();
-        foreach ($rawData as $data) {
-            $value = unserialize($data['value']);
-            switch ($data['return_type']) {
-                case self::RETURN_TYPE_INTEGER:
-                    $value = (int) $value;
-                    break;
+        $cacheKey = 'cache.model.lookup.getRawData';
+        $cache = Yii::$app->getCache();
+        $keyValues = $cache->get($cacheKey);
+        if ($keyValues === false) {
+            $keyValues = [];
+            $rawData = \Yii::$app->getDb()->createCommand('SELECT [[key]], [[value]], [[return_type]], [[input_method]], [[input_value]] FROM {{%lookup}} WHERE [[enabled]] = :enabled', [':enabled' => Constant::BOOLEAN_TRUE])->queryAll();
+            foreach ($rawData as $data) {
+                $value = unserialize($data['value']);
+                if ($value !== false) {
+                    switch ($data['return_type']) {
+                        case self::RETURN_TYPE_INTEGER:
+                            $value = (int) $value;
+                            break;
 
-                case self::RETURN_TYPE_ARRAY:
-                    // 返回的数组数据有定长和变长数组的区别，如果是定长数组，则写入到 value 字段中，直接返回。但是变长数组的话，则不能直接写入 value 字段，而应该保存到 input_methd 中，一行表示一个元素，键值以“:”进行分隔。
-                    if ($data['input_method'] == self::INPUT_METHOD_DROPDOWNLIST) {
-                        $value = [];
-                        foreach (explode(PHP_EOL, $data['input_value']) as $key) {
-                            $v = explode(':', $key);
-                            if (count($v) == 2 && $v[0] != '' && $v[1] != '') {
-                                $value[$v[0]] = $v[1];
+                        case self::RETURN_TYPE_ARRAY:
+                            // 返回的数组数据有定长和变长数组的区别，如果是定长数组，则写入到 value 字段中，直接返回。但是变长数组的话，则不能直接写入 value 字段，而应该保存到 input_methd 中，一行表示一个元素，键值以“:”进行分隔。
+                            if ($data['input_method'] == self::INPUT_METHOD_DROPDOWNLIST) {
+                                $value = [];
+                                foreach (explode(PHP_EOL, $data['input_value']) as $key) {
+                                    $v = explode(':', $key);
+                                    if (count($v) == 2 && $v[0] != '' && $v[1] != '') {
+                                        $value[$v[0]] = $v[1];
+                                    }
+                                }
                             }
-                        }
-                    }
-                    if (!is_array($value)) {
-                        $value = (array) $value;
-                    }
-                    break;
+                            if (!is_array($value)) {
+                                $value = (array) $value;
+                            }
+                            break;
 
-                case self::RETURN_TYPE_BOOLEAN:
-                    $value = $value ? true : false;
-                    break;
+                        case self::RETURN_TYPE_BOOLEAN:
+                            $value = $value ? true : false;
+                            break;
 
-                default :
-                    $value = is_string($value) ? $value : (string) $value;
+                        case self::RETURN_TYPE_URL:
+                            $value = Yii::$app->getRequest()->getHostInfo() . (string) $value;
+                            break;
+
+                        case self::RETURN_TYPE_FILE_ABSOLUTE_PATH:
+                            $value = Yii::getAlias('@webroot') . (string) $value;
+                            break;
+
+                        default :
+                            $value = (string) $value;
+                            break;
+                    }
+                } else {
+                    $value = null;
+                }
+
+                $keyValues[$data['key']] = $value;
             }
-            $keyValues[$data['key']] = $value;
-        }
 
-        Yii::$app->getCache()->set('cache.model.lookup.refresh-cache', $keyValues);
+            $cache->set($cacheKey, $keyValues, 0, new DbDependency([
+                'sql' => 'SELECT MAX([[updated_at]]) FROM {{%lookup}}'
+            ]));
+        }
 
         return $keyValues;
     }
@@ -216,28 +245,16 @@ class Lookup extends BaseActiveRecord
     /**
      * 根据设定的标签获取值
      *
-     * @param string $key
-     * @param string $defaultValue
-     * @param string $returnType
-     * @return mixed
+     * @param $key
+     * @param null $defaultValue
+     * @return mixed|null
+     * @throws \yii\db\Exception
      */
-    public static function getValue($key, $defaultValue = null, $returnType = 'string')
+    public static function getValue($key, $defaultValue = null)
     {
-        $labelValues = Yii::$app->getCache()->get('cache.mode.lookup.refresh-cache');
-        $labelValues === false && $labelValues = self::refreshCache();
+        $values = self::getRawData();
 
-        $value = isset($labelValues[$key]) ? $labelValues[$key] : $defaultValue;
-        switch ($returnType) {
-            case 'int':
-                $value = (int) $value;
-                break;
-
-            case 'array':
-                $value = (array) $value;
-                break;
-        }
-
-        return $value;
+        return isset($values[$key]) ? $values[$key] : $defaultValue;
     }
 
     // Events
@@ -258,18 +275,6 @@ class Lookup extends BaseActiveRecord
         } else {
             return false;
         }
-    }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        self::refreshCache();
-    }
-
-    public function afterDelete()
-    {
-        parent::afterDelete();
-        self::refreshCache();
     }
 
 }
