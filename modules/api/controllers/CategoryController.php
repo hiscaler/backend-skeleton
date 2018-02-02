@@ -18,7 +18,7 @@ class CategoryController extends Controller
      * 分类数据
      *
      * @param null|string $sign
-     * @param bool $sign
+     * @param bool $flat
      * @return array
      * @throws \yii\db\Exception
      */
