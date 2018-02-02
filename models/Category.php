@@ -144,7 +144,12 @@ class Category extends BaseActiveRecord
      */
     private static function rawData($tree = true)
     {
+        $url = Yii::$app->getRequest()->getHostInfo();
         $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
+        foreach ($items as $key => $item) {
+            $items[$key]['enabled'] = $item['enabled'] ? true : false;
+            $item['icon'] && $items[$key]['icon'] = $url . $item['icon'];
+        }
 
         return $tree ? ArrayHelper::toTree($items, 'id', 'parent') : $items;
     }
@@ -166,6 +171,9 @@ class Category extends BaseActiveRecord
         $db = \Yii::$app->getDb();
         if ($sign) {
             $parentId = $db->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $sign])->queryScalar();
+            if (!$parentId) {
+                return [];
+            }
         } else {
             $parentId = 0;
         }
