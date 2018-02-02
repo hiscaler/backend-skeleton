@@ -22,14 +22,14 @@ $this->params['breadcrumbs'][] = $this->title;
                             <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
                             <span class="buttons">
                                 <?= Html::a(Yii::t('module', 'Uninstall'), ['uninstall', 'alias' => $module['alias']], ['class' => 'uninstall', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['install', 'alias' => $module['alias']])]) ?>
-                                <?= Html::a(Yii::t('module', 'Upgrade'), ['upgrade', 'alias' => $module['alias']], ['class' => 'upgrade', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['upgrade', 'alias' => $module['alias']])]) ?>
+                                <?= Html::a(Yii::t('module', 'Upgrade'), ['upgrade', 'alias' => $module['alias']], ['class' => 'upgrade', 'data-key' => $module['alias'], 'data-name' => $module['name'], 'data-url' => \yii\helpers\Url::toRoute(['upgrade', 'alias' => $module['alias']])]) ?>
                             </span>
                         </div>
                         <div class="bd">
                             <p class="misc">
                                 <span><?= Yii::t('module', 'Author') ?>：<?= $module['author'] ?></span>
                                 <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
-                                <span><?= Yii::t('module', 'Url') ?>：<?= $module['url'] ?></span>
+                                <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
                             </p>
                             <p class="description">
                                 <?= $module['description'] ?>
@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <p class="misc">
                                 <span><?= Yii::t('module', 'Author') ?>：<?= $module['author'] ?></span>
                                 <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
-                                <span><?= Yii::t('module', 'Url') ?>：<?= $module['url'] ?></span>
+                                <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
                             </p>
                             <p class="description">
                                 <?= $module['description'] ?>
@@ -122,7 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
             });
         }
 
-        // 模块升级
+        // 模块信息更新
         $('.upgrade').on('click', function () {
             var $t = $(this);
             $.ajax({
@@ -134,7 +134,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 success: function (response) {
                     if (response.success) {
-                        layer.alert('升级成功。');
+                        layer.alert($t.attr('data-name') + '模块更新成功。', {icon: 1});
                     } else {
                         layer.alert(response.error.message);
                     }

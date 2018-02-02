@@ -9,7 +9,7 @@ return [
     'Description' => '描叙',
     'Install' => '安装',
     'Uninstall' => '卸载',
-    'Upgrade' => '升级',
+    'Upgrade' => '更新',
     'Installed modules' => '已安装模块',
     'Pending install modules' => '待安装模块',
 ];

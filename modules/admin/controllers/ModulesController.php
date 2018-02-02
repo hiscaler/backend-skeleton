@@ -363,7 +363,7 @@ class ModulesController extends Controller
     }
 
     /**
-     * 升级模块
+     * 更新模块
      *
      * @todo 数据及文件的处理
      *
