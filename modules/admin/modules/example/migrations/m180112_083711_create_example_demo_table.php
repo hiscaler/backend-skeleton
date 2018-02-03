@@ -4,6 +4,8 @@ use yii\db\Migration;
 
 /**
  * Handles the creation of table `example_demo`.
+ *
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class m180112_083711_create_example_demo_table extends Migration
 {

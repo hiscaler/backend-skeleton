@@ -5,18 +5,20 @@ namespace app\modules\admin\modules\example\controllers;
 use app\modules\admin\extensions\BaseController;
 
 /**
- * Default controller for the `example` module
+ * `example` 子模块
  */
 class DefaultController extends BaseController
 {
 
     /**
-     * Renders the index view for the module
+     * 首页
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($key)
     {
-        return $this->render('index');
+        return $this->render('index', [
+            'key' => $key,
+        ]);
     }
 }

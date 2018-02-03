@@ -3,7 +3,7 @@
 namespace app\modules\admin\modules\example;
 
 /**
- * 测试模块
+ * `example` 子模块
  */
 class Module extends \app\modules\admin\Module
 {
@@ -19,10 +19,10 @@ class Module extends \app\modules\admin\Module
     public function init()
     {
         parent::init();
-        $this->modules = [
-            'api' => [
-                'class' => 'app\modules\admin\modules\example\modules\api\Module',
-            ]
-        ];
+        \Yii::$app->setComponents([
+            'formatter' => [
+                'class' => 'app\modules\admin\modules\example\extensions\Formatter',
+            ],
+        ]);
     }
 }
