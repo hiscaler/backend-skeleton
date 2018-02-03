@@ -55,8 +55,8 @@ if ($session->hasFlash('notice')) {
                                                 if ($d['return_type'] == app\models\Lookup::RETURN_TYPE_STRING) {
                                                     $input = Html::textarea($d['key'], unserialize($d['value']), ['class' => 'form-control']);
                                                 } elseif ($d['return_type'] == app\models\Lookup::RETURN_TYPE_ARRAY) {
-                                                    echo Html::hiddenInput('inputValues[' . \yii\helpers\Inflector::camel2id($d['key']) . ']', 1);
-                                                    $input = Html::textarea($d['key'], $d['input_value'], ['class' => 'form-control']);
+                                                    $input = Html::hiddenInput('inputValues[' . \yii\helpers\Inflector::camel2id($d['key']) . ']', 1);
+                                                    $input .= Html::textarea($d['key'], $d['input_value'], ['class' => 'form-control']);
                                                 } else {
                                                     $input = null;
                                                 }
@@ -79,8 +79,12 @@ if ($session->hasFlash('notice')) {
                                                 break;
 
                                             case \app\models\Lookup::INPUT_METHOD_FILE:
-                                                echo Html::hiddenInput($d['key'], unserialize($d['value']), ['class' => 'form-control']);
-                                                $input = Html::fileInput($d['key'], null, ['class' => 'form-control']);
+                                                $filePath = unserialize($d['value']);
+                                                $input = Html::hiddenInput($d['key'], $filePath, ['class' => 'form-control']);
+                                                $input .= Html::fileInput($d['key'], null, ['class' => 'form-control']);
+                                                if ($filePath) {
+                                                    $input .= '<a href="' . $filePath . '" target="_blank"><span class="glyphicon glyphicon-eye-open"></span> </a>';
+                                                }
                                                 break;
 
                                             default:
