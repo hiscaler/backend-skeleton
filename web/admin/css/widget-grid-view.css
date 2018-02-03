@@ -346,9 +346,9 @@
 .grid-view table.table td.icon-img img {
     width: 30px;
     height: 30px;
-    -webkit-border-radius: 30px;
-    -moz-border-radius: 30px;
-    border-radius: 30px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
 }
 
 .grid-view table.table td.boolean {

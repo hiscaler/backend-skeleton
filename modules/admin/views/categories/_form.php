@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
         <div class="entry">
             <?= $form->field($model, 'sign')->textInput(['maxlength' => true]) ?>
-            
+
             <?= $form->field($model, 'alias')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="entry">
@@ -23,9 +23,15 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'short_name')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'parent_id')->dropDownList(Category::tree(Category::RETURN_TYPE_ALL), ['prompt' => '']) ?>
-
-            <?= $form->field($model, 'icon')->fileInput() ?>
+            <?= $form->field($model, 'parent_id')->dropDownList(Category::tree(null, Category::RETURN_TYPE_ALL), ['prompt' => '']) ?>
+            <?php
+            $template = '{label}{input}{thumb}{error}';
+            $thumb = '';
+            if (!$model->isNewRecord && $model->icon) {
+                $thumb = '<img class="thumbnail" src="' . Yii::$app->getRequest()->getBaseUrl() . $model->icon . '" />';
+            }
+            $template = str_replace('{thumb}', $thumb, $template);
+            echo $form->field($model, 'icon', ['template' => $template])->fileInput() ?>
         </div>
         <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
         <div class="entry">
