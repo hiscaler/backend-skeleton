@@ -170,7 +170,7 @@ class Meta extends \yii\db\ActiveRecord
         $rawData = (new Query())->select(['id', 'key', 'label', 'description', 'input_type', 'input_candidate_value', 'default_value'])
             ->from(static::tableName())
             ->where([
-                'object_name' => strtr($activeRecord->tableName(), ['{{%' => '', '}}' => '']),
+                'table_name' => strtr($activeRecord->tableName(), ['{{%' => '', '}}' => '']),
                 'enabled' => Constant::BOOLEAN_TRUE,
             ])
             ->indexBy('id')
@@ -444,7 +444,7 @@ class Meta extends \yii\db\ActiveRecord
         }
 
         $where = [
-            'object_name' => strtr($activeRecord->tableName(), ['{{%' => '', '}}' => ''])
+            'table_name' => strtr($activeRecord->tableName(), ['{{%' => '', '}}' => ''])
         ];
         if ($keys) {
             $where['key'] = $keys;
