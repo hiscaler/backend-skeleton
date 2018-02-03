@@ -17,8 +17,8 @@ class MetaSearch extends Meta
     public function rules()
     {
         return [
-            [['id', 'return_value_type', 'enabled', 'created_by', 'created_at', 'updated_by', 'updated_at', 'deleted_by', 'deleted_at'], 'integer'],
-            [['object_name', 'key', 'label', 'description', 'input_type', 'default_value'], 'safe'],
+            [['enabled'], 'integer'],
+            [['table_name', 'key', 'label'], 'safe'],
         ];
     }
 
@@ -48,7 +48,7 @@ class MetaSearch extends Meta
             'query' => $query,
             'sort' => [
                 'defaultOrder' => [
-                    'object_name' => SORT_ASC,
+                    'table_name' => SORT_ASC,
                     'key' => SORT_ASC,
                 ]
             ]
@@ -64,23 +64,12 @@ class MetaSearch extends Meta
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'return_value_type' => $this->return_value_type,
             'enabled' => $this->enabled,
-            'created_by' => $this->created_by,
-            'created_at' => $this->created_at,
-            'updated_by' => $this->updated_by,
-            'updated_at' => $this->updated_at,
-            'deleted_by' => $this->deleted_by,
-            'deleted_at' => $this->deleted_at,
         ]);
 
-        $query->andFilterWhere(['like', 'object_name', $this->object_name])
+        $query->andFilterWhere(['like', 'table_name', $this->table_name])
             ->andFilterWhere(['like', 'key', $this->key])
-            ->andFilterWhere(['like', 'label', $this->label])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'input_type', $this->input_type])
-            ->andFilterWhere(['like', 'default_value', $this->default_value]);
+            ->andFilterWhere(['like', 'label', $this->label]);
 
         return $dataProvider;
     }

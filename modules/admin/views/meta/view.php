@@ -28,7 +28,7 @@ $this->params['menus'] = [
                         'model' => $model,
                         'attributes' => [
                             'id',
-                            'object_name_formatted',
+                            'table_name:metaTableName',
                             'key',
                             'label',
                             'description',

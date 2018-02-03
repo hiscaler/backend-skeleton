@@ -11,7 +11,7 @@ use yii\db\Query;
  * This is the model class for table "{{%meta}}".
  *
  * @property integer $id
- * @property string $object_name
+ * @property string $table_name
  * @property string $key
  * @property string $label
  * @property string $description
@@ -63,10 +63,12 @@ class Meta extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['object_name', 'key', 'label', 'description', 'input_type'], 'required'],
+            [['table_name', 'key', 'label', 'description', 'input_type'], 'required'],
             [['return_value_type', 'enabled', 'created_by', 'created_at', 'updated_by', 'updated_at', 'deleted_by', 'deleted_at'], 'integer'],
             ['enabled', 'boolean'],
-            [['object_name', 'key'], 'string', 'max' => 30],
+            [['table_name'], 'string', 'max' => 60],
+            [['key'], 'string', 'max' => 30],
+            [['key'], 'trim'],
             [['label', 'description'], 'string', 'max' => 255],
             [['input_type', 'default_value'], 'string', 'max' => 16],
             [['input_candidate_value'], 'string'],
@@ -81,8 +83,7 @@ class Meta extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'object_name' => Yii::t('meta', 'Object Name'),
-            'object_name_formatted' => Yii::t('meta', 'Object Name'),
+            'table_name' => Yii::t('meta', 'Table Name'),
             'key' => Yii::t('meta', 'Key'),
             'label' => Yii::t('meta', 'Label'),
             'description' => Yii::t('meta', 'Description'),
@@ -155,16 +156,6 @@ class Meta extends \yii\db\ActiveRecord
         $options = self::returnValueTypeOptions();
 
         return isset($options[$this->return_value_type]) ? $options[$this->return_value_type] : null;
-    }
-
-    /**
-     * 格式化之后的对对象名称
-     *
-     * @return string
-     */
-    public function getObject_name_formatted()
-    {
-        return Yii::t('model', \yii\helpers\Inflector::camel2words($this->object_name)) . " [ $this->object_name ]";
     }
 
     /**
@@ -281,14 +272,14 @@ class Meta extends \yii\db\ActiveRecord
     /**
      * 获取数据验证规则
      *
-     * @param $objectName
+     * @param $tableName
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function getRules($objectName)
+    public static function getRules($tableName)
     {
         $rules = [];
-        $validators = Yii::$app->getDb()->createCommand('SELECT [[name]], [[options]] FROM {{%meta_validator}} WHERE [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName)', [':objectName' => trim($objectName)])->queryAll();
+        $validators = Yii::$app->getDb()->createCommand('SELECT [[name]], [[options]] FROM {{%meta_validator}} WHERE [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName)', [':tableName' => trim($tableName)])->queryAll();
         foreach ($validators as $validator) {
             $options = unserialize($validator['options']) ?: [];
             foreach ($options as $key => $value) {
@@ -477,11 +468,11 @@ class Meta extends \yii\db\ActiveRecord
         return $values;
     }
 
-    public static function getValue($objectName, $key, $objectId)
+    public static function getValue($tableName, $key, $objectId)
     {
         $value = null;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName AND [[key]] = :key', [':objectName' => strtolower(trim($objectName)), ':key' => trim($key)])->queryScalar();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $value = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar() ?: null;
         }
@@ -492,18 +483,18 @@ class Meta extends \yii\db\ActiveRecord
     /**
      * 更新自定义表单数据值
      *
-     * @param $objectName
+     * @param $tableName
      * @param $key
      * @param $objectId
      * @param $value
      * @return bool
      * @throws \yii\db\Exception
      */
-    public static function updateValue($objectName, $key, $objectId, $value)
+    public static function updateValue($tableName, $key, $objectId, $value)
     {
         $success = false;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName AND [[key]] = :key', [':objectName' => strtolower(trim($objectName)), ':key' => trim($key)])->queryScalar();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar() ?: null;
             // @todo 验证 objectId 是否有效
@@ -533,18 +524,18 @@ class Meta extends \yii\db\ActiveRecord
     /**
      * 增加自定义表单项目值
      *
-     * @param $objectName
+     * @param $tableName
      * @param $key
      * @param $objectId
      * @param $value
      * @return int|null
      * @throws \yii\db\Exception
      */
-    public static function increaseValue($objectName, $key, $objectId, $value)
+    public static function increaseValue($tableName, $key, $objectId, $value)
     {
         $result = null;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName AND [[key]] = :key', [':objectName' => strtolower(trim($objectName)), ':key' => trim($key)])->queryScalar();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
             // @todo 验证 objectId 是否有效
@@ -574,18 +565,18 @@ class Meta extends \yii\db\ActiveRecord
     /**
      * 减少自定义表单项目值
      *
-     * @param $objectName
+     * @param $tableName
      * @param $key
      * @param $objectId
      * @param $value
      * @return int|null
      * @throws \yii\db\Exception
      */
-    public static function decreaseValue($objectName, $key, $objectId, $value)
+    public static function decreaseValue($tableName, $key, $objectId, $value)
     {
         $result = null;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName AND [[key]] = :key', [':objectName' => strtolower(trim($objectName)), ':key' => trim($key)])->queryScalar();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
             // @todo 验证 objectId 是否有效

@@ -4,7 +4,7 @@
  * meta
  */
 return [
-    'Object Name' => '对象名称',
+    'Table Name' => '表名称',
     'Key' => '键名',
     'Label' => '显示名称',
     'Description' => '描述',

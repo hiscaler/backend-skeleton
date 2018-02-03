@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
         <div class="tab-panel" id="tab-panel-basic">
             <div class="entry">
-                <?= $form->field($model, 'object_name')->dropDownList(app\models\Option::models()) ?>
+                <?= $form->field($model, 'table_name')->dropDownList(app\models\Option::models(), ['prompt' => '']) ?>
 
                 <?= $form->field($model, 'key')->textInput(['maxlength' => true]) ?>
             </div>

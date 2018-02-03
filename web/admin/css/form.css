@@ -231,8 +231,8 @@ textarea.blur, input.blur {
 .form div.help-block {
     color: #C00;
     line-height: 30px;
-    padding-left: 156px;
-    background: url(../images/error.png) no-repeat 136px 50%;
+    padding-left: 175px;
+    background: url(../images/error.png) no-repeat 154px 50%;
 }
 
 div.form .form-group #node-names {

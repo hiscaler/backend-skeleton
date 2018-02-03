@@ -15,7 +15,7 @@ class m160904_123424_create_meta_table extends Migration
     {
         $this->createTable('{{%meta}}', [
             'id' => $this->primaryKey(),
-            'object_name' => $this->string(30)->notNull()->comment('对象名称'),
+            'table_name' => $this->string(60)->notNull()->comment('表名称'),
             'key' => $this->string(30)->notNull()->comment('键名'),
             'label' => $this->string()->notNull()->comment('显示名称'),
             'description' => $this->string()->notNull()->comment('描述'),

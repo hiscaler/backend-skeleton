@@ -36,7 +36,8 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'serial-number'],
             ],
             [
-                'attribute' => 'object_name_formatted',
+                'attribute' => 'table_name',
+                'format' => 'metaTableName',
                 'contentOptions' => ['class' => 'meta-object-name'],
             ],
             [
