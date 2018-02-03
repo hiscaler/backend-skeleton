@@ -179,7 +179,7 @@ class Meta extends \yii\db\ActiveRecord
         $objectId = $activeRecord->isNewRecord ? null : $activeRecord->getPrimaryKey();
         if ($objectId) {
             $values = [];
-            $rawValues = (new \yii\db\Query())
+            $rawValues = (new Query())
                 ->select('*')
                 ->from('{{%meta_value}}')
                 ->where([
@@ -449,12 +449,12 @@ class Meta extends \yii\db\ActiveRecord
         if ($keys) {
             $where['key'] = $keys;
         }
-        $rawValues = (new \yii\db\Query())
+        $rawValues = (new Query())
             ->select(['m.id', 'm.key', 'm.label', 'm.description', 't.value'])
             ->from('{{%meta_value}} t')
             ->leftJoin('{{%meta}} m', '[[t.meta_id]] = [[m.id]]')
-            ->where(['t.object_id' => (int) $objectId,])
-            ->andWhere(['in', 't.meta_id', (new \yii\db\Query())->select(['id'])->from('{{%meta}}')->where($where)])
+            ->where(['t.object_id' => (int) $objectId])
+            ->andWhere(['in', 't.meta_id', (new Query())->select(['id'])->from('{{%meta}}')->where($where)])
             ->all();
         foreach ($rawValues as $data) {
             $values[$data['key']] = [
