@@ -6,6 +6,7 @@ use yadjet\behaviors\FileUploadBehavior;
 use yadjet\helpers\ArrayHelper;
 use yadjet\helpers\TreeFormatHelper;
 use Yii;
+use yii\caching\DbDependency;
 use yii\helpers\Inflector;
 
 /**
@@ -32,10 +33,6 @@ use yii\helpers\Inflector;
 class Category extends BaseActiveRecord
 {
 
-    /**
-     * 全部的
-     */
-    const RETURN_TYPE_ALL = 'all';
     /**
      * 仅分配给个人的
      */
@@ -144,14 +141,24 @@ class Category extends BaseActiveRecord
      */
     private static function rawData($tree = true)
     {
-        $url = Yii::$app->getRequest()->getHostInfo();
-        $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
-        foreach ($items as $key => $item) {
-            $items[$key]['enabled'] = $item['enabled'] ? true : false;
-            $item['icon'] && $items[$key]['icon'] = $url . $item['icon'];
+        $cacheKey = 'app.models.category.rawData.' . (int) $tree;
+        $cache = Yii::$app->getCache();
+        $items = $cache->get($cacheKey);
+        if ($items === false) {
+            $url = Yii::$app->getRequest()->getHostInfo();
+            $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
+            foreach ($items as $key => $item) {
+                $items[$key]['enabled'] = $item['enabled'] ? true : false;
+                $item['icon'] && $items[$key]['icon'] = $url . $item['icon'];
+            }
+            $tree && $items = ArrayHelper::toTree($items, 'id', 'parent');
+
+            $cache->set($cacheKey, $items, 0, new DbDependency([
+                'sql' => 'SELECT MAX([[updated_at]]) FROM {{%category}}'
+            ]));
         }
 
-        return $tree ? ArrayHelper::toTree($items, 'id', 'parent') : $items;
+        return $items;
     }
 
     /**
@@ -181,7 +188,13 @@ class Category extends BaseActiveRecord
             // 数据过滤
             if ($returnType == self::RETURN_TYPE_PRIVATE || $enabled !== null) {
                 if ($returnType == self::RETURN_TYPE_PRIVATE) {
-                    $privateCategoryIds = $db->createCommand('SELECT [[category_id]] FROM {{%user_auth_category}} WHERE [[user_id]] = :userId', [':userId' => \Yii::$app->getUser()->getId()])->queryColumn();
+                    $user = Yii::$app->getUser();
+                    if ($user->getIsGuest()) {
+                        $privateCategoryIds = [];
+                    } else {
+                        $privateCategoryIds = $db->createCommand('SELECT [[category_id]] FROM {{%user_auth_category}} WHERE [[user_id]] = :userId', [':userId' => $user->getId()])->queryColumn();
+                    }
+
                     if (empty($privateCategoryIds)) {
                         return [];
                     }
