@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\modules\admin\modules\link\models\LinkSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-<div class="form-outside form-search form-layout-column" style="display: none">
+<div class="form-outside form-search form-layout-column">
     <div class="link-search form">
         <?php $form = ActiveForm::begin([
             'action' => ['index'],
@@ -17,8 +17,8 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
         <div class="entry">
-            <?= $form->field($model, 'category_id') ?>
-            <?= $form->field($model, 'type') ?>
+            <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('link', \app\models\Category::RETURN_TYPE_PRIVATE), ['prompt' => '']) ?>
+            <?= $form->field($model, 'type')->dropDownList(\app\modules\admin\modules\link\models\Link::typeOptions(), ['prompt' => '']) ?>
         </div>
         <div class="entry">
             <?= $form->field($model, 'title') ?>

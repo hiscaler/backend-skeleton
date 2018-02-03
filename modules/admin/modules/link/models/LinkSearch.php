@@ -19,8 +19,8 @@ class LinkSearch extends Link
     public function rules()
     {
         return [
-            [['id', 'category_id', 'type', 'ordering', 'enabled', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['title', 'description', 'url', 'url_open_target', 'logo'], 'safe'],
+            [['category_id', 'type', 'enabled'], 'integer'],
+            [['title'], 'safe'],
         ];
     }
 
@@ -48,6 +48,12 @@ class LinkSearch extends Link
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'category_id' => SORT_ASC,
+                    'ordering' => SORT_ASC,
+                ]
+            ]
         ]);
 
         $this->load($params);
@@ -60,22 +66,12 @@ class LinkSearch extends Link
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
             'category_id' => $this->category_id,
             'type' => $this->type,
-            'ordering' => $this->ordering,
             'enabled' => $this->enabled,
-            'created_at' => $this->created_at,
-            'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'url', $this->url])
-            ->andFilterWhere(['like', 'url_open_target', $this->url_open_target])
-            ->andFilterWhere(['like', 'logo', $this->logo]);
+        $query->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

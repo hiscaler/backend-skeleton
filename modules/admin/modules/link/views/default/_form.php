@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'url')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'url')->textInput(['maxlength' => true, 'placeholder' => 'http://www.example.com']) ?>
 
         <?= $form->field($model, 'url_open_target')->dropDownList(\app\modules\admin\modules\link\models\Link::urlOpenTargetOptions()) ?>
 

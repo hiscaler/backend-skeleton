@@ -14,7 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
-    ['label' => Yii::t('app', 'Search'), 'url' => '#'],
 ];
 ?>
 <div class="link-index">
@@ -43,7 +42,7 @@ $this->params['menus'] = [
             ],
             'title',
             'description',
-            //'url:url',
+            'url:url',
             //'url_open_target:url',
             //'logo',
             [

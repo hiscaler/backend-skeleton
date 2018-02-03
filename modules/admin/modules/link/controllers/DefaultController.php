@@ -76,16 +76,31 @@ class DefaultController extends BaseController
 
     /**
      * Creates a new Link model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
      *
-     * @return mixed
+     * @param null $category
+     * @param int $type
+     * @param string $urlOpenTarget
+     * @param int $ordering
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate($category = null, $type = Link::TYPE_TEXT, $urlOpenTarget = Link::URL_OPEN_TARGET_BLANK, $ordering = 1)
     {
         $model = new Link();
+        $model->loadDefaultValues();
+        $category && $model->category_id = (int) $category;
+        if (!isset(Link::typeOptions()[$type])) {
+            $type = Link::TYPE_TEXT;
+        }
+        $model->type = $type;
+        if (!isset(Link::urlOpenTargetOptions()[$urlOpenTarget])) {
+            $urlOpenTarget = Link::URL_OPEN_TARGET_BLANK;
+        }
+        $model->url_open_target = $urlOpenTarget;
+
+        $model->ordering = (int) $ordering;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['create', 'category' => $model->category_id, 'type' => $model->type, 'urlOpenTarget' => $model->url_open_target, 'ordering' => $model->ordering + 1]);
         }
 
         return $this->render('create', [

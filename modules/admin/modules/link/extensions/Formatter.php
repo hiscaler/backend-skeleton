@@ -4,7 +4,7 @@ namespace app\modules\admin\modules\link\extensions;
 
 use app\modules\admin\modules\link\models\Link;
 
-class Formatter extends \yii\i18n\Formatter
+class Formatter extends \app\modules\admin\extensions\Formatter
 {
 
     public $nullDisplay = '';
