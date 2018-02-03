@@ -28,6 +28,8 @@ class m160808_122553_create_file_upload_config_table extends Migration
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
         ]);
+
+        $this->createIndex('updated_at', '{{%file_upload_config}}', ['updated_at']);
     }
 
     /**
