@@ -39,7 +39,7 @@ $this->params['menus'] = [
                     'attribute' => 'alias',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        return Html::a($model['alias'], ['update', 'id' => $model['id']]);
+                        return '<a href="javascript:;" class="btn-copy" data-clipboard-target="#label-alias-' . $model['id'] . '" title="复制">&nbsp;</a>' . Html::a($model['alias'], ['update', 'id' => $model['id']], ['id' => 'label-alias-' . $model['id']]);
                     },
                     'contentOptions' => ['style' => 'width: 60px'],
                 ],
