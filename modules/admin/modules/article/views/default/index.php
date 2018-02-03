@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -28,12 +29,13 @@ $this->params['menus'] = [
             ],
             [
                 'attribute' => 'alias',
+                'value' => function ($model) {
+                    return '<a href="javascript:;" class="btn-copy" data-clipboard-target="#article-alias-' . $model['id'] . '" title="复制">&nbsp;</a>' . Html::a($model['alias'], ['update', 'id' => $model['id']], ['id' => 'article-alias-' . $model['id']]);
+                },
+                'format' => 'raw',
                 'contentOptions' => ['class' => 'alias'],
             ],
             'title',
-            'keyword',
-            'description:ntext',
-            //'content:ntext',
             [
                 'attribute' => 'created_by',
                 'value' => function ($model) {
