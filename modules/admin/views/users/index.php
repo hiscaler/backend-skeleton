@@ -76,8 +76,9 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'datetime'],
             ],
             [
-                'attribute' => 'status_text',
-                'contentOptions' => ['class' => 'data-status']
+                'attribute' => 'status',
+                'format' => 'boolean',
+                'contentOptions' => ['class' => 'boolean pointer enabled-handler']
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
@@ -158,6 +159,8 @@ $title = Yii::t('app', 'Please choice this user can manager categories');
 
             return false;
         });
+
+        yadjet.actions.toggle("table td.enabled-handler img", "<?= Url::toRoute('toggle') ?>");
     });
 </script>
 <?php \app\modules\admin\components\JsBlock::end() ?>

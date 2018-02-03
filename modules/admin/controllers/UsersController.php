@@ -32,7 +32,7 @@ class UsersController extends GlobalController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'change-password', 'auth'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'change-password', 'auth', 'toggle'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -42,6 +42,7 @@ class UsersController extends GlobalController
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'toggle' => ['post'],
                 ],
             ],
         ];
@@ -252,6 +253,43 @@ class UsersController extends GlobalController
         } else {
             throw new InvalidCallException('无效的访问方式。');
         }
+    }
+
+    /**
+     * 激活禁止操作
+     *
+     * @return Response
+     */
+    public function actionToggle()
+    {
+        $id = Yii::$app->getRequest()->post('id');
+        $db = Yii::$app->getDb();
+        $value = $db->createCommand('SELECT [[status]] FROM {{%user}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if ($value !== false) {
+            $value = !$value;
+            $now = time();
+            $db->createCommand()->update('{{%user}}', ['status' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], '[[id]] = :id', [':id' => (int) $id])->execute();
+            $responseData = [
+                'success' => true,
+                'data' => [
+                    'value' => $value,
+                    'updatedAt' => Yii::$app->getFormatter()->asDate($now),
+                    'updatedBy' => Yii::$app->getUser()->getIdentity()->username,
+                ],
+            ];
+        } else {
+            $responseData = [
+                'success' => false,
+                'error' => [
+                    'message' => '数据有误',
+                ],
+            ];
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseData,
+        ]);
     }
 
     /**
