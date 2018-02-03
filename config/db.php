@@ -7,4 +7,6 @@ return [
     'password' => 'root',
     'charset' => 'utf8',
     'tablePrefix' => 'www_',
+    'enableSchemaCache' => false,
+    'schemaCacheDuration' => 0,
 ];
