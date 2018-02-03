@@ -580,6 +580,7 @@ ul.pagination li.disabled span {
     height: 16px;
     background: url("../images/copy.png") no-repeat center center;
     text-decoration: none;
+    margin-right: 4px;
 }
 
 .btn-copy:hover {
