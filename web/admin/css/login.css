@@ -67,25 +67,26 @@ li {
 }
 
 #right .field-loginform-rememberme label {
-    width: 200px;
-    margin-left: 63px;
+    width: 100px;
 }
 
 #right .button {
-    _width: 240px;
     background: url(../images/login/button.gif) no-repeat;
     border: none;
     height: 30px;
     width: 90px;
     cursor: pointer;
-    margin-left: 60px;
+    margin-left: 66px;
 }
 
 #right input.form-control {
     height: 24px;
     line-height: 24px;
-    padding: 2px;
+    padding: 2px 5px;
     border: #7db6c7 solid 1px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
 }
 
 #right input#loginform-verifycode {

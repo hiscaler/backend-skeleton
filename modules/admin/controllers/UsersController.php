@@ -72,7 +72,6 @@ class UsersController extends GlobalController
     public function actionCreate()
     {
         $model = new RegisterForm();
-        $model->type = User::TYPE_USER;
         $model->status = User::STATUS_ACTIVE;
         $model->loadDefaultValues();
 

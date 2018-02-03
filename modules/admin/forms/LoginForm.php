@@ -28,10 +28,10 @@ class LoginForm extends Model
             // username and password are both required
             [['username', 'password'], 'required'],
             // rememberMe must be a boolean value
-//            ['rememberMe', 'boolean'],
+            ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
-//            ['verifyCode', 'captcha', 'captchaAction' => 'default/captcha'],
+            ['verifyCode', 'captcha', 'captchaAction' => '/admin/default/captcha'],
         ];
     }
 
@@ -65,7 +65,7 @@ class LoginForm extends Model
 
             if ($logined) {
                 // Record login information
-                Yii::$app->getDb()->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id')->bindValues([
+                Yii::$app->getDb()->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
                     ':loginIp' => ip2long(Yii::$app->getRequest()->userIP),
                     ':loginTime' => time(),
                     ':id' => Yii::$app->getUser()->getId()
@@ -88,7 +88,7 @@ class LoginForm extends Model
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username, 'user');
+            $this->_user = User::findByUsername($this->username);
         }
 
         return $this->_user;
@@ -100,8 +100,8 @@ class LoginForm extends Model
     public function attributeLabels()
     {
         return [
-            'username' => '用户名',
-            'password' => '密码',
+            'username' => '帐　号',
+            'password' => '密　码',
             'verifyCode' => '验证码',
             'rememberMe' => '记住登录',
         ];

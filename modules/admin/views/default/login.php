@@ -1,9 +1,9 @@
 <?php
 
-use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
 
+$name = (\app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name) . '后台管理';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -14,11 +14,11 @@ use yii\captcha\Captcha;
     <meta HTTP-EQUIV="pragma" CONTENT="no-cache" />
     <meta name="language" content="en" />
     <link rel="stylesheet" type="text/css" href="<?= Yii::$app->getRequest()->baseUrl . '/admin/css/login.css' ?>" />
-    <title><?php echo Html::encode($this->title); ?></title>
+    <title><?= $name ?></title>
 </head>
 <body>
 <div id="logo">
-    后台管理系统
+    <?= $name ?>
 </div>
 <div id="in">
     <div id="left"></div>
@@ -45,9 +45,9 @@ use yii\captcha\Captcha;
             ]);
             ?>
             <li>
-                <?= $form->field($model, 'rememberMe')->checkbox(); ?>
+                <input type="submit" name="bt_login" id="bt_login" value="" class="button" />
+                <?= $form->field($model, 'rememberMe', ['options' => ['style' => 'display: inline-block;']])->checkbox(); ?>
             </li>
-            <li><input type="submit" name="bt_login" id="bt_login" value="" class="button" /></li>
         </ul>
         <?php ActiveForm::end(); ?>
     </div>

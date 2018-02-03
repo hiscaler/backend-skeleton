@@ -13,7 +13,6 @@ use yii\web\IdentityInterface;
  * This is the model class for table "mai_user".
  *
  * @property integer $id
- * @property integer $type
  * @property string $username
  * @property string $nickname
  * @property string $avatar
@@ -42,18 +41,10 @@ class User extends ActiveRecord implements IdentityInterface
     use ActiveRecordHelperTrait;
 
     /**
-     * 用户类型
-     */
-    const TYPE_USER = 0;
-    const TYPE_MEMBER = 1;
-
-    /**
      * 用户状态
      */
-    const STATUS_PENDING = 0; // 待审核状态
+    const STATUS_LOCKED = 0; // 禁止状态
     const STATUS_ACTIVE = 1; // 激活状态
-    const STATUS_LOCKED = 2; // 禁止状态
-    const STATUS_DELETED = 3; // 删除状态
 
     /**
      * 用户角色
@@ -82,7 +73,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['type', 'role', 'credits_count', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['role', 'credits_count', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             ['username', 'match', 'pattern' => '/^[a-z0-9]+[a-z0-9-]+[a-z0-9]$/'],
             [['username', 'nickname', 'user_group', 'system_group'], 'string', 'max' => 20],
@@ -93,7 +84,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['username'], 'unique'],
             ['email', 'email'],
             [['password_reset_token'], 'unique'],
-            ['status', 'default', 'value' => self::STATUS_PENDING],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['role', 'default', 'value' => 0],
             ['status', 'in', 'range' => array_keys(self::statusOptions())],
             ['avatar', 'file',
@@ -142,14 +133,9 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $username
      * @return static|null
      */
-    public static function findByUsername($username, $type = null)
+    public static function findByUsername($username)
     {
-        $condition = ['username' => $username, 'status' => self::STATUS_ACTIVE];
-        if ($type !== null) {
-            $condition['type'] = strtolower($type) == 'user' ? self::TYPE_USER : self::TYPE_MEMBER;
-        }
-
-        return static::findOne($condition);
+        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -230,7 +216,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setPassword($password)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($password);
     }
 
     /**
@@ -310,10 +296,8 @@ class User extends ActiveRecord implements IdentityInterface
     public static function statusOptions()
     {
         return [
-            self::STATUS_PENDING => '待审核',
             self::STATUS_ACTIVE => '激活',
             self::STATUS_LOCKED => '锁定',
-            self::STATUS_DELETED => '删除',
         ];
     }
 
@@ -381,31 +365,6 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
-    private static function _getList($where)
-    {
-        return (new \yii\db\Query())
-            ->select('username')
-            ->from(self::tableName())
-            ->where($where)
-            ->indexBy('id')
-            ->column();
-    }
-
-    /**
-     * 获取人员列表
-     *
-     * @return array
-     */
-    public static function getList()
-    {
-        return self::_getList(['type' => static::TYPE_MEMBER]);
-    }
-
-    public static function getListByUserGroup($group)
-    {
-        return self::_getList(['type' => static::TYPE_MEMBER, 'user_group' => trim($group)]);
-    }
-
     // Events
     public function beforeSave($insert)
     {
@@ -416,11 +375,7 @@ class User extends ActiveRecord implements IdentityInterface
             if ($insert) {
                 $this->generateAuthKey();
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
-                if ($this->type == self::TYPE_MEMBER) {
-                    $this->created_by = $this->updated_by = 0;
-                } else {
-                    $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
-                }
+                $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
                 $this->created_at = $this->updated_at = time();
             } else {
                 $this->updated_at = time();
