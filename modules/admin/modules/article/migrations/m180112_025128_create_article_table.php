@@ -27,6 +27,8 @@ class m180112_025128_create_article_table extends Migration
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
         ]);
+
+        $this->createIndex('alias', '{{%article}}', ['alias']);
     }
 
     /**

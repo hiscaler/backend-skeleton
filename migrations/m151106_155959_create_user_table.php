@@ -18,7 +18,6 @@ class m151106_155959_create_user_table extends Migration
 
         $this->createTable('{{%user}}', [
             'id' => $this->primaryKey(),
-            'type' => $this->boolean()->notNull()->defaultValue(0)->comment('用户类型'),
             'username' => $this->string(20)->notNull()->unique()->comment('用户名'),
             'nickname' => $this->string(20)->notNull()->comment('昵称'),
             'avatar' => $this->string(100)->comment('头像'),
@@ -34,7 +33,7 @@ class m151106_155959_create_user_table extends Migration
             'login_count' => $this->integer()->notNull()->defaultValue(0)->comment('登录次数'),
             'last_login_ip' => $this->integer()->defaultValue(null)->comment('最后登录 IP'),
             'last_login_time' => $this->integer()->defaultValue(null)->comment('最后登录时间'),
-            'status' => $this->smallInteger()->notNull()->defaultValue(10)->comment('状态'),
+            'status' => $this->smallInteger()->notNull()->defaultValue(1)->comment('状态'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'created_by' => $this->integer()->notNull()->comment('添加人'),
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
