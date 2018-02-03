@@ -88,7 +88,7 @@ class Module extends \yii\db\ActiveRecord
      */
     public static function getInstalledModules()
     {
-        return Yii::$app->getDb()->createCommand('SELECT * FROM {{%module}}')->queryAll();
+        return Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[menus]] FROM {{%module}}')->queryAll();
     }
 
     /**

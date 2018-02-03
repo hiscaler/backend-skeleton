@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\caching\DbDependency;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
@@ -156,8 +157,8 @@ class FileUploadConfig extends BaseActiveRecord
                 }
             }
 
-            $cache->set($cacheKey, $configs, 0, new \yii\caching\DbDependency([
-                'sql' => 'SELECT MAX(updated_at) FROM ' . static::tableName(),
+            $cache->set($cacheKey, $configs, 0, new DbDependency([
+                'sql' => 'SELECT MAX(updated_at) FROM {{%file_upload_config}}',
             ]));
 
             return $configs;

@@ -6,6 +6,7 @@ use Yii;
 use yii\base\ErrorException;
 use yii\db\ActiveRecord;
 use yii\db\Query;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "{{%meta}}".
@@ -320,11 +321,12 @@ class Meta extends \yii\db\ActiveRecord
     /**
      * 保存 Meta 数据
      *
-     * @param \yii\db\ActiveRecord $activeRecord
+     * @param ActiveRecord $activeRecord
      * @param \yii\base\DynamicModel $dynamicModel
-     * @param type $throwException
-     * @return boolean|mixed
-     * @throws \yii\base\ErrorException
+     * @param bool $throwException
+     * @return bool|null
+     * @throws ErrorException
+     * @throws \yii\db\Exception
      */
     public static function saveValues(\yii\db\ActiveRecord $activeRecord, \yii\base\DynamicModel $dynamicModel, $throwException = false)
     {
@@ -363,7 +365,7 @@ class Meta extends \yii\db\ActiveRecord
                     }
                 }
                 if ($isFile) {
-                    $file = \yii\web\UploadedFile::getInstance($dynamicModel, $key);
+                    $file = UploadedFile::getInstance($dynamicModel, $key);
                     if ($file) {
                         $directory = Yii::getAlias('@webroot');
                         $path = '/uploads/' . date('Ymd');
