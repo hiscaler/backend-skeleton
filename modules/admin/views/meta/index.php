@@ -44,7 +44,7 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'meta-key'],
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return "<span class=\"pk\">[ {$model['id']} ]</span>" . '<a href="javascript:;" class="btn-copy" data-clipboard-target="#meta-key-' . $model['id'] . '" title="¸´ÖÆ">&nbsp;</a>' . \yii\helpers\Html::a($model['key'], ['update', 'id' => $model['id']], ['id' => 'meta-key-' . $model['id']]);
+                    return "<span class=\"pk\">[ {$model['id']} ]</span>" . '<a href="javascript:;" class="btn-copy" data-clipboard-target="#meta-key-' . $model['id'] . '" title="å¤åˆ¶">&nbsp;</a>' . \yii\helpers\Html::a($model['key'], ['update', 'id' => $model['id']], ['id' => 'meta-key-' . $model['id']]);
                 }
             ],
             [
