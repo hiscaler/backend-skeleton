@@ -572,3 +572,16 @@ ul.pagination li.disabled span {
 .glyphicon-refund {
     background-position: -2766px -16px;
 }
+
+/* 复制按钮 */
+.btn-copy {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url("../images/copy.png") no-repeat center center;
+    text-decoration: none;
+}
+
+.btn-copy:hover {
+    text-decoration: none;
+}

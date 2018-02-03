@@ -31,6 +31,7 @@ class AppAsset extends AssetBundle
         'layer/layer.js',
         'js/vue.js',
         'js/axios.min.js',
+        'js/clipboard.min.js',
         'js/application.js',
         'js/underscore-min.js',
     ];

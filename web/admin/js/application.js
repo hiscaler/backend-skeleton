@@ -279,3 +279,17 @@ var vm = new Vue({
         }
     }
 });
+
+/**
+ * 复制内容
+ * @type {Clipboard}
+ */
+var clipboard = new Clipboard('.btn-copy');
+clipboard.on('success', function (e) {
+    var $o = $(e.trigger).attr('data-clipboard-target');
+    layer.tips('复制成功', $(e.trigger).attr('data-clipboard-target'), {tips: [2, '#000000']});
+    e.clearSelection();
+});
+clipboard.on('error', function (e) {
+    layer.tips('复制失败，请手动复制', $(e.trigger).attr('data-clipboard-target'), {tips: 4});
+});
