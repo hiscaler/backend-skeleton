@@ -1,11 +1,11 @@
 <?php
 
-namespace app\modules\api\controllers;
+namespace app\modules\api\extensions;
 
 use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use yii\filters\auth\QueryParamAuth;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
 
     public function behaviors()

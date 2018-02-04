@@ -4,11 +4,11 @@ namespace app\modules\api\controllers;
 
 use app\models\Lookup;
 use app\models\Meta;
+use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Constant;
 use app\modules\api\models\Member;
 use BadMethodCallException;
 use EasyWeChat\Foundation\Application;
-use yadjet\helpers\TreeFormatHelper;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
@@ -27,7 +27,7 @@ use yii\web\Response;
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class WxappController extends Controller
+class WxappController extends BaseController
 {
 
     /* @var \EasyWeChat\Foundation\Application */
@@ -152,6 +152,7 @@ class WxappController extends Controller
             return [
                 'session' => $accessToken,
                 'openid' => $openid,
+                'id' => $memberId,
             ];
         } else {
             Yii::$app->getResponse()->setStatusCode(400);

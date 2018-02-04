@@ -3,6 +3,7 @@
 namespace app\modules\api\controllers;
 
 use app\models\Lookup;
+use app\modules\api\extensions\BaseController;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -11,7 +12,7 @@ use yii\web\NotFoundHttpException;
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class LookupController extends Controller
+class LookupController extends BaseController
 {
 
     /**

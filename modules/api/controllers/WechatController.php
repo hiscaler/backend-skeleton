@@ -3,13 +3,14 @@
 namespace app\modules\api\controllers;
 
 use app\models\Member;
+use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Constant;
 use Overtrue\Wechat\Auth;
 use Overtrue\Wechat\Js;
 use Yii;
 use yii\base\InvalidCallException;
 
-class WechatController extends Controller
+class WechatController extends BaseController
 {
 
     public function actionAuth($redirectUri)

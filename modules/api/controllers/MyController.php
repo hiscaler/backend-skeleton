@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 
+use app\modules\api\extensions\AuthController;
 use app\modules\api\models\Member;
 
 class MyController extends AuthController

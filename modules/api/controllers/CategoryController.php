@@ -3,6 +3,7 @@
 namespace app\modules\api\controllers;
 
 use app\models\Category;
+use app\modules\api\extensions\BaseController;
 use yadjet\helpers\ArrayHelper;
 
 /**
@@ -11,7 +12,7 @@ use yadjet\helpers\ArrayHelper;
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class CategoryController extends Controller
+class CategoryController extends BaseController
 {
 
     /**
