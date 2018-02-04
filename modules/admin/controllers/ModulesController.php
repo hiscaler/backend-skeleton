@@ -90,6 +90,7 @@ class ModulesController extends Controller
                                                 $links[] = [
                                                     'label' => $link['label'],
                                                     'url' => $t,
+                                                    'active' => isset($link['active']) ? $link['active'] : null,
                                                 ];
                                             }
                                             $value = $links;

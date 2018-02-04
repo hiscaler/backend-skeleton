@@ -18,8 +18,10 @@ class GlobalControlPanel extends Widget
     public function getItems()
     {
         $items = [];
+        $request = Yii::$app->getRequest();
         $controller = Yii::$app->controller;
         $controllerId = $controller->id;
+        $actionId = $controller->action->id;
         $moduleId = $controller->module->id;
         $builtinModules = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
 
@@ -66,8 +68,38 @@ class GlobalControlPanel extends Widget
                 if (!empty($module['menus']) && ($moduleMenus = json_decode($module['menus'], true))) {
                     foreach ($moduleMenus as $key => $menu) {
                         if (isset($menu['url'][0])) {
-                            list($ctl,) = explode('/', substr($menu['url'][0], 8 + strlen($module['alias'])));
-                            $moduleMenus[$key]['active'] = $moduleId == $module['alias'] && $ctl == $controllerId;
+                            if (isset($menu['active'])) {
+                                $active = $moduleId == $module['alias'];
+                                if ($active) {
+                                    parse_str($menu['active'], $conditions);
+                                    foreach ($conditions as $kk => $value) {
+                                        switch ($kk) {
+                                            case 'controllerId':
+                                                if ($controllerId != $value) {
+                                                    $active = false;
+                                                    break 2;
+                                                }
+                                                break;
+
+                                            case 'actionId':
+                                                if ($actionId != $value) {
+                                                    $active = false;
+                                                    break 2;
+                                                }
+                                                break;
+
+                                            default:
+                                                if ($value != $request->get($kk)) {
+                                                    $active = false;
+                                                    break 2;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+
+                                $moduleMenus[$key]['active'] = $active;
+                            }
                         }
                     }
                     $t['items'] = $moduleMenus;
