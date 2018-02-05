@@ -12,7 +12,8 @@
                 {
                     "key": "1"
                 }
-            ]
+            ],
+            "active": "controllerId=default&actionId=index&&key=1"
         },
         {
             "label": "菜单 2",
