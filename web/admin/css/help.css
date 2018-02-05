@@ -1,0 +1,170 @@
+blockquote {
+    border-left: #ccc solid 4px;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    padding-left: 10px !important;
+    background-color: #f5f5f5;
+}
+
+body {
+    width: 100%;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+table th, table td {
+    border-bottom: 1px #E9E9E9 solid;
+    padding: 6px 5px;
+    /* 保持不换行 */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: keep-all; /* for ie */
+    white-space: nowrap; /* for chrome */
+}
+
+table th.nowrap, table td.nowrap {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+table th.wrap, table td.wrap {
+    word-break: break-all; /* for ie */
+    white-space: normal; /* for chrome */
+}
+
+table th.pointer, table td.pointer {
+    cursor: pointer;
+}
+
+table th {
+    border-top: 1px #E9E9E9 solid;
+    background: #F5F5F5 url(../images/grid-view-header-bg.gif) no-repeat right center;
+    padding: 7px 4px;
+    color: #7d8389;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+table th.last {
+    background: #F5F5F5;
+}
+
+table caption .btn-circle {
+    margin: 7px 0 0 2px;
+    font-size: 18px;
+    position: absolute;
+    border: #ccc solid 1px;
+    width: 16px;
+    height: 16px;
+    line-height: 14px;
+    border-radius: 16px;
+    display: inline-block;
+    text-align: center;
+    background-color: #4362BF;
+    color: #FFF;
+    vertical-align: top;
+}
+
+table caption .btn-circle:hover {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+table td label.circle {
+    display: inline;
+    float: left;
+    margin: 5px;
+    border-radius: 4px;
+    border: #CCC solid 1px;
+    padding: 3px 10px;
+    background-color: #F5F5F5;
+}
+
+table th a {
+    color: #7d8389;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+table th a:hover {
+    color: #3b5998;
+}
+
+table th a.asc {
+    background: url(../images/up.gif) right center no-repeat;
+    padding-right: 10px;
+}
+
+table th a.desc {
+    background: url(../images/down.gif) right center no-repeat;
+    padding-right: 10px;
+}
+
+table tr.enabled {
+    background: #FFF;
+}
+
+table tr.disabled {
+    background: #F5F5F5;
+}
+
+table tr.new {
+    background: #FFF6BF;
+}
+
+table tr.even {
+    background: #FAFCFF;
+}
+
+table tr.odd {
+    background: #FFF;
+}
+
+table tr.block {
+    background: #FFF6BF;
+}
+
+table tr.selected td {
+    background: #FFFFEF;
+}
+
+table tr.root .name {
+    font-weight: bold;
+}
+
+table tr.children-2 .name,
+table tr.children-3 .name,
+table tr.children-4 .name {
+    background-image: url("../images/right-arrow.png");
+    background-repeat: no-repeat;
+    background-position: 24px center;
+    padding-left: 40px;
+}
+
+table tr.children-3 .name {
+    background-position: 40px center;
+    padding-left: 56px;
+}
+
+table tr.children-4 .name {
+    background-position: 56px center;
+    padding-left: 72px;
+}
+
+table tr:hover {
+    background: #ECFBD4;
+}
+
+table tr td img {
+    border: none;
+}
