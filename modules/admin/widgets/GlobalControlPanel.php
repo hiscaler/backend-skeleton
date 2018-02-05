@@ -71,7 +71,7 @@ class GlobalControlPanel extends Widget
                             if (isset($menu['active'])) {
                                 $active = $moduleId == $module['alias'];
                                 if ($active) {
-                                    parse_str($menu['active'], $conditions);
+                                    parse_str(trim($menu['active']), $conditions);
                                     foreach ($conditions as $kk => $value) {
                                         switch ($kk) {
                                             case 'controllerId':
@@ -103,6 +103,7 @@ class GlobalControlPanel extends Widget
                         }
                     }
                     $t['items'] = $moduleMenus;
+                    $t['url'] = $moduleMenus[0]['url'];
                 }
                 $items[] = $t;
             }
