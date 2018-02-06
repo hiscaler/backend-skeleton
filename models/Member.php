@@ -39,7 +39,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     const STATUS_PENDING = 0; // 待审核状态
     const STATUS_ACTIVE = 1; // 激活状态
-    const STATUS_LOCKED = 2; // 禁止状态
+    const STATUS_LOCKED = 2; // 锁定状态
     const STATUS_DELETED = 3; // 删除状态
 
     /**
