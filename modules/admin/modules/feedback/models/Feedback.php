@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\feedback\models;
 
+use app\models\BaseActiveRecord;
 use Yii;
 
 /**
@@ -20,7 +21,7 @@ use Yii;
  * @property int $updated_at 更新时间
  * @property int $updated_by 更新人
  */
-class Feedback extends \yii\db\ActiveRecord
+class Feedback extends BaseActiveRecord
 {
 
     /**
@@ -65,29 +66,12 @@ class Feedback extends \yii\db\ActiveRecord
             'email' => '邮箱',
             'message' => '内容',
             'created_at' => '添加时间',
-            'created_by' => '添加人',
+            'created_by' => '提交人',
+            'creater.nickname' => '提交人',
             'updated_at' => '更新时间',
             'updated_by' => '更新人',
+            'updater.nickname' => '更新人',
         ];
-    }
-
-    // Events
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            $userId = \Yii::$app->getUser()->getIsGuest() ? 0 : \Yii::$app->getUser()->getId();
-            if ($insert) {
-                $this->created_by = $this->updated_by = $userId;
-                $this->created_at = $this->updated_at = time();
-            } else {
-                $this->updated_by = $userId;
-                $this->updated_at = time();
-            }
-
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

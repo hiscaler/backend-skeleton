@@ -26,13 +26,27 @@ $this->params['menus'] = [
                 'class' => 'yii\grid\SerialColumn',
                 'contentOptions' => ['class' => 'serial-number']
             ],
-            'category_id',
+            [
+                'attribute' => 'category.name',
+                'contentOptions' => ['class' => 'category-name'],
+            ],
             'title',
-            'username',
-            'tel',
-            //'mobile_phone',
-            //'email:email',
-            //'message:ntext',
+            [
+                'attribute' => 'username',
+                'contentOptions' => ['class' => 'username'],
+            ],
+            [
+                'attribute' => 'tel',
+                'contentOptions' => ['class' => 'tel'],
+            ],
+            [
+                'attribute' => 'mobile_phone',
+                'contentOptions' => ['class' => 'mobile-phone'],
+            ],
+            [
+                'attribute' => 'email',
+                'contentOptions' => ['class' => 'email'],
+            ],
             [
                 'attribute' => 'created_at',
                 'format' => 'date',
