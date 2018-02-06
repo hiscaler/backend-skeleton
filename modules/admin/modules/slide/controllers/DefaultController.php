@@ -1,12 +1,12 @@
 <?php
 
-namespace app\modules\slide\controllers;
+namespace app\modules\admin\modules\slide\controllers;
 
 use app\models\User;
 use app\modules\admin\extensions\BaseController;
+use app\modules\admin\modules\slide\models\Slide;
+use app\modules\admin\modules\slide\models\SlideSearch;
 use Yii;
-use app\modules\slide\models\Slide;
-use app\modules\slide\models\SlideSearch;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -31,7 +31,7 @@ class DefaultController extends BaseController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'toggle'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'toggle', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

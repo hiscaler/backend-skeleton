@@ -10,7 +10,7 @@ use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 
 /**
- * This is the model class for table "www_slide".
+ * This is the model class for table "{{%slide}}".
  *
  * @property integer $id
  * @property integer $category_id
@@ -27,8 +27,6 @@ use Yii;
  */
 class Slide extends BaseActiveRecord
 {
-
-    const GROUP_KEY = 'm.models.slide.group';
 
     public $_fileUploadConfig;
 
@@ -59,7 +57,8 @@ class Slide extends BaseActiveRecord
     {
         return [
             [['category_id', 'ordering', 'enabled', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['title', 'url'], 'required'],
+            [['title'], 'required'],
+            [['title', 'url'], 'trim'],
             [['title'], 'string', 'max' => 60],
             [['url'], 'string', 'max' => 100],
             [['url_open_target'], 'string', 'max' => 6],
@@ -69,13 +68,8 @@ class Slide extends BaseActiveRecord
                 'extensions' => $this->_fileUploadConfig['extensions'],
                 'minSize' => $this->_fileUploadConfig['size']['min'],
                 'maxSize' => $this->_fileUploadConfig['size']['max'],
-                'tooSmall' => Yii::t('app', 'The file "{file}" is too small. Its size cannot be smaller than {limit}.', [
-                    'limit' => ApplicationHelper::friendlyFileSize($this->_fileUploadConfig['size']['min']),
-                ]),
-                'tooBig' => Yii::t('app', 'The file "{file}" is too big. Its size cannot exceed {limit}.', [
-                    'limit' => ApplicationHelper::friendlyFileSize($this->_fileUploadConfig['size']['max']),
-                ]),
-            ],];
+            ],
+        ];
     }
 
     public function behaviors()
@@ -96,8 +90,7 @@ class Slide extends BaseActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'category_id' => Yii::t('app', 'Group'),
-            'group_name' => Yii::t('app', 'Group'),
+            'category_id' => Yii::t('app', 'Category'),
             'title' => '名称',
             'url' => Yii::t('slide.model', 'URL'),
             'url_open_target' => '打开方式',
@@ -125,29 +118,6 @@ class Slide extends BaseActiveRecord
         $options = self::urlOpenTargetOptions();
 
         return isset($options[$this->url_open_target]) ? $options[$this->url_open_target] : null;
-    }
-
-    public function getGroup_name()
-    {
-        return Lookup::getValue(static::GROUP_KEY);
-    }
-
-    // Events
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            if ($insert) {
-                $this->created_at = $this->updated_at = time();
-                $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
-            } else {
-                $this->updated_at = time();
-                $this->updated_by = Yii::$app->getUser()->getId();
-            }
-
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

@@ -17,13 +17,13 @@ use yii\widgets\ActiveForm;
         ]);
         ?>
 
-        <?= $form->field($model, 'category_id')->dropDownList(\app\models\Option::categoryTree(), ['prompt' => '']) ?>
+        <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('slide.module.category'), ['prompt' => '']) ?>
 
         <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'url')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'url_open_target')->dropDownList(\app\modules\slide\models\Slide::urlOpenTargetOptions()) ?>
+        <?= $form->field($model, 'url_open_target')->dropDownList(\app\modules\admin\modules\slide\models\Slide::urlOpenTargetOptions()) ?>
 
         <?= $form->field($model, 'picture_path')->fileInput() ?>
 

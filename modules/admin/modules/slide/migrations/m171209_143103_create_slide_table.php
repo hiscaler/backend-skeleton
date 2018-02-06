@@ -17,7 +17,7 @@ class m171209_143103_create_slide_table extends Migration
             'id' => $this->primaryKey(),
             'category_id' => $this->integer()->notNull()->defaultValue(0)->comment('所属分类'),
             'title' => $this->string(60)->notNull()->comment('标题'),
-            'url' => $this->string(100)->notNull()->comment('链接地址'),
+            'url' => $this->string(100)->comment('链接地址'),
             'url_open_target' => $this->string(6)->notNull()->defaultValue('_blank')->comment('链接打开方式'),
             'picture_path' => $this->string(100)->notNull()->comment('图片'),
             'ordering' => $this->smallInteger()->notNull()->defaultValue(0)->comment('排序'),

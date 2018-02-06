@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\admin\modules\article;
+namespace app\modules\admin\modules\slide;
 
 /**
  * slide module definition class
