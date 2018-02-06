@@ -3,8 +3,6 @@
 namespace app\modules\admin\controllers;
 
 use cebe\markdown\GithubMarkdown;
-use cebe\markdown\Markdown;
-use cebe\markdown\MarkdownExtra;
 use Yii;
 use yii\web\NotFoundHttpException;
 
