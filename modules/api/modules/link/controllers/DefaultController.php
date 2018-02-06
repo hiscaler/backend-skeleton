@@ -71,7 +71,7 @@ class DefaultController extends BaseController
     /**
      * 列表（带翻页）
      *
-     * @api GET /api/link/default?fields=:fields&category=:catgory&type=:type&page=:page&pageSize=:pageSize
+     * @api GET /api/link/default?fields=:fields&category=:category&type=:type&page=:page&pageSize=:pageSize
      * @param null $category
      * @param null $type
      * @param int $page
@@ -92,7 +92,7 @@ class DefaultController extends BaseController
     /**
      * 列表（不带翻页）
      *
-     * @api GET /api/link/default/list?fields=:fields&category=:catgory&type=:type&offset=:offset&limit=:limit
+     * @api GET /api/link/default/list?fields=:fields&category=:category&type=:type&offset=:offset&limit=:limit
      * @param null $fields
      * @param null $category
      * @param null $type
