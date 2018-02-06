@@ -308,7 +308,15 @@ class ModulesController extends Controller
                         'updated_at' => $now,
                         'updated_by' => $userId,
                     ])->execute();
+
                     $this->_migrate($alias, 'up');
+
+                    // 复制翻译的语种文件
+                    $messageFilePath = Yii::getAlias("@app/modules/admin/modules/$alias/messages");
+                    if (file_exists($messageFilePath)) {
+                        FileHelper::copyDirectory($messageFilePath, Yii::getAlias('@app/messages'));
+                    }
+
                     $success = true;
                 } catch (\Exception $ex) {
                     $errorMessage = $ex->getMessage();
