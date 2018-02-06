@@ -1,0 +1,9 @@
+{
+    "name": "留言反馈管理",
+    "author": "hiscaler",
+    "version": "0.0.1",
+    "description": "会员留言反馈模块",
+    "url": "http://www.github.com/hiscaler",
+    "menus": [],
+    "depends": []
+}
