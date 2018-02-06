@@ -34,6 +34,6 @@ return [
     'Deleted' => '删除',
     'Base Information' => '基础信息',
     "Management's Sites" => '管理的站点',
-    'Pending' => '待审核',
+    'Locked' => '锁定',
     'Active' => '激活',
 ];

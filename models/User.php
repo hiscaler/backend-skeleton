@@ -43,7 +43,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * 用户状态
      */
-    const STATUS_LOCKED = 0; // 禁止状态
+    const STATUS_LOCKED = 0; // 锁定状态
     const STATUS_ACTIVE = 1; // 激活状态
 
     /**

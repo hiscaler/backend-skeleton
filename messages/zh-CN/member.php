@@ -22,6 +22,6 @@ return [
     'Last Login IP' => '最后登陆 IP',
     'Pending' => '待审核',
     'Active' => '激活',
-    'Disabled' => '禁止',
+    'Locked' => '锁定',
     'Deleted' => '删除',
 ];

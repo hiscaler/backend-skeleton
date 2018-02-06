@@ -4,6 +4,7 @@ namespace app\commands;
 
 use app\models\Constant;
 use app\models\Lookup;
+use app\models\Member;
 use app\models\User;
 use Yii;
 use yii\base\Security;
@@ -178,24 +179,25 @@ class InitController extends Controller
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
                     'value' => 'php:Y-m-d H:i:s',
                 ],
-                // 用户注册默认状态
-                'system.user.signup.default.status' => [
+                // 会员注册默认状态
+                'system.member.signup.default.status' => [
                     'returnType' => Lookup::RETURN_TYPE_INTEGER,
                     'inputMethod' => Lookup::INPUT_METHOD_DROPDOWNLIST,
                     'inputValue' => implode(PHP_EOL, [
-                        User::STATUS_PENDING . ':' . Yii::t('user', 'Pending'),
-                        User::STATUS_ACTIVE . ':' . Yii::t('user', 'Active'),
+                        Member::STATUS_PENDING . ':' . Yii::t('member', 'Pending'),
+                        Member::STATUS_LOCKED . ':' . Yii::t('member', 'Locked'),
+                        Member::STATUS_ACTIVE . ':' . Yii::t('member', 'Active'),
                     ]),
-                    'value' => User::STATUS_PENDING,
+                    'value' => Member::STATUS_ACTIVE,
                 ],
-                // 用户注册赠送积分
-                'system.user.signup.default.credits' => [
+                // 会员注册赠送积分
+                'system.member.signup.default.credits' => [
                     'returnType' => Lookup::RETURN_TYPE_INTEGER,
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
                     'value' => 0,
                 ],
-                // 用户推荐注册赠送积分
-                'system.user.signup.referral.credits' => [
+                // 会员推荐注册赠送积分
+                'system.member.signup.referral.credits' => [
                     'returnType' => Lookup::RETURN_TYPE_INTEGER,
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
                     'value' => 0,

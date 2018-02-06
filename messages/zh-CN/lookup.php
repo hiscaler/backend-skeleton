@@ -40,7 +40,8 @@ return [
     'Date Format' => '日期格式',
     'Time Format' => '时间格式',
     'Datetime Format' => '日期时间格式',
-    'User Signup Default Status' => '用户注册默认状态',
-    'User Signup Default Credits' => '用户注册赠送积分',
-    'User Signup Referral Credits' => '用户注册推荐赠送积分',
+    'User Role' => '会员角色',
+    'Member Signup Default Status' => '会员注册默认状态',
+    'Member Signup Default Credits' => '会员注册赠送积分',
+    'Member Signup Referral Credits' => '会员注册推荐赠送积分',
 ];
