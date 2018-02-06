@@ -9,6 +9,5 @@
 |---|:---:|:---:|:---:|---|
 | fields | string | 否 | null | 可返回的列表字段（title,categoryId,categoryName,type,description,url,logo,urlOpenTarget） |
 | category | string | 否 | null | 分类 id |
-| type | string | 否 | null | 类型 |
 | page | int | 否 | 1 | 当前页 |
 | pageSize | int | 否 | 20 | 每页返回的数据量 |
