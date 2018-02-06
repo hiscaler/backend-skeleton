@@ -162,7 +162,7 @@ class ModulesController extends Controller
             define('STDIN', fopen("php://stdin", "r"));
         }
         if (!defined('STDOUT')) {
-            define('STDOUT', fopen('/tmp/stdout', 'w'));
+            define('STDOUT', fopen('php://stdout', 'w'));
         }
         $migrationFilesPath = Yii::getAlias('@app/modules/admin/modules/' . $moduleId . '/migrations/');
         Yii::setAlias('@migrations', $migrationFilesPath);
@@ -238,7 +238,7 @@ class ModulesController extends Controller
         }
 
         ob_clean();
-        $handle = fopen('/tmp/stdout', 'r');
+        $handle = fopen('php://stdout', 'r');
         $message = '';
         while (($buffer = fgets($handle, 4096)) !== false) {
             $message .= $buffer . "<br>";
