@@ -31,8 +31,17 @@ class HelpController extends Controller
 
             $this->layout = 'help';
 
+            $content = $markdown->parse($content);
+            preg_match('/<h1>(.*)<\/h1>?.*/', $content, $matches);
+            if ($matches) {
+                $title = $matches[1];
+            } else {
+                $title = 'ERROR';
+            }
+
             return $this->render('index.php', [
-                'body' => $markdown->parse($content),
+                'title' => $title,
+                'body' => $content,
             ]);
         }
         throw new NotFoundHttpException("$file 文档不存在。");
