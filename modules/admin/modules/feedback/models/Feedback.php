@@ -72,9 +72,9 @@ class Feedback extends \yii\db\ActiveRecord
     }
 
     // Events
-    public function afterSave($insert, $changedAttributes)
+    public function beforeSave($insert)
     {
-        if (parent::afterSave($insert, $changedAttributes)) {
+        if (parent::beforeSave($insert)) {
             $userId = \Yii::$app->getUser()->getIsGuest() ? 0 : \Yii::$app->getUser()->getId();
             if ($insert) {
                 $this->created_by = $this->updated_by = $userId;
@@ -89,4 +89,5 @@ class Feedback extends \yii\db\ActiveRecord
             return false;
         }
     }
+
 }
