@@ -4,11 +4,13 @@ namespace app\modules\api\modules\feedback\controllers;
 
 use app\models\Meta;
 use app\modules\admin\forms\DynamicForm;
+use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\modules\feedback\models\Feedback;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
+use yii\helpers\Inflector;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -22,17 +24,50 @@ class DefaultController extends Controller
     public $modelClass = 'app\modules\api\modules\feedback\models\Feedback';
 
     /**
-     * 文章列表
+     * 搜索条件解析
      *
-     * @api /api/feedback/default/index
+     * @param null $fields
+     * @param null $category
+     * @param null $offset
+     * @param null $limit
+     * @return \yii\db\Query
+     */
+    private function parseQuery($fields = null, $category = null, $offset = null, $limit = null)
+    {
+        $where = [];
+        $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.username', 't.tel', 't.mobile_phone', 't.email', 't.created_at', 't.created_by', 't.updated_at', 't.updated_by'], $fields, ['category_name' => 't.category_id']);
+        $query = (new ActiveQuery(Feedback::className()))
+            ->alias('t')
+            ->select($selectColumns);
+
+        if (in_array('c.name AS category_name', $selectColumns)) {
+            $query->leftJoin('{{%category}} c', 't.category_id = c.id');
+        }
+
+        // 提交处理
+        if ($category) {
+            $where['t.category_id'] = (int) $category;
+        }
+
+        return $query->where($where)
+            ->offset($offset)
+            ->limit($limit)
+            ->orderBy(['t.created_at' => SORT_DESC]);
+    }
+
+    /**
+     * 列表（带翻页）
+     *
+     * @api GET /api/feedback/default?fields=:fields&category=:category&page=:page&pageSize=:pageSize
+     * @param null $category
      * @param int $page
      * @param int $pageSize
      * @return ActiveDataProvider
      */
-    public function actionIndex($page = 1, $pageSize = 20)
+    public function actionIndex($category = null, $page = 1, $pageSize = 20)
     {
         return new ActiveDataProvider([
-            'query' => (new ActiveQuery(Feedback::className())),
+            'query' => $this->parseQuery(Yii::$app->getRequest()->get('fields'), $category, $page, $pageSize),
             'pagination' => [
                 'page' => (int) $page - 1,
                 'pageSize' => (int) $pageSize ?: 20
@@ -41,12 +76,29 @@ class DefaultController extends Controller
     }
 
     /**
-     * 文章详情
+     * 列表（不带翻页）
      *
-     * @api /api/feedback/default/view?id=:id
+     * @api GET /api/feedback/default/list?fields=:fields&category=:category&offset=:offset&limit=:limit
+     * @param null $fields
+     * @param null $category
+     * @param int $offset
+     * @param int $limit
+     * @return ActiveDataProvider
+     */
+    public function actionList($fields = null, $category = null, $offset = 0, $limit = 10)
+    {
+        return new ActiveDataProvider([
+            'query' => $this->parseQuery($fields, $category, $offset, $limit),
+            'pagination' => false
+        ]);
+    }
+
+    /**
+     * 详情
      *
+     * @api GET /api/feedback/default/view?id=:id
      * @param $id
-     * @return Article|array|null|\yii\db\ActiveRecord
+     * @return null|static
      * @throws NotFoundHttpException
      */
     public function actionView($id)
@@ -56,6 +108,14 @@ class DefaultController extends Controller
         return $model;
     }
 
+    /**
+     * 提交留言反馈
+     *
+     * @api POST /api/feedback/default/submit
+     * @return Feedback|array
+     * @throws \yii\base\ErrorException
+     * @throws \yii\db\Exception
+     */
     public function actionSubmit()
     {
         $model = new Feedback();
@@ -63,9 +123,15 @@ class DefaultController extends Controller
 
         $dynamicModel = new DynamicForm(Meta::getItems($model));
 
-        $post = Yii::$app->getRequest()->post();
-        if ($post) {
-            if (($model->load($post, '') && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
+        $payload = [];
+        foreach (Yii::$app->getRequest()->post() as $key => $value) {
+            if (strpos($key, '_') !== false) {
+                $key = Inflector::camel2id($key, '_');
+            }
+            $payload[$key] = $value;
+        }
+        if ($payload) {
+            if (($model->load($payload, '') && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($payload) && $dynamicModel->validate()))) {
                 if ($model->save(false)) {
                     $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
 
