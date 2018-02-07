@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 trait ActiveRecordHelperTrait
 {
 
@@ -37,14 +35,13 @@ trait ActiveRecordHelperTrait
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $userId = \Yii::$app->getUser()->getIsGuest() ? 0 : \Yii::$app->getUser()->getId();
             if ($insert) {
                 $this->created_at = $this->updated_at = time();
-                $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
+                $this->created_by = $this->updated_by = $userId;
             } else {
                 $this->updated_at = time();
-                if (Yii::$app->getUser()->isGuest) {
-                    $this->updated_by = Yii::$app->getUser()->getId();
-                }
+                $this->updated_by = $userId;
             }
 
             return true;
