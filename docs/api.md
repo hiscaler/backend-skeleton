@@ -58,14 +58,65 @@
 |---|:---:|:---:|:---:|---|
 | name | string | 是 | null | 常规设定的键名 |
 
+## GET /api/wechat/auth
+### 说明
+微信公众号认证
+### 参数说明
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|---|:---:|:---:|:---:|---|
+| redirectUri | string | 是 | null | 回调地址 |
+### 返回值
+无
+
+## GET /api/wechat/jssdk
+### 说明
+微信 JSSDK 数据
+### 参数说明
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|---|:---:|:---:|:---:|---|
+| url | string | 否 | null | 当前页面地址 |
+| apis | string | 否 | null | 激活的 api 接口，比如 checkJsApi, onMenuShareTimeline, onMenuShareAppMessage, onMenuShareQQ, onMenuShareWeibo, onMenuShareQZone 等 |
+### 返回值
+```javascript
+{
+    "appId": "公众号的唯一标识",
+    "timestamp": "生成签名的时间戳",
+    "nonceStr": "生成签名的随机串",
+    "signature": "签名",
+    jsApiList: ['需要使用的JS接口列表']
+}
+```
+
 ## GET /api/wxapp/login
 ### 说明
 微信小程序认证
 ### 参数说明
-无
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|---|:---:|:---:|:---:|---|
+| code | string | 是 | null | 小程序 code 值 |
+| info | json | 是 | null | 获取的微信用户信息 |
+### 参考资料
+https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-login.html#wxloginobject
+### 返回值
+```json
+{
+    "session": "session value",
+    "openid": 'wechat openid'
+}
+```
 
 ## GET /api/wxapp/check-session
 ### 说明
 微信小程序 session 检测
 ### 参数说明
-无
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|---|:---:|:---:|:---:|---|
+| session | string | 是 | null | login 接口获得的 session 值 |
+### 参考资料
+https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-login.html#wxchecksessionobject
+### 返回值
+```json
+{
+    'valid': true|false
+}
+```
