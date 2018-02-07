@@ -40,7 +40,7 @@ class InitController extends Controller
                 'password_reset_token' => null,
                 'email' => 'admin@example.com',
                 'role' => User::ROLE_ADMINISTRATOR,
-                'register_ip' => '::1',
+                'register_ip' => 0,
                 'login_count' => 0,
                 'last_login_ip' => null,
                 'last_login_time' => null,

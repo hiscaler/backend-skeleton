@@ -66,7 +66,7 @@ class LoginForm extends Model
             if ($logined) {
                 // Record login information
                 Yii::$app->getDb()->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
-                    ':loginIp' => ip2long(Yii::$app->getRequest()->userIP),
+                    ':loginIp' => ip2long(Yii::$app->getRequest()->getUserIP()) ?: 0,
                     ':loginTime' => time(),
                     ':id' => Yii::$app->getUser()->getId()
                 ])->execute();

@@ -12,7 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property integer $user_id
- * @property string $login_ip
+ * @property integer $login_ip
  * @property string $client_information
  * @property integer $login_at
  */
@@ -34,8 +34,8 @@ class UserLoginLog extends ActiveRecord
     {
         return [
             [['user_id', 'login_ip', 'client_information', 'login_at'], 'required'],
-            [['user_id', 'login_at'], 'integer'],
-            [['login_ip', 'client_information'], 'string', 'max' => 255]
+            [['user_id', 'login_at', 'login_ip'], 'integer'],
+            [['client_information'], 'string', 'max' => 255]
         ];
     }
 
@@ -66,7 +66,7 @@ class UserLoginLog extends ActiveRecord
     {
         Yii::$app->getDb()->createCommand()->insert('{{%user_login_log}}', [
             'user_id' => Yii::$app->getUser()->getId(),
-            'login_ip' => Yii::$app->getRequest()->getUserIP(),
+            'login_ip' => ip2long(Yii::$app->getRequest()->getUserIP()) ?: 0,
             'client_information' => UtilHelper::getBrowserName(),
             'login_at' => time(),
         ])->execute();
