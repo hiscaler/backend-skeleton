@@ -18,7 +18,7 @@ class Toolbar extends Widget
         if (!$user->isGuest) {
             $items[] = [
                 'label' => $user->getIdentity()->username . (($user->getIdentity()->role == User::ROLE_ADMINISTRATOR) ? ' [ M ]' : ''),
-                'url' => ['/admin/default/profile'],
+                'url' => ['/admin/account/index'],
             ];
 
             $items[] = [

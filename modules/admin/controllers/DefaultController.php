@@ -2,13 +2,9 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\User;
-use app\modules\admin\forms\ChangeMyPasswordForm;
 use app\modules\admin\forms\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
-use yii\web\NotFoundHttpException;
 
 /**
  * Site controller
@@ -30,7 +26,7 @@ class DefaultController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'profile', 'change-password', 'login-logs'],
+                        'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -86,81 +82,6 @@ class DefaultController extends Controller
         Yii::$app->getUser()->logout();
 
         return $this->goHome();
-    }
-
-    /**
-     * 修改帐号资料
-     *
-     * @return mixed
-     */
-    public function actionProfile()
-    {
-        $model = $this->findCurrentUserModel();
-
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'User profile save successed.'));
-
-            return $this->redirect(['profile']);
-        } else {
-            return $this->render('profile', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Change current logined user password
-     *
-     * @return mixed
-     */
-    public function actionChangePassword()
-    {
-        $this->layout = 'my';
-        $user = $this->findCurrentUserModel();
-        $model = new ChangeMyPasswordForm();
-
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
-            $user->setPassword($model->password);
-            if ($user->save(false)) {
-                Yii::$app->getSession()->setFlash('notice', "您的密码修改成功，请下次登录使用新的密码。");
-
-                return $this->redirect(Url::previous());
-            }
-        }
-
-        return $this->render('changePassword', [
-            'user' => $user,
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * 用户登录日志
-     *
-     * @return mixed
-     */
-    public function actionLoginLogs()
-    {
-        $this->layout = 'my';
-        $loginLogs = [];
-        $formatter = Yii::$app->formatter;
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.login_ip]], [[t.client_information]], [[t.login_at]] FROM {{%user_login_log}} t WHERE [[t.user_id]] = :userId ORDER BY [[t.login_at]] DESC', [':userId' => Yii::$app->getUser()->getId()])->queryAll();
-        foreach ($rawData as $data) {
-            $loginLogs[$formatter->asDate($data['login_at'])][] = $data;
-        }
-
-        return $this->render('loginLogs', [
-            'loginLogs' => $loginLogs
-        ]);
-    }
-
-    public function findCurrentUserModel()
-    {
-        if (($model = User::findOne(Yii::$app->getUser()->getId())) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
     }
 
 }

@@ -9,10 +9,10 @@ use yii\widgets\ActiveForm;
 
 $this->params['breadcrumbs'][] = '帐号资料';
 
-$session = Yii::$app->session;
-if ($session->hasFlash('success')):
+$session = Yii::$app->getSession();
+if ($session->hasFlash('notice')):
     echo \app\modules\admin\components\MessageBox::widget([
-        'message' => $session->getFlash('success'),
+        'message' => $session->getFlash('notice'),
     ]);
 else:
     ?>
