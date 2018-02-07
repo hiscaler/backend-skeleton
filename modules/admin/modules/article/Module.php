@@ -3,7 +3,7 @@
 namespace app\modules\admin\modules\article;
 
 /**
- * article module definition class
+ * `article` module definition class
  */
 class Module extends \yii\base\Module
 {
@@ -19,10 +19,5 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        $this->modules = [
-            'api' => [
-                'class' => 'app\modules\admin\modules\article\modules\api\Module',
-            ]
-        ];
     }
 }
