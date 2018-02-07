@@ -196,7 +196,7 @@ class Lookup extends BaseActiveRecord
                             break;
 
                         case self::RETURN_TYPE_ARRAY:
-                            // 返回的数组数据有定长和变长数组的区别，如果是定长数组，则写入到 value 字段中，直接返回。但是变长数组的话，则不能直接写入 value 字段，而应该保存到 input_methd 中，一行表示一个元素，键值以“:”进行分隔。
+                            // 返回的数组数据有定长和变长数组的区别，如果是定长数组，则写入到 value 字段中，直接返回。但是变长数组的话，则不能直接写入 value 字段，而应该保存到 input_method 中，一行表示一个元素，键值以“:”进行分隔。
                             if ($data['input_method'] == self::INPUT_METHOD_DROPDOWNLIST) {
                                 $value = [];
                                 foreach (explode(PHP_EOL, $data['input_value']) as $key) {
