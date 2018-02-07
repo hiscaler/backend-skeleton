@@ -73,6 +73,7 @@ class HelpController extends Controller
                 $sections[] = [
                     'label' => $doc['title'],
                     'url' => ['help/index', 'file' => $key],
+                    'active' => $file == $key,
                 ];
             }
 
