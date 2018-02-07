@@ -1042,6 +1042,7 @@ ul.list li em {
 
 .widget-module .bd .description {
     line-height: 24px;
+    padding-left: 18px;
     text-indent: 24px;
     color: #CCC;
 }
