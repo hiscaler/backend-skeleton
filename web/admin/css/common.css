@@ -175,7 +175,8 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
  * Site error
  ******************************************************************************/
 .site-error {
-    padding: 50px 140px;
+    width: 400px;
+    margin: 200px auto 0 auto;
 }
 
 .site-error h1 {
