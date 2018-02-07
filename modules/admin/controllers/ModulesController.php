@@ -407,10 +407,13 @@ class ModulesController extends Controller
                     ], ['id' => $moduleId])->execute();
 
                     // 更新翻译文本
-                    $messagePath = Yii::getAlias('@app/modules/admin/modules/' . $alias . '/messages');
+                    $sourcePath = Yii::getAlias("@app/modules/admin/modules/$alias");
+                    $messagePath = $sourcePath . '/messages';
                     if (file_exists($messagePath)) {
                         FileHelper::copyDirectory($messagePath, Yii::getAlias('@app/messages'));
                     }
+
+                    copy($sourcePath . DIRECTORY_SEPARATOR . 'icon.png', Yii::getAlias('@webroot') . "/admin/images/module-icons/{$alias}-icon.png");
 
                     $success = true;
                 } catch (\Exception $ex) {
