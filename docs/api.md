@@ -117,6 +117,12 @@ https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-login.html#wxchecksessionobjec
 ### 返回值
 ```json
 {
-    'valid': true|false
+    "valid": true
+}
+```
+或者
+```json
+{
+    "valid": false
 }
 ```
