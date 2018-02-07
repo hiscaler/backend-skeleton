@@ -57,8 +57,16 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'number'],
             ],
             // 'last_login_ip',
-            // 'last_login_time:datetime',
-            // 'status',
+            [
+                'attribute' => 'last_login_time',
+                'format' => 'datetime',
+                'contentOptions' => ['class' => 'datetime'],
+            ],
+            [
+                'attribute' => 'status',
+                'format' => 'memberStatus',
+                'contentOptions' => ['class' => 'data-status'],
+            ],
             // 'remark:ntext',
             [
                 'attribute' => 'created_at',

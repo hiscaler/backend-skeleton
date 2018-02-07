@@ -18,6 +18,9 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'mobile_phone') ?>
         </div>
+        <div class="entry">
+            <?= $form->field($model, 'status')->dropDownList(\app\models\Member::statusOptions(), ['prompt' => '']) ?>
+        </div>
         <div class="form-group buttons">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
             <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>

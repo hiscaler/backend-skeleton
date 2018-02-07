@@ -2,15 +2,14 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\Member;
+use app\models\MemberSearch;
 use app\models\Meta;
 use app\modules\admin\forms\DynamicForm;
 use Yii;
-use app\models\Member;
-use app\models\MemberSearch;
 use yii\filters\AccessControl;
-use yii\helpers\VarDumper;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * 会员管理
@@ -82,6 +81,7 @@ class MembersController extends Controller
     {
         $model = new Member();
         $model->loadDefaultValues();
+        $model->status = Member::STATUS_ACTIVE;
         $dynamicModel = new DynamicForm(Meta::getItems($model));
 
         $post = Yii::$app->getRequest()->post();

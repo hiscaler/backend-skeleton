@@ -17,6 +17,7 @@ class MemberSearch extends Member
     public function rules()
     {
         return [
+            [['status'], 'integer'],
             [['username', 'mobile_phone'], 'safe'],
         ];
     }
@@ -57,6 +58,10 @@ class MemberSearch extends Member
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        $query->andFilterWhere([
+            'status' => $this->status,
+        ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'mobile_phone', $this->mobile_phone]);

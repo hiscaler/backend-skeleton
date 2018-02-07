@@ -28,7 +28,7 @@ $this->params['menus'] = [
                     'model' => $model,
                     'attributes' => [
                         'id',
-                        'type',
+//                        'type',
                         'username',
                         'nickname',
                         [
@@ -39,11 +39,21 @@ $this->params['menus'] = [
                         'email:email',
                         'tel',
                         'mobile_phone',
-                        'register_ip',
+                        [
+                            'attribute' => 'register_ip',
+                            'value' => function ($model) {
+                                return long2ip($model['register_ip']);
+                            },
+                        ],
                         'login_count',
-                        'last_login_ip',
+                        [
+                            'attribute' => 'last_login_ip',
+                            'value' => function ($model) {
+                                return long2ip($model['last_login_ip']);
+                            },
+                        ],
                         'last_login_time:datetime',
-                        'status',
+                        'status:memberStatus',
                         'remark:ntext',
                         'created_at:datetime',
                         'updated_at:datetime',

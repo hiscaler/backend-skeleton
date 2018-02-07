@@ -274,6 +274,21 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * 会员状态选项
+     *
+     * @return array
+     */
+    public static function statusOptions()
+    {
+        return [
+            self::STATUS_PENDING => '待审核',
+            self::STATUS_ACTIVE => '激活',
+            self::STATUS_LOCKED => '锁定',
+            self::STATUS_DELETED => '删除',
+        ];
+    }
+
+    /**
      * 微信资料
      *
      * @return \yii\db\ActiveQuery

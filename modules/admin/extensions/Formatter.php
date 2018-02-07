@@ -4,6 +4,7 @@ namespace app\modules\admin\extensions;
 
 use app\models\FileUploadConfig;
 use app\models\Lookup;
+use app\models\Member;
 use app\models\Meta;
 use app\models\Option;
 use app\models\User;
@@ -208,6 +209,25 @@ class Formatter extends \yii\i18n\Formatter
         }
 
         $options = Lookup::returnTypeOptions();
+
+        return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
+    }
+
+    // Member
+
+    /**
+     * 会员状态
+     *
+     * @param integer $value
+     * @return mixed
+     */
+    public function asMemberStatus($value)
+    {
+        if ($value === null) {
+            return $this->nullDisplay;
+        }
+
+        $options = Member::statusOptions();
 
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }
