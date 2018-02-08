@@ -12,7 +12,6 @@ class MyController extends AuthController
      * 个人资料
      *
      * @return array
-     * @throws \yii\db\Exception
      */
     public function actionProfile()
     {
@@ -20,4 +19,5 @@ class MyController extends AuthController
             'profile' => Member::findOne(\Yii::$app->getUser()->getId()),
         ];
     }
+
 }
