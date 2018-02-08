@@ -5,20 +5,34 @@ namespace app\modules\api\controllers;
 use app\models\Member;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Constant;
-use Overtrue\Wechat\Auth;
-use Overtrue\Wechat\Js;
+use EasyWeChat\Foundation\Application;
 use Yii;
 use yii\base\InvalidCallException;
+use yii\base\InvalidConfigException;
 
+/**
+ * 微信接口处理
+ * Class WechatController
+ *
+ * @package app\modules\api\controllers
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class WechatController extends BaseController
 {
+
+    public function init()
+    {
+        parent::init();
+        if (!isset(Yii::$app->params['wechat']) || !Yii::$app->params['wechat'] || !isset(Yii::$app->params['wechat']['app_id'], Yii::$app->params['wechat']['secret'])) {
+            throw new InvalidConfigException('无效的微信配置。');
+        }
+    }
 
     public function actionAuth($redirectUri)
     {
         $db = Yii::$app->getDb();
-        $wechatOptions = Yii::$app->params['wechat'];
-        $auth = new Auth($wechatOptions['appid'], $wechatOptions['secret']);
-        $user = $auth->authorize($to = null, 'snsapi_userinfo', 'STATE');
+        $application = new Application(Yii::$app->params['wechat']);
+        $user = $application->oauth->scopes(['snsapi_userinfo'])->user();
         if ($user) {
             $openid = $user->openid;
             $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
@@ -63,7 +77,7 @@ class WechatController extends BaseController
             } else {
                 $redirectUri .= '&';
             }
-            $redirectUri .= "accessToken={$accessToken}&showDialog=1";
+            $redirectUri .= "accessToken=$accessToken";
 
             $this->redirect($redirectUri);
         } else {
@@ -88,11 +102,11 @@ class WechatController extends BaseController
         });
         empty($apis) && $apis = ['checkJsApi'];
 
-        $wechatConfig = Yii::$app->params['wechat'];
-        $js = new Js($wechatConfig['appid'], $wechatConfig['secret']);
+        $application = new Application(Yii::$app->params['wechat']);
+        $js = $application->js;
         $url = $url ? urldecode($url) : Yii::$app->getRequest()->getHostInfo();
         $js->setUrl($url);
-        $config = $js->config($apis, $debug, $beta);
+        $config = $js->config($apis, $debug, $beta, false);
 
         return $config;
     }
