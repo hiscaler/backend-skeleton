@@ -62,7 +62,7 @@ $this->params['menus'] = [
             [
                 'attribute' => 'enabled',
                 'format' => 'boolean',
-                'contentOptions' => ['class' => 'boolean pointer enabled-handler'],
+                'contentOptions' => ['class' => 'boolean pointer boolean-handler'],
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
@@ -73,3 +73,9 @@ $this->params['menus'] = [
     ?>
     <?php Pjax::end(); ?>
 </div>
+
+<?php \app\modules\admin\components\JsBlock::begin() ?>
+    <script type="text/javascript">
+        yadjet.actions.toggle("table td.boolean-handler img", "<?= \yii\helpers\Url::toRoute('toggle') ?>");
+    </script>
+<?php \app\modules\admin\components\JsBlock::end() ?>

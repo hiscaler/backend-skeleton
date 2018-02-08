@@ -12,6 +12,7 @@ use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * 幻灯片管理
@@ -41,6 +42,7 @@ class DefaultController extends BaseController
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'toggle' => ['POST'],
                 ],
             ],
         ];
@@ -127,6 +129,45 @@ class DefaultController extends BaseController
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * 切换是否激活开关
+     *
+     * @return Response
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
+    public function actionToggle()
+    {
+        $id = Yii::$app->getRequest()->post('id');
+        $db = Yii::$app->getDb();
+        $value = $db->createCommand('SELECT [[enabled]] FROM {{%slide}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if ($value !== null) {
+            $value = !$value;
+            $now = time();
+            $db->createCommand()->update('{{%slide}}', ['enabled' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], ['id' => (int) $id])->execute();
+            $responseData = [
+                'success' => true,
+                'data' => [
+                    'value' => $value,
+                    'updatedAt' => Yii::$app->getFormatter()->asDate($now),
+                    'updatedBy' => Yii::$app->getUser()->getIdentity()->username,
+                ],
+            ];
+        } else {
+            $responseData = [
+                'success' => false,
+                'error' => [
+                    'message' => '数据有误',
+                ],
+            ];
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseData,
+        ]);
     }
 
     /**
