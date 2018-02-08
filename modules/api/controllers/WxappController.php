@@ -36,8 +36,9 @@ class WxappController extends BaseController
     public function init()
     {
         parent::init();
-        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
-            throw new InvalidConfigException('无效的微信参数配置。');
+        $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : null;
+        if ($options === null || !is_array($options) || !isset($options['app_id']) || !isset($options['secret'])) {
+            throw new InvalidConfigException('无效的微信参数配置（请在 params.php 中配置 wechat 项，并赋予 app_id 和 secret 正确值）。');
         }
 
         $this->wechatApplication = new Application(Yii::$app->params['wechat']);
@@ -90,10 +91,7 @@ class WxappController extends BaseController
             throw new InvalidParamException('info 值无效。');
         }
 
-        $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : null;
-        if (!is_array($options) || !isset($options['app_id']) || !isset($options['secret'])) {
-            throw new InvalidConfigException('无效的微信参数配置（请在 params.php 中配置 wechat 项，并赋予 appid 和 secret 正确值）。');
-        }
+        $options = Yii::$app->params['wechat'];
         $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$options['app_id']}&secret={$options['secret']}&js_code={$code}&grant_type=authorization_code";
         $token = file_get_contents($url);
         $token && $token = json_decode($token, true);
@@ -152,7 +150,6 @@ class WxappController extends BaseController
             return [
                 'session' => $accessToken,
                 'openid' => $openid,
-                'id' => $memberId,
             ];
         } else {
             Yii::$app->getResponse()->setStatusCode(400);
@@ -196,9 +193,6 @@ class WxappController extends BaseController
      */
     public function actionPayment()
     {
-        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
-            throw new InvalidConfigException('无效的微信参数配置。');
-        }
         $request = Yii::$app->getRequest();
         $body = trim($request->post('body', '')) ?: ' ';
         $outTradeNo = trim($request->post('out_trade_no'));
@@ -216,7 +210,6 @@ class WxappController extends BaseController
             throw new InvalidParamException("openid $openid 不存在。");
         }
 
-        $application = new Application(Yii::$app->params['wechat']);
         $attributes = [
             'trade_type' => 'JSAPI',
             'body' => $body,
@@ -226,7 +219,7 @@ class WxappController extends BaseController
             'notify_url' => Url::toRoute(['wxapp/payment-notify'], true),
         ];
         $order = new \EasyWeChat\Payment\Order($attributes);
-        $payment = $application->payment;
+        $payment = $this->wechatApplication->payment;
         $response = $payment->prepare($order);
         if ($response->return_code == 'SUCCESS' && $response->result_code == 'SUCCESS') {
             $prepayId = $response->prepay_id;
@@ -261,12 +254,6 @@ class WxappController extends BaseController
      */
     public function actionPaymentNotify()
     {
-        Yii::error('wechat callback');
-        file_put_contents(__DIR__ . '/c.txt', 'd');
-//        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
-//            throw new InvalidConfigException('无效的微信参数配置。');
-//        }
-
         $response = $this->wechatApplication->payment->handleNotify(function ($notify, $successful) {
             if ($successful) {
                 $db = \Yii::$app->getDb();
@@ -308,8 +295,8 @@ class WxappController extends BaseController
     public function actionRefund($outTradeNo)
     {
         $options = isset(Yii::$app->params['wechat']) ? Yii::$app->params['wechat'] : [];
-        if (!isset($options['appid'], $options['secret'], $options['mch_id'], $options['mch_key'])) {
-            throw new InvalidConfigException('无效的微信公众号配置。');
+        if (!isset($options['app_id'], $options['secret'], $options['mch_id'], $options['mch_key'])) {
+            throw new InvalidConfigException('无效的微信参数配置（请在 params.php 中配置 wechat 项，并赋予 app_id、secret、mch_id、mch_key 正确值）。');
         }
 
         $db = \Yii::$app->getDb();
@@ -434,9 +421,7 @@ EOT;
                 $this->wechatApplication['config']->set('payment.key_path', $webrootPath . Lookup::getValue('custom.wxapp.cert.key'));
                 $merchantPay = $this->wechatApplication->merchant_pay;
                 $response = $merchantPay->send($merchantPayData);
-                VarDumper::dump($response, 111, true);
-                exit;
-                $db->createCommand()->insert('{{%wechat_pay_order}}', $columns)->execute();
+                //$db->createCommand()->insert('{{%wechat_pay_order}}', $columns)->execute();
             } else {
                 throw new BadRequestHttpException('提现金额不能大于用户的剩余金额。');
             }
