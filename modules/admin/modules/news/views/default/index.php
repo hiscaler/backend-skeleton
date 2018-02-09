@@ -50,7 +50,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                     }
                     $sentence = Inflector::sentence($words, '、', null, '、');
                     if (!empty($sentence)) {
-                        $sentence = "<span class=\"attributes\">{$sentence}</span>";
+                        $sentence = "<span class=\"labels\">{$sentence}</span>";
                     }
 
                     return $sentence . $output;

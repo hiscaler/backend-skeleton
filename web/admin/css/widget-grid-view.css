@@ -471,6 +471,7 @@
     color: #E7002E;
     margin-right: 5px;
 }
+
 .grid-view table.table td a.picture-news {
     padding-left: 20px;
     background: url("../images/picture-news.png") no-repeat left center;
@@ -485,7 +486,7 @@
     margin-left: 10px;
 }
 
-.grid-view table.table td span.attributes {
+.grid-view table.table td span.labels {
     color: #E7002E;
     float: right;
 }

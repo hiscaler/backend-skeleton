@@ -276,7 +276,7 @@ class BaseActiveRecord extends ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        // Delete attribute relation data and update attribute frequency value
+        // Delete label relation data and update label frequency value
         $db = Yii::$app->getDb();
         $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [
             ':entityId' => $this->id,

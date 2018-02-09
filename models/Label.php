@@ -128,7 +128,7 @@ class Label extends BaseActiveRecord
     {
         $sentence = Inflector::sentence(static::getEntityItems($entityId, $entityName), '、', null, '、');
         if (!empty($sentence)) {
-            $sentence = "<span class=\"lables\">{$sentence}</span>";
+            $sentence = "<span class=\"labels\">{$sentence}</span>";
         }
 
         return $sentence;
@@ -140,6 +140,7 @@ class Label extends BaseActiveRecord
      * @param integer $entityId
      * @param string $modelName
      * @return array
+     * @throws \yii\db\Exception
      */
     public static function getEntityLabelIds($entityId, $modelName)
     {
@@ -152,6 +153,7 @@ class Label extends BaseActiveRecord
      * @param integer $labelId
      * @param string $entityName
      * @return array
+     * @throws \yii\db\Exception
      */
     public static function getEntityIds($labelId, $entityName)
     {
