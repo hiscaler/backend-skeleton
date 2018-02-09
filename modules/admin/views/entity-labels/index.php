@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel common\models\AttributeSearch */
+/* @var $searchModel app\models\LabelSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->params['menus'] = [
@@ -17,8 +17,7 @@ if ($dataProviders):
     ?>
     <div id="attribute-entity-attributes" class="attribute-entity-attributes">
         <?php
-        if (count($dataProviders) > 1):
-            $js = <<<'EOT'
+        $js = <<<'EOT'
     $(document).on('click', '#tabs-entity-attributes li a', function () {
          $t = $(this);
          $('.panel').hide();
@@ -28,19 +27,17 @@ if ($dataProviders):
          return false;
      });
 EOT;
-            $this->registerJs($js);
-            ?>
-            <ul id="tabs-entity-attributes" class="tabs-common">
-                <?php
-                $i = 0;
-                foreach ($dataProviders as $key => $dataProvider):
-                    $i++;
-                    ?>
-                    <li class="<?= $i == 1 ? 'active' : '' ?>"><a href="###" data-key="panel-<?= $key ?>"><?= $key ?></a></li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-
+        $this->registerJs($js);
+        ?>
+        <ul id="tabs-entity-attributes" class="tabs-common">
+            <?php
+            $i = 0;
+            foreach ($dataProviders as $key => $dataProvider):
+                $i++;
+                ?>
+                <li class="<?= $i == 1 ? 'active' : '' ?>"><a href="###" data-key="panel-<?= $key ?>"><?= $key ?></a></li>
+            <?php endforeach; ?>
+        </ul>
         <?php
         Pjax::begin([
             'linkSelector' => '#attribute-entity-attributes',
@@ -67,7 +64,7 @@ EOT;
                             return [
                                 'data-key' => $key,
                                 'data-entity-id' => $model['entityId'],
-                                'data-entity-name' => $model['entityName'],
+                                'data-model-name' => $model['modelName'],
                                 'data-label-id' => $model['id'],
                             ];
                         },
@@ -96,7 +93,7 @@ EOT;
         <?php Pjax::end(); ?>
     </div>
     <?php
-    $this->registerJs('yadjet.actions.toggle("table td.set-entity-label-handler img", "' . Url::toRoute('set-entity-label') . '", {}, ["entity-id", "entity-name", "label-id"]);');
+    $this->registerJs('yadjet.actions.toggle("table td.set-entity-label-handler img", "' . Url::toRoute('set') . '", {}, ["entity-id", "model-name", "label-id"]);');
 else:
     echo \yii\helpers\Html::tag('div', '您还未设置推送位。', ['class' => 'notice']);
 endif;

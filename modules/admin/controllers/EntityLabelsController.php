@@ -6,6 +6,7 @@ use app\models\Attribute;
 use app\models\BaseActiveRecord;
 use app\models\Constant;
 use app\models\Label;
+use app\modules\admin\components\ApplicationHelper;
 use PDO;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -31,7 +32,7 @@ class EntityLabelsController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'entities', 'set-entity-label', 'delete', 'toggle'],
+                        'actions' => ['index', 'entities', 'set', 'delete', 'toggle'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -52,15 +53,15 @@ class EntityLabelsController extends Controller
      * 查看实体记录自定义属性
      *
      * @param integer $entityId
-     * @param string $entityName
+     * @param string $modelName
      * @return mixed
      */
-    public function actionIndex($entityId, $entityName)
+    public function actionIndex($entityId, $modelName)
     {
         if (Yii::$app->getRequest()->isAjax) {
             $attributes = [];
             $groups = [];
-            $entityAttributes = Label::getEntityItems($entityId, $entityName);
+            $entityLabels = Label::getEntityItems($entityId, ApplicationHelper::id2ClassName($modelName));
             $rawData = Label::getItems(true);
             foreach ($rawData as $key => $value) {
                 if (strpos($value, '.') !== false) {
@@ -70,8 +71,8 @@ class EntityLabelsController extends Controller
                         'id' => $key,
                         'name' => $value,
                         'entityId' => $entityId,
-                        'entityName' => $entityName,
-                        'enabled' => isset($entityAttributes[$key])
+                        'modelName' => $modelName,
+                        'enabled' => isset($entityLabels[$key])
                     ];
                 } else {
                     $groups['*'] = Yii::t('app', 'Common Attributes List');
@@ -79,8 +80,8 @@ class EntityLabelsController extends Controller
                         'id' => $key,
                         'name' => $value,
                         'entityId' => $entityId,
-                        'entityName' => $entityName,
-                        'enabled' => isset($entityAttributes[$key])
+                        'modelName' => $modelName,
+                        'enabled' => isset($entityLabels[$key])
                     ];
                 }
             }
@@ -155,18 +156,16 @@ class EntityLabelsController extends Controller
     /**
      * 添加或者删除实体数据自定义属性
      *
-     * @param integer $entityId
-     * @param string $entityName
-     * @param integer $labelId
      * @return Response
+     * @throws Exception
      */
-    public function actionSetEntityLabel()
+    public function actionSet()
     {
         $request = Yii::$app->getRequest();
         $entityId = (int) $request->post('entityId');
-        $entityName = trim($request->post('entityName'));
+        $modelName = trim($request->post('modelName'));
         $labelId = (int) $request->post('labelId');
-        if (!$entityId || empty($entityName) || !$labelId) {
+        if (!$entityId || empty($modelName) || !$labelId) {
             $responseData = [
                 'success' => false,
                 'error' => [
@@ -174,10 +173,9 @@ class EntityLabelsController extends Controller
                 ]
             ];
         } else {
+            $modelName = ApplicationHelper::id2ClassName($modelName);
             $db = Yii::$app->getDb();
-            $entityEnabled = $db->createCommand('SELECT [[enabled]] FROM {{%label}} WHERE [[id]] = :id')->bindValues([
-                ':id' => $labelId,
-            ])->queryScalar();
+            $entityEnabled = $db->createCommand('SELECT [[enabled]] FROM {{%label}} WHERE [[id]] = :id', [':id' => $labelId])->queryScalar();
             if ($entityEnabled === false) {
                 $responseData = [
                     'success' => false,
@@ -186,9 +184,9 @@ class EntityLabelsController extends Controller
                     ]
                 ];
             } else {
-                $id = $db->createCommand('SELECT [[id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[entity_name]] = :entityName AND [[label_id]] = :labelId')->bindValues([
+                $id = $db->createCommand('SELECT [[id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName AND [[label_id]] = :labelId', [
                     ':entityId' => $entityId,
-                    ':entityName' => $entityName,
+                    ':modelName' => $modelName,
                     ':labelId' => $labelId,
                 ])->queryScalar();
                 $transaction = $db->beginTransaction();
@@ -197,7 +195,7 @@ class EntityLabelsController extends Controller
                         // Delete it
                         $db->createCommand()->delete('{{%entity_label}}', '[[id]] = :id', [':id' => $id])->execute();
                         // Update attribute frequency count
-                        $db->createCommand('UPDATE {{%label}} SET [[frequency]] = [[frequency]] - 1 WHERE [[id]] = :id')->bindValue(':id', $labelId, PDO::PARAM_INT)->execute();
+                        $db->createCommand('UPDATE {{%label}} SET [[frequency]] = [[frequency]] - 1 WHERE [[id]] = :id', [':id' => $labelId])->execute();
                         $responseData = [
                             'success' => true,
                             'data' => [
@@ -210,7 +208,7 @@ class EntityLabelsController extends Controller
                         $userId = Yii::$app->getUser()->getId();
                         $db->createCommand()->insert('{{%entity_label}}', [
                             'entity_id' => $entityId,
-                            'entity_name' => $entityName,
+                            'model_name' => $modelName,
                             'label_id' => $labelId,
                             'enabled' => $entityEnabled,
                             'ordering' => Label::DEFAULT_ORDERING_VALUE,
@@ -255,7 +253,7 @@ class EntityLabelsController extends Controller
      */
     public function actionEntities($modelName, $labelId = null)
     {
-        $object = Yii::createObject(BaseActiveRecord::id2ClassName($modelName));
+        $object = Yii::createObject($modelName);
         // 自定义属性名称
         $labels = [];
         $attributesRawData = (new Query)->select(['a.id', 'a.alias', 'a.name'])
