@@ -2,10 +2,17 @@
 
 namespace app\modules\admin\modules\news\controllers;
 
+use app\models\Meta;
+use app\modules\admin\extensions\BaseController;
+use app\modules\admin\forms\DynamicForm;
+use app\modules\admin\modules\news\models\NewsContent;
 use Yii;
 use app\modules\admin\modules\news\models\News;
 use app\modules\admin\modules\news\models\NewsSearch;
+use yii\base\Model;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -14,7 +21,7 @@ use yii\filters\VerbFilter;
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
 
     /**
@@ -71,13 +78,31 @@ class DefaultController extends Controller
     public function actionCreate()
     {
         $model = new News();
+        $model->loadDefaultValues();
+        $newsContent = new NewsContent();
+        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $post = Yii::$app->getRequest()->post();
+
+        if (($model->load($post) && $newsContent->load($post) && Model::validateMultiple([$model, $newsContent])) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
+            $transaction = Yii::$app->getDb()->beginTransaction();
+            try {
+                $model->save(false);
+                $model->saveContent($newsContent); // 保存资讯正文
+                $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
+                $transaction->commit();
+            } catch (Exception $e) {
+                $transaction->rollback();
+                throw new HttpException(500, $e->getMessage());
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'newsContent' => $newsContent,
+            'dynamicModel' => $dynamicModel,
         ]);
     }
 
@@ -92,13 +117,29 @@ class DefaultController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $newsContent = $model->newsContent ?: new NewsContent();
+        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $post = Yii::$app->getRequest()->post();
+        if (($model->load($post) && $newsContent->load($post) && Model::validateMultiple([$model, $newsContent])) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
+            $transaction = Yii::$app->getDb()->beginTransaction();
+            try {
+                $model->save(false);
+                $model->saveContent($newsContent); // 保存资讯正文
+                $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
+                $transaction->commit();
+            } catch (Exception $e) {
+                $transaction->rollback();
+                throw new HttpException(500, $e->getMessage());
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'newsContent' => $newsContent,
+            'dynamicModel' => $dynamicModel,
         ]);
     }
 

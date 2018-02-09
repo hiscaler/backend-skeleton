@@ -19,7 +19,6 @@ $this->params['menus'] = [
 <div class="news-index">
     <?php Pjax::begin(); ?>
     <?= $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -27,20 +26,32 @@ $this->params['menus'] = [
                 'class' => 'yii\grid\SerialColumn',
                 'contentOptions' => ['class' => 'serial-number']
             ],
-            'category_id',
+            [
+                'attribute' => 'category.name',
+                'contentOptions' => ['class' => 'category-name'],
+            ],
             'title',
-            'short_title',
-            'keywords',
-            //'description:ntext',
-            //'author',
-            //'source',
-            //'source_url:url',
             //'is_picture_news',
             //'picture_path',
-            //'enabled',
-            //'enabled_comment',
-            //'comments_count',
-            //'published_at',
+            [
+                'attribute' => 'enabled',
+                'format' => 'boolean',
+                'contentOptions' => ['class' => 'boolean pointer boolean-handler'],
+            ],
+            [
+                'attribute' => 'enabled_comment',
+                'format' => 'boolean',
+                'contentOptions' => ['class' => 'boolean pointer boolean-handler'],
+            ],
+            [
+                'attribute' => 'comments_count',
+                'contentOptions' => ['class' => 'number'],
+            ],
+            [
+                'attribute' => 'published_at',
+                'format' => 'datetime',
+                'contentOptions' => ['class' => 'datetime']
+            ],
             [
                 'attribute' => 'created_by',
                 'value' => function ($model) {

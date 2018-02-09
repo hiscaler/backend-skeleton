@@ -16,14 +16,14 @@ use yii\widgets\ActiveForm;
                 'data-pjax' => 1
             ],
         ]); ?>
-
-        <?= $form->field($model, 'id') ?>
-
-        <?= $form->field($model, 'category_id') ?>
-
-        <?= $form->field($model, 'title') ?>
-
-
+        <div class="entry">
+            <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('news.module.category'), ['prompt' => '']) ?>
+            <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::booleanOptions(), ['prompt' => '']) ?>
+        </div>
+        <div class="entry">
+            <?= $form->field($model, 'id') ?>
+            <?= $form->field($model, 'title') ?>
+        </div>
         <?php // echo $form->field($model, 'description') ?>
 
         <?php // echo $form->field($model, 'author') ?>

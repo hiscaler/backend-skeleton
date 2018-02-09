@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'miniProgram' => '资讯',
+    'News' => '资讯',
 ];

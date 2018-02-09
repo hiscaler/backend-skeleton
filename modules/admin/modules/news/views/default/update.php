@@ -6,7 +6,7 @@
 $this->title = 'Update News: {nameAttribute}';
 $this->params['breadcrumbs'][] = ['label' => 'News', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
@@ -17,5 +17,7 @@ $this->params['menus'] = [
 <div class="news-update">
     <?= $this->render('_form', [
         'model' => $model,
+        'newsContent' => $newsContent,
+        'dynamicModel' => $dynamicModel,
     ]) ?>
 </div>

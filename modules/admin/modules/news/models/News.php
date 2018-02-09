@@ -3,7 +3,11 @@
 namespace app\modules\admin\modules\news\models;
 
 use app\models\BaseActiveRecord;
+use app\models\Constant;
+use app\models\FileUploadConfig;
+use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "{{%news}}".
@@ -31,6 +35,14 @@ use Yii;
 class News extends BaseActiveRecord
 {
 
+    public $_fileUploadConfig;
+
+    public function init()
+    {
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::className2Id(), 'picture_path');
+        parent::init();
+    }
+
     /**
      * @inheritdoc
      */
@@ -45,18 +57,35 @@ class News extends BaseActiveRecord
     public function rules()
     {
         return [
-            [['category_id', 'is_picture_news', 'comments_count', 'published_at', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['category_id', 'is_picture_news', 'comments_count', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title', 'author', 'source', 'published_at'], 'required'],
             [['title', 'short_title', 'keywords', 'author', 'source', 'source_url'], 'trim'],
             [['category_id'], 'default', 'value' => 0],
             [['description'], 'string'],
+            ['published_at', 'datetime', 'format' => 'php:Y-m-d H:i:s', 'timestampAttribute' => 'published_at'],
             [['enabled', 'enabled_comment'], 'boolean'],
             [['title', 'short_title'], 'string', 'max' => 160],
             [['keywords'], 'string', 'max' => 60],
             [['author'], 'string', 'max' => 20],
             [['source'], 'string', 'max' => 30],
-            [['source_url', 'picture_path'], 'string', 'max' => 200],
+            [['source_url'], 'string', 'max' => 200],
+            ['picture_path', 'image',
+                'extensions' => $this->_fileUploadConfig['extensions'],
+                'minSize' => $this->_fileUploadConfig['size']['min'],
+                'maxSize' => $this->_fileUploadConfig['size']['max'],
+            ],
         ];
+    }
+
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            [
+                'class' => ImageUploadBehavior::className(),
+                'attribute' => 'picture_path',
+                'thumb' => $this->_fileUploadConfig['thumb']
+            ],
+        ]);
     }
 
     /**
@@ -87,7 +116,59 @@ class News extends BaseActiveRecord
         ];
     }
 
+    /**
+     * 保存资讯正文内容
+     *
+     * @param ActiveReocrd $newsContent
+     * @return boolean
+     */
+    public function saveContent($newsContent)
+    {
+        $newsContent->news_id = $this->id;
+
+        return $newsContent->save();
+    }
+
+    /**
+     * 资讯正文
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNewsContent()
+    {
+        return $this->hasOne(NewsContent::className(), ['news_id' => 'id']);
+    }
+
+    /**
+     * 处理正文内容中的图片，如果没有上传附件图片并且设定了图片的获取位置才会进行解析操作
+     *
+     * @param ActiveRecord $model
+     */
+    public function processPicturePath($model)
+    {
+        if (!(UploadedFile::getInstance($model, 'picture_path') instanceof UploadedFile) && $number = $model->content_image_number) {
+            $picturePath = Yad::getTextImages($model->newsContent->content, $number);
+            if (!empty($picturePath)) {
+                Yii::$app->getDb()->createCommand()->update('{{%news}}', [
+                    'is_picture_news' => Option::BOOLEAN_TRUE,
+                    'picture_path' => $picturePath,
+                ], '[[id]] = :id', [':id' => $model->id])->execute();
+            }
+        }
+    }
+
     // Events
+    private $_newsContent;
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        if (!$this->isNewRecord) {
+            $this->published_at = Yii::$app->getFormatter()->asDatetime($this->published_at);
+            $this->_newsContent = $this->newsContent ? $this->newsContent->content : null;
+        }
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -95,9 +176,36 @@ class News extends BaseActiveRecord
                 $this->short_title = $this->title;
             }
 
+            $file = UploadedFile::getInstance($this, 'picture_path');
+            if ($file instanceof UploadedFile && $file->error != UPLOAD_ERR_NO_FILE) {
+                $this->is_picture_news = Constant::BOOLEAN_TRUE;
+            }
+
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        // 清理资讯相关联数据
+        $entityName = self::className();
+        $db = \Yii::$app->getDb();
+        $cmd = $db->createCommand();
+        $cmd->delete('{{%news_content}}', ['news_id' => $this->id])->execute();
+
+        // 推送位处理
+        $entityAttributes = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[entity_name]] = :entityName', [':entityId' => $this->id, ':entityName' => $entityName])->queryAll();
+        if ($entityAttributes) {
+            $entityAttributeIds = $attributeIds = [];
+            foreach ($entityAttributes as $entityAttribute) {
+                $entityAttributeIds[] = $entityAttribute['id'];
+                $attributeIds[] = $entityAttribute['label_id'];
+            }
+            $cmd->delete('{{%entity_label}}', ['id' => $entityAttributeIds])->execute();
+            $db->createCommand('UPDATE {{%label}} SET [[frequency]] = [[frequency]] - 1 WHERE [[id]] IN (' . implode(', ', $attributeIds) . ')')->execute();
         }
     }
 
