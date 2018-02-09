@@ -16,8 +16,9 @@ use yii\widgets\ActiveForm;
         <?php endif; ?>
     </ul>
     <div class="panels form form-layout-column">
-        <?php $form = ActiveForm::begin(); ?>
-        <?= $form->errorSummary($model) ?>
+        <?php $form = ActiveForm::begin([
+            'options' => ['enctype' => 'multipart/form-data']
+        ]); ?>
         <div class="tab-panel" id="tab-panel-basic">
             <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('news.module.category'), ['prompt' => '']) ?>
 

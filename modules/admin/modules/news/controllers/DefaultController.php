@@ -5,16 +5,14 @@ namespace app\modules\admin\modules\news\controllers;
 use app\models\Meta;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\forms\DynamicForm;
-use app\modules\admin\modules\news\models\NewsContent;
-use Yii;
 use app\modules\admin\modules\news\models\News;
+use app\modules\admin\modules\news\models\NewsContent;
 use app\modules\admin\modules\news\models\NewsSearch;
+use Yii;
 use yii\base\Model;
-use yii\helpers\VarDumper;
-use yii\web\Controller;
+use yii\filters\VerbFilter;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * 资讯管理
@@ -79,6 +77,7 @@ class DefaultController extends BaseController
     {
         $model = new News();
         $model->loadDefaultValues();
+        $model->published_at = Yii::$app->getFormatter()->asDatetime(time());
         $newsContent = new NewsContent();
         $dynamicModel = new DynamicForm(Meta::getItems($model));
 
