@@ -157,7 +157,7 @@ class Label extends BaseActiveRecord
     {
         return Yii::$app->getDb()->createCommand('SELECT [[entity_id]] FROM {{%entity_label}} WHERE [[label_id]] = :labelId AND [[model_name]] = :modelName', [':labelId' => (int) $labelId, ':modelName' => $entityName])->queryColumn();
     }
-    
+
     // Events
     public function beforeSave($insert)
     {
@@ -178,7 +178,7 @@ class Label extends BaseActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        Yii::$app->getDb()->createCommand()->delete('{{%entity_label}}', 'label_id = :labelId', [':labelId' => $this->id])->execute();
+        Yii::$app->getDb()->createCommand()->delete('{{%entity_label}}', ['label_id' => $this->id])->execute();
     }
 
 }

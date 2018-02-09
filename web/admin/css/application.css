@@ -980,6 +980,11 @@ body .layer-grid-view .layui-layer-content {
     padding: 1px;
 }
 
+body .layui-layer-dialog .layui-layer-content {
+    line-height: 19px;
+    padding: 5px 5px 10px 5px;
+}
+
 /*******************************************************************************
  * Footer
  ******************************************************************************/
