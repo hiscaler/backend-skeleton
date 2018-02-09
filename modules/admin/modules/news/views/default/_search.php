@@ -10,6 +10,7 @@ use yii\widgets\ActiveForm;
 <div class="form-outside form-search form-layout-column" style="display: none">
     <div class="news-search form">
         <?php $form = ActiveForm::begin([
+            'id' => 'form-news',
             'action' => ['index'],
             'method' => 'get',
             'options' => [

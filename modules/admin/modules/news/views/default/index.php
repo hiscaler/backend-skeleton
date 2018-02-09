@@ -22,9 +22,13 @@ $this->params['menus'] = [
 $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 ?>
 <div class="news-index">
-    <?php Pjax::begin(); ?>
     <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?php Pjax::begin([
+        'formSelector' => '#form-news',
+        'linkSelector' => '#grid-view-news a',
+    ]); ?>
     <?= GridView::widget([
+        'id' => 'grid-view-news',
         'dataProvider' => $dataProvider,
         'columns' => [
             [

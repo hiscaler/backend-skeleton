@@ -94,7 +94,7 @@ class News extends BaseActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => '编号',
             'category_id' => '所属分类',
             'title' => '标题',
             'short_title' => '副标题',
