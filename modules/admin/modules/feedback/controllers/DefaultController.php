@@ -51,7 +51,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $searchModel = new FeedbackSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
