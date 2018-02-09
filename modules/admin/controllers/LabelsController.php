@@ -113,7 +113,7 @@ class LabelsController extends GlobalController
     {
         $model = $this->findModel($id);
         if ($model->frequency) {
-            throw new NotAcceptableHttpException('The requested does not acceptable.');
+            throw new NotAcceptableHttpException('有数据使用该推送位，禁止删除。');
         } else {
             $db = Yii::$app->getDb();
             $transaction = $db->beginTransaction();
