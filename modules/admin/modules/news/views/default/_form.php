@@ -22,14 +22,14 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('news.module.category'), ['prompt' => '']) ?>
 
             <?php
-            $entityAttributes = \app\models\Label::getItems(false, true);
-            if ($entityAttributes):
+            $entityLabels = \app\models\Label::getItems(false, true);
+            if ($entityLabels):
                 ?>
-                <fieldset>
-                    <legend><?= Yii::t('app', 'Entity Attributes') ?></legend>
+                <fieldset class="entity-labels">
+                    <legend><?= Yii::t('app', 'Entity Labels') ?></legend>
                     <?php
-                    foreach ($entityAttributes as $key => $attributes) {
-                        echo $form->field($model, 'entityAttributes')->checkboxList($attributes, ['unselect' => null])->label($key);
+                    foreach ($entityLabels as $key => $labels) {
+                        echo $form->field($model, 'entityLabels')->checkboxList($labels, [])->label($key);
                     }
                     ?>
                 </fieldset>

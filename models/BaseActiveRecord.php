@@ -13,7 +13,7 @@ use yii\web\HttpException;
 
 /**
  * @property string $keywords
- * @property string $entityAttributes
+ * @property string $entityLabels
  * @property string $entityNodeIds
  * @property string $entityNodeNames
  * @property integer $isDraft
@@ -28,8 +28,8 @@ class BaseActiveRecord extends ActiveRecord
      */
     const DEFAULT_ORDERING_VALUE = 10000;
 
-    private $_oldEntityAttributes = [];
-    public $entityAttributes = [];
+    private $_oldEntityLabels = [];
+    public $entityLabels = [];
     private $_oldEntityNodeIds;
     private $_oldEntityNodeNames;
     public $entityNodeIds;
@@ -68,7 +68,7 @@ class BaseActiveRecord extends ActiveRecord
     public function rules()
     {
         $rules = [
-            [['entityAttributes', 'entityNodeIds'], 'safe'],
+            [['entityLabels', 'entityNodeIds'], 'safe'],
             ['isDraft', 'boolean'],
             ['content_image_number', 'safe']
         ];
@@ -122,7 +122,7 @@ class BaseActiveRecord extends ActiveRecord
         return $this->hasMany(Label::className(), ['id' => 'label_id'])
             ->select(['id', 'name'])
             ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
-                $query->where(['entity_name' => static::className2Id()]);
+                $query->where(['model_name' => static::className()]);
             });
     }
 
@@ -195,7 +195,7 @@ class BaseActiveRecord extends ActiveRecord
             'updated_at' => Yii::t('app', 'Updated At'),
             'deleted_by' => Yii::t('app', 'Deleted By'),
             'deleted_at' => Yii::t('app', 'Deleted At'),
-            'entityAttributes' => Yii::t('app', 'Entity Attributes'),
+            'entityLabels' => Yii::t('app', 'Entity Labels'),
             'entityNodeIds' => Yii::t('app', 'Relation Node'),
             'model_name' => Yii::t('app', 'Model Name'),
             'isDraft' => Yii::t('app', 'Draft'),
@@ -208,9 +208,8 @@ class BaseActiveRecord extends ActiveRecord
     {
         parent::afterFind();
         if (!$this->isNewRecord) {
-            $this->entityAttributes = Label::getEntityLabelIds($this->id, static::className2Id());
-            $this->_oldEntityAttributes = $this->entityAttributes;
-//            $nodes = \Yii::$app->getDb()->createCommand('SELECT [[n.id]], [[n.name]] FROM {{%entity_node}} t LEFT JOIN {{%node}} n ON [[t.node_id]] = [[n.id]] WHERE [[t.entity_id]] = :entityId AND [[t.entity_name]] = :entityName')->bindValues([':entityId' => (int) $this->id, ':entityName' => static::className2Id()])->queryAll();
+            $this->entityLabels = Label::getEntityLabelIds($this->id, static::className());
+            $this->_oldEntityLabels = $this->entityLabels;
             $nodes = [];
             if ($nodes) {
                 $ids = [];
@@ -253,47 +252,52 @@ class BaseActiveRecord extends ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        // Entity attributes
-        $entityAttributes = $this->entityAttributes;
-        if (!is_array($this->_oldEntityAttributes)) {
-            $this->_oldEntityAttributes = [];
+        // Entity labels
+        $entityLabels = $this->entityLabels;
+        if (!is_array($this->_oldEntityLabels)) {
+            $this->_oldEntityLabels = [];
         }
-        if (!is_array($entityAttributes)) {
-            $entityAttributes = [];
+        if (!is_array($entityLabels)) {
+            $entityLabels = [];
         }
 
         if ($insert) {
-            $insertAttributes = $entityAttributes;
-            $deleteAttributes = [];
+            $insertLabels = $entityLabels;
+            $deleteLabels = [];
         } else {
-            $insertAttributes = array_diff($entityAttributes, $this->_oldEntityAttributes);
-            $deleteAttributes = array_diff($this->_oldEntityAttributes, $entityAttributes);
+            if ($entityLabels) {
+                $insertLabels = array_diff($entityLabels, $this->_oldEntityLabels);
+                $deleteLabels = array_diff($this->_oldEntityLabels, $entityLabels);
+            } else {
+                $insertLabels = [];
+                $deleteLabels = $this->_oldEntityLabels;
+            }
         }
 
         $db = Yii::$app->getDb();
         $transaction = $db->beginTransaction();
         try {
             // Insert data
-            if ($insertAttributes) {
+            if ($insertLabels) {
                 $rows = [];
                 $userId = Yii::$app->getUser()->getId();
                 $now = time();
-                foreach ($insertAttributes as $attributeId) {
-                    $rows[] = [$this->id, static::className2Id(), $attributeId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
+                foreach ($insertLabels as $labelId) {
+                    $rows[] = [$this->id, static::className(), $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
                 }
                 if ($rows) {
-                    $db->createCommand()->batchInsert('{{%entity_label}}', ['entity_id', 'entity_name', 'attribute_id', 'enabled', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], $rows)->execute();
+                    $db->createCommand()->batchInsert('{{%entity_label}}', ['entity_id', 'model_name', 'label_id', 'enabled', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], $rows)->execute();
                     $db->createCommand("UPDATE {{%label}} SET [[frequency]] = [[frequency]] + 1 WHERE [[id]] IN (" . implode(', ', ArrayHelper::getColumn($rows, 2)) . ")")->execute();
                 }
             }
             // Delete data
-            if ($deleteAttributes) {
+            if ($deleteLabels) {
                 $db->createCommand()->delete('{{%entity_label}}', [
                     'entity_id' => $this->id,
-                    'entity_name' => static::className2Id(),
-                    'label_id' => $deleteAttributes
+                    'model_name' => static::className(),
+                    'label_id' => $deleteLabels
                 ])->execute();
-                $db->createCommand("UPDATE {{%attribute}} SET [[frequency]] = [[frequency]] - 1 WHERE [[id]] IN (" . implode(', ', $deleteAttributes) . ")")->execute();
+                $db->createCommand("UPDATE {{%label}} SET [[frequency]] = [[frequency]] - 1 WHERE [[id]] IN (" . implode(', ', $deleteLabels) . ")")->execute();
             }
             $transaction->commit();
         } catch (Exception $e) {
@@ -307,9 +311,9 @@ class BaseActiveRecord extends ActiveRecord
         parent::afterDelete();
         // Delete attribute relation data and update attribute frequency value
         $db = Yii::$app->getDb();
-        $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[entity_name]] = :entityName', [
+        $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [
             ':entityId' => $this->id,
-            ':entityName' => static::className2Id()
+            ':modelName' => static::className()
         ])->queryAll();
         if ($labels) {
             $db->createCommand('DELETE FROM {{%entity_label}} WHERE [[id]] IN (' . implode(', ', ArrayHelper::getColumn($labels, 'id')) . ')')->execute();

@@ -21,6 +21,11 @@ class NewsContent extends \yii\db\ActiveRecord
         return '{{%news_content}}';
     }
 
+    public static function primaryKey()
+    {
+        return ['news_id'];
+    }
+
     /**
      * @inheritdoc
      */
@@ -43,4 +48,5 @@ class NewsContent extends \yii\db\ActiveRecord
             'content' => '正文',
         ];
     }
+
 }

@@ -56,7 +56,7 @@ class News extends BaseActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             [['category_id', 'is_picture_news', 'comments_count', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title', 'author', 'source', 'published_at'], 'required'],
             [['title', 'short_title', 'keywords', 'author', 'source', 'source_url'], 'trim'],
@@ -74,7 +74,7 @@ class News extends BaseActiveRecord
                 'minSize' => $this->_fileUploadConfig['size']['min'],
                 'maxSize' => $this->_fileUploadConfig['size']['max'],
             ],
-        ];
+        ]);
     }
 
     public function behaviors()

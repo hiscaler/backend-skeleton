@@ -26,6 +26,7 @@ $this->params['menus'] = [
             'short_title',
             'keywords',
             'description:ntext',
+            'newsContent.content:raw',
             'author',
             'source',
             'source_url:url',
