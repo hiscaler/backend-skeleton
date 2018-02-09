@@ -46,7 +46,7 @@ class Category extends BaseActiveRecord
 
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::className2Id(), 'icon');
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::className(), 'icon');
         parent::init();
     }
 
