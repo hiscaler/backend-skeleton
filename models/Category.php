@@ -74,7 +74,7 @@ class Category extends BaseActiveRecord
             [['alias'], 'string', 'max' => 120],
             ['alias', 'match', 'pattern' => '/^([a-z0-9\-]+[\/]{0,1})*[^\/]$/'],
             [['sign'], 'string', 'max' => 20],
-            ['sign', 'match', 'pattern' => '/^[a-z]*[a-z]$/'],
+            ['sign', 'match', 'pattern' => '/^[a-z]*[a-z\.]*[a-z]$/'],
             [['sign'], 'unique'],
             [['name', 'short_name'], 'string', 'max' => 30],
             [['parent_id'], 'checkParent'],
