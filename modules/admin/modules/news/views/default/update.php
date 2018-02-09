@@ -4,7 +4,7 @@
 /* @var $model app\modules\admin\modules\news\models\News */
 
 $this->title = 'Update News: {nameAttribute}';
-$this->params['breadcrumbs'][] = ['label' => 'News', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('news.model', 'News'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 

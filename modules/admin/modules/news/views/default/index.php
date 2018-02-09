@@ -3,6 +3,7 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
+use yii\helpers\Url;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -38,7 +39,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'attribute' => 'title',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $output = "<span class=\"pk\">[ {$model['id']} ]</span>" . Html::a($model['title'], ['news/update', 'id' => $model['id']], ['class' => $model['is_picture_news'] ? 'picture-news' : '']);
+                    $output = "<span class=\"pk\">[ {$model['id']} ]</span>" . Html::a($model['title'], ['default/update', 'id' => $model['id']], ['class' => $model['is_picture_news'] ? 'picture-news' : '', 'data-pjax' => 0]);
                     $words = [];
                     foreach ($model['customLabels'] as $attr) {
                         $words[] = $attr['name'];
@@ -54,12 +55,12 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             [
                 'attribute' => 'enabled',
                 'format' => 'boolean',
-                'contentOptions' => ['class' => 'boolean pointer boolean-handler'],
+                'contentOptions' => ['class' => 'boolean pointer news-enabled-handler'],
             ],
             [
                 'attribute' => 'enabled_comment',
                 'format' => 'boolean',
-                'contentOptions' => ['class' => 'boolean pointer boolean-handler'],
+                'contentOptions' => ['class' => 'boolean pointer news-enabled-comment-handler'],
             ],
             [
                 'attribute' => 'comments_count',
@@ -111,6 +112,9 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
     $(function () {
+        yadjet.actions.toggle("table td.news-enabled-handler img", "<?= Url::toRoute('toggle') ?>");
+        yadjet.actions.toggle("table td.news-enabled-comment-handler img", "<?= Url::toRoute('toggle-comment') ?>");
+
         jQuery(document).on('click', 'a.setting-entity-labels', function () {
             var $this = $(this);
             $.ajax({

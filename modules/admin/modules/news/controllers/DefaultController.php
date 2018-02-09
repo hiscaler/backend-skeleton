@@ -10,9 +10,11 @@ use app\modules\admin\modules\news\models\NewsContent;
 use app\modules\admin\modules\news\models\NewsSearch;
 use Yii;
 use yii\base\Model;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * 资讯管理
@@ -28,6 +30,16 @@ class DefaultController extends BaseController
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'toggle', 'toggle-comment'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -155,6 +167,80 @@ class DefaultController extends BaseController
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Toggle enabled
+     *
+     * @return Response
+     */
+    public function actionToggle()
+    {
+        $id = Yii::$app->request->post('id');
+        $db = Yii::$app->getDb();
+        $value = $db->createCommand('SELECT [[enabled]] FROM {{%news}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if ($value !== null) {
+            $value = !$value;
+            $now = time();
+            $db->createCommand()->update('{{%news}}', ['enabled' => $value, 'updated_by' => Yii::$app->getUser()->getId(), 'updated_at' => $now], '[[id]] = :id', [':id' => (int) $id])->execute();
+            $responseData = [
+                'success' => true,
+                'data' => [
+                    'value' => $value,
+                    'updatedAt' => Yii::$app->getFormatter()->asDate($now),
+                    'updatedBy' => Yii::$app->getUser()->getIdentity()->username,
+                ],
+            ];
+        } else {
+            $responseData = [
+                'success' => false,
+                'error' => [
+                    'message' => '数据有误',
+                ],
+            ];
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseData,
+        ]);
+    }
+
+    /**
+     * Toggle enabled comment function
+     *
+     * @return Response
+     */
+    public function actionToggleComment()
+    {
+        $id = Yii::$app->request->post('id');
+        $db = Yii::$app->getDb();
+        $value = $db->createCommand('SELECT [[enabled_comment]] FROM {{%news}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if ($value !== null) {
+            $value = !$value;
+            $now = time();
+            $db->createCommand()->update('{{%news}}', ['enabled_comment' => $value, 'updated_by' => Yii::$app->getUser()->getId(), 'updated_at' => $now], 'id = :id', [':id' => (int) $id])->execute();
+            $responseData = [
+                'success' => true,
+                'data' => [
+                    'value' => $value,
+                    'updatedAt' => Yii::$app->getFormatter()->asDate($now),
+                    'updatedBy' => Yii::$app->getUser()->getIdentity()->username,
+                ],
+            ];
+        } else {
+            $responseData = [
+                'success' => false,
+                'error' => [
+                    'message' => '数据有误',
+                ],
+            ];
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseData,
+        ]);
     }
 
     /**
