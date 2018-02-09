@@ -57,7 +57,7 @@ class DefaultController extends BaseController
     public function actionIndex()
     {
         $searchModel = new NewsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -176,7 +176,7 @@ class DefaultController extends BaseController
      */
     public function actionToggle()
     {
-        $id = Yii::$app->request->post('id');
+        $id = Yii::$app->getRequest()->post('id');
         $db = Yii::$app->getDb();
         $value = $db->createCommand('SELECT [[enabled]] FROM {{%news}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
         if ($value !== null) {
@@ -213,7 +213,7 @@ class DefaultController extends BaseController
      */
     public function actionToggleComment()
     {
-        $id = Yii::$app->request->post('id');
+        $id = Yii::$app->getRequest()->post('id');
         $db = Yii::$app->getDb();
         $value = $db->createCommand('SELECT [[enabled_comment]] FROM {{%news}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
         if ($value !== null) {
