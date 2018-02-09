@@ -52,7 +52,7 @@ class DefaultController extends BaseController
     public function actionIndex()
     {
         $searchModel = new LinkSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -99,7 +99,7 @@ class DefaultController extends BaseController
 
         $model->ordering = (int) $ordering;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['create', 'category' => $model->category_id, 'type' => $model->type, 'urlOpenTarget' => $model->url_open_target, 'ordering' => $model->ordering + 1]);
         }
 
@@ -120,7 +120,7 @@ class DefaultController extends BaseController
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
