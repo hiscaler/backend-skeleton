@@ -110,7 +110,7 @@ class SiteController extends Controller
         }
 
         $model = new SigninForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
             return $this->goBack();
         }
 
@@ -139,7 +139,7 @@ class SiteController extends Controller
     public function actionForgetPassword()
     {
         $model = new ForgetPasswordForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
             $body = $this->render("@app/mail/layouts/find-password.php", [
                 'content' => "{$model->username}，您提交了密码找回申请，请点击该链接地址完成后续认证。",
                 'url' => '<a href="' . Url::toRoute(['site/reset-password', 'token' => $model['token']], true) . '">点击修改密码</a>',
@@ -169,7 +169,7 @@ class SiteController extends Controller
     {
         $model = new ResetPasswordForm();
         $model->token = $token;
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
             $model->_user->setPassword($model->password);
             Yii::$app->getDb()->createCommand()->update('{{%user}}', ['password_hash' => $model->_user->password_hash, 'password_reset_token' => null], ['id' => $model->_user->id])->execute();
             Yii::$app->getSession()->setFlash('notice', "您的密码修改成功，请下次登录使用新的密码。");
