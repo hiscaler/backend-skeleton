@@ -14,9 +14,6 @@ use yii\web\HttpException;
 /**
  * @property string $keywords
  * @property string $entityLabels
- * @property string $entityNodeIds
- * @property string $entityNodeNames
- * @property integer $isDraft
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -30,29 +27,7 @@ class BaseActiveRecord extends ActiveRecord
 
     private $_oldEntityLabels = [];
     public $entityLabels = [];
-    private $_oldEntityNodeIds;
-    private $_oldEntityNodeNames;
-    public $entityNodeIds;
-    public $entityNodeNames;
-    private $_oldNodeId;
-    public $isDraft = Constant::BOOLEAN_FALSE; // 记录是否为草稿
     public $content_image_number = 1; // 从文本内容中获取第几章图片作为缩略图
-
-    /**
-     * `app\model\Post` To `app-model-Post`
-     *
-     * @param string $className
-     * @return string
-     */
-
-    public static function className2Id($className = null)
-    {
-        if ($className === null) {
-            $className = static::className();
-        }
-
-        return str_replace('\\', '-', $className);
-    }
 
     /**
      * `app-model-Post` To `app\model\Post`
@@ -68,17 +43,9 @@ class BaseActiveRecord extends ActiveRecord
     public function rules()
     {
         $rules = [
-            [['entityLabels', 'entityNodeIds'], 'safe'],
-            ['isDraft', 'boolean'],
+            [['entityLabels'], 'safe'],
             ['content_image_number', 'safe']
         ];
-
-        if ($this->hasAttribute('node_id')) {
-            $rules = array_merge($rules, [
-                [['node_id'], 'integer'],
-                [['node_id'], 'default', 'value' => 0],
-            ]);
-        }
 
         if ($this->hasAttribute('tags')) {
             $rules[] = [['tags'], 'trim'];
@@ -196,9 +163,7 @@ class BaseActiveRecord extends ActiveRecord
             'deleted_by' => Yii::t('app', 'Deleted By'),
             'deleted_at' => Yii::t('app', 'Deleted At'),
             'entityLabels' => Yii::t('app', 'Entity Labels'),
-            'entityNodeIds' => Yii::t('app', 'Relation Node'),
             'model_name' => Yii::t('app', 'Model Name'),
-            'isDraft' => Yii::t('app', 'Draft'),
             'content_image_number' => Yii::t('app', 'Content Image Number'),
         ];
     }
@@ -210,24 +175,6 @@ class BaseActiveRecord extends ActiveRecord
         if (!$this->isNewRecord) {
             $this->entityLabels = Label::getEntityLabelIds($this->id, static::className());
             $this->_oldEntityLabels = $this->entityLabels;
-            $nodes = [];
-            if ($nodes) {
-                $ids = [];
-                $names = [];
-                foreach ($nodes as $node) {
-                    $ids[] = $node['id'];
-                    $names[] = $node['name'];
-                }
-                $this->entityNodeIds = $this->_oldEntityNodeIds = implode(',', $ids);
-                $this->entityNodeNames = $this->_oldEntityNodeNames = $names;
-            }
-
-            if ($this->hasAttribute('status')) {
-                $this->isDraft = $this->status == Option::STATUS_DRAFT;
-            }
-        }
-        if ($this->hasAttribute('node_id')) {
-            $this->_oldNodeId = $this->node_id;
         }
     }
 
