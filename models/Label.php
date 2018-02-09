@@ -94,10 +94,10 @@ class Label extends BaseActiveRecord
      * 根据实体编号和实体名称获取关联的自定义属性列表
      *
      * @param integer $entityId
-     * @param string $entityName
+     * @param string $modelName
      * @return array
      */
-    public static function getEntityItems($entityId, $entityName)
+    public static function getEntityItems($entityId, $modelName)
     {
         $items = [];
         $rawItems = (new Query())
@@ -106,7 +106,7 @@ class Label extends BaseActiveRecord
             ->leftJoin('{{%label}} a', '[[t.label_id]] = [[a.id]]')
             ->where([
                 't.entity_id' => (int) $entityId,
-                't.entity_name' => trim($entityName)
+                't.model_name' => trim($modelName)
             ])
             ->all();
 
@@ -138,12 +138,12 @@ class Label extends BaseActiveRecord
      * 根据实体编号和实体名称获取关联的自定义属性编号列表
      *
      * @param integer $entityId
-     * @param string $entityName
+     * @param string $modelName
      * @return array
      */
-    public static function getEntityLabelIds($entityId, $entityName)
+    public static function getEntityLabelIds($entityId, $modelName)
     {
-        return Yii::$app->getDb()->createCommand('SELECT [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[entity_name]] = :entityName')->bindValues([':entityId' => (int) $entityId, ':entityName' => $entityName])->queryColumn();
+        return Yii::$app->getDb()->createCommand('SELECT [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [':entityId' => (int) $entityId, ':modelName' => $modelName])->queryColumn();
     }
 
     /**
@@ -155,9 +155,9 @@ class Label extends BaseActiveRecord
      */
     public static function getEntityIds($labelId, $entityName)
     {
-        return Yii::$app->getDb()->createCommand('SELECT [[entity_id]] FROM {{%entity_label}} WHERE [[label_id]] = :labelId AND [[entity_name]] = :entityName')->bindValues([':labelId' => (int) $labelId, ':entityName' => $entityName])->queryColumn();
+        return Yii::$app->getDb()->createCommand('SELECT [[entity_id]] FROM {{%entity_label}} WHERE [[label_id]] = :labelId AND [[model_name]] = :modelName', [':labelId' => (int) $labelId, ':modelName' => $entityName])->queryColumn();
     }
-
+    
     // Events
     public function beforeSave($insert)
     {
