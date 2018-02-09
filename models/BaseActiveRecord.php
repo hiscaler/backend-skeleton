@@ -30,14 +30,19 @@ class BaseActiveRecord extends ActiveRecord
     public $content_image_number = 1; // 从文本内容中获取第几章图片作为缩略图
 
     /**
-     * `app-model-Post` To `app\model\Post`
+     * `app\model\Post` To `app-model-Post`
      *
-     * @param string $id
+     * @param string $className
      * @return string
      */
-    public static function id2ClassName($id)
+
+    public static function className2Id($className = null)
     {
-        return str_replace('-', '\\', $id);
+        if ($className === null) {
+            $className = static::className();
+        }
+
+        return str_replace('\\', '-', $className);
     }
 
     public function rules()
@@ -91,6 +96,21 @@ class BaseActiveRecord extends ActiveRecord
             ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
                 $query->where(['model_name' => static::className()]);
             });
+    }
+
+    /**
+     * 自定义推送位数据
+     *
+     * @return ActiveRecord
+     */
+    public function getCustomLabels()
+    {
+        return $this->hasMany(Label::className(), ['id' => 'label_id'])
+            ->select(['id', 'name'])
+            ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
+                $query->where(['model_name' => static::className()]);
+            }
+            );
     }
 
     /**
