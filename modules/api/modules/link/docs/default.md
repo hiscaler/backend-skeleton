@@ -7,7 +7,7 @@
 ###参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |---|:---:|:---:|:---:|---|
-| fields | string | 否 | null | 可返回的列表字段（title,categoryId,categoryName,type,description,url,logo,urlOpenTarget） |
+| fields | string | 否 | null | 返回的字段（title,categoryId,categoryName,type,description,url,logo,urlOpenTarget） |
 | category | string | 否 | null | 分类 id |
 | page | int | 否 | 1 | 当前页 |
 | pageSize | int | 否 | 20 | 每页返回的数据量 |
