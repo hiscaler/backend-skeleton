@@ -38,8 +38,6 @@
 | limit | int | 否 | 10 | 返回的数据量 |
 | expand | string | 否 | null | 附加数据，多个数据间使用逗号分隔，当前可使用的数据为：content |
 
-
-
 ## GET api/news/default/view?id=:id
 ###接口说明
 获取资讯详情
