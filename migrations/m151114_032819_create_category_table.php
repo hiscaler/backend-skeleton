@@ -14,7 +14,7 @@ class m151114_032819_create_category_table extends Migration
     {
         $this->createTable('{{%category}}', [
             'id' => $this->primaryKey(),
-            'sign' => $this->string(20)->unique()->comment('标记'),
+            'sign' => $this->string(40)->unique()->comment('标记'),
             'alias' => $this->string(120)->notNull()->comment('分类别名'),
             'name' => $this->string(30)->notNull()->comment('分类名称'),
             'short_name' => $this->string(30)->notNull()->comment('简称'),
