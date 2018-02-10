@@ -2,6 +2,7 @@
 
 namespace app\modules\api\extensions;
 
+use Yii;
 use yii\filters\ContentNegotiator;
 use yii\filters\Cors;
 use yii\rest\Controller;
@@ -17,12 +18,33 @@ class BaseController extends Controller
 {
 
     /**
+     * 是否为调试模式
+     *
+     * @var boolean
+     */
+    protected $debug = false;
+
+    /**
+     *  数据缓存时间（秒）
+     *
+     * @var integer
+     */
+    protected $dbCacheTime = 3600;
+
+    /**
      * @var array
      */
     public $serializer = [
         'class' => '\yii\rest\Serializer',
         'collectionEnvelope' => 'items',
     ];
+
+    public function init()
+    {
+        parent::init();
+        $this->dbCacheTime = isset(Yii::$app->params['api.db.cache.time']) ? (int) Yii::$app->params['api.db.cache.time'] : null;
+        $this->debug = strtolower(trim(Yii::$app->getRequest()->get('debug'))) == 'y';
+    }
 
     public function behaviors()
     {
