@@ -30,6 +30,7 @@ class m180208_150244_create_news_table extends Migration
             'enabled' => $this->boolean()->notNull()->defaultValue(1)->comment('激活'),
             'enabled_comment' => $this->boolean()->notNull()->defaultValue(0)->comment('激活评论'),
             'comments_count' => $this->integer()->notNull()->defaultValue(0)->comment('评论次数'),
+            'clicks_count' => $this->integer()->notNull()->defaultValue(0)->comment('点击次数'),
             'published_at' => $this->integer()->notNull()->comment('发布时间'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'created_by' => $this->integer()->notNull()->comment('添加人'),

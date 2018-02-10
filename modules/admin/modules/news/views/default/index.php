@@ -71,6 +71,10 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'number'],
             ],
             [
+                'attribute' => 'clicks_count',
+                'contentOptions' => ['class' => 'number'],
+            ],
+            [
                 'attribute' => 'published_at',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime']

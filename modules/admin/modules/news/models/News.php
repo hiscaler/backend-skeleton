@@ -26,6 +26,7 @@ use yii\web\UploadedFile;
  * @property int $enabled 激活
  * @property int $enabled_comment 激活评论
  * @property int $comments_count 评论次数
+ * @property int $clicks_count 点击次数
  * @property int $published_at 发布时间
  * @property int $created_at 添加时间
  * @property int $created_by 添加人
@@ -57,10 +58,11 @@ class News extends BaseActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['category_id', 'is_picture_news', 'comments_count', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['category_id', 'is_picture_news', 'comments_count', 'clicks_count', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title', 'author', 'source', 'published_at'], 'required'],
             [['title', 'short_title', 'keywords', 'author', 'source', 'source_url'], 'trim'],
             [['category_id'], 'default', 'value' => 0],
+            [['comments_count', 'clicks_count'], 'default', 'value' => 0],
             [['description'], 'string'],
             ['published_at', 'datetime', 'format' => 'php:Y-m-d H:i:s', 'timestampAttribute' => 'published_at'],
             [['enabled', 'enabled_comment'], 'boolean'],
@@ -108,6 +110,7 @@ class News extends BaseActiveRecord
             'enabled' => '激活',
             'enabled_comment' => '激活评论',
             'comments_count' => '评论次数',
+            'clicks_count' => '点击次数',
             'published_at' => '发布时间',
             'created_at' => '添加时间',
             'created_by' => '添加人',
@@ -142,7 +145,8 @@ class News extends BaseActiveRecord
     /**
      * 处理正文内容中的图片，如果没有上传附件图片并且设定了图片的获取位置才会进行解析操作
      *
-     * @param ActiveRecord $model
+     * @param $model
+     * @throws \yii\db\Exception
      */
     public function processPicturePath($model)
     {
@@ -150,7 +154,7 @@ class News extends BaseActiveRecord
             $picturePath = Yad::getTextImages($model->newsContent->content, $number);
             if (!empty($picturePath)) {
                 Yii::$app->getDb()->createCommand()->update('{{%news}}', [
-                    'is_picture_news' => Option::BOOLEAN_TRUE,
+                    'is_picture_news' => Constant::BOOLEAN_TRUE,
                     'picture_path' => $picturePath,
                 ], '[[id]] = :id', [':id' => $model->id])->execute();
             }
