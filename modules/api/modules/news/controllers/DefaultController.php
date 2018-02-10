@@ -245,7 +245,7 @@ class DefaultController extends BaseController
         // Order By
         $orderByColumns = [];
         if (!empty($orderBy)) {
-            $orderByColumnLimit = ['id', 'categoryId', 'ordering', 'publishedAt', 'createdAt', 'updatedAt']; // Supported order by column names
+            $orderByColumnLimit = ['id', 'categoryId', 'clicksCount', 'publishedAt', 'createdAt', 'updatedAt']; // Supported order by column names
             foreach (explode(',', trim($orderBy)) as $string) {
                 if (!empty($string)) {
                     $string = explode('.', $string);
@@ -332,7 +332,7 @@ class DefaultController extends BaseController
             ':id' => (int) $id,
         ])->queryOne();
         if ($data) {
-            $sql = 'UPDATE {{%news}} SET [[click_times]] = [[click_times]] + 1';
+            $sql = 'UPDATE {{%news}} SET [[clicks_count]] = [[clicks_count]] + 1';
             $bindValues = [];
             $sql .= ' WHERE [[id]] = :id';
             $bindValues[':id'] = $data['id'];
@@ -340,7 +340,7 @@ class DefaultController extends BaseController
 
             return [
                 'id' => $data['id'],
-                'clicksCount' => $data['hits_count'] + 1
+                'clicksCount' => $data['clicks_count'] + 1
             ];
         } else {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
@@ -356,7 +356,7 @@ class DefaultController extends BaseController
     public function actionCreate()
     {
         $model = new News();
-        $model->ordering = 0;
+        $model->loadDefaultValues();
         $newsContent = new NewsContent();
         $post = Yii::$app->getRequest()->post();
         if ($post) {

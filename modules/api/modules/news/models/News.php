@@ -26,6 +26,7 @@ use yii\web\UploadedFile;
  * @property int $enabled 激活
  * @property int $enabled_comment 激活评论
  * @property int $comments_count 评论次数
+ * @property int $clicks_count 点击次数
  * @property int $published_at 发布时间
  * @property int $created_at 添加时间
  * @property int $created_by 添加人
@@ -57,10 +58,11 @@ class News extends BaseActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['category_id', 'is_picture_news', 'comments_count', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['category_id', 'is_picture_news', 'comments_count', 'clicks_count', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title', 'author', 'source', 'published_at'], 'required'],
             [['title', 'short_title', 'keywords', 'author', 'source', 'source_url'], 'trim'],
             [['category_id'], 'default', 'value' => 0],
+            [['comments_count', 'clicks_count'], 'default', 'value' => 0],
             [['description'], 'string'],
             ['published_at', 'datetime', 'format' => 'php:Y-m-d H:i:s', 'timestampAttribute' => 'published_at'],
             [['enabled', 'enabled_comment'], 'boolean'],
@@ -134,6 +136,7 @@ class News extends BaseActiveRecord
             },
             'enabledComment' => 'enabled_comment',
             'commentsCount' => 'comments_count',
+            'clicksCount' => 'clicks_count',
             'publishedAt' => 'published_at',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
