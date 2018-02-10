@@ -20,7 +20,12 @@ use yii\widgets\ActiveForm;
             'options' => ['enctype' => 'multipart/form-data']
         ]); ?>
         <div class="tab-panel" id="tab-panel-basic">
-            <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('classicCase.module.category'), ['prompt' => '']) ?>
+            <?php
+            $categories = \app\models\Category::tree('classicCase.module.category');
+            if ($categories) {
+                echo $form->field($model, 'category_id')->dropDownList($categories, ['prompt' => '']);
+            }
+            ?>
 
             <?php
             $entityLabels = \app\models\Label::getItems(false, true);
