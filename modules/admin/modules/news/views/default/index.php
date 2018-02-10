@@ -111,7 +111,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                         return Html::a(Html::img($baseUrl . '/images/labels.png'), ['/admin/entity-labels/index', 'entityId' => $model['id'], 'modelName' => $model->className2Id()], ['title' => Yii::t('app', 'Entity Labels'), 'class' => 'setting-entity-labels', 'data-pjax' => '0']);
                     },
                 ],
-                'headerOptions' => ['class' => 'buttons-3 last'],
+                'headerOptions' => ['class' => 'buttons-4 last'],
             ],
         ],
     ]); ?>
