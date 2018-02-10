@@ -50,7 +50,7 @@ class ClassicCase extends BaseActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             [['category_id', 'enabled', 'clicks_count', 'ordering', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title', 'content', 'published_at'], 'required'],
             [['title', 'keywords', 'description'], 'trim'],
@@ -65,7 +65,7 @@ class ClassicCase extends BaseActiveRecord
                 'minSize' => $this->_fileUploadConfig['size']['min'],
                 'maxSize' => $this->_fileUploadConfig['size']['max'],
             ],
-        ];
+        ]);
     }
 
     public function behaviors()
