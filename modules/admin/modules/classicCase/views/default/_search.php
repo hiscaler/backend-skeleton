@@ -24,7 +24,6 @@ use yii\widgets\ActiveForm;
             }
             ?>
 
-
             <?= $form->field($model, 'title') ?>
         </div>
         <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::booleanOptions(), ['prompt' => '']) ?>
