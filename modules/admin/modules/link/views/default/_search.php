@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="entry">
             <?= $form->field($model, 'title') ?>
-            <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::booleanOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::boolean(), ['prompt' => '']) ?>
         </div>
         <?php // echo $form->field($model, 'url') ?>
 

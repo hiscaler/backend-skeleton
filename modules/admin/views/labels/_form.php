@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
     <div class="attribute-form form">
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'ordering')->dropDownList(\app\models\Option::orderingOptions()) ?>
+        <?= $form->field($model, 'ordering')->dropDownList(\app\models\Option::ordering()) ?>
 
         <?= $form->field($model, 'alias')->textInput(['maxlength' => true]) ?>
 

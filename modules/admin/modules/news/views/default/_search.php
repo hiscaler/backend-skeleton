@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
                 echo $form->field($model, 'category_id')->dropDownList($categories, ['prompt' => '']);
             }
             ?>
-            <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::booleanOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::boolean(), ['prompt' => '']) ?>
         </div>
         <div class="entry">
             <?= $form->field($model, 'id') ?>

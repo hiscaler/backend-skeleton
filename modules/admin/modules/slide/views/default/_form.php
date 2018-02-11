@@ -27,7 +27,7 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'picture_path')->fileInput() ?>
 
-        <?= $form->field($model, 'ordering')->dropDownList(\app\models\Option::orderingOptions()) ?>
+        <?= $form->field($model, 'ordering')->dropDownList(\app\models\Option::ordering()) ?>
 
         <?= $form->field($model, 'enabled')->checkBox([], null) ?>
         <div class="form-group buttons">

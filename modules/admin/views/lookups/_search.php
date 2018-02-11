@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="entry">
             <?= $form->field($model, 'return_type')->dropDownList(\app\models\Lookup::returnTypeOptions(), ['prompt' => '']) ?>
-            <?php echo $form->field($model, 'enabled')->dropDownList(\app\models\Option::booleanOptions(), ['prompt' => '']) ?>
+            <?php echo $form->field($model, 'enabled')->dropDownList(\app\models\Option::boolean(), ['prompt' => '']) ?>
         </div>
         <div class="form-group buttons">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

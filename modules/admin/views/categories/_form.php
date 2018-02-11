@@ -35,7 +35,7 @@ use yii\widgets\ActiveForm;
         </div>
         <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
         <div class="entry">
-            <?= $form->field($model, 'ordering')->dropDownList(Option::orderingOptions()) ?>
+            <?= $form->field($model, 'ordering')->dropDownList(Option::ordering()) ?>
 
             <?= $form->field($model, 'enabled')->checkbox([], false) ?>
         </div>
