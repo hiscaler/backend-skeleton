@@ -19,8 +19,8 @@ class NewsSearch extends News
     public function rules()
     {
         return [
-            [['id', 'category_id', 'is_picture_news', 'enabled', 'enabled_comment', 'comments_count', 'published_at', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['title', 'short_title', 'keywords', 'description', 'author', 'source', 'source_url', 'picture_path'], 'safe'],
+            [['id', 'category_id', 'is_picture_news', 'enabled', 'enabled_comment', 'published_at'], 'integer'],
+            [['title', 'keywords', 'author', 'source',], 'safe'],
         ];
     }
 
@@ -65,22 +65,13 @@ class NewsSearch extends News
             'is_picture_news' => $this->is_picture_news,
             'enabled' => $this->enabled,
             'enabled_comment' => $this->enabled_comment,
-            'comments_count' => $this->comments_count,
             'published_at' => $this->published_at,
-            'created_at' => $this->created_at,
-            'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'short_title', $this->short_title])
             ->andFilterWhere(['like', 'keywords', $this->keywords])
-            ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'author', $this->author])
-            ->andFilterWhere(['like', 'source', $this->source])
-            ->andFilterWhere(['like', 'source_url', $this->source_url])
-            ->andFilterWhere(['like', 'picture_path', $this->picture_path]);
+            ->andFilterWhere(['like', 'source', $this->source]);
 
         return $dataProvider;
     }
