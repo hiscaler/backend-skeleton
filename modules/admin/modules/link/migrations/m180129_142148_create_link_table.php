@@ -35,6 +35,7 @@ class m180129_142148_create_link_table extends Migration
         $this->createIndex('category_id', '{{%slide}}', ['category_id']);
         $this->createIndex('type', '{{%slide}}', ['type']);
         $this->createIndex('category_id_type', '{{%slide}}', ['category_id', 'type']);
+        $this->createIndex('category_id_type_enabled', '{{%slide}}', ['category_id', 'type', 'enabled']);
     }
 
     /**
