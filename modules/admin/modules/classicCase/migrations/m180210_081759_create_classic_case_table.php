@@ -32,6 +32,10 @@ class m180210_081759_create_classic_case_table extends Migration
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
         ]);
+
+        $this->createIndex('category_id', '{{%classic_case}}', ['category_id']);
+        $this->createIndex('enabled', '{{%classic_case}}', ['enabled']);
+        $this->createIndex('category_id_enabled', '{{%classic_case}}', ['category_id', 'enabled']);
     }
 
     /**
