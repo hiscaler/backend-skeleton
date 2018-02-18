@@ -3,7 +3,6 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
 }
 
 .g-text {
-    background: url(../images/input-bg.png) repeat-x scroll 0 -130px #fff;
     border: 1px solid #AAAAAA;
     height: 14px;
     padding: 5px 5px 6px;
@@ -23,7 +22,6 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
 }
 
 .g-text-area {
-    background: url(../images/input-bg.png) repeat-x scroll 0 -130px #fff;
     border: 1px solid #AAAAAA;
     width: 604px;
     height: 120px;
