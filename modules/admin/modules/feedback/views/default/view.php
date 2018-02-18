@@ -18,7 +18,10 @@ $this->params['menus'] = [
         'model' => $model,
         'attributes' => [
             'id',
-            'category.name',
+            [
+                'attribute' => 'category.name',
+                'visible' => $model->category_id,
+            ],
             'title',
             'username',
             'tel',

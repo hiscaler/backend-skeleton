@@ -17,7 +17,7 @@ $this->params['menus'] = [
 ?>
 <div class="feedback-index">
     <?php Pjax::begin(); ?>
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -29,6 +29,7 @@ $this->params['menus'] = [
             [
                 'attribute' => 'category.name',
                 'contentOptions' => ['class' => 'category-name'],
+                'visible' => $categories,
             ],
             'title',
             [

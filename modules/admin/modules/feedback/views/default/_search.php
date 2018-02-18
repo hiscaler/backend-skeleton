@@ -17,7 +17,11 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
 
-        <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('feedback.module.category', \app\models\Category::RETURN_TYPE_PRIVATE), ['prompt' => '']) ?>
+        <?php
+        if ($categories) {
+            echo $form->field($model, 'category_id')->dropDownList($categories, ['prompt' => '']);
+        }
+        ?>
         <div class="entry">
             <?= $form->field($model, 'title') ?>
 

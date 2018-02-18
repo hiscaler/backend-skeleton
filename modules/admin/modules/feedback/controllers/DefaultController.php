@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\feedback\controllers;
 
+use app\models\Category;
 use Yii;
 use app\modules\admin\modules\feedback\models\Feedback;
 use app\modules\admin\modules\feedback\models\FeedbackSearch;
@@ -47,6 +48,7 @@ class DefaultController extends Controller
      * Lists all Feedback models.
      *
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -56,6 +58,7 @@ class DefaultController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'categories' => Category::tree('feedback.module.category', Category::RETURN_TYPE_PRIVATE)
         ]);
     }
 
