@@ -6,8 +6,8 @@ use app\models\Meta;
 use app\models\User;
 use app\models\UserSearch;
 use app\modules\admin\forms\ChangePasswordForm;
-use app\modules\admin\forms\DynamicForm;
 use app\modules\admin\forms\CreateUserForm;
+use app\modules\admin\forms\DynamicForm;
 use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\base\InvalidCallException;
@@ -139,7 +139,8 @@ class UsersController extends GlobalController
         return $this->redirect(['index']);
     }
 
-    /**修改密码
+    /**
+     * 修改密码
      *
      * @param $id
      * @return string|\yii\web\Response
