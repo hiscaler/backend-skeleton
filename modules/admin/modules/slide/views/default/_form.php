@@ -17,7 +17,12 @@ use yii\widgets\ActiveForm;
         ]);
         ?>
 
-        <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('slide.module.category'), ['prompt' => '']) ?>
+        <?php
+        $categories = \app\models\Category::tree('slide.module.category', \app\models\Category::RETURN_TYPE_PRIVATE);
+        if ($categories) {
+            echo $form->field($model, 'category_id')->dropDownList($categories, ['prompt' => '']);
+        }
+        ?>
 
         <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 

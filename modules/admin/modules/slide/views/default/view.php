@@ -22,7 +22,10 @@ $this->params['menus'] = [
         'attributes' => [
             'id',
             'ordering',
-            'category.name',
+            [
+                'attribute' => 'category.name',
+                'visible' => $model['category_id'],
+            ],
             'title',
             'url:url',
             'url_open_target_text',
