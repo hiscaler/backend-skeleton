@@ -11,7 +11,11 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * MetaController implements the CRUD actions for Meta model.
+ * 扩展属性管理
+ * Class MetaController
+ *
+ * @package app\modules\admin\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class MetaController extends Controller
 {

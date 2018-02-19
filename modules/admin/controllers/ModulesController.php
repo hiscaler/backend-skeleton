@@ -16,7 +16,9 @@ use yii\web\Response;
 
 /**
  * 模块管理
+ * Class ModulesController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class ModulesController extends Controller

@@ -10,7 +10,9 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 帐号管理
+ * Class AccountController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class AccountController extends Controller

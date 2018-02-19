@@ -7,7 +7,11 @@ use Yii;
 use yii\filters\AccessControl;
 
 /**
- * Site controller
+ * Default controller
+ * Class DefaultController
+ *
+ * @package app\modules\admin\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends Controller
 {

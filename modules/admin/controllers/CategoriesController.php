@@ -13,7 +13,9 @@ use yii\web\Response;
 
 /**
  * 分类管理
+ * Class CategoriesController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class CategoriesController extends GlobalController

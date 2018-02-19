@@ -19,7 +19,9 @@ use yii\web\Response;
 
 /**
  * 系统用户管理
+ * Class UsersController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class UsersController extends Controller

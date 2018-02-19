@@ -12,7 +12,9 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 用户分组管理
+ * Class UserGroupsController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class UserGroupsController extends Controller

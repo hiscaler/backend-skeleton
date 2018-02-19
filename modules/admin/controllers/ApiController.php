@@ -7,7 +7,9 @@ use Yii;
 
 /**
  * 接口
+ * Class ApiController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class ApiController extends \yii\rest\Controller

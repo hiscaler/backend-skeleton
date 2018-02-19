@@ -11,7 +11,9 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 附件上传设定管理
+ * Class FileUploadConfigsController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class FileUploadConfigsController extends Controller

@@ -15,6 +15,10 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 会员管理
+ * Class MembersController
+ *
+ * @package app\modules\admin\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class MembersController extends Controller
 {

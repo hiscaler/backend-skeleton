@@ -17,7 +17,9 @@ use yii\web\UploadedFile;
 
 /**
  * 基本设置管理
+ * Class LookupsController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class LookupsController extends Controller

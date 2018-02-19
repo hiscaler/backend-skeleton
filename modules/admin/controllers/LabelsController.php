@@ -15,7 +15,9 @@ use yii\web\Response;
 
 /**
  * 推送位管理
+ * Class LabelsController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class LabelsController extends Controller

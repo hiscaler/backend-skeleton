@@ -9,6 +9,7 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 帮助中心
+ * Class HelpController
  *
  * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
