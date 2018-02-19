@@ -7,7 +7,7 @@ use app\models\User;
 use app\models\UserSearch;
 use app\modules\admin\forms\ChangePasswordForm;
 use app\modules\admin\forms\DynamicForm;
-use app\modules\admin\forms\RegisterForm;
+use app\modules\admin\forms\CreateUserForm;
 use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\base\InvalidCallException;
@@ -72,7 +72,7 @@ class UsersController extends GlobalController
      */
     public function actionCreate()
     {
-        $model = new RegisterForm();
+        $model = new CreateUserForm();
         $model->status = User::STATUS_ACTIVE;
         $model->loadDefaultValues();
 
