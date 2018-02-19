@@ -19,7 +19,6 @@ use yii\widgets\ActiveForm;
         ]); ?>
         <div class="entry">
             <?php
-            $categories = \app\models\Category::tree('news.module.category');
             if ($categories) {
                 echo $form->field($model, 'category_id')->dropDownList($categories, ['prompt' => '']);
             }

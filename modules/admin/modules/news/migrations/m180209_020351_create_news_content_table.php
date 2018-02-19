@@ -16,7 +16,7 @@ class m180209_020351_create_news_content_table extends Migration
     public function up()
     {
         $this->createTable('{{%news_content}}', [
-            'news_id' => $this->integer()->notNull()->comment('资讯 id'),
+            'news_id' => $this->integer()->notNull()->unique()->comment('资讯 id'),
             'content' => $this->text()->notNull()->comment('正文'),
         ]);
     }
