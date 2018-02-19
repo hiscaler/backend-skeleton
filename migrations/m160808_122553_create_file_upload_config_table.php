@@ -29,6 +29,7 @@ class m160808_122553_create_file_upload_config_table extends Migration
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
         ]);
 
+        $this->createIndex('model_name', '{{%file_upload_config}}', ['model_name']);
         $this->createIndex('updated_at', '{{%file_upload_config}}', ['updated_at']);
     }
 

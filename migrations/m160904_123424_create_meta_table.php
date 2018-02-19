@@ -31,6 +31,8 @@ class m160904_123424_create_meta_table extends Migration
             'deleted_by' => $this->integer()->comment('删除人'),
             'deleted_at' => $this->integer()->comment('删除时间'),
         ]);
+
+        $this->createIndex('table_name', '{{%meta}}', ['table_name']);
     }
 
     /**

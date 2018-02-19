@@ -39,6 +39,8 @@ class m151106_155959_create_user_table extends Migration
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
         ], $tableOptions);
+
+        $this->createIndex('status', '{{%user}}', ['status']);
     }
 
     public function down()
