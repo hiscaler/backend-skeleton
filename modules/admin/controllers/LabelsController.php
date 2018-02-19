@@ -18,7 +18,7 @@ use yii\web\Response;
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class LabelsController extends GlobalController
+class LabelsController extends Controller
 {
 
     public function behaviors()

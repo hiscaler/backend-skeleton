@@ -22,7 +22,7 @@ use yii\web\Response;
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class UsersController extends GlobalController
+class UsersController extends Controller
 {
 
     public function behaviors()

@@ -15,7 +15,7 @@ use yii\web\NotFoundHttpException;
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class UserGroupsController extends GlobalController
+class UserGroupsController extends Controller
 {
 
     /**

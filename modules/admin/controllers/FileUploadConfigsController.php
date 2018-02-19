@@ -14,7 +14,7 @@ use yii\web\NotFoundHttpException;
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
-class FileUploadConfigsController extends GlobalController
+class FileUploadConfigsController extends Controller
 {
 
     public function behaviors()
