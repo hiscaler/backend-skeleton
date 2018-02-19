@@ -18,7 +18,7 @@ use yii\web\Response;
  * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class CategoriesController extends GlobalController
+class CategoriesController extends Controller
 {
 
     public function behaviors()
