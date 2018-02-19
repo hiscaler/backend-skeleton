@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\components\MessageBox;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -15,11 +16,22 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
 ];
+
+$baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 ?>
 <div class="member-index">
     <?= $this->render('_search', ['model' => $searchModel]); ?>
-    <?php Pjax::begin(); ?>
-    <?= GridView::widget([
+    <?php
+    $session = Yii::$app->getSession();
+    if ($session->hasFlash('notice')) {
+        echo MessageBox::widget([
+            'title' => Yii::t('app', 'Prompt Message'),
+            'message' => $session->getFlash('notice'),
+            'showCloseButton' => true
+        ]);
+    }
+    Pjax::begin();
+    echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             [
@@ -79,7 +91,12 @@ $this->params['menus'] = [
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update} {delete}',
+                'template' => '{view} {update} {change-password} {delete}',
+                'buttons' => [
+                    'change-password' => function ($url, $model, $key) use ($baseUrl) {
+                        return Html::a(Html::img($baseUrl . '/images/change-password.png'), $url, ['title' => Yii::t('app', 'Change Password')]);
+                    },
+                ],
                 'headerOptions' => ['class' => 'buttons-3 last'],
             ],
         ],

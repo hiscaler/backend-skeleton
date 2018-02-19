@@ -1,8 +1,8 @@
 <?php
 /* @var $this yii\web\View */
-/* @var $model common\models\User */
+/* @var $model app\models\Member */
 
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Users'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Members'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Change Password');
 
 $this->params['menus'] = [
@@ -12,7 +12,7 @@ $this->params['menus'] = [
 <div class="user-create">
     <?=
     $this->render('_changePasswordForm', [
-        'user' => $user,
+        'user' => $member,
         'model' => $model,
     ]);
     ?>

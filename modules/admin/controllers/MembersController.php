@@ -5,6 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\Member;
 use app\models\MemberSearch;
 use app\models\Meta;
+use app\modules\admin\forms\ChangePasswordForm;
 use app\modules\admin\forms\CreateMemberForm;
 use app\modules\admin\forms\DynamicForm;
 use Yii;
@@ -28,7 +29,7 @@ class MembersController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'change-password'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -140,6 +141,33 @@ class MembersController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionChangePassword($id)
+    {
+        $member = $this->findModel($id);
+        $model = new ChangePasswordForm();
+
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
+            $member->setPassword($model->password);
+            if ($member->save(false)) {
+                Yii::$app->getSession()->setFlash('notice', "用户 {$member->username} 密码修改成功，请通知会员下次登录使用新的密码。");
+
+                return $this->redirect(['index']);
+            }
+        }
+
+        return $this->render('change-password', [
+            'member' => $member,
+            'model' => $model,
+        ]);
     }
 
     /**
