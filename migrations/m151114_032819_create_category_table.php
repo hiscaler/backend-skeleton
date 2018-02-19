@@ -31,6 +31,8 @@ class m151114_032819_create_category_table extends Migration
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
         ]);
+
+        $this->createIndex('parent_id', '{{%category}}', ['parent_id']);
     }
 
     public function down()
