@@ -5,6 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\Member;
 use app\models\MemberSearch;
 use app\models\Meta;
+use app\modules\admin\forms\CreateMemberForm;
 use app\modules\admin\forms\DynamicForm;
 use Yii;
 use yii\filters\AccessControl;
@@ -79,9 +80,10 @@ class MembersController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Member();
-        $model->loadDefaultValues();
+        $model = new CreateMemberForm();
         $model->status = Member::STATUS_ACTIVE;
+        $model->loadDefaultValues();
+
         $dynamicModel = new DynamicForm(Meta::getItems($model));
 
         $post = Yii::$app->getRequest()->post();
@@ -90,14 +92,14 @@ class MembersController extends Controller
             if ($model->save()) {
                 $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
 
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             }
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-                'dynamicModel' => $dynamicModel,
-            ]);
         }
+
+        return $this->render('create', [
+            'model' => $model,
+            'dynamicModel' => $dynamicModel,
+        ]);
     }
 
     /**

@@ -12,6 +12,8 @@ return [
     'Nickname' => '昵称',
     'Email' => '电子邮箱',
     'Role' => '角色',
+    'Password' => '密码',
+    'Confirm Password' => '确认密码',
     'Rule' => '审核规则',
     'Guest' => '来宾用户',
     'Administrator' => '管理员',

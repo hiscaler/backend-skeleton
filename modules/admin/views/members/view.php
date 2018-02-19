@@ -15,11 +15,15 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
     ['label' => Yii::t('app', 'Update'), 'url' => ['update', 'id' => $model->id]],
 ];
+
+$wechatModel = $model->wechat;
 ?>
 <div>
     <ul class="tabs-common">
         <li class="active"><a href="javascript:;" data-toggle="tab-panel-basic">基本资料</a></li>
-        <li><a href="javascript:;" data-toggle="tab-panel-wehcat">微信资料</a></li>
+        <?php if ($wechatModel): ?>
+            <li><a href="javascript:;" data-toggle="tab-panel-wehcat">微信资料</a></li>
+        <?php endif; ?>
     </ul>
     <div class="panels">
         <div class="tab-panel" id="tab-panel-basic">
@@ -61,30 +65,32 @@ $this->params['menus'] = [
                 ]) ?>
             </div>
         </div>
-        <div class="tab-panel" id="tab-panel-wehcat" style="display: none;">
-            <?= DetailView::widget([
-                'model' => $model->wechat,
-                'attributes' => [
-                    'id',
-                    'subscribe:boolean',
-                    'openid',
-                    'subscribe:boolean',
-                    'nickname',
-                    'sex:sex',
-                    'country',
-                    'province',
-                    'city',
-                    'language',
-                    [
-                        'attribute' => 'headimgurl',
-                        'format' => 'image',
-                        'contentOptions' => ['class' => 'avatar']
+        <?php if ($wechatModel): ?>
+            <div class="tab-panel" id="tab-panel-wehcat" style="display: none;">
+                <?= DetailView::widget([
+                    'model' => $wechatModel,
+                    'attributes' => [
+                        'id',
+                        'subscribe:boolean',
+                        'openid',
+                        'subscribe:boolean',
+                        'nickname',
+                        'sex:sex',
+                        'country',
+                        'province',
+                        'city',
+                        'language',
+                        [
+                            'attribute' => 'headimgurl',
+                            'format' => 'image',
+                            'contentOptions' => ['class' => 'avatar']
+                        ],
+                        'subscribe_time:datetime',
+                        'unionid',
                     ],
-                    'subscribe_time:datetime',
-                    'unionid',
-                ],
-            ]) ?>
-        </div>
+                ]) ?>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
 
