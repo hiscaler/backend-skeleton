@@ -44,13 +44,12 @@ class DefaultController extends BaseController
     private function _parseControllerFile($file)
     {
         $count = 0;
-//        $controller = ($moduleId) ? "{$moduleId}.{$controller}" : $controller;
         $h = file($file);
         $rows = count($h);
         $actions = $descriptions = [];
         for ($i = 0; $i < $rows; $i++) {
             $line = trim($h[$i]);
-            if (in_array($line, ['', '/**', '*', '*/', '{', '}', '<?php', '?>']) || strpos($line, 'actions()') || (strpos($line, 'description') === false && strpos($line, 'function') === false)) {
+            if (in_array($line, ['', '/**', '*', '*/', '{', '}', '<?php', '?>']) || strpos($line, 'actions()') || (strpos($line, '@rbacDesc') === false && strpos($line, 'function') === false)) {
                 continue;
             }
             if (preg_match("/^(.+)function( +)action*/", $line)) {
@@ -64,8 +63,8 @@ class DefaultController extends BaseController
                 $replacements[0] = '';
                 $action = preg_replace($patterns, $replacements, trim(trim(substr(trim($line), $posAct, $posPar - $posAct))));
                 $actions[$i] = preg_replace("/action/", "", $action, 1);
-            } elseif (preg_match("/^\*( +)@description( +)*/", $line)) {
-                $descriptions[$i] = trim(str_replace('* @description', '', $line));
+            } elseif (preg_match("/^\*( +)@rbacDesc( +)*/", $line)) {
+                $descriptions[$i] = trim(str_replace('* @rbacDesc', '', $line));
             }
             $count = count($actions);
             if ($count != count($descriptions)) {
