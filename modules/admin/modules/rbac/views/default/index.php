@@ -674,8 +674,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 userRolesByUserId: function (userId, index) {
                     axios.get(yadjet.rbac.urls.user.roles.replace('_id', userId))
                         .then(function (response) {
-                            this.user.roles = response.data;
-                            this.activeObject.userId = userId;
+                            vm.user.roles = response.data;
+                            vm.activeObject.userId = userId;
                             var $tr = $('#rbac-users > table tr:eq(' + (index + 1) + ')');
                             var offset = $tr.offset();
                             $('#rbac-pop-window').css({
@@ -685,186 +685,121 @@ $this->params['breadcrumbs'][] = $this->title;
                             });
                         })
                         .catch(function (error) {
-                            this.user.roles = [];
-                            this.activeObject.userId = undefined;
+                            vm.user.roles = [];
+                            vm.activeObject.userId = undefined;
                         });
-                    //     Vue.http.get(yadjet.rbac.urls.user.roles.replace('_id', userId)).then((res) => {
-                    //         this.user.roles = res.data;
-                    //     this.activeObject.userId = userId;
-                    //     var $tr = $('#rbac-users > table tr:eq(' + (index + 1) + ')');
-                    //     var offset = $tr.offset();
-                    //     $('#rbac-pop-window').css({
-                    //         position: 'absolute',
-                    //         left: offset.left + 40,
-                    //         top: offset.top + $tr.find('td').outerHeight()
-                    //     });
-                    // });
                 },
                 // 给用户授权
                 assign: function (roleName, index) {
                     axios.post(yadjet.rbac.urls.assign, {roleName: roleName, userId: vm.activeObject.userId})
                         .then(function (response) {
-                            this.user.roles.push(this.roles[index]);
+                            vm.user.roles.push(vm.roles[index]);
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.post(yadjet.rbac.urls.assign, {roleName: roleName, userId: vm.activeObject.userId}).then((res) => {
-                    //         console.info(index);
-                    //     this.user.roles.push(this.roles[index]);
-                    // });
                 },
                 // 撤销用户授权
                 revoke: function (roleName, index) {
                     axios.post(yadjet.rbac.urls.revoke, {roleName: roleName, userId: vm.activeObject.userId})
                         .then(function (response) {
-                            for (var i in this.user.roles) {
-                                console.info(this.user.roles[i].name);
-                                if (this.user.roles[i].name === roleName) {
-                                    this.user.roles.splice(i, 1);
+                            for (var i in vm.user.roles) {
+                                console.info(vm.user.roles[i].name);
+                                if (vm.user.roles[i].name === roleName) {
+                                    vm.user.roles.splice(i, 1);
                                     break;
                                 }
                             }
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.post(yadjet.rbac.urls.revoke, {roleName: roleName, userId: vm.activeObject.userId}).then((res) => {
-                    //         for (var i in this.user.roles) {
-                    //         console.info(this.user.roles[i].name);
-                    //         if (this.user.roles[i].name === roleName) {
-                    //             this.user.roles.splice(i, 1);
-                    //             break;
-                    //         }
-                    //     }
-                    // });
                 },
                 // 删除角色
                 roleDelete: function (roleName, index, event) {
                     axios.post(yadjet.rbac.urls.roles.delete.replace('_name', roleName))
                         .then(function (response) {
-                            this.roles.splice(index, 1);
+                            vm.roles.splice(index, 1);
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.post(yadjet.rbac.urls.roles.delete.replace('_name', roleName)).then((res) => {
-                    //         this.roles.splice(index, 1);
-                    // });
                     event.preventDefault();
                 },
                 // 删除角色关联的所有权限
                 roleRemoveChildren: function (roleName) {
                     axios.post(yadjet.rbac.urls.roles.removeChildren.replace('_name', roleName))
                         .then(function (response) {
-                            this.role.permissions = [];
+                            vm.role.permissions = [];
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.post(yadjet.rbac.urls.roles.removeChildren.replace('_name', roleName)).then((res) => {
-                    //         this.role.permissions = [];
-                    // });
                 },
                 // 根据角色获取关联的所有权限
                 permissionsByRole: function (roleName, index) {
                     axios.get(yadjet.rbac.urls.roles.permissions.replace('_roleName', roleName))
                         .then(function (response) {
-                            this.activeObject.role = roleName;
-                            this.role.permissions = response.data;
+                            vm.activeObject.role = roleName;
+                            vm.role.permissions = response.data;
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.get(yadjet.rbac.urls.roles.permissions.replace('_roleName', roleName)).then((res) => {
-                    //         this.activeObject.role = roleName;
-                    //     this.role.permissions = res.data;
-                    // });
                 },
                 // 分配权限给角色
                 roleAddChild: function (permissionName, index, event) {
                     axios.post(yadjet.rbac.urls.roles.addChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName))
                         .then(function (response) {
-                            for (var i in this.permissions) {
-                                if (this.permissions[i].name == permissionName) {
-                                    this.role.permissions.push(this.permissions[i]);
+                            for (var i in vm.permissions) {
+                                if (vm.permissions[i].name == permissionName) {
+                                    vm.role.permissions.push(vm.permissions[i]);
                                     break;
                                 }
                             }
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.post(yadjet.rbac.urls.roles.addChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName)).then((res) => {
-                    //         for (var i in this.permissions) {
-                    //         if (this.permissions[i].name == permissionName) {
-                    //             this.role.permissions.push(this.permissions[i]);
-                    //             break;
-                    //         }
-                    //     }
-                    // });
                 },
                 // 从角色中移除权限
                 roleRemoveChild: function (permissionName, index, event) {
                     axios.post(yadjet.rbac.urls.roles.removeChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName))
                         .then(function (response) {
-                            for (var i in this.role.permissions) {
-                                if (this.role.permissions[i].name == permissionName) {
-                                    this.role.permissions.splice(i, 1);
+                            for (var i in vm.role.permissions) {
+                                if (vm.role.permissions[i].name == permissionName) {
+                                    vm.role.permissions.splice(i, 1);
                                     break;
                                 }
                             }
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.post(yadjet.rbac.urls.roles.removeChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName)).then((res) => {
-                    //         for (var i in this.role.permissions) {
-                    //         if (this.role.permissions[i].name == permissionName) {
-                    //             this.role.permissions.splice(i, 1);
-                    //             break;
-                    //         }
-                    //     }
-                    // });
                 },
                 // 切换添加表单是否可见
                 toggleFormVisible: function (formName) {
-                    this.formVisible[formName] = !this.formVisible[formName];
+                    vm.formVisible[formName] = !vm.formVisible[formName];
                 },
                 // 保存扫描的权限
                 permissionSave: function (name, description, index, event) {
                     axios.post(yadjet.rbac.urls.permissions.create, {name: name, description: description})
                         .then(function (response) {
                             if (response.data.success) {
-                                this.permissions.push(response.data.data);
-                                this.pendingPermissions[index].active = false;
+                                vm.permissions.push(response.data.data);
+                                vm.pendingPermissions[index].active = false;
                             }
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.post(yadjet.rbac.urls.permissions.create, {name: name, description: description}).then((res) => {
-                    //         if (res.data.success) {
-                    //         this.permissions.push(res.data.data);
-                    //         this.pendingPermissions[index].active = false;
-                    //     }
-                    // });
                 },
                 // 删除单个权限
                 permissionDelete: function (name, index, event) {
                     axios.post(yadjet.rbac.urls.permissions.delete.replace('_name', name))
                         .then(function (response) {
-                            this.permissions.splice(index, 1);
-                            for (var i in this.pendingPermissions) {
-                                if (this.pendingPermissions[i].name == name) {
-                                    this.pendingPermissions[i].active = true;
+                            vm.permissions.splice(index, 1);
+                            for (var i in vm.pendingPermissions) {
+                                if (vm.pendingPermissions[i].name == name) {
+                                    vm.pendingPermissions[i].active = true;
                                     break;
                                 }
                             }
                         })
                         .catch(function (error) {
                         });
-                    //     Vue.http.post(yadjet.rbac.urls.permissions.delete.replace('_name', name)).then((res) => {
-                    //         this.permissions.splice(index, 1);
-                    //     for (var i in this.pendingPermissions) {
-                    //         if (this.pendingPermissions[i].name == name) {
-                    //             this.pendingPermissions[i].active = true;
-                    //             break;
-                    //         }
-                    //     }
-                    // });
                     event.preventDefault();
                 }
             },
@@ -873,9 +808,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 userRoles: function () {
                     var roles = [], role;
                     for (var i in this.roles) {
-                        role = yadjet.utils.clone(this.roles[i]);
+                        role = clone(this.roles[i]);
                         role.active = false;
-                        for (var j in this.user.roles) {
+                        for (var j in vm.user.roles) {
                             if (role.name == this.user.roles[j].name) {
                                 role.active = true;
                                 break;
@@ -890,7 +825,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 rolePermissions: function () {
                     var permissions = [], permission;
                     for (var i in this.permissions) {
-                        permission = yadjet.utils.clone(this.permissions[i]);
+                        permission = clone(this.permissions[i]);
                         permission.active = false;
                         for (var j in this.role.permissions) {
                             if (permission.name == this.role.permissions[j].name) {
@@ -991,28 +926,21 @@ $this->params['breadcrumbs'][] = $this->title;
             })
             .catch(function (error) {
             });
-        // Vue.http.get(yadjet.rbac.urls.users.list).then((res) => {
-        //     vm.users.items = res.data.items;
-        // vm.users.extras = res.data.extras;
-        // });
+
         axios.get(yadjet.rbac.urls.roles.list)
             .then(function (response) {
                 vm.roles = response.data;
             })
             .catch(function (error) {
             });
-        // Vue.http.get(yadjet.rbac.urls.roles.list).then((res) => {
-        //     vm.roles = res.data;
-        // });
+
         axios.get(yadjet.rbac.urls.permissions.list)
             .then(function (response) {
                 vm.permissions = response.data;
             })
             .catch(function (error) {
             });
-        // Vue.http.get(yadjet.rbac.urls.permissions.list).then((res) => {
-        //     vm.permissions = res.data;
-        // });
+
         axios.get(yadjet.rbac.urls.permissions.scan)
             .then(function (response) {
                 vm.pendingPermissions = response.data;
