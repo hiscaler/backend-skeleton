@@ -46,6 +46,9 @@ class Module extends \yii\base\Module
                     ],
                 ],
             ],
+            'authManager' => [
+                'class' => 'yii\rbac\DbManager',
+            ],
             'response' => [
                 'class' => '\yii\web\Response',
                 'formatters' => [
