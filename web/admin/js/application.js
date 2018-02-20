@@ -235,51 +235,51 @@ $(document).on('click', '.search-button a', function () {
     
     return false;
 });
-
-var vm = new Vue({
-    el: '#mts-app',
-    data: {
-        // 所有数据验证规则
-        validators: {},
-        meta: {
-            // 某个数据项的验证规则
-            validators: {}
+if ($('#mts-app').length) {
+    var vm = new Vue({
+        el: '#mts-app',
+        data: {
+            // 所有数据验证规则
+            validators: {},
+            meta: {
+                // 某个数据项的验证规则
+                validators: {}
+            },
+            // 对象的 meta 信息
+            metaObjects: {}
         },
-        // 对象的 meta 信息
-        metaObjects: {}
-    },
-    methods: {
-        // 判断对象是否为空
-        isEmptyObject: function (e) {
-            var t;
-            for (t in e)
-                return !1;
-            return !0;
-        }
-    },
-    computed: {
-        // 当前 Meta 对象数据验证规则以及规则相关属性定义
-        metaValidators: function () {
-            var validators = [], validator;
-            for (var validatorName in this.validators) {
-                validator = clone(this.validators[validatorName]);
-                validator.name = validatorName;
-                validator.active = false;
-                for (var j in this.meta.validators) {
-                    if (this.meta.validators[j].name === validatorName) {
-                        validator.active = true;
-                        validator.options = this.meta.validators[j].options;
-                        break;
-                    }
-                }
-                validators.push(validator);
+        methods: {
+            // 判断对象是否为空
+            isEmptyObject: function (e) {
+                var t;
+                for (t in e)
+                    return !1;
+                return !0;
             }
-            
-            return validators;
+        },
+        computed: {
+            // 当前 Meta 对象数据验证规则以及规则相关属性定义
+            metaValidators: function () {
+                var validators = [], validator;
+                for (var validatorName in this.validators) {
+                    validator = clone(this.validators[validatorName]);
+                    validator.name = validatorName;
+                    validator.active = false;
+                    for (var j in this.meta.validators) {
+                        if (this.meta.validators[j].name === validatorName) {
+                            validator.active = true;
+                            validator.options = this.meta.validators[j].options;
+                            break;
+                        }
+                    }
+                    validators.push(validator);
+                }
+                
+                return validators;
+            }
         }
-    }
-});
-
+    });
+}
 /**
  * 复制内容
  * @type {Clipboard}
