@@ -99,8 +99,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td>{{ item.rule_name }}</td>
                         <td>{{ item.data }}</td>
                         <td class="btn-3">
-                            <button class="button-rbac" data-confirm="删除该角色？" v-on:click="roleDelete(item.name, $index, $event)">X</button>
-                            <button class="button-rbac" data-confirm="删除该角色关联的所有权限？" v-on:click="roleRemoveChildren(item.name)"><?= Yii::t('rbac', 'Remove Children') ?></button>
+                            <button class="button-rbac" v-on:click="roleDelete(item.name, $index, $event)">X</button>
+                            <button class="button-rbac" v-on:click="roleRemoveChildren(item.name)"><?= Yii::t('rbac', 'Remove Children') ?></button>
                             <button class="button-rbac" v-on:click="permissionsByRole(item.name, $index)"><?= Yii::t('rbac', 'Permissions') ?></button>
                         </td>
                     </tr>
@@ -125,7 +125,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <td>{{ item.data }}</td>
                             <td class="btn-1">
                                 <button class="button-rbac" v-show="!item.active" v-on:click="roleAddChild(item.name, $index, $event)">+</button>
-                                <button class="button-rbac" v-show="item.active" data-confirm="删除该权限？" v-on:click="roleRemoveChild(item.name, $index, $event)">X</button>
+                                <button class="button-rbac" v-show="item.active" v-on:click="roleRemoveChild(item.name, $index, $event)">X</button>
                             </td>
                         </tr>
                         </tbody>
@@ -168,7 +168,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td>{{ item.rule_name }}</td>
                         <td>{{ item.data }}</td>
                         <td class="btn-1">
-                            <button class="button-rbac" data-confirm="删除该权限？" v-on:click="permissionDelete(item.name, $index, $event)">X</button>
+                            <button class="button-rbac" v-on:click="permissionDelete(item.name, $index, $event)">X</button>
                         </td>
                     </tr>
                     </tbody>
@@ -285,6 +285,7 @@ $this->params['breadcrumbs'][] = $this->title;
             color: #7d8389;
             background-color: #FFF;
             border-radius: 3px;
+            cursor: pointer;
         }
 
         .wrapper {
@@ -715,22 +716,29 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 // 删除角色
                 roleDelete: function (roleName, index, event) {
-                    axios.post(yadjet.rbac.urls.roles.delete.replace('_name', roleName))
-                        .then(function (response) {
-                            vm.roles.splice(index, 1);
-                        })
-                        .catch(function (error) {
-                        });
-                    event.preventDefault();
+                    layer.confirm('确定删除该角色？', {icon: 3, title: '提示'}, function (boxIndex) {
+                        axios.post(yadjet.rbac.urls.roles.delete.replace('_name', roleName))
+                            .then(function (response) {
+                                vm.roles.splice(index, 1);
+                            })
+                            .catch(function (error) {
+                            });
+
+                        layer.close(boxIndex);
+                    });
                 },
                 // 删除角色关联的所有权限
                 roleRemoveChildren: function (roleName) {
-                    axios.post(yadjet.rbac.urls.roles.removeChildren.replace('_name', roleName))
-                        .then(function (response) {
-                            vm.role.permissions = [];
-                        })
-                        .catch(function (error) {
-                        });
+                    layer.confirm('删除该角色关联的所有权限？', {icon: 3, title: '提示'}, function (boxIndex) {
+                        axios.post(yadjet.rbac.urls.roles.removeChildren.replace('_name', roleName))
+                            .then(function (response) {
+                                vm.role.permissions = [];
+                            })
+                            .catch(function (error) {
+                            });
+
+                        layer.close(boxIndex);
+                    });
                 },
                 // 根据角色获取关联的所有权限
                 permissionsByRole: function (roleName, index) {
@@ -758,17 +766,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 // 从角色中移除权限
                 roleRemoveChild: function (permissionName, index, event) {
-                    axios.post(yadjet.rbac.urls.roles.removeChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName))
-                        .then(function (response) {
-                            for (var i in vm.role.permissions) {
-                                if (vm.role.permissions[i].name == permissionName) {
-                                    vm.role.permissions.splice(i, 1);
-                                    break;
+                    layer.confirm('确定删除该权限？', {icon: 3, title: '提示'}, function (boxIndex) {
+                        axios.post(yadjet.rbac.urls.roles.removeChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName))
+                            .then(function (response) {
+                                for (var i in vm.role.permissions) {
+                                    if (vm.role.permissions[i].name == permissionName) {
+                                        vm.role.permissions.splice(i, 1);
+                                        break;
+                                    }
                                 }
-                            }
-                        })
-                        .catch(function (error) {
-                        });
+                            })
+                            .catch(function (error) {
+                            });
+
+                        layer.close(boxIndex);
+                    });
                 },
                 // 切换添加表单是否可见
                 toggleFormVisible: function (formName) {
@@ -788,19 +800,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 // 删除单个权限
                 permissionDelete: function (name, index, event) {
-                    axios.post(yadjet.rbac.urls.permissions.delete.replace('_name', name))
-                        .then(function (response) {
-                            vm.permissions.splice(index, 1);
-                            for (var i in vm.pendingPermissions) {
-                                if (vm.pendingPermissions[i].name == name) {
-                                    vm.pendingPermissions[i].active = true;
-                                    break;
+                    layer.confirm('确定删除该权限？', {icon: 3, title: '提示'}, function (boxIndex) {
+                        axios.post(yadjet.rbac.urls.permissions.delete.replace('_name', name))
+                            .then(function (response) {
+                                vm.permissions.splice(index, 1);
+                                for (var i in vm.pendingPermissions) {
+                                    if (vm.pendingPermissions[i].name == name) {
+                                        vm.pendingPermissions[i].active = true;
+                                        break;
+                                    }
                                 }
-                            }
-                        })
-                        .catch(function (error) {
-                        });
-                    event.preventDefault();
+                            })
+                            .catch(function (error) {
+                            });
+
+                        layer.close(boxIndex);
+                    });
                 }
             },
             computed: {

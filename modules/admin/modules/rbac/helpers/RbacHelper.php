@@ -28,7 +28,7 @@ trait RbacHelper
             ],
             'where' => [], // 查询条件
         ],
-        'disabledScanModules' => ['gii', 'debug'], // 禁止扫描的模块
+        'disabledScanModules' => ['gii', 'debug', 'api'], // 禁止扫描的模块
         'selfish' => true, // 是否只显示当前应用的相关数据
     ];
 
