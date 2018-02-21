@@ -53,6 +53,7 @@ class UsersController extends Controller
     /**
      * Lists all User models.
      *
+     * @rbacDescription 系统用户列表数据查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -70,6 +71,7 @@ class UsersController extends Controller
      * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 系统用户添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -96,6 +98,16 @@ class UsersController extends Controller
         ]);
     }
 
+    /**
+     * 系统用户更新
+     *
+     * @rbacDescription 系统用户更新权限
+     * @param $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws \yii\base\ErrorException
+     * @throws \yii\db\Exception
+     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -119,6 +131,7 @@ class UsersController extends Controller
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 系统用户删除权限
      * @param integer $id
      * @return mixed
      */
@@ -144,6 +157,7 @@ class UsersController extends Controller
     /**
      * 修改密码
      *
+     * @rbacDescription 系统用户密码修改权限
      * @param $id
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException
@@ -171,6 +185,7 @@ class UsersController extends Controller
     /**
      * 设置用户可管理分类数据
      *
+     * @rbacDescription 设置系统用户可管理分类数据权限
      * @param $id
      * @return string|Response
      * @throws NotFoundHttpException
@@ -259,8 +274,9 @@ class UsersController extends Controller
     }
 
     /**
-     * 激活禁止操作
+     * 激活、禁止操作
      *
+     * @rbacDescription 设置系统用户记录、禁止状态操作权限
      * @return Response
      */
     public function actionToggle()

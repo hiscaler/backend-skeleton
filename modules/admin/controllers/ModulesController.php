@@ -253,6 +253,7 @@ class ModulesController extends Controller
     /**
      * Lists all Module models.
      *
+     * @rbacDescription 模块列表数据查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -275,6 +276,7 @@ class ModulesController extends Controller
     /**
      * 模块安装
      *
+     * @rbacDescription 模块安装权限
      * @param $alias
      * @return Response
      * @throws \yii\db\Exception
@@ -340,6 +342,7 @@ class ModulesController extends Controller
     /**
      * 模块卸载
      *
+     * @rbacDescription 模块卸载权限
      * @param $alias
      * @return Response
      * @throws \yii\db\Exception
@@ -380,6 +383,7 @@ class ModulesController extends Controller
      *
      * @todo 数据及文件的处理
      *
+     * @rbacDescription 模块更新权限
      * @param $alias
      * @return Response
      * @throws \yii\db\Exception

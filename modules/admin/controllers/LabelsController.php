@@ -49,6 +49,7 @@ class LabelsController extends Controller
     /**
      * Lists all Label models.
      *
+     * @rbacDescription 推送位数据查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -66,6 +67,7 @@ class LabelsController extends Controller
      * Creates a new Label model.
      * If creation is successful, the browser will be redirected to the 'create' page.
      *
+     * @rbacDescription 推送位添加权限
      * @return mixed
      */
     public function actionCreate($ordering = 1)
@@ -88,6 +90,7 @@ class LabelsController extends Controller
      * Updates an existing Label model.
      * If update is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 推送位更新权限
      * @param integer $id
      * @return mixed
      */
@@ -108,6 +111,7 @@ class LabelsController extends Controller
      * Deletes an existing Label model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 推送位删除权限
      * @param integer $id
      * @return mixed
      */
@@ -134,8 +138,9 @@ class LabelsController extends Controller
     }
 
     /**
-     * 激活禁止操作
+     * 激活、禁止操作
      *
+     * @rbacDescription 推送位激活、禁止操作权限
      * @return Response
      */
     public function actionToggle()

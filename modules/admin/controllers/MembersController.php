@@ -51,6 +51,7 @@ class MembersController extends Controller
     /**
      * Lists all Member models.
      *
+     * @rbacDescription 会员列表数据查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -67,6 +68,7 @@ class MembersController extends Controller
     /**
      * Displays a single Member model.
      *
+     * @rbacDescription 会员详情数据查看权限
      * @param integer $id
      * @return mixed
      */
@@ -81,6 +83,7 @@ class MembersController extends Controller
      * Creates a new Member model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 会员数据添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -111,6 +114,7 @@ class MembersController extends Controller
      * Updates an existing Member model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 会员数据更新权限
      * @param integer $id
      * @return mixed
      */
@@ -137,6 +141,7 @@ class MembersController extends Controller
      * Deletes an existing Member model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 会员数据删除权限
      * @param integer $id
      * @return mixed
      */
@@ -150,6 +155,7 @@ class MembersController extends Controller
     /**
      * 修改密码
      *
+     * @rbacDescription 会员密码修改权限
      * @param $id
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException

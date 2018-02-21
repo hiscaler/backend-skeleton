@@ -59,11 +59,21 @@ class DefaultController extends Controller
         ];
     }
 
+    /**
+     * 首页
+     *
+     * @return string
+     */
     public function actionIndex()
     {
         return $this->render('index');
     }
 
+    /**
+     * 登录
+     *
+     * @return string|\yii\web\Response
+     */
     public function actionLogin()
     {
         if (!Yii::$app->getUser()->isGuest) {
@@ -81,6 +91,11 @@ class DefaultController extends Controller
         }
     }
 
+    /**
+     * 用户注销
+     *
+     * @return \yii\web\Response
+     */
     public function actionLogout()
     {
         Yii::$app->getUser()->logout();
