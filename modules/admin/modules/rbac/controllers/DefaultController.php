@@ -63,8 +63,8 @@ class DefaultController extends BaseController
                 $replacements[0] = '';
                 $action = preg_replace($patterns, $replacements, trim(trim(substr(trim($line), $posAct, $posPar - $posAct))));
                 $actions[$i] = preg_replace("/action/", "", $action, 1);
-            } elseif (preg_match("/^\*( +)@rbacDesc( +)*/", $line)) {
-                $descriptions[$i] = trim(str_replace('* @rbacDesc', '', $line));
+            } elseif (preg_match("/^\*( +)@rbacDescription( +)*/", $line)) {
+                $descriptions[$i] = trim(str_replace('* @rbacDescription', '', $line));
             }
             $count = count($actions);
             if ($count != count($descriptions)) {
