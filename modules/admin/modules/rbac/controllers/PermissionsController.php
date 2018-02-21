@@ -64,9 +64,16 @@ class PermissionsController extends Controller
                 $success = false;
                 $errorMessage = '名称不能为空。';
             } else {
-                $permission = $this->auth->createPermission(Yii::$app->id . '@' . $name);
-                $permission->description = $description;
-                $this->auth->add($permission);
+                $name = Yii::$app->id . '@' . $name;
+                $permission = $this->auth->getPermission($name);
+                if ($permission) {
+                    $permission->description = $description;
+                    $this->auth->update($name, $permission);
+                } else {
+                    $permission = $this->auth->createPermission($name);
+                    $permission->description = $description;
+                    $this->auth->add($permission);
+                }
             }
             $responseBody = [
                 'success' => $success,
