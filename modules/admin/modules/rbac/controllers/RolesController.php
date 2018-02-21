@@ -56,9 +56,16 @@ class RolesController extends Controller
                 $success = false;
                 $errorMessage = '名称不能为空。';
             } else {
-                $role = $this->auth->createRole(Yii::$app->id . '@' . $name);
-                $role->description = trim($request->post('description'));
-                $this->auth->add($role);
+                $name = Yii::$app->id . '@' . $name;
+                $role = $this->auth->getRole($name);
+                if ($role) {
+                    $role->description = trim($request->post('description'));
+                    $this->auth->update($name, $role);
+                } else {
+                    $role = $this->auth->createRole($name);
+                    $role->description = trim($request->post('description'));
+                    $this->auth->add($role);
+                }
             }
             $responseBody = [
                 'success' => $success,
