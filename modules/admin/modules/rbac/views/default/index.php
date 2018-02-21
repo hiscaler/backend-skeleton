@@ -877,10 +877,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             // vm.roles[response.data.name] = response.data;
                             vm.roles.push(response.data);
                         } else {
-                            alert(response.error.message);
+                            layer.alert(response.error.message);
                         }
                     }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
+                        layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
                     }
                 });
 
@@ -897,10 +897,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         if (response.success) {
                             vm.permissions.push(response.data);
                         } else {
-                            alert(response.error.message);
+                            layer.alert(response.error.message);
                         }
                     }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
+                        layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
                     }
                 });
 
