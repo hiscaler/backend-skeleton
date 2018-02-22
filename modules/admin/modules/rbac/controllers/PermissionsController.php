@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hiscaler
- * Date: 2018-02-20
- * Time: 11:14
- */
 
 namespace app\modules\admin\modules\rbac\controllers;
 
@@ -22,20 +16,9 @@ class PermissionsController extends Controller
      */
     public function actionIndex()
     {
-        $items = $this->auth->getPermissions();
-        if ($this->getModuleOptions()['selfish']) {
-            $appId = Yii::$app->id;
-            $len = strlen($appId);
-            foreach ($items as $key => $item) {
-                if (strncmp($appId, $key, $len) !== 0) {
-                    unset($items[$key]);
-                }
-            }
-        }
-
         return new Response([
             'format' => Response::FORMAT_JSON,
-            'data' => array_values($items),
+            'data' => array_values($this->auth->getPermissions()),
         ]);
     }
 
@@ -64,7 +47,6 @@ class PermissionsController extends Controller
                 $success = false;
                 $errorMessage = '名称不能为空。';
             } else {
-                $name = Yii::$app->id . '@' . $name;
                 $permission = $this->auth->getPermission($name);
                 if ($permission) {
                     $permission->description = $description;

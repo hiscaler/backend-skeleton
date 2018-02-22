@@ -78,17 +78,16 @@ class DefaultController extends BaseController
     public function actionScan()
     {
         $options = $this->getModuleOptions();
-        $appId = Yii::$app->id;
         $actions = $files = [];
         $paths = [
-            "{$appId}@" => Yii::$app->getControllerPath()
+            Yii::$app->getControllerPath()
         ];
         foreach (Yii::$app->getModules() as $key => $config) {
             $moduleId = Yii::$app->getModule($key)->getUniqueId();
             if (empty($moduleId) || in_array($moduleId, $options['disabledScanModules'])) {
                 continue;
             }
-            $paths["{$appId}@{$moduleId}@"] = Yii::$app->getModule($moduleId)->getControllerPath();
+            $paths["{$moduleId}-"] = Yii::$app->getModule($moduleId)->getControllerPath();
         }
         foreach ($paths as $moduleId => $path) {
             if (!isset($files[$moduleId])) {
@@ -101,7 +100,7 @@ class DefaultController extends BaseController
             foreach ($items as $file) {
                 $parseActions = $this->_parseControllerFile($file);
                 foreach ($parseActions as $key => $description) {
-                    $name = $moduleId . Inflector::camelize(str_replace('Controller', '', basename($file, '.php')) . '.' . Inflector::camel2id($key));
+                    $name = ($moduleId ?: '') . Inflector::camel2id(str_replace('Controller', '', basename($file, '.php')) . '.' . Inflector::camel2id($key));
                     $actions[] = [
                         'name' => $name,
                         'description' => isset($existsActions[$name]) ? $existsActions[$name]->description : $description,
