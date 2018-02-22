@@ -603,6 +603,10 @@ $this->params['breadcrumbs'][] = $this->title;
         #rbac-pending-permissions table input {
             width: 96%;
         }
+        #rbac-pop-window {
+            border: #E9E9E9 solid 1px;
+            border-radius: 0 0 6px 6px;
+        }
     </style>
 <?php \app\modules\admin\components\CssBlock::end() ?>
 <?php \app\modules\admin\components\JsBlock::begin() ?>
