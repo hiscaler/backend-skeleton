@@ -43,36 +43,33 @@ class DefaultController extends BaseController
      */
     private function _parseControllerFile($file)
     {
-        $count = 0;
-        $h = file($file);
-        $rows = count($h);
-        $actions = $descriptions = [];
-        for ($i = 0; $i < $rows; $i++) {
-            $line = trim($h[$i]);
-            if (in_array($line, ['', '/**', '*', '*/', '{', '}', '<?php', '?>']) || strpos($line, 'actions()') || (strpos($line, '@rbacDesc') === false && strpos($line, 'function') === false)) {
-                continue;
-            }
-            if (preg_match("/^(.+)function( +)action*/", $line)) {
-                $posAct = strpos(trim($line), "action");
-                $posPar = strpos(trim($line), "(");
-                $patterns[0] = '/\s*/m';
-                $patterns[1] = '#\((.*)\)#';
-                $patterns[2] = '/\{/m';
-                $replacements[2] = '';
-                $replacements[1] = '';
-                $replacements[0] = '';
-                $action = preg_replace($patterns, $replacements, trim(trim(substr(trim($line), $posAct, $posPar - $posAct))));
-                $actions[$i] = preg_replace("/action/", "", $action, 1);
-            } elseif (preg_match("/^\*( +)@rbacDescription( +)*/", $line)) {
-                $descriptions[$i] = trim(str_replace('* @rbacDescription', '', $line));
-            }
-            $count = count($actions);
-            if ($count != count($descriptions)) {
-                $descriptions = array_pad($descriptions, $count, null);
+        $className = str_replace(Yii::getAlias('@app'), 'app', FileHelper::normalizePath($file));
+        $className = str_replace('.php', '', $className);
+        $descriptions = [];
+        $reflection = new \ReflectionClass($className);
+        $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+        foreach ($methods as $method) {
+            if (preg_match('/^action[A-Z]+[a-zA-Z]*/', $method->getName())) {
+                $t = $method->getDocComment();
+                $rbacDescription = null;
+                foreach (explode(PHP_EOL, $t) as $row) {
+                    $row = trim($row);
+                    if ($row) {
+                        if (strpos($row, '@rbacIgnore') !== false) {
+                            break;
+                        } elseif (strpos($row, '@rbacDescription') !== false) {
+                            preg_match('/.*@rbacDescription(.*)/', $row, $matches);
+                            if ($matches) {
+                                $rbacDescription = trim($matches[1]);
+                            }
+                        }
+                    }
+                }
+                $descriptions[substr($method->getName(), 6)] = $rbacDescription;
             }
         }
 
-        return ($count) ? array_combine($actions, $descriptions) : [];
+        return $descriptions;
     }
 
     public function actionScan()
