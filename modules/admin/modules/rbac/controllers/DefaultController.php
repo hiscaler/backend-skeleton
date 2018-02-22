@@ -43,15 +43,14 @@ class DefaultController extends BaseController
      */
     private function _parseControllerFile($file)
     {
-        $className = str_replace(Yii::getAlias('@app'), 'app', FileHelper::normalizePath($file));
-        $className = str_replace('.php', '', $className);
         $descriptions = [];
+        $className = str_replace([Yii::getAlias('@app'), '.php'], ['app'], FileHelper::normalizePath($file));
         $reflection = new \ReflectionClass($className);
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             if (preg_match('/^action[A-Z]+[a-zA-Z]*/', $method->getName())) {
                 $t = $method->getDocComment();
-                $rbacDescription = null;
+                $description = null;
                 foreach (explode(PHP_EOL, $t) as $row) {
                     $row = trim($row);
                     if ($row) {
@@ -60,12 +59,12 @@ class DefaultController extends BaseController
                         } elseif (strpos($row, '@rbacDescription') !== false) {
                             preg_match('/.*@rbacDescription(.*)/', $row, $matches);
                             if ($matches) {
-                                $rbacDescription = trim($matches[1]);
+                                $description = trim($matches[1]);
                             }
                         }
                     }
                 }
-                $descriptions[substr($method->getName(), 6)] = $rbacDescription;
+                $descriptions[substr($method->getName(), 6)] = $description;
             }
         }
 
