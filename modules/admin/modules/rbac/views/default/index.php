@@ -329,7 +329,7 @@ $this->params['breadcrumbs'][] = $this->title;
          * Grid View
          ******************************************************************************/
         .rbac-grid-view-loading {
-            background: url(../images/loading.gif) no-repeat;
+            background: url(/admin/images/loading.gif) no-repeat;
         }
 
         .rbac-grid-view {
@@ -370,7 +370,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         .rbac-grid-view table.table th {
             border-top: 1px #E9E9E9 solid;
-            background: #F5F5F5 url(images/grid-view-header-bg.gif) no-repeat right center;
+            background: #F5F5F5 url(/admin/images/grid-view-header-bg.gif) no-repeat right center;
             padding: 5px 4px;
             color: #7d8389;
             text-align: left;
@@ -399,12 +399,12 @@ $this->params['breadcrumbs'][] = $this->title;
         }
 
         .rbac-grid-view table.table th a.asc {
-            background: url(images/up.gif) right center no-repeat;
+            background: url(/admin/images/up.gif) right center no-repeat;
             padding-right: 10px;
         }
 
         .rbac-grid-view table.table th a.desc {
-            background: url(images/down.gif) right center no-repeat;
+            background: url(/admin/images/down.gif) right center no-repeat;
             padding-right: 10px;
         }
 
@@ -477,7 +477,7 @@ $this->params['breadcrumbs'][] = $this->title;
         }
 
         .rbac-grid-view .empty {
-            background: #FFFCC9 url(images/notice.png) no-repeat 5px center;
+            background: #FFFCC9 url(/admin/images/notice.png) no-repeat 5px center;
             padding: 2px 5px 2px 25px;
             height: 24px;
             line-height: 24px;
@@ -638,6 +638,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 scan: undefined
             }
         };
+
+        axios.interceptors.request.use(function (config) {
+            $.fn.lock();
+            return config;
+        }, function (error) {
+            $.fn.unlock();
+            return Promise.reject(error);
+        });
+
+        axios.interceptors.response.use(function (response) {
+            $.fn.unlock();
+            return response;
+        }, function (error) {
+            $.fn.unlock();
+            return Promise.reject(error);
+        });
 
         var vm = new Vue({
             el: '#rbac-app',
