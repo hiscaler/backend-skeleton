@@ -8,11 +8,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <div id="rbac-app">
         <div class="rbac-tabs-common">
             <ul>
-                <li class="active"><a data-toggle="rbac-users" href="<?= \yii\helpers\Url::toRoute('users') ?>"><?= Yii::t('rbac', 'Users') ?></a></li>
-                <li><a data-toggle="rbac-roles" href="<?= \yii\helpers\Url::toRoute('roles') ?>"><?= Yii::t('rbac', 'Roles') ?></a></li>
-                <li><a data-toggle="rbac-permissions" href="<?= \yii\helpers\Url::toRoute('permissions') ?>"><?= Yii::t('rbac', 'Permissions') ?></a>
-                </li>
-                <li><a data-toggle="rbac-pending-permissions" href="<?= \yii\helpers\Url::toRoute('default/scan') ?>"><?= Yii::t('rbac', 'Permissions Scan') ?></a></li>
+                <li class="active"><a data-toggle="rbac-users" href="<?= \yii\helpers\Url::toRoute('users') ?>"><?= Yii::t('rbac', 'Users') ?><span class="badges">{{ users.items.length }}</span></a></li>
+                <li><a data-toggle="rbac-roles" href="<?= \yii\helpers\Url::toRoute('roles') ?>"><?= Yii::t('rbac', 'Roles') ?><span class="badges">{{ roles.length }}</span></a></li>
+                <li><a data-toggle="rbac-permissions" href="<?= \yii\helpers\Url::toRoute('permissions') ?>"><?= Yii::t('rbac', 'Permissions') ?><span class="badges">{{ permissions.length }}</span></a></li>
+                <li><a data-toggle="rbac-pending-permissions" href="<?= \yii\helpers\Url::toRoute('default/scan') ?>"><?= Yii::t('rbac', 'Permissions Scan') ?><span class="badges">{{ pendingPermissions.length }}</span></a></li>
             </ul>
         </div>
         <div id="rbac-panels" class="rbac-grid-view">
@@ -64,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div id="rbac-roles" class="panel" style="display: none;">
-                <fieldset>
+                <fieldset class="wrapper">
                     <legend>
                         <button class="button-rbac" @click="toggleFormVisible('role')">{{ formVisible.role ? '<?= Yii::t('rbac', 'Hide Form') ?>' : '<?= Yii::t('rbac', 'Show Form') ?>' }}</button>
                     </legend>
@@ -259,7 +258,7 @@ $this->params['breadcrumbs'][] = $this->title;
             border-top-right-radius: 3px;
             border-width: 1px 1px medium;
             color: #666677;
-            display: block;
+            display: inline-block;
             padding: 2px 15px;
             text-decoration: none;
         }
@@ -269,7 +268,15 @@ $this->params['breadcrumbs'][] = $this->title;
         }
 
         .rbac-tabs-common .badges {
-            margin-left: 10px;
+            position: absolute;
+            margin-top: -10px;
+            display: inline;
+            background-color: #ac2925;
+            color: #FFFFFF;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            font-size: 10px;
         }
 
         #rbac-panels {
