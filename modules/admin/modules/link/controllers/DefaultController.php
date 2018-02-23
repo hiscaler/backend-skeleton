@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\link\controllers;
 
+use app\models\Category;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\link\models\Link;
 use app\modules\admin\modules\link\models\LinkSearch;
@@ -57,6 +58,7 @@ class DefaultController extends BaseController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'categories' => Category::tree('link.module.category', Category::RETURN_TYPE_PRIVATE)
         ]);
     }
 

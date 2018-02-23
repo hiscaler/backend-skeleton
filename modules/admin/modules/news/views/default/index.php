@@ -22,7 +22,7 @@ $this->params['menus'] = [
 $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 ?>
 <div class="news-index">
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>
     <?php Pjax::begin([
         'formSelector' => '#form-news',
         'linkSelector' => '#grid-view-news a',
@@ -38,6 +38,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             [
                 'attribute' => 'category.name',
                 'contentOptions' => ['class' => 'category-name'],
+                'visible' => $categories,
             ],
             [
                 'attribute' => 'title',

@@ -29,6 +29,8 @@ class m180206_064203_create_feedback_table extends Migration
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
         ]);
+
+        $this->createIndex('category_id', '{{%feedback}}', ['category_id']);
     }
 
     /**

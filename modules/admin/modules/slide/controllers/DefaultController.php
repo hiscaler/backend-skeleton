@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\slide\controllers;
 
+use app\models\Category;
 use app\models\User;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\slide\models\Slide;
@@ -61,6 +62,7 @@ class DefaultController extends BaseController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'categories' => Category::tree('slide.module.category', Category::RETURN_TYPE_PRIVATE),
         ]);
     }
 

@@ -18,8 +18,12 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
         <div class="entry">
-            <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('news.module.category'), ['prompt' => '']) ?>
-            <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::booleanOptions(), ['prompt' => '']) ?>
+            <?php
+            if ($categories) {
+                echo $form->field($model, 'category_id')->dropDownList($categories, ['prompt' => '']);
+            }
+            ?>
+            <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::boolean(), ['prompt' => '']) ?>
         </div>
         <div class="entry">
             <?= $form->field($model, 'id') ?>

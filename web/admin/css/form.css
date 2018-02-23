@@ -1,3 +1,9 @@
+/*
+Document   : form
+Created on : 2018-02-18 21:32:31
+Author     : hiscaler <hiscaler@gmail.com>
+Description: 表单样式
+*/
 /*******************************************************************************
  * 表单
  ******************************************************************************/
@@ -175,7 +181,6 @@ input[type="password"],
     border-radius: 3px;
     padding: 5px 5px;
     width: 400px;
-    background: url(../images/input-bg.png) repeat-x scroll 0 -127px #FAFAFA;
 }
 
 .g-text-number {
@@ -192,7 +197,6 @@ input[type="password"],
 
 textarea,
 .g-text-area {
-    background: url(../images/input-bg.png) repeat-x scroll 0 -127px #fff;
     border: 1px solid #d5d5d5;
     border-radius: 3px;
     width: 400px;
@@ -489,7 +493,9 @@ div.form .buttons {
     width: 610px;
 }
 
-#tab-panel-rules {}
+#tab-panel-rules {
+}
+
 #tab-panel-rules fieldset {
     width: 48%;
     float: left;

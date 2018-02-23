@@ -11,10 +11,12 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 附件上传设定管理
+ * Class FileUploadConfigsController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class FileUploadConfigsController extends GlobalController
+class FileUploadConfigsController extends Controller
 {
 
     public function behaviors()
@@ -44,6 +46,12 @@ class FileUploadConfigsController extends GlobalController
      *
      * @return mixed
      */
+    /**
+     * 文件上传设置数据列表
+     *
+     * @rbacDescription 文件上传设置数据列表查看权限
+     * @return mixed
+     */
     public function actionIndex()
     {
         $searchModel = new FileUploadConfigSearch();
@@ -59,6 +67,7 @@ class FileUploadConfigsController extends GlobalController
      * Creates a new FileUploadConfig model.
      * If creation is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 文件上传设置添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -79,6 +88,7 @@ class FileUploadConfigsController extends GlobalController
      * Updates an existing FileUploadConfig model.
      * If update is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 文件上传设置更新权限
      * @param integer $id
      * @return mixed
      */
@@ -99,6 +109,7 @@ class FileUploadConfigsController extends GlobalController
      * Deletes an existing FileUploadConfig model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 文件上传设置删除权限
      * @param integer $id
      * @return mixed
      */

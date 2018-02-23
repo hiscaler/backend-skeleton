@@ -1,0 +1,9 @@
+{
+    "name": "权限控制",
+    "author": "hiscaler",
+    "version": "0.0.1",
+    "description": "基于角色的权限访问控制（Role-Based Access Control）",
+    "url": "http://www.github.com/hiscaler",
+    "menus": [],
+    "depends": []
+}

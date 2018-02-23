@@ -10,7 +10,9 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 帐号管理
+ * Class AccountController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class AccountController extends Controller
@@ -40,6 +42,7 @@ class AccountController extends Controller
     /**
      * 帐号资料
      *
+     * @rbacDescription 当前登录用户资料查看权限
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException
      */
@@ -60,6 +63,8 @@ class AccountController extends Controller
 
     /**
      * 修改密码
+     *
+     * @rbacDescription 当前登录用户密码修改权限
      *
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException
@@ -86,6 +91,8 @@ class AccountController extends Controller
 
     /**
      * 用户登录日志
+     *
+     * @rbacDescription 当前登录用户日志查看权限
      *
      * @return string
      * @throws \yii\base\InvalidConfigException

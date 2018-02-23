@@ -24,7 +24,7 @@ class Option
      *
      * @return array
      */
-    public static function booleanOptions()
+    public static function boolean()
     {
         return [
             Constant::BOOLEAN_FALSE => Yii::t('app', 'No'),
@@ -39,7 +39,7 @@ class Option
      * @param integer $max
      * @return array
      */
-    public static function orderingOptions($start = 0, $max = 60)
+    public static function ordering($start = 0, $max = 60)
     {
         $options = [];
         for ($i = $start; $i <= $max; $i++) {
@@ -54,7 +54,7 @@ class Option
      *
      * @return array
      */
-    public static function statusOptions()
+    public static function status()
     {
         return [
             self::STATUS_DRAFT => Yii::t('app', 'Draft'),

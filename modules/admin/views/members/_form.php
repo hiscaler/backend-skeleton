@@ -23,6 +23,12 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'nickname')->textInput(['maxlength' => true]) ?>
 
+            <?php if ($model->isNewRecord): ?>
+                <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
+
+                <?= $form->field($model, 'confirm_password')->passwordInput(['maxlength' => true]) ?>
+            <?php endif; ?>
+
             <?= $form->field($model, 'avatar')->fileInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>

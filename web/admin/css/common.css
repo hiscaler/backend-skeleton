@@ -1,9 +1,14 @@
+/*
+Document   : common
+Created on : 2018-02-18 21:29:31
+Author     : hiscaler <hiscaler@gmail.com>
+Description: 通用样式
+*/
 input[type=text].disabled, select.disabled, input[type=password].disabled, input.disabled, textarea.disabled {
     background: #F5F5F5;
 }
 
 .g-text {
-    background: url(../images/input-bg.png) repeat-x scroll 0 -130px #fff;
     border: 1px solid #AAAAAA;
     height: 14px;
     padding: 5px 5px 6px;
@@ -23,7 +28,6 @@ input[type=text].disabled, select.disabled, input[type=password].disabled, input
 }
 
 .g-text-area {
-    background: url(../images/input-bg.png) repeat-x scroll 0 -130px #fff;
     border: 1px solid #AAAAAA;
     width: 604px;
     height: 120px;

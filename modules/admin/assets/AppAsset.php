@@ -20,10 +20,10 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web/admin';
     public $css = [
-        'css/application.css',
-        'css/common.css',
-        'css/widget-grid-view.css',
-        'css/form.css',
+        'css/application.min.css',
+        'css/common.min.css',
+        'css/widget-grid-view.min.css',
+        'css/form.min.css',
         'layer/skin/layer.css',
     ];
     public $js = [

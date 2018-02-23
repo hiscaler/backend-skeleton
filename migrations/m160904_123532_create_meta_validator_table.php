@@ -19,6 +19,8 @@ class m160904_123532_create_meta_validator_table extends Migration
             'name' => $this->string(30)->notNull()->comment('验证器名称'),
             'options' => $this->text()->comment('验证器配置属性'),
         ]);
+
+        $this->createIndex('meta_id', '{{%meta_validator}}', ['meta_id']);
     }
 
     /**

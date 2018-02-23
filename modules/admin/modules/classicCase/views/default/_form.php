@@ -67,7 +67,7 @@ use yii\widgets\ActiveForm;
             </div>
             <div class="entry">
                 <?= $form->field($model, 'enabled')->checkbox() ?>
-                <?= $form->field($model, 'ordering')->dropDownList(\app\models\Option::orderingOptions()) ?>
+                <?= $form->field($model, 'ordering')->dropDownList(\app\models\Option::ordering()) ?>
             </div>
         </div>
         <div class="tab-panel" id="tab-panel-metas" style="display: none">

@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\Meta */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-<div>
+<div id="mts-app">
     <ul class="tabs-common">
         <li class="active"><a href="javascript:;" data-toggle="tab-panel-basic">基本设定</a></li>
         <li><a href="javascript:;" data-toggle="tab-panel-rules">验证规则</a></li>

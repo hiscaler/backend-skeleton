@@ -17,7 +17,9 @@ use yii\web\UploadedFile;
 
 /**
  * 基本设置管理
+ * Class LookupsController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class LookupsController extends Controller
@@ -49,6 +51,7 @@ class LookupsController extends Controller
     /**
      * Lists all Lookup models.
      *
+     * @rbacDescription 系统常规设定管理权限
      * @return mixed
      */
     public function actionForm()
@@ -108,6 +111,10 @@ class LookupsController extends Controller
         ]);
     }
 
+    /**
+     * @rbacDescription 系统常规设定数据查看权限
+     * @return mixed
+     */
     public function actionIndex()
     {
         $searchModel = new LookupSearch();
@@ -123,6 +130,7 @@ class LookupsController extends Controller
      * Creates a new Lookup model.
      * If creation is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 系统常规设定数据添加权限
      * @param string $group
      * @param string $type
      * @return string|Response
@@ -167,6 +175,7 @@ class LookupsController extends Controller
      * Updates an existing Lookup model.
      * If update is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 系统常规设定数据更新权限
      * @param integer $id
      * @return mixed
      */
@@ -187,6 +196,7 @@ class LookupsController extends Controller
      * Deletes an existing Lookup model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 系统常规设定数据删除权限
      * @param integer $id
      * @return mixed
      */
@@ -201,6 +211,11 @@ class LookupsController extends Controller
         return $this->redirect(['index']);
     }
 
+    /**
+     * @rbacDescription 系统常规设定数据激活、禁止操作权限
+     * @return Response
+     * @throws \yii\db\Exception
+     */
     public function actionToggle()
     {
         $id = Yii::$app->getRequest()->post('id');

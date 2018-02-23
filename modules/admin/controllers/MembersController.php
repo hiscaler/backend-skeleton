@@ -5,6 +5,8 @@ namespace app\modules\admin\controllers;
 use app\models\Member;
 use app\models\MemberSearch;
 use app\models\Meta;
+use app\modules\admin\forms\ChangePasswordForm;
+use app\modules\admin\forms\CreateMemberForm;
 use app\modules\admin\forms\DynamicForm;
 use Yii;
 use yii\filters\AccessControl;
@@ -13,6 +15,10 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 会员管理
+ * Class MembersController
+ *
+ * @package app\modules\admin\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class MembersController extends Controller
 {
@@ -27,7 +33,7 @@ class MembersController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'change-password'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -45,6 +51,7 @@ class MembersController extends Controller
     /**
      * Lists all Member models.
      *
+     * @rbacDescription 会员列表数据查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -61,6 +68,7 @@ class MembersController extends Controller
     /**
      * Displays a single Member model.
      *
+     * @rbacDescription 会员详情数据查看权限
      * @param integer $id
      * @return mixed
      */
@@ -75,13 +83,15 @@ class MembersController extends Controller
      * Creates a new Member model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 会员数据添加权限
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Member();
-        $model->loadDefaultValues();
+        $model = new CreateMemberForm();
         $model->status = Member::STATUS_ACTIVE;
+        $model->loadDefaultValues();
+
         $dynamicModel = new DynamicForm(Meta::getItems($model));
 
         $post = Yii::$app->getRequest()->post();
@@ -90,20 +100,21 @@ class MembersController extends Controller
             if ($model->save()) {
                 $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
 
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             }
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-                'dynamicModel' => $dynamicModel,
-            ]);
         }
+
+        return $this->render('create', [
+            'model' => $model,
+            'dynamicModel' => $dynamicModel,
+        ]);
     }
 
     /**
      * Updates an existing Member model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 会员数据更新权限
      * @param integer $id
      * @return mixed
      */
@@ -130,6 +141,7 @@ class MembersController extends Controller
      * Deletes an existing Member model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 会员数据删除权限
      * @param integer $id
      * @return mixed
      */
@@ -138,6 +150,34 @@ class MembersController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * 修改密码
+     *
+     * @rbacDescription 会员密码修改权限
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionChangePassword($id)
+    {
+        $member = $this->findModel($id);
+        $model = new ChangePasswordForm();
+
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
+            $member->setPassword($model->password);
+            if ($member->save(false)) {
+                Yii::$app->getSession()->setFlash('notice', "用户 {$member->username} 密码修改成功，请通知会员下次登录使用新的密码。");
+
+                return $this->redirect(['index']);
+            }
+        }
+
+        return $this->render('change-password', [
+            'member' => $member,
+            'model' => $model,
+        ]);
     }
 
     /**

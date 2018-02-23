@@ -15,7 +15,11 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * GridColumnConfigsController implements the CRUD actions for GridColumnConfig model.
+ * 表格类设定管理
+ * Class GridColumnConfigsController
+ *
+ * @package app\modules\admin\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class GridColumnConfigsController extends Controller
 {

@@ -18,7 +18,7 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="slide-index">
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>
     <?php
     Pjax::begin([
         'formSelector' => '#form-slide-search',
@@ -42,6 +42,7 @@ $this->params['menus'] = [
             [
                 'attribute' => 'category.name',
                 'contentOptions' => ['class' => 'category-name'],
+                'visible' => $categories
             ],
             [
                 'attribute' => 'title',

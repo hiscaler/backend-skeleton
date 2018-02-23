@@ -37,6 +37,12 @@ class m180208_150244_create_news_table extends Migration
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
         ]);
+
+        $this->createIndex('category_id', '{{%news}}', ['category_id']);
+        $this->createIndex('is_picture_news', '{{%news}}', ['is_picture_news']);
+        $this->createIndex('enabled', '{{%news}}', ['enabled']);
+        $this->createIndex('category_id_enabled', '{{%news}}', ['category_id', 'enabled']);
+        $this->createIndex('category_id_is_picture_news', '{{%news}}', ['category_id', 'is_picture_news']);
     }
 
     /**

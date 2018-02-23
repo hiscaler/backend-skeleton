@@ -329,6 +329,7 @@ class Category extends BaseActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            empty($this->sign) && $this->sign = null;
             if (empty($this->alias) && !empty($this->name)) {
                 $this->alias = Inflector::slug($this->name);
             }

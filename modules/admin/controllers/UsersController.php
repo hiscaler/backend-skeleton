@@ -6,8 +6,8 @@ use app\models\Meta;
 use app\models\User;
 use app\models\UserSearch;
 use app\modules\admin\forms\ChangePasswordForm;
+use app\modules\admin\forms\CreateUserForm;
 use app\modules\admin\forms\DynamicForm;
-use app\modules\admin\forms\RegisterForm;
 use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\base\InvalidCallException;
@@ -19,10 +19,12 @@ use yii\web\Response;
 
 /**
  * 系统用户管理
+ * Class UsersController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class UsersController extends GlobalController
+class UsersController extends Controller
 {
 
     public function behaviors()
@@ -51,6 +53,7 @@ class UsersController extends GlobalController
     /**
      * Lists all User models.
      *
+     * @rbacDescription 系统用户列表数据查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -68,11 +71,12 @@ class UsersController extends GlobalController
      * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 系统用户添加权限
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new RegisterForm();
+        $model = new CreateUserForm();
         $model->status = User::STATUS_ACTIVE;
         $model->loadDefaultValues();
 
@@ -94,6 +98,16 @@ class UsersController extends GlobalController
         ]);
     }
 
+    /**
+     * 系统用户更新
+     *
+     * @rbacDescription 系统用户更新权限
+     * @param $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws \yii\base\ErrorException
+     * @throws \yii\db\Exception
+     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -117,6 +131,7 @@ class UsersController extends GlobalController
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 系统用户删除权限
      * @param integer $id
      * @return mixed
      */
@@ -139,8 +154,10 @@ class UsersController extends GlobalController
         return $this->redirect(['index']);
     }
 
-    /**修改密码
+    /**
+     * 修改密码
      *
+     * @rbacDescription 系统用户密码修改权限
      * @param $id
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException
@@ -168,6 +185,7 @@ class UsersController extends GlobalController
     /**
      * 设置用户可管理分类数据
      *
+     * @rbacDescription 设置系统用户可管理分类数据权限
      * @param $id
      * @return string|Response
      * @throws NotFoundHttpException
@@ -256,8 +274,9 @@ class UsersController extends GlobalController
     }
 
     /**
-     * 激活禁止操作
+     * 激活、禁止操作
      *
+     * @rbacDescription 设置系统用户记录、禁止状态操作权限
      * @return Response
      */
     public function actionToggle()

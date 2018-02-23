@@ -11,7 +11,11 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * MetaController implements the CRUD actions for Meta model.
+ * 扩展属性管理
+ * Class MetaController
+ *
+ * @package app\modules\admin\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class MetaController extends Controller
 {
@@ -45,6 +49,7 @@ class MetaController extends Controller
     /**
      * Lists all Meta models.
      *
+     * @rbacDescription 扩展属性数据列表查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -61,6 +66,7 @@ class MetaController extends Controller
     /**
      * Displays a single Meta model.
      *
+     * @rbacDescription 扩展属性数据查看权限
      * @param integer $id
      * @return mixed
      */
@@ -75,6 +81,7 @@ class MetaController extends Controller
      * Creates a new Meta model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 扩展属性数据添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -95,6 +102,7 @@ class MetaController extends Controller
      * Updates an existing Meta model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 扩展属性数据更新权限
      * @param integer $id
      * @return mixed
      */
@@ -115,6 +123,7 @@ class MetaController extends Controller
      * Deletes an existing Meta model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 扩展属性数据删除权限
      * @param integer $id
      * @return mixed
      */
@@ -126,8 +135,9 @@ class MetaController extends Controller
     }
 
     /**
-     * 激活禁止操作
+     * 激活、禁止操作
      *
+     * @rbacDescription 扩展属性数据激活、禁止操作权限
      * @return Response
      */
     public function actionToggle()

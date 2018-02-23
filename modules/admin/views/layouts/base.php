@@ -21,7 +21,7 @@ $siteName = \app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name;
         <title><?= Html::encode($this->title) ?> - <?= $siteName ?></title>
         <?php $this->head() ?>
     </head>
-    <body id="mts-app">
+    <body>
     <?php $this->beginBody() ?>
     <div id="page-hd">
         <div id="page">

@@ -87,7 +87,7 @@ class Formatter extends \yii\i18n\Formatter
         if ($value === null) {
             return $this->nullDisplay;
         }
-        $options = Option::statusOptions();
+        $options = Option::status();
 
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }

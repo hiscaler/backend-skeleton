@@ -31,6 +31,11 @@ class m180129_142148_create_link_table extends Migration
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),
             'updated_by' => $this->integer()->notNull()->comment('更新人'),
         ]);
+
+        $this->createIndex('category_id', '{{%slide}}', ['category_id']);
+        $this->createIndex('type', '{{%slide}}', ['type']);
+        $this->createIndex('category_id_type', '{{%slide}}', ['category_id', 'type']);
+        $this->createIndex('category_id_type_enabled', '{{%slide}}', ['category_id', 'type', 'enabled']);
     }
 
     /**

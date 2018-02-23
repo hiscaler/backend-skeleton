@@ -13,10 +13,12 @@ use yii\web\Response;
 
 /**
  * 分类管理
+ * Class CategoriesController
  *
+ * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class CategoriesController extends GlobalController
+class CategoriesController extends Controller
 {
 
     public function behaviors()
@@ -43,8 +45,10 @@ class CategoriesController extends GlobalController
     }
 
     /**
+     *
      * Lists all Category models.
      *
+     * @rbacDescription 查看分类列表权限
      * @return mixed
      */
     public function actionIndex()
@@ -61,6 +65,7 @@ class CategoriesController extends GlobalController
      * Creates a new Category model.
      * If creation is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 新建分类权限
      * @return mixed
      */
     public function actionCreate($parentId = 0)
@@ -92,6 +97,7 @@ class CategoriesController extends GlobalController
      * Updates an existing Category model.
      * If update is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 更新分类权限
      * @param integer $id
      * @return mixed
      */
@@ -112,6 +118,7 @@ class CategoriesController extends GlobalController
      * Deletes an existing Category model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 删除分类权限
      * @param integer $id
      * @return mixed
      */
@@ -131,6 +138,7 @@ class CategoriesController extends GlobalController
     /**
      * 激活禁止操作
      *
+     * @rbacDescription 激活、禁止操作分类权限
      * @return Response
      */
     public function actionToggle()

@@ -64,7 +64,6 @@ class ClassicCaseSearch extends ClassicCase
             'category_id' => $this->category_id,
             'enabled' => $this->enabled,
             'published_at' => $this->published_at,
-
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title]);

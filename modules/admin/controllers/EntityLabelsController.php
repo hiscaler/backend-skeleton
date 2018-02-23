@@ -3,7 +3,6 @@
 namespace app\modules\admin\controllers;
 
 use app\models\Attribute;
-use app\models\BaseActiveRecord;
 use app\models\Constant;
 use app\models\Label;
 use app\modules\admin\components\ApplicationHelper;
@@ -20,7 +19,11 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * EntityLabelsController implements the CRUD actions for Attribute model.
+ * 数据推送位管理
+ * Class EntityLabelsController
+ *
+ * @package app\modules\admin\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class EntityLabelsController extends Controller
 {

@@ -7,7 +7,7 @@ use app\models\User;
 /**
  * 添加用户
  */
-class RegisterForm extends User
+class CreateUserForm extends User
 {
 
     public $password;

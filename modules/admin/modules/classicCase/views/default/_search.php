@@ -24,10 +24,9 @@ use yii\widgets\ActiveForm;
             }
             ?>
 
-
             <?= $form->field($model, 'title') ?>
         </div>
-        <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::booleanOptions(), ['prompt' => '']) ?>
+        <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::boolean(), ['prompt' => '']) ?>
 
         <?php // echo $form->field($model, 'published_at') ?>
         <div class="form-group buttons">
