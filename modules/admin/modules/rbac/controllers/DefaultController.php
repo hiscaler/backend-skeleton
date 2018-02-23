@@ -48,9 +48,12 @@ class DefaultController extends BaseController
      * @return array
      * @throws \ReflectionException
      */
-    private function _parseControllerFile($file)
+    private function _parsePermissionsFromControllerClass($file)
     {
-        $descriptions = [];
+        $permissions = [
+            'ignore' => [],
+            'normal' => [],
+        ];
         $className = str_replace([Yii::getAlias('@app'), '.php'], ['app'], FileHelper::normalizePath($file));
         $reflection = new \ReflectionClass($className);
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
@@ -61,6 +64,7 @@ class DefaultController extends BaseController
                     $row = trim($row);
                     if ($row) {
                         if (strpos($row, '@rbacIgnore') !== false) {
+                            $permissions['ignore'][] = substr($method->getName(), 6);
                             break;
                         } elseif (strpos($row, '@rbacDescription') !== false) {
                             preg_match('/.*@rbacDescription(.*)/', $row, $matches);
@@ -70,11 +74,11 @@ class DefaultController extends BaseController
                         }
                     }
                 }
-                $descriptions[substr($method->getName(), 6)] = $description;
+                $permissions['normal'][substr($method->getName(), 6)] = $description;
             }
         }
 
-        return $descriptions;
+        return $permissions;
     }
 
     /**
@@ -86,7 +90,7 @@ class DefaultController extends BaseController
     public function actionScan()
     {
         $options = $this->getModuleOptions();
-        $actions = $files = [];
+        $permissions = $files = [];
         $paths = [
             Yii::$app->getControllerPath()
         ];
@@ -112,24 +116,30 @@ class DefaultController extends BaseController
             }
             $files[$moduleId] = FileHelper::findFiles($path);
         }
-        $existsActions = $this->auth->getPermissions();
+        $ignorePermissions = [];
+        $existPermissions = $this->auth->getPermissions();
         foreach ($files as $moduleId => $items) {
             foreach ($items as $file) {
-                $parseActions = $this->_parseControllerFile($file);
-                foreach ($parseActions as $key => $description) {
+                $rawPermissions = $this->_parsePermissionsFromControllerClass($file);
+                foreach ($rawPermissions['ignore'] as $permissionName) {
+                    $ignorePermissions[] = ($moduleId ?: '') . Inflector::camel2id(str_replace('Controller', '', basename($file, '.php')) . '.' . Inflector::camel2id($permissionName));
+                }
+
+                foreach ($rawPermissions['normal'] as $key => $description) {
                     $name = ($moduleId ?: '') . Inflector::camel2id(str_replace('Controller', '', basename($file, '.php')) . '.' . Inflector::camel2id($key));
-                    $actions[] = [
+                    $permissions[] = [
                         'name' => $name,
-                        'description' => isset($existsActions[$name]) ? $existsActions[$name]->description : $description,
-                        'active' => isset($existsActions[$name]) ? false : true,
+                        'description' => isset($existPermissions[$name]) ? $existPermissions[$name]->description : $description,
+                        'active' => isset($existPermissions[$name]) ? false : true,
                     ];
                 }
             }
         }
 
+        Yii::$app->getCache()->set('admin.rbac.default.roles', $ignorePermissions, 0);
         return new Response([
             'format' => Response::FORMAT_JSON,
-            'data' => $actions,
+            'data' => $permissions,
         ]);
     }
 }
