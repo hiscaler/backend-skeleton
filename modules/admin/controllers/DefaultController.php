@@ -62,6 +62,7 @@ class DefaultController extends Controller
     /**
      * 首页
      *
+     * @rbacIgnore true
      * @return string
      */
     public function actionIndex()
@@ -72,6 +73,7 @@ class DefaultController extends Controller
     /**
      * 登录
      *
+     * @rbacIgnore true
      * @return string|\yii\web\Response
      */
     public function actionLogin()
@@ -94,6 +96,7 @@ class DefaultController extends Controller
     /**
      * 用户注销
      *
+     * @rbacIgnore true
      * @return \yii\web\Response
      */
     public function actionLogout()
