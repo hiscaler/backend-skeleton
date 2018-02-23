@@ -98,9 +98,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td>{{ item.rule_name }}</td>
                         <td>{{ item.data }}</td>
                         <td class="btn-3">
-                            <button class="button-rbac" v-on:click="roleDelete(item.name, $index, $event)">X</button>
                             <button class="button-rbac" v-on:click="roleRemoveChildren(item.name)"><?= Yii::t('rbac', 'Remove Children') ?></button>
+                            <button class="button-rbac" v-on:click="roleAddChildren($index, $event)"><?= Yii::t('rbac', 'Add Children') ?></button>
                             <button class="button-rbac" v-on:click="permissionsByRole(item.name, $index)"><?= Yii::t('rbac', 'Permissions') ?></button>
+                            <button class="button-rbac" v-on:click="roleDelete(item.name, $index, $event)">X</button>
                         </td>
                     </tr>
                     </tbody>
@@ -638,6 +639,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'delete': undefined, // 删除角色
                 permissions: undefined, // 角色对应的权限
                 addChild: undefined, // 角色关联权限操作
+                addChildren: undefined, // 添加所有权限至指定的角色
                 removeChild: undefined, // 删除角色中的某个关联权限
                 removeChildren: undefined, // 删除角色关联的所有权限
             },
@@ -786,6 +788,17 @@ $this->params['breadcrumbs'][] = $this->title;
                                     vm.role.permissions.push(vm.permissions[i]);
                                     break;
                                 }
+                            }
+                        })
+                        .catch(function (error) {
+                        });
+                },
+                // 添加所有权限至指定的角色
+                roleAddChildren: function (index, event) {
+                    axios.post(yadjet.rbac.urls.roles.addChildren.replace('_roleName', vm.activeObject.role))
+                        .then(function (response) {
+                            for (var i in vm.permissions) {
+                                vm.role.permissions.push(vm.permissions[i]);
                             }
                         })
                         .catch(function (error) {
@@ -950,6 +963,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'delete': '<?= Url::toRoute(['roles/delete', 'name' => '_name']) ?>',
                 permissions: '<?= Url::toRoute(['roles/permissions-by-role', 'roleName' => '_roleName']) ?>',
                 addChild: '<?= Url::toRoute(['roles/add-child', 'roleName' => '_roleName', 'permissionName' => '_permissionName']) ?>',
+                addChildren: '<?= Url::toRoute(['roles/add-children', 'roleName' => '_roleName']) ?>',
                 removeChild: '<?= Url::toRoute(['roles/remove-child', 'roleName' => '_roleName', 'permissionName' => '_permissionName']) ?>',
                 removeChildren: '<?= Url::toRoute(['roles/remove-children', 'name' => '_name']) ?>'
             },

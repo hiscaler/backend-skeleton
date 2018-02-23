@@ -148,6 +148,47 @@ class RolesController extends Controller
     }
 
     /**
+     * 添加所有权限至指定的角色
+     *
+     * @param $roleName
+     * @return Response
+     */
+    public function actionAddChildren($roleName)
+    {
+        try {
+            $role = $this->auth->getRole($roleName);
+            if ($role) {
+                $existPermissions = $this->auth->getPermissionsByRole($roleName);
+                foreach ($this->auth->getPermissions() as $key => $permission) {
+                    if (!isset($existPermissions[$key])) {
+                        $this->auth->addChild($role, $permission);
+                    }
+                }
+                $responseBody = ['success' => true];
+            } else {
+                $responseBody = [
+                    'success' => false,
+                    'error' => [
+                        'message' => "$roleName 不存在。",
+                    ]
+                ];
+            }
+        } catch (Exception $exc) {
+            $responseBody = [
+                'success' => false,
+                'error' => [
+                    'message' => $exc->getMessage(),
+                ]
+            ];
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseBody,
+        ]);
+    }
+
+    /**
      * 移除角色和权限关联关系
      *
      * @param string $roleName
