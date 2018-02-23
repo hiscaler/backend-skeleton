@@ -91,11 +91,20 @@ class DefaultController extends BaseController
             Yii::$app->getControllerPath()
         ];
         foreach (Yii::$app->getModules() as $key => $config) {
-            $moduleId = Yii::$app->getModule($key)->getUniqueId();
-            if (empty($moduleId) || in_array($moduleId, $options['disabledScanModules'])) {
+            $module = Yii::$app->getModule($key);
+            $moduleId = $module->getUniqueId();
+            if (in_array($moduleId, $options['disabledScanModules'])) {
                 continue;
             }
-            $paths["{$moduleId}-"] = Yii::$app->getModule($moduleId)->getControllerPath();
+            $paths["$moduleId-"] = $module->getControllerPath();
+
+            // 激活的子模块
+            foreach ($module->getModules() as $subModule) {
+                $subModuleId = "$moduleId.$subModule->id";
+                if (!in_array($subModuleId, $options['disabledScanModules'])) {
+                    $paths["$moduleId-$subModuleId-"] = $subModule->getControllerPath();
+                }
+            }
         }
         foreach ($paths as $moduleId => $path) {
             if (!isset($files[$moduleId])) {
