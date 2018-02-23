@@ -22,7 +22,7 @@ class BaseController extends Controller
             $formatter->timeFormat = Lookup::getValue('system.time-format', 'php:H:i:s');
 
             $authManager = Yii::$app->getAuthManager();
-            if ($authManager && !Lookup::getValue('system.rbac.debug', false)) {
+            if ($authManager && !Lookup::getValue('system.rbac.debug', true)) {
                 $defaultRoles = Yii::$app->getCache()->get('admin.rbac.default.roles');
                 $defaultRoles || $defaultRoles = [];
                 $defaultRoles = array_merge($defaultRoles, [
