@@ -100,9 +100,9 @@ class DefaultController extends BaseController
 
             // 激活的子模块
             foreach ($module->getModules() as $subModule) {
-                $subModuleId = "$moduleId.$subModule->id";
+                $subModuleId = str_replace('/', '-', $subModule->getUniqueId());
                 if (!in_array($subModuleId, $options['disabledScanModules'])) {
-                    $paths["$moduleId-$subModuleId-"] = $subModule->getControllerPath();
+                    $paths["$subModuleId-"] = $subModule->getControllerPath();
                 }
             }
         }
