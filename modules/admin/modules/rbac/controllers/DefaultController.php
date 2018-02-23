@@ -30,6 +30,12 @@ class DefaultController extends BaseController
         }
     }
 
+    /**
+     * 主页面
+     *
+     * @rbacDescription 查看权限认证主页面权限
+     * @return string
+     */
     public function actionIndex()
     {
         return $this->render('index');
@@ -40,6 +46,7 @@ class DefaultController extends BaseController
      *
      * @param $file
      * @return array
+     * @throws \ReflectionException
      */
     private function _parseControllerFile($file)
     {
@@ -49,9 +56,8 @@ class DefaultController extends BaseController
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             if (preg_match('/^action[A-Z]+[a-zA-Z]*/', $method->getName())) {
-                $t = $method->getDocComment();
                 $description = null;
-                foreach (explode(PHP_EOL, $t) as $row) {
+                foreach (explode(PHP_EOL, $method->getDocComment()) as $row) {
                     $row = trim($row);
                     if ($row) {
                         if (strpos($row, '@rbacIgnore') !== false) {
@@ -71,6 +77,12 @@ class DefaultController extends BaseController
         return $descriptions;
     }
 
+    /**
+     * 扫描所有控制器获取动作和其说明
+     *
+     * @rbacDescription 扫描所有控制器获取动作和其说明权限
+     * @return Response
+     */
     public function actionScan()
     {
         $options = $this->getModuleOptions();
