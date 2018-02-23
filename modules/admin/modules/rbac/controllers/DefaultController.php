@@ -59,11 +59,13 @@ class DefaultController extends BaseController
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             if (preg_match('/^action[A-Z]+[a-zA-Z]*/', $method->getName())) {
+                $ignore = false;
                 $description = null;
                 foreach (explode(PHP_EOL, $method->getDocComment()) as $row) {
                     $row = trim($row);
                     if ($row) {
                         if (strpos($row, '@rbacIgnore') !== false) {
+                            $ignore = true;
                             $permissions['ignore'][] = substr($method->getName(), 6);
                             break;
                         } elseif (strpos($row, '@rbacDescription') !== false) {
@@ -74,7 +76,7 @@ class DefaultController extends BaseController
                         }
                     }
                 }
-                $permissions['normal'][substr($method->getName(), 6)] = $description;
+                !$ignore && $permissions['normal'][substr($method->getName(), 6)] = $description;
             }
         }
 
@@ -137,6 +139,7 @@ class DefaultController extends BaseController
         }
 
         Yii::$app->getCache()->set('admin.rbac.default.roles', $ignorePermissions, 0);
+
         return new Response([
             'format' => Response::FORMAT_JSON,
             'data' => $permissions,
