@@ -54,7 +54,7 @@ class GridColumnConfigsController extends Controller
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         }
         try {
-            $attributeLabels = Yii::createObject(BaseActiveRecord::id2ClassName($name))->attributeLabels();
+            $attributeLabels = Yii::createObject($name)->attributeLabels();
         } catch (\Exception $ex) {
             throw new InvalidCallException($ex->getMessage());
         }
@@ -90,7 +90,7 @@ class GridColumnConfigsController extends Controller
     public function actionToggle()
     {
         $attribute = Yii::$app->getRequest()->post('id');
-        $name = Yii::$app->request->post('name');
+        $name = Yii::$app->getRequest()->post('name');
         $db = Yii::$app->getDb();
         $value = $db->createCommand('SELECT [[visible]] FROM {{%grid_column_config}} WHERE [[user_id]] = :userId AND [[name]] = :name AND [[attribute]] = :attribute')->bindValues([
             ':userId' => Yii::$app->getUser()->getId(),
