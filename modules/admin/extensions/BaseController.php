@@ -24,12 +24,12 @@ class BaseController extends Controller
             $authManager = Yii::$app->getAuthManager();
             if ($authManager && !Lookup::getValue('system.rbac.debug', true)) {
                 $defaultRoles = $authManager->defaultRoles;
-                $role = $this->module->getUniqueId();
-                if ($role) {
-                    $role .= '-';
+                $key = str_replace('/', '-', $this->module->getUniqueId());
+                if ($key) {
+                    $key .= '-';
                 }
-                $role = $role . Inflector::camel2id(Yii::$app->controller->id) . '.' . Inflector::camel2id($action->id);
-                if (Yii::$app->getUser()->can($role) || in_array($role, $defaultRoles)) {
+                $key = $key . Inflector::camel2id(Yii::$app->controller->id) . '.' . Inflector::camel2id($action->id);
+                if (in_array($key, $defaultRoles) || Yii::$app->getUser()->can($key)) {
                     return true;
                 } else {
                     throw new UnauthorizedHttpException('对不起，您没有操作该项目的权限。');
