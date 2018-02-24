@@ -46,6 +46,19 @@ class Module extends \yii\base\Module
                     ],
                 ],
             ],
+            'i18n' => [
+                'class' => 'yii\i18n\I18N',
+                'translations' => [
+                    '*' => [
+                        'class' => '\yii\i18n\PhpMessageSource',
+                        'basePath' => '@app/messages',
+                    ],
+                    $this->id => [
+                        'class' => '\yii\i18n\PhpMessageSource',
+                        'basePath' => $this->basePath . '/messages',
+                    ],
+                ],
+            ],
             'authManager' => [
                 'class' => 'yii\rbac\DbManager',
             ],
