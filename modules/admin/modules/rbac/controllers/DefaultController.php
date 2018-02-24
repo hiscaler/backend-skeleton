@@ -6,6 +6,7 @@ use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\rbac\helpers\RbacHelper;
 use Yii;
 use yii\base\Exception;
+use yii\base\Module;
 use yii\helpers\FileHelper;
 use yii\helpers\Inflector;
 use yii\web\Response;
@@ -88,6 +89,7 @@ class DefaultController extends BaseController
      *
      * @rbacDescription 扫描所有控制器获取动作和其说明权限
      * @return Response
+     * @throws \ReflectionException
      */
     public function actionScan()
     {
@@ -98,37 +100,41 @@ class DefaultController extends BaseController
         ];
         foreach (Yii::$app->getModules() as $key => $config) {
             $module = Yii::$app->getModule($key);
-            $moduleId = $module->getUniqueId();
-            if (in_array($moduleId, $options['disabledScanModules'])) {
+            $mainModuleId = $module->getUniqueId();
+            if (in_array($mainModuleId, $options['disabledScanModules'])) {
                 continue;
             }
-            $paths["$moduleId-"] = $module->getControllerPath();
+            $paths["$mainModuleId-"] = $module->getControllerPath();
 
             // 激活的子模块
-            foreach ($module->getModules() as $subModule) {
+            foreach ($module->getModules() as $k => $subModule) {
+                if (!$subModule instanceof Module) {
+                    $subModule = Yii::$app->getModule("$mainModuleId/$k");
+                }
+
                 $subModuleId = str_replace('/', '-', $subModule->getUniqueId());
                 if (!in_array($subModuleId, $options['disabledScanModules'])) {
                     $paths["$subModuleId-"] = $subModule->getControllerPath();
                 }
             }
         }
-        foreach ($paths as $moduleId => $path) {
-            if (!isset($files[$moduleId])) {
-                $files[$moduleId] = [];
+        foreach ($paths as $mainModuleId => $path) {
+            if (!isset($files[$mainModuleId])) {
+                $files[$mainModuleId] = [];
             }
-            $files[$moduleId] = FileHelper::findFiles($path);
+            $files[$mainModuleId] = FileHelper::findFiles($path);
         }
         $ignorePermissions = [];
         $existPermissions = $this->auth->getPermissions();
-        foreach ($files as $moduleId => $items) {
+        foreach ($files as $mainModuleId => $items) {
             foreach ($items as $file) {
                 $rawPermissions = $this->_parsePermissionsFromControllerClass($file);
                 foreach ($rawPermissions['ignore'] as $permissionName) {
-                    $ignorePermissions[] = ($moduleId ?: '') . Inflector::camel2id(str_replace('Controller', '', basename($file, '.php')) . '.' . Inflector::camel2id($permissionName));
+                    $ignorePermissions[] = ($mainModuleId ?: '') . Inflector::camel2id(str_replace('Controller', '', basename($file, '.php')) . '.' . Inflector::camel2id($permissionName));
                 }
 
                 foreach ($rawPermissions['normal'] as $key => $description) {
-                    $name = ($moduleId ?: '') . Inflector::camel2id(str_replace('Controller', '', basename($file, '.php')) . '.' . Inflector::camel2id($key));
+                    $name = ($mainModuleId ?: '') . Inflector::camel2id(str_replace('Controller', '', basename($file, '.php')) . '.' . Inflector::camel2id($key));
                     $permissions[] = [
                         'name' => $name,
                         'description' => isset($existPermissions[$name]) ? $existPermissions[$name]->description : $description,
