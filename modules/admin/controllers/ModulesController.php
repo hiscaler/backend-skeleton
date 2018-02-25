@@ -315,12 +315,6 @@ class ModulesController extends Controller
 
                     $this->_migrate($alias, 'up');
 
-                    // 复制翻译的语种文件
-                    $messageFilePath = Yii::getAlias("@app/modules/admin/modules/$alias/messages");
-                    if (file_exists($messageFilePath)) {
-                        FileHelper::copyDirectory($messageFilePath, Yii::getAlias('@app/messages'));
-                    }
-
                     $success = true;
                 } catch (\Exception $ex) {
                     $errorMessage = $ex->getMessage();
@@ -412,14 +406,7 @@ class ModulesController extends Controller
                         'updated_by' => Yii::$app->getUser()->getId(),
                     ], ['id' => $moduleId])->execute();
 
-                    // 更新翻译文本
-                    $sourcePath = Yii::getAlias("@app/modules/admin/modules/$alias");
-                    $messagePath = $sourcePath . '/messages';
-                    if (file_exists($messagePath)) {
-                        FileHelper::copyDirectory($messagePath, Yii::getAlias('@app/messages'));
-                    }
-
-                    copy($sourcePath . DIRECTORY_SEPARATOR . 'icon.png', Yii::getAlias('@webroot') . "/admin/images/module-icons/{$alias}-icon.png");
+                    copy(Yii::getAlias("@app/modules/admin/modules/$alias") . DIRECTORY_SEPARATOR . 'icon.png', Yii::getAlias('@webroot') . "/admin/images/module-icons/{$alias}-icon.png");
 
                     $success = true;
                 } catch (\Exception $ex) {
