@@ -23,7 +23,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 ?>
 <div class="classic-case-index">
     <?php Pjax::begin(); ?>
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -39,6 +39,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             [
                 'attribute' => 'category.name',
                 'contentOptions' => ['class' => 'category-name'],
+                'visible' => $categories
             ],
             [
                 'attribute' => 'title',

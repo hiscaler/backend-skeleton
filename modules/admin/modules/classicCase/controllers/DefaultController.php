@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\classicCase\controllers;
 
+use app\models\Category;
 use app\models\Meta;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\forms\DynamicForm;
@@ -59,6 +60,7 @@ class DefaultController extends BaseController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'categories' => Category::tree('classicCase.module.category', Category::RETURN_TYPE_PRIVATE)
         ]);
     }
 
