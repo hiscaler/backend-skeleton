@@ -121,4 +121,14 @@ class Yad
         return $images;
     }
 
+    /**
+     * 系统版本
+     *
+     * @return string
+     */
+    public static function getVersion()
+    {
+        return '0.0.1';
+    }
+
 }

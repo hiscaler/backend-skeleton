@@ -832,6 +832,30 @@ ul.list li em {
 }
 
 /*******************************************************************************
+ * 系统信息
+ ******************************************************************************/
+.system-information {
+    border: #e9e9e9 solid 1px;
+    margin: 10px;
+}
+
+.system-information li {
+    height: 30px;
+    line-height: 30px;
+    border-bottom: #e9e9e9 solid 1px;
+}
+
+.system-information li span {
+    display: inline;
+    height: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    padding: 0 10px;
+    margin-right: 10px;
+    border-right: #e9e9e9 solid 1px;
+}
+
+/*******************************************************************************
  * 模块信息
  ******************************************************************************/
 .widget-module {

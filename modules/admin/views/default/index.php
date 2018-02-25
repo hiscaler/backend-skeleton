@@ -14,3 +14,11 @@ if ($this->beginCache(\app\modules\admin\widgets\UserLoginLogs::class, ['depende
     echo \app\modules\admin\widgets\UserLoginLogs::widget();
     $this->endCache();
 }
+?>
+<div class="system-information">
+    <ul>
+        <li><span>开发人员</span>hiscaler</li>
+        <li><span>联系方式</span><a href="mailto:hiscaler@gmail.com">hiscaler@gmail.com</a></li>
+        <li><span>当前版本</span><?= \app\models\Yad::getVersion() ?></li>
+    </ul>
+</div>
