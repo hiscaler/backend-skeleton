@@ -40,7 +40,7 @@ class News extends BaseActiveRecord
 
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::className(), 'picture_path');
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
         parent::init();
     }
 
@@ -83,7 +83,7 @@ class News extends BaseActiveRecord
     {
         return array_merge(parent::behaviors(), [
             [
-                'class' => ImageUploadBehavior::className(),
+                'class' => ImageUploadBehavior::class,
                 'attribute' => 'picture_path',
                 'thumb' => $this->_fileUploadConfig['thumb']
             ],
@@ -172,7 +172,7 @@ class News extends BaseActiveRecord
      */
     public function getNewsContent()
     {
-        return $this->hasOne(NewsContent::className(), ['news_id' => 'id']);
+        return $this->hasOne(NewsContent::class, ['news_id' => 'id']);
     }
 
 }

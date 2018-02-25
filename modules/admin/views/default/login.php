@@ -39,7 +39,7 @@ $name = (\app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name) . 
             <?= $form->field($model, 'password', $fieldConfigs)->passwordInput(); ?>
 
             <?=
-            $form->field($model, 'verifyCode', $fieldConfigs)->widget(Captcha::className(), [
+            $form->field($model, 'verifyCode', $fieldConfigs)->widget(Captcha::class, [
                 'template' => '{input}{image}',
                 'captchaAction' => 'default/captcha',
             ]);

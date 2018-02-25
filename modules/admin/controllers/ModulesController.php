@@ -130,7 +130,7 @@ class ModulesController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'actions' => ['index', 'install', 'uninstall', 'upgrade'],
@@ -140,7 +140,7 @@ class ModulesController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'install' => ['POST'],
                     'uninstall' => ['POST'],

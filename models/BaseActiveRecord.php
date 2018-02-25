@@ -39,7 +39,7 @@ class BaseActiveRecord extends ActiveRecord
     public static function className2Id($className = null)
     {
         if ($className === null) {
-            $className = static::className();
+            $className = static::class;
         }
 
         return str_replace('\\', '-', $className);
@@ -91,10 +91,10 @@ class BaseActiveRecord extends ActiveRecord
      */
     public function getRelatedLabels()
     {
-        return $this->hasMany(Label::className(), ['id' => 'label_id'])
+        return $this->hasMany(Label::class, ['id' => 'label_id'])
             ->select(['id', 'name'])
             ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
-                $query->where(['model_name' => static::className()]);
+                $query->where(['model_name' => static::class]);
             });
     }
 
@@ -105,10 +105,10 @@ class BaseActiveRecord extends ActiveRecord
      */
     public function getCustomLabels()
     {
-        return $this->hasMany(Label::className(), ['id' => 'label_id'])
+        return $this->hasMany(Label::class, ['id' => 'label_id'])
             ->select(['id', 'name'])
             ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
-                $query->where(['model_name' => static::className()]);
+                $query->where(['model_name' => static::class]);
             }
             );
     }
@@ -120,7 +120,7 @@ class BaseActiveRecord extends ActiveRecord
      */
     public function getCategory()
     {
-        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
     /**
@@ -130,7 +130,7 @@ class BaseActiveRecord extends ActiveRecord
      */
     public function getCreater()
     {
-        return $this->hasOne(User::className(), ['id' => 'created_by'])->select(['id', 'nickname']);
+        return $this->hasOne(User::class, ['id' => 'created_by'])->select(['id', 'nickname']);
     }
 
     /**
@@ -140,7 +140,7 @@ class BaseActiveRecord extends ActiveRecord
      */
     public function getUpdater()
     {
-        return $this->hasOne(User::className(), ['id' => 'updated_by'])->select(['id', 'nickname']);
+        return $this->hasOne(User::class, ['id' => 'updated_by'])->select(['id', 'nickname']);
     }
 
     /**
@@ -150,7 +150,7 @@ class BaseActiveRecord extends ActiveRecord
      */
     public function getDeleter()
     {
-        return $this->hasOne(User::className(), ['id' => 'deleted_by'])->select(['id', 'nickname']);
+        return $this->hasOne(User::class, ['id' => 'deleted_by'])->select(['id', 'nickname']);
     }
 
     public function attributeLabels()
@@ -193,7 +193,7 @@ class BaseActiveRecord extends ActiveRecord
     {
         parent::afterFind();
         if (!$this->isNewRecord) {
-            $this->entityLabels = Label::getEntityLabelIds($this->id, static::className());
+            $this->entityLabels = Label::getEntityLabelIds($this->id, static::class);
             $this->_oldEntityLabels = $this->entityLabels;
         }
     }
@@ -250,7 +250,7 @@ class BaseActiveRecord extends ActiveRecord
                 $userId = Yii::$app->getUser()->getId();
                 $now = time();
                 foreach ($insertLabels as $labelId) {
-                    $rows[] = [$this->id, static::className(), $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
+                    $rows[] = [$this->id, static::class, $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
                 }
                 if ($rows) {
                     $db->createCommand()->batchInsert('{{%entity_label}}', ['entity_id', 'model_name', 'label_id', 'enabled', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], $rows)->execute();
@@ -261,7 +261,7 @@ class BaseActiveRecord extends ActiveRecord
             if ($deleteLabels) {
                 $db->createCommand()->delete('{{%entity_label}}', [
                     'entity_id' => $this->id,
-                    'model_name' => static::className(),
+                    'model_name' => static::class,
                     'label_id' => $deleteLabels
                 ])->execute();
                 $db->createCommand("UPDATE {{%label}} SET [[frequency]] = [[frequency]] - 1 WHERE [[id]] IN (" . implode(', ', $deleteLabels) . ")")->execute();
@@ -280,7 +280,7 @@ class BaseActiveRecord extends ActiveRecord
         $db = Yii::$app->getDb();
         $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [
             ':entityId' => $this->id,
-            ':modelName' => static::className()
+            ':modelName' => static::class
         ])->queryAll();
         if ($labels) {
             $db->createCommand('DELETE FROM {{%entity_label}} WHERE [[id]] IN (' . implode(', ', ArrayHelper::getColumn($labels, 'id')) . ')')->execute();

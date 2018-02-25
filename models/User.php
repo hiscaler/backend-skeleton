@@ -105,7 +105,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [
-                'class' => FileUploadBehavior::className(),
+                'class' => FileUploadBehavior::class,
                 'attribute' => 'avatar'
             ],
         ];

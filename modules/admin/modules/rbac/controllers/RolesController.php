@@ -14,7 +14,7 @@ class RolesController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'add-child' => ['post'],
                     'create' => ['post'],

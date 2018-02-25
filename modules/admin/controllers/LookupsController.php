@@ -29,7 +29,7 @@ class LookupsController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'actions' => ['index', 'form', 'create', 'update', 'delete', 'toggle'],
@@ -39,7 +39,7 @@ class LookupsController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                     'toggle' => ['post'],

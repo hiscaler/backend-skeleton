@@ -32,7 +32,7 @@ class Slide extends BaseActiveRecord
 
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::className(), 'picture_path');
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
         parent::init();
     }
 
@@ -76,7 +76,7 @@ class Slide extends BaseActiveRecord
     {
         return [
             [
-                'class' => ImageUploadBehavior::className(),
+                'class' => ImageUploadBehavior::class,
                 'attribute' => 'picture_path',
                 'thumb' => $this->_fileUploadConfig['thumb']
             ],

@@ -59,7 +59,7 @@ class UserLoginLog extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id'])->select(['id', 'username']);
+        return $this->hasOne(User::class, ['id' => 'user_id'])->select(['id', 'username']);
     }
 
     public static function write()

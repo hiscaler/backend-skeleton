@@ -36,7 +36,7 @@ class DefaultController extends Controller
     {
         $where = [];
         $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.username', 't.tel', 't.mobile_phone', 't.email', 't.created_at', 't.created_by', 't.updated_at', 't.updated_by'], $fields, ['category_name' => 't.category_id']);
-        $query = (new ActiveQuery(Feedback::className()))
+        $query = (new ActiveQuery(Feedback::class))
             ->alias('t')
             ->select($selectColumns);
 

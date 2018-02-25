@@ -198,7 +198,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public function getWechatMember()
     {
-        return $this->hasOne(WechatMember::className(), ['openid' => 'openid']);
+        return $this->hasOne(WechatMember::class, ['openid' => 'openid']);
     }
 
 }

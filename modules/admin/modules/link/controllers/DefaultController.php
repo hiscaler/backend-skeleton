@@ -27,7 +27,7 @@ class DefaultController extends BaseController
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'actions' => ['index', 'create', 'update', 'view', 'delete', 'toggle'],
@@ -37,7 +37,7 @@ class DefaultController extends BaseController
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],

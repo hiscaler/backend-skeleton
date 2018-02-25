@@ -50,7 +50,7 @@ class BaseController extends Controller
     {
         return [
             'contentNegotiator' => [
-                'class' => ContentNegotiator::className(),
+                'class' => ContentNegotiator::class,
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                     'text/javascript' => Response::FORMAT_JSONP,
@@ -58,7 +58,7 @@ class BaseController extends Controller
                 ],
             ],
             'corsFilter' => [
-                'class' => Cors::className(),
+                'class' => Cors::class,
                 'cors' => [
                     'Origin' => ['*'],
                     'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],

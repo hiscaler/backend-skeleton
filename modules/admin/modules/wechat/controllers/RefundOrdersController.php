@@ -25,7 +25,7 @@ class RefundOrdersController extends BaseController
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'actions' => ['index', 'create', 'view', 'update', 'delete'],
@@ -35,7 +35,7 @@ class RefundOrdersController extends BaseController
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],

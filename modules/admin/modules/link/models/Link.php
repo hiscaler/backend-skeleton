@@ -47,7 +47,7 @@ class Link extends BaseActiveRecord
 
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::className(), 'logo');
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'logo');
         parent::init();
     }
 
@@ -113,7 +113,7 @@ class Link extends BaseActiveRecord
     {
         return [
             [
-                'class' => ImageUploadBehavior::className(),
+                'class' => ImageUploadBehavior::class,
                 'attribute' => 'logo',
                 'thumb' => $this->_fileUploadConfig['thumb']
             ],
@@ -143,7 +143,7 @@ class Link extends BaseActiveRecord
      */
     public function getCategory()
     {
-        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
     // Events

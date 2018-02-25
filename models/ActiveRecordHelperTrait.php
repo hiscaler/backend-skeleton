@@ -14,7 +14,7 @@ trait ActiveRecordHelperTrait
     public static function className2Id($className = null)
     {
         if ($className === null) {
-            $className = static::className();
+            $className = static::class;
         }
 
         return str_replace('\\', '-', $className);

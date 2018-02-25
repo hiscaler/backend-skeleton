@@ -33,7 +33,7 @@ class DefaultController extends BaseController
     {
         $where = ['t.enabled' => Constant::BOOLEAN_TRUE];
         $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.url', 't.url_open_target', 't.picture_path'], $fields, ['category_name' => 't.category_id']);
-        $query = (new ActiveQuery(Slide::className()))
+        $query = (new ActiveQuery(Slide::class))
             ->alias('t')
             ->select($selectColumns);
 

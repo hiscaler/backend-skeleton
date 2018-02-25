@@ -28,7 +28,7 @@ class DefaultController extends Controller
     public function actionIndex($page = 1, $pageSize = 20)
     {
         return new ActiveDataProvider([
-            'query' => (new ActiveQuery(Article::className())),
+            'query' => (new ActiveQuery(Article::class)),
             'pagination' => [
                 'page' => (int) $page - 1,
                 'pageSize' => (int) $pageSize ?: 20

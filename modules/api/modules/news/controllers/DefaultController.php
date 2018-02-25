@@ -92,7 +92,7 @@ class DefaultController extends BaseController
             't.enabled' => Constant::BOOLEAN_TRUE,
         ];
         $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.short_title', 't.author', 't.source', 't.keywords', 't.description', 't.is_picture_news', 't.picture_path', 't.enabled_comment', 'comments_count', 't.published_at', 't.created_at', 't.updated_at', 'u.nickname AS editor'], $fields, ['short_title' => 't.title']);
-        $query = (new \yii\db\ActiveQuery(News::className()))
+        $query = (new \yii\db\ActiveQuery(News::class))
             ->select($selectColumns)
             ->from('{{%news}} t');
         if (in_array('c.name AS category_name', $selectColumns)) {
@@ -155,7 +155,7 @@ class DefaultController extends BaseController
                 $subQuery = (new Query())
                     ->select('entity_id')
                     ->from('{{%entity_label}}')
-                    ->where('[[t.id]] = [[entity_id]] AND [[model_name]] = :modelName', [':modelName' => \app\modules\admin\modules\news\models\News::className()])
+                    ->where('[[t.id]] = [[entity_id]] AND [[model_name]] = :modelName', [':modelName' => \app\modules\admin\modules\news\models\News::class])
                     ->andWhere(['IN', 'label_id', $attributeIdList])
                     ->groupBy('entity_id')
                     ->having('COUNT(*) = ' . count($attributeIdList));

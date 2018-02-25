@@ -295,7 +295,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getWechat()
     {
-        return $this->hasOne(WechatMember::className(), ['member_id' => 'id']);
+        return $this->hasOne(WechatMember::class, ['member_id' => 'id']);
     }
 
     // Events

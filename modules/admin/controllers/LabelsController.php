@@ -27,7 +27,7 @@ class LabelsController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'actions' => ['index', 'create', 'update', 'delete', 'toggle'],
@@ -37,7 +37,7 @@ class LabelsController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                     'toggle' => ['post'],

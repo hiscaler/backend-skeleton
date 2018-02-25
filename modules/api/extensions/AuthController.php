@@ -13,9 +13,9 @@ class AuthController extends BaseController
         $behaviors = parent::behaviors();
         $token = \Yii::$app->getRequest()->get('accessToken');
         if (!empty($token)) {
-            $class = AccessTokenAuth::className();
+            $class = AccessTokenAuth::class;
         } else {
-            $class = QueryParamAuth::className();
+            $class = QueryParamAuth::class;
         }
 
         $behaviors = array_merge($behaviors, [
