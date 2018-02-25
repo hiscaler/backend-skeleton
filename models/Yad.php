@@ -5,7 +5,6 @@ namespace app\models;
 use Yii;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
-use yii\web\Cookie;
 
 class Yad
 {
