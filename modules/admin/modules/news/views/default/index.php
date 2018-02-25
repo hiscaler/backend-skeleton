@@ -133,10 +133,10 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                     $.fn.lock();
                 }, success: function (response) {
                     layer.open({
+                        skin: 'layer-labels',
                         title: $this.attr('title'),
                         content: response,
-                        lock: true,
-                        padding: '10px'
+                        move: false
                     });
                     $.fn.unlock();
                 }, error: function (XMLHttpRequest, textStatus, errorThrown) {
