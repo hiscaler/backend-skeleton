@@ -1,3 +1,9 @@
+/*
+Document   : application
+Created on : 2018-02-26 21:25:40
+Author     : hiscaler <hiscaler@gmail.com>
+Description: rbac module CSS
+*/
 body {
     font-size: 14px;
 }
@@ -136,10 +142,6 @@ input {
 /*******************************************************************************
  * Grid View
  ******************************************************************************/
-.rbac-grid-view-loading {
-    background: url(/admin/images/loading.gif) no-repeat;
-}
-
 .rbac-grid-view {
     width: 100%;
     overflow: auto;
@@ -178,7 +180,7 @@ input {
 
 .rbac-grid-view table.table th {
     border-top: 1px #E9E9E9 solid;
-    background: #F5F5F5 url(/admin/images/grid-view-header-bg.gif) no-repeat right center;
+    background: #F5F5F5 url(../images/grid-view-header-bg.gif) no-repeat right center;
     padding: 5px 4px;
     color: #7d8389;
     text-align: left;
@@ -204,16 +206,6 @@ input {
 
 .rbac-grid-view table.table th a:hover {
     color: #3b5998;
-}
-
-.rbac-grid-view table.table th a.asc {
-    background: url(/admin/images/up.gif) right center no-repeat;
-    padding-right: 10px;
-}
-
-.rbac-grid-view table.table th a.desc {
-    background: url(/admin/images/down.gif) right center no-repeat;
-    padding-right: 10px;
 }
 
 .rbac-grid-view table.table th.serial-number {
@@ -282,13 +274,6 @@ input {
 }
 
 .rbac-grid-view .pager {
-}
-
-.rbac-grid-view .empty {
-    background: #FFFCC9 url(/admin/images/notice.png) no-repeat 5px center;
-    padding: 2px 5px 2px 25px;
-    height: 24px;
-    line-height: 24px;
 }
 
 .rbac-grid-view tr.filters td {
