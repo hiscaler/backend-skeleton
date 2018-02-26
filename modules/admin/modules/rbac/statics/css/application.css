@@ -1,0 +1,418 @@
+body {
+    font-size: 14px;
+}
+
+a {
+    text-decoration: none;
+}
+
+fieldset, input {
+    border: 1px #E9E9E9 solid;
+}
+
+fieldset {
+    border: none;
+    border-top: 1px #E9E9E9 solid;
+    margin-top: 10px;
+}
+
+input {
+    padding: 6px;
+    border-radius: 2px;
+}
+
+#rbac-app {
+}
+
+.rbac-tabs-common {
+    height: 25px;
+    margin: 0;
+}
+
+.rbac-tabs-common li {
+    float: left;
+    list-style: none outside none;
+    margin: 0 3px;
+}
+
+.rbac-tabs-common li.active a {
+    background: none repeat scroll 0 0 #F5F5F5;
+    border-top: #DD4B39 solid 2px;
+    border-bottom: 1px solid #F8F8F8;
+    color: #4362BF;
+}
+
+.rbac-tabs-common a:hover {
+    background: none repeat scroll 0 0 #F5F5F5;
+}
+
+.rbac-tabs-common a {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FFF;
+    border-color: #E9E9E9;
+    border-style: solid solid none;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-width: 1px 1px medium;
+    color: #666677;
+    display: inline-block;
+    padding: 2px 15px;
+    text-decoration: none;
+}
+
+.rbac-tabs-common li.active a {
+    padding-top: 1px;
+}
+
+.rbac-tabs-common .badges {
+    position: absolute;
+    margin-top: -10px;
+    display: inline;
+    background-color: #ac2925;
+    color: #FFFFFF;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    font-size: 10px;
+}
+
+#rbac-panels {
+    border: #E9E9E9 solid 1px;
+    border-radius: 0 0 6px 6px;
+}
+
+/*******************************************************************************
+ * Common
+ ******************************************************************************/
+.button-rbac {
+    border: #E9E9E9 solid 1px;
+    color: #7d8389;
+    background-color: #FFF;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.wrapper {
+    margin-bottom: 10px;
+}
+
+/*******************************************************************************
+ * Form
+ ******************************************************************************/
+.form-rbac {
+}
+
+.form-rbac div.row {
+    padding: 10px 0;
+    border-bottom: 1px #E9E9E9 solid;
+}
+
+.form-rbac div.last-row {
+    border-bottom: none;
+}
+
+.form-rbac div.row label {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.form-rbac div.row input.rbac-input {
+    width: 300px;
+}
+
+.form-rbac div.last-row input.button-rbac {
+    margin-left: 110px;
+    padding: 3px 14px;
+    background-color: #F5F5F5;
+    color: #4362BF;
+}
+
+/*******************************************************************************
+ * Grid View
+ ******************************************************************************/
+.rbac-grid-view-loading {
+    background: url(/admin/images/loading.gif) no-repeat;
+}
+
+.rbac-grid-view {
+    width: 100%;
+    overflow: auto;
+}
+
+.rbac-grid-view table.table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.rbac-grid-view table.table th, .rbac-grid-view table.table td {
+    border-bottom: 1px #E9E9E9 solid;
+    padding: 6px;
+    /* 保持不换行 */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: keep-all; /* for ie */
+    white-space: nowrap; /* for chrome */
+}
+
+.rbac-grid-view table.table th {
+    padding-left: 10px !important;
+}
+
+.rbac-grid-view table.table th.nowrap, .rbac-grid-view table.table td.nowrap {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.rbac-grid-view table.table th.pointer, .rbac-grid-view table.table td.pointer {
+    cursor: pointer;
+}
+
+.rbac-grid-view table.table th {
+    border-top: 1px #E9E9E9 solid;
+    background: #F5F5F5 url(/admin/images/grid-view-header-bg.gif) no-repeat right center;
+    padding: 5px 4px;
+    color: #7d8389;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: normal;
+}
+
+.rbac-grid-view table.table tr.clear-border-top th {
+    border-top: none;
+}
+
+.rbac-grid-view table.table th.last {
+    background: #F5F5F5;
+}
+
+.rbac-grid-view table.table th a {
+    color: #7d8389;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.rbac-grid-view table.table th a:hover {
+    color: #3b5998;
+}
+
+.rbac-grid-view table.table th a.asc {
+    background: url(/admin/images/up.gif) right center no-repeat;
+    padding-right: 10px;
+}
+
+.rbac-grid-view table.table th a.desc {
+    background: url(/admin/images/down.gif) right center no-repeat;
+    padding-right: 10px;
+}
+
+.rbac-grid-view table.table th.serial-number {
+    text-align: center;
+    padding: 0 !important;
+    width: 30px;
+}
+
+.rbac-grid-view table.table tr.even {
+    background: #FFF;
+}
+
+.rbac-grid-view table.table tr.odd {
+    background: #FAFCFF;
+}
+
+.rbac-grid-view table.table tr.block {
+    background: #FFF6BF;
+}
+
+.rbac-grid-view table.table tr.selected td {
+    background: #FFFFEF;
+}
+
+.rbac-grid-view table.table tr.disabled td,
+.rbac-grid-view table.table tr.disabled td input,
+.rbac-grid-view table.table tr.disabled td button {
+    color: #CCC;
+}
+
+.rbac-grid-view table.table tr:hover {
+    background: #ECFBD4;
+}
+
+.rbac-grid-view table.table tr td img {
+    border: none;
+    vertical-align: middle;
+}
+
+.rbac-grid-view .link-column img {
+    border: 0;
+}
+
+.rbac-grid-view .button-column {
+    text-align: center;
+}
+
+.rbac-grid-view .button-column img {
+    border: 0;
+}
+
+.rbac-grid-view .checkbox-column {
+    width: 15px;
+}
+
+.rbac-grid-view .summary {
+    margin: 0 0 5px 0;
+    line-height: 31px;
+    padding-right: 10px;
+    text-align: right;
+    color: #7d8389;
+}
+
+.rbac-grid-view .summary b {
+    margin: 0 5px;
+}
+
+.rbac-grid-view .pager {
+}
+
+.rbac-grid-view .empty {
+    background: #FFFCC9 url(/admin/images/notice.png) no-repeat 5px center;
+    padding: 2px 5px 2px 25px;
+    height: 24px;
+    line-height: 24px;
+}
+
+.rbac-grid-view tr.filters td {
+    padding: 2px 0 2px 5px;
+    margin: 0;
+}
+
+.rbac-grid-view .filters input {
+    border: 1px solid #E9E9E9;
+    padding: 4px 5px;
+}
+
+.rbac-grid-view table.table td.center {
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.pk {
+    width: 50px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #999;
+}
+
+.rbac-grid-view table.table td.checkbox {
+    width: 20px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.serial-number {
+    width: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #999;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.pk a {
+    color: #999;
+}
+
+.rbac-grid-view table.table td.date {
+    width: 65px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.datetime {
+    width: 160px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.username {
+    width: 60px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.user-role {
+    width: 120px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.date-time-ago {
+    width: 85px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.ordering {
+    width: 40px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.icon {
+    width: 34px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.boolean {
+    width: 30px;
+    text-align: center;
+}
+
+.rbac-grid-view table.table td.role-name {
+    width: 120px;
+}
+
+.rbac-grid-view table.table td.permission-name {
+    width: 320px;
+}
+
+.rbac-grid-view table.table th.actions, .rbac-grid-view table.table td.actions {
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rbac-grid-view table.table td.btn-1 {
+    width: 20px;
+    _width: 30px;
+}
+
+.rbac-grid-view table.table td.btn-2 {
+    width: 40px;
+    _width: 40px;
+}
+
+.rbac-grid-view table.table td.btn-3 {
+    width: 60px;
+    _width: 70px;
+}
+
+.rbac-grid-view table.table td.btn-4 {
+    width: 80px;
+    _widht: 90px;
+}
+
+.rbac-grid-view table.table td.btn-5 {
+    width: 100px;
+    _widht: 110px;
+}
+
+#rbac-pending-permissions table input {
+    width: 96%;
+}
+
+#rbac-pop-window {
+    border: #E9E9E9 solid 1px;
+    border-radius: 0 0 6px 6px;
+}
