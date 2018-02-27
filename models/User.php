@@ -281,11 +281,8 @@ class User extends ActiveRecord implements IdentityInterface
         $roles = [];
         $authManager = Yii::$app->getAuthManager();
         if ($authManager) {
-            $rawRoles = $authManager->getRoles();
-            foreach ($rawRoles as $role) {
-                $name = $role->name;
-                $role->description && $name .= " [ $role->description ]";
-                $roles[$role->name] = $name;
+            foreach ($authManager->getRoles() as $role) {
+                $roles[$role->name] = $role->description ?: $role->name;
             }
         }
 
