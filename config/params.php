@@ -67,7 +67,7 @@ return [
                 'id' => 'user-group',
                 'label' => 'User Groups',
                 'url' => ['user-groups/index'],
-                'forceEmbed' => true,
+                'forceEmbed' => false,
             ],
             'app-models-Member' => [
                 'id' => 'member',
