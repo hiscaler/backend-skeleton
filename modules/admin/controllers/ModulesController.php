@@ -25,6 +25,16 @@ class ModulesController extends Controller
 {
 
     /**
+     * @var string 模块路径
+     */
+    private $_baseDirectory = null;
+
+    /**
+     * @var string 模块图标保存路径
+     */
+    private $_iconDestDirectory = null;
+
+    /**
      * 本地放置的模块，不一定有安装到系统中
      *
      * @var array
@@ -34,9 +44,14 @@ class ModulesController extends Controller
     public function init()
     {
         parent::init();
-        $defaultIcon = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/module-icons/default-module-icon.png';
+        $defaultIcon = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/default-module-icon.png';
         $localModules = [];
         $baseDirectory = Yii::getAlias('@app/modules/admin/modules');
+        $this->_baseDirectory = $baseDirectory;
+        $this->_iconDestDirectory = Yii::getAlias('@webroot/assets/t');
+        if (!file_exists($this->_iconDestDirectory)) {
+            FileHelper::createDirectory($this->_iconDestDirectory);
+        }
         $handle = opendir($baseDirectory);
         if ($handle === false) {
             throw new InvalidParamException("Unable to open directory: {$baseDirectory}");
@@ -112,9 +127,9 @@ class ModulesController extends Controller
                     }
                 }
                 if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'icon.png')) {
-                    $dest = Yii::getAlias('@webroot') . "/admin/images/module-icons/{$dir}-icon.png";
-                    !file_exists($dest) && copy($fullDirectory . DIRECTORY_SEPARATOR . 'icon.png', $dest);
-                    $m['icon'] = "/admin/images/module-icons/{$dir}-icon.png";
+                    $iconName = md5("{$dir}-icon") . '.png';
+                    copy($fullDirectory . DIRECTORY_SEPARATOR . 'icon.png', $this->_iconDestDirectory . "/$iconName");
+                    $m['icon'] = "/assets/t/{$iconName}";
                 }
                 $localModules[$dir] = $m;
             }
@@ -260,7 +275,15 @@ class ModulesController extends Controller
     {
         $notInstalledModules = $this->_localModules;
         $installedModules = Yii::$app->getDb()->createCommand('SELECT * FROM {{%module}} ORDER BY [[updated_at]] DESC')->queryAll();
+        if ($installedModules && !file_exists($this->_iconDestDirectory)) {
+            FileHelper::createDirectory($this->_iconDestDirectory);
+        }
         foreach ($installedModules as $key => $module) {
+            $iconName = md5($module['alias'] . '-icon') . '.png';
+            if (!file_exists(Yii::getAlias('@webroot') . $module['icon'])) {
+                copy(Yii::getAlias('@app/modules/admin/modules/' . $module['alias'] . DIRECTORY_SEPARATOR . 'icon.png'), $this->_iconDestDirectory . "/$iconName");
+                $installedModules[$key]['icon'] = "/assets/t/$iconName";
+            }
             $installedModules[$key]['error'] = isset($this->_localModules[$module['alias']]) ? Module::ERROR_NONE : Module::ERROR_NOT_FOUND_DIRECTORY;
             if (isset($notInstalledModules[$module['alias']])) {
                 unset($notInstalledModules[$module['alias']]);
