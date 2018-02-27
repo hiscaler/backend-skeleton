@@ -120,7 +120,7 @@ $title = Yii::t('app', 'Please choice this user can manager categories');
                         id: 'nodes-list',
                         title: "<?= $title ?>" + ' [ ' + t.attr('data-name') + ' ]',
                         content: response,
-                        skin: 'layer-grid-view',
+                        skin: 'layer-fix',
                         area: ['400px', '600px'],
                         yes: function (index, layero) {
                             var nodes = $.fn.zTree.getZTreeObj("__ztree__").getCheckedNodes(true);

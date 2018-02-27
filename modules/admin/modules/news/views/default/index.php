@@ -133,7 +133,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                     $.fn.lock();
                 }, success: function (response) {
                     layer.open({
-                        skin: 'layer-labels',
+                        skin: 'layer-fix',
                         title: $this.attr('title'),
                         content: response,
                         move: false

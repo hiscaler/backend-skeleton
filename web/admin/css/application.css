@@ -1000,10 +1000,10 @@ fieldset.model-rule .list-group li.list-group-item label {
 /*******************************************************************************
  * Layer 定制
  ******************************************************************************/
-body .layer-labels .layui-layer-title {
+body .layer-fix .layui-layer-title {
     font-weight: bold;
 }
-body .layer-labels .layui-layer-content {
+body .layer-fix .layui-layer-content {
     line-height: 19px;
     padding: 5px 5px 10px 5px;
 }
