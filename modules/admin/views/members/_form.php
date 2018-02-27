@@ -29,7 +29,14 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'confirm_password')->passwordInput(['maxlength' => true]) ?>
             <?php endif; ?>
 
-            <?= $form->field($model, 'avatar')->fileInput(['maxlength' => true]) ?>
+            <?php
+            $template = '{label}{input}{thumb}{error}';
+            $thumb = '';
+            if (!$model->isNewRecord && $model->avatar) {
+                $thumb = '<img class="thumbnail" src="' . Yii::$app->getRequest()->getBaseUrl() . $model->avatar . '" />';
+            }
+            $template = str_replace('{thumb}', $thumb, $template);
+            echo $form->field($model, 'avatar', ['template' => $template])->fileInput() ?>
 
             <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
