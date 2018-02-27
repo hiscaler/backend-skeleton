@@ -16,7 +16,11 @@ use app\models\User;
         <?php endif; ?>
     </ul>
     <div class="panels form">
-        <?php $form = ActiveForm::begin(); ?>
+        <?php
+        $form = ActiveForm::begin([
+            'options' => ['enctype' => 'multipart/form-data']
+        ]);
+        ?>
         <div class="tab-panel" id="tab-panel-basic">
             <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
             <?php if ($model->isNewRecord): ?>
@@ -30,6 +34,15 @@ use app\models\User;
             <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'role')->dropDownList(User::roleOptions(), ['prompt' => '']) ?>
+
+            <?php
+            $template = '{label}{input}{thumb}{error}';
+            $thumb = '';
+            if (!$model->isNewRecord && $model->avatar) {
+                $thumb = '<img class="thumbnail" src="' . Yii::$app->getRequest()->getBaseUrl() . $model->avatar . '" />';
+            }
+            $template = str_replace('{thumb}', $thumb, $template);
+            echo $form->field($model, 'avatar', ['template' => $template])->fileInput() ?>
 
             <?= $form->field($model, 'status')->dropDownList(User::statusOptions(), ['prompt' => '']) ?>
         </div>
