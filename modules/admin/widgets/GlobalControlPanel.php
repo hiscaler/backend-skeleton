@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\widgets;
 
+use app\models\Lookup;
 use app\models\Module;
 use Yii;
 use yii\base\Widget;
@@ -17,6 +18,8 @@ class GlobalControlPanel extends Widget
 
     public function getItems()
     {
+        $user = \Yii::$app->getUser();
+        $rbacDebug = Lookup::getValue('system.rbac.debug', true);
         $items = [];
         $request = Yii::$app->getRequest();
         $controller = Yii::$app->controller;
@@ -30,14 +33,25 @@ class GlobalControlPanel extends Widget
             foreach ($ms as $key => $value) {
                 if ((isset($value['forceEmbed']) && $value['forceEmbed'])) {
                     $url = $value['url'];
+                    $r = $url[0];
+                    $rArr = explode('/', $r);
+                    if (!$rbacDebug) {
+                        if ($rArr[0] == 'admin') {
+                            array_shift($rArr);
+                        }
+                        if (!$user->can('admin-' . implode('.', $rArr))) {
+                            continue;
+                        }
+                    }
+
                     $urlControllerId = null;
-                    foreach (explode('/', $url[0]) as $d) {
+                    foreach ($rArr as $d) {
                         if (!empty($d)) {
                             $urlControllerId = $d;
                             break;
                         }
                     }
-                    $url[0] = '/admin/' . $url[0];
+                    $url[0] = '/admin/' . $r;
                     $activeConditions = isset($value['activeConditions']) ? in_array($controllerId, $value['activeConditions']) : $controllerId == $urlControllerId;
                     $rawItems[] = [
                         'label' => Yii::t('app', $value['label']),
@@ -105,6 +119,15 @@ class GlobalControlPanel extends Widget
                     $t['items'] = $moduleMenus;
                     $t['url'] = $moduleMenus[0]['url'];
                 }
+
+                if (!$rbacDebug) {
+                    $rArr = explode('/', trim($t['url'][0], '/'));
+                    $permissionName = array_shift($rArr) . '-' . array_shift($rArr) . '-' . implode('.', $rArr);
+                    if (!$user->can($permissionName)) {
+                        continue;
+                    }
+                }
+
                 $items[] = $t;
             }
         }
