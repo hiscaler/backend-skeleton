@@ -108,6 +108,9 @@ class DefaultController extends BaseController
 
             // 激活的子模块
             foreach ($module->getModules() as $k => $subModule) {
+                if ($k == 'example') {
+                    continue;
+                }
                 if (!$subModule instanceof Module) {
                     $subModule = Yii::$app->getModule("$mainModuleId/$k");
                 }
