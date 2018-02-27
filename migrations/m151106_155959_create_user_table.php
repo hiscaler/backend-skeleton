@@ -25,7 +25,7 @@ class m151106_155959_create_user_table extends Migration
             'password_hash' => $this->string()->notNull()->comment('密码'),
             'password_reset_token' => $this->string()->unique()->comment('密码重置 token'),
             'email' => $this->string(50)->comment('邮箱'),
-            'role' => $this->smallInteger()->notNull()->defaultValue(0)->comment('角色'),
+            'role' => $this->string(64)->comment('角色'),
             'credits_count' => $this->integer()->notNull()->defaultValue(0)->comment('积分'),
             'user_group' => $this->string(20)->comment('用户组'),
             'system_group' => $this->string(20)->comment('系统组'),

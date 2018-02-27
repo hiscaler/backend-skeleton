@@ -20,7 +20,7 @@ use yii\web\IdentityInterface;
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
- * @property integer $role
+ * @property string $role
  * @property integer $credits_count
  * @property string $user_group
  * @property string $system_group
@@ -46,11 +46,6 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_LOCKED = 0; // 锁定状态
     const STATUS_ACTIVE = 1; // 激活状态
 
-    /**
-     * 用户角色
-     */
-    const ROLE_ADMINISTRATOR = 1;
-
     private $_fileUploadConfig;
 
     public function init()
@@ -73,7 +68,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['role', 'credits_count', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['credits_count', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             ['username', 'match', 'pattern' => '/^[a-z0-9]+[a-z0-9-]+[a-z0-9]$/'],
             [['username', 'nickname', 'user_group', 'system_group'], 'string', 'max' => 20],
@@ -85,7 +80,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'email'],
             [['password_reset_token'], 'unique'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['role', 'default', 'value' => 0],
+            ['role', 'string', 'min' => 1, 'max' => 64],
             ['status', 'in', 'range' => array_keys(self::statusOptions())],
             ['avatar', 'file',
                 'extensions' => $this->_fileUploadConfig['extensions'],
@@ -279,13 +274,22 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * 用户角色选项
      *
-     * @return array|mixed
+     * @return array
      */
     public static function roleOptions()
     {
-        $roles = Lookup::getValue('system.user.role');
+        $roles = [];
+        $authManager = Yii::$app->getAuthManager();
+        if ($authManager) {
+            $rawRoles = $authManager->getRoles();
+            foreach ($rawRoles as $role) {
+                $name = $role->name;
+                $role->description && $name .= " [ $role->description ]";
+                $roles[$role->name] = $name;
+            }
+        }
 
-        return is_array($roles) ? $roles : [];
+        return $roles;
     }
 
     /**
@@ -366,6 +370,16 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     // Events
+    private $_roleName = null;
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        if (!$this->getIsNewRecord()) {
+            $this->_roleName = $this->role;
+        }
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -385,6 +399,45 @@ class User extends ActiveRecord implements IdentityInterface
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $authManager = Yii::$app->getAuthManager();
+        if ($authManager) {
+            $roleName = $this->role;
+            $role = !empty($roleName) ? $authManager->getRole($roleName) : null;
+            if ($role) {
+                if ($insert) {
+                    $authManager->assign($role, $this->id);
+                } else {
+                    if ($this->_roleName != $this->role) {
+                        if (!empty($this->_roleName)) {
+                            $oldRole = $authManager->getRole($this->_roleName);
+                            if ($oldRole) {
+                                $authManager->revoke($oldRole, $this->id);
+                            }
+                        }
+                        $authManager->assign($role, $this->id);
+                    }
+                }
+            } elseif (!$insert) {
+                if (!empty($this->_roleName)) {
+                    if ($role = $authManager->getRole($this->_roleName)) {
+                        $authManager->revoke($role, $this->id);
+                    }
+                }
+            }
+        }
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        if ($authManager = Yii::$app->getAuthManager()) {
+            $authManager->revokeAll($this->id);
         }
     }
 

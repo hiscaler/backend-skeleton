@@ -17,7 +17,7 @@ class Toolbar extends Widget
         $user = Yii::$app->getUser();
         if (!$user->isGuest) {
             $items[] = [
-                'label' => $user->getIdentity()->username . (($user->getIdentity()->role == User::ROLE_ADMINISTRATOR) ? ' [ M ]' : ''),
+                'label' => $user->getIdentity()->username,
                 'url' => ['/admin/account/index'],
             ];
 

@@ -39,7 +39,7 @@ class InitController extends Controller
                 'password_hash' => $security->generatePasswordHash('admin'),
                 'password_reset_token' => null,
                 'email' => 'admin@example.com',
-                'role' => User::ROLE_ADMINISTRATOR,
+                'role' => null,
                 'register_ip' => 0,
                 'login_count' => 0,
                 'last_login_ip' => null,
@@ -200,12 +200,6 @@ class InitController extends Controller
                 'system.member.signup.referral.credits' => [
                     'returnType' => Lookup::RETURN_TYPE_INTEGER,
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
-                    'value' => 0,
-                ],
-                // 用户角色
-                'system.user.role' => [
-                    'returnType' => Lookup::RETURN_TYPE_ARRAY,
-                    'inputMethod' => Lookup::INPUT_METHOD_DROPDOWNLIST,
                     'value' => 0,
                 ],
                 // RBAC 调试模式
