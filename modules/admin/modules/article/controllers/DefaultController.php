@@ -46,8 +46,9 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Lists all Article models.
+     * 显示所有单文章
      *
+     * @rbacDescription 单文章列表查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -64,6 +65,7 @@ class DefaultController extends BaseController
     /**
      * Displays a single Article model.
      *
+     * @rbacDescription 单文章详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -79,6 +81,7 @@ class DefaultController extends BaseController
      * Creates a new Article model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 单文章添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -105,6 +108,7 @@ class DefaultController extends BaseController
      * Updates an existing Article model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 单文章更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -132,6 +136,7 @@ class DefaultController extends BaseController
      * Deletes an existing Article model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 单文章删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found

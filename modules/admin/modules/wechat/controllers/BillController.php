@@ -16,6 +16,14 @@ use Yii;
 class BillController extends BaseController
 {
 
+    /**
+     * 对账单下载
+     *
+     * @rbacDescription 微信支付对账单下载权限
+     * @return string
+     * @throws \yii\base\ExitException
+     * @throws \yii\web\RangeNotSatisfiableHttpException
+     */
     public function actionIndex()
     {
         if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {

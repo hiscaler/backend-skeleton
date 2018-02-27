@@ -48,6 +48,7 @@ class DefaultController extends BaseController
     /**
      * Lists all Link models.
      *
+     * @rbacDescription 链接列表查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -65,6 +66,7 @@ class DefaultController extends BaseController
     /**
      * Displays a single Link model.
      *
+     * @rbacDescription 链接详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -79,6 +81,7 @@ class DefaultController extends BaseController
     /**
      * Creates a new Link model.
      *
+     * @rbacDescription 链接添加权限
      * @param null $category
      * @param int $type
      * @param string $urlOpenTarget
@@ -114,6 +117,7 @@ class DefaultController extends BaseController
      * Updates an existing Link model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 链接更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -135,6 +139,7 @@ class DefaultController extends BaseController
      * Deletes an existing Link model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 链接删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -149,6 +154,7 @@ class DefaultController extends BaseController
     /**
      * 切换是否激活开关
      *
+     * @rbacDescription 链接激活状态修改权限
      * @return Response
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\db\Exception

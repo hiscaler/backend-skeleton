@@ -45,6 +45,7 @@ class DefaultController extends BaseController
     /**
      * 数据分析
      *
+     * @rbacDescription 小程序数据分析查看权限
      * @return string
      */
     public function actionIndex()

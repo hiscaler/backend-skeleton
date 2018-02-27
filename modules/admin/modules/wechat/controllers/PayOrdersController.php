@@ -35,6 +35,7 @@ class PayOrdersController extends Controller
     /**
      * Lists all PayOrder models.
      *
+     * @rbacDescription 企业付款订单列表数据查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -51,6 +52,7 @@ class PayOrdersController extends Controller
     /**
      * Displays a single PayOrder model.
      *
+     * @rbacDescription 企业付款订单详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -66,6 +68,7 @@ class PayOrdersController extends Controller
      * Creates a new PayOrder model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 企业付款订单添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -85,6 +88,7 @@ class PayOrdersController extends Controller
      * Updates an existing PayOrder model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 企业付款订单更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -106,6 +110,7 @@ class PayOrdersController extends Controller
      * Deletes an existing PayOrder model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 企业付款订单删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found

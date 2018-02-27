@@ -33,6 +33,7 @@ class DefaultController extends BaseController
     /**
      * Renders the index view for the module
      *
+     * @rbacDescription 微信模块访问权限
      * @return string
      */
     public function actionIndex()

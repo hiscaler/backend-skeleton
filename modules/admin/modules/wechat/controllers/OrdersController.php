@@ -53,6 +53,7 @@ class OrdersController extends BaseController
     /**
      * Lists all Order models.
      *
+     * @rbacDescription 微信订单列表数据查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -69,6 +70,7 @@ class OrdersController extends BaseController
     /**
      * Displays a single Order model.
      *
+     * @rbacDescription 微信订单详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -84,6 +86,7 @@ class OrdersController extends BaseController
      * Updates an existing Order model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 微信订单更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -105,6 +108,7 @@ class OrdersController extends BaseController
      * Deletes an existing Order model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 微信订单删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -119,6 +123,7 @@ class OrdersController extends BaseController
     /**
      * 微信商户平台订单查询
      *
+     * @rbacDescription 微信商户平台订单查询权限
      * @param $id
      * @return string
      * @throws InvalidConfigException
@@ -170,6 +175,7 @@ class OrdersController extends BaseController
     /**
      * 订单退款
      *
+     * @rbacDescription 微信商户平台订单退款权限
      * @param $id
      * @param $refundFee
      * @return Response
@@ -249,6 +255,16 @@ class OrdersController extends BaseController
         }
     }
 
+    /**
+     * 微信商户平台订单退款查询
+     *
+     * @rbacDescription 微信商户平台订单退款查询权限
+     * @param $id
+     * @return string
+     * @throws InvalidConfigException
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
+     */
     public function actionRefundQuery($id)
     {
         if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {

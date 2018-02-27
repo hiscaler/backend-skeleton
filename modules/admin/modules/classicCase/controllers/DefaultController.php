@@ -50,6 +50,7 @@ class DefaultController extends BaseController
     /**
      * Lists all ClassicCase models.
      *
+     * @rbacDescription 案例列表查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -67,6 +68,7 @@ class DefaultController extends BaseController
     /**
      * Displays a single ClassicCase model.
      *
+     * @rbacDescription 案例详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -82,6 +84,7 @@ class DefaultController extends BaseController
      * Creates a new ClassicCase model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 案例添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -117,6 +120,7 @@ class DefaultController extends BaseController
      * Updates an existing ClassicCase model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 案例更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -151,6 +155,7 @@ class DefaultController extends BaseController
      * Deletes an existing ClassicCase model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 案例删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -165,6 +170,7 @@ class DefaultController extends BaseController
     /**
      * Toggle enabled
      *
+     * @rbacDescription 案例激活状态修改权限
      * @return Response
      */
     public function actionToggle()

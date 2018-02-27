@@ -46,6 +46,7 @@ class RefundOrdersController extends BaseController
     /**
      * Lists all OrderRefund models.
      *
+     * @rbacDescription 微信退款订单数据列表查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -62,6 +63,7 @@ class RefundOrdersController extends BaseController
     /**
      * Displays a single OrderRefund model.
      *
+     * @rbacDescription 微信退款订单详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -77,6 +79,7 @@ class RefundOrdersController extends BaseController
      * Creates a new OrderRefund model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 微信退款订单添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -96,6 +99,7 @@ class RefundOrdersController extends BaseController
      * Updates an existing OrderRefund model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
+     * @rbacDescription 微信退款订单更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -117,6 +121,7 @@ class RefundOrdersController extends BaseController
      * Deletes an existing OrderRefund model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
+     * @rbacDescription 微信退款订单删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
