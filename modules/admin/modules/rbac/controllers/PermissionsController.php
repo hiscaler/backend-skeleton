@@ -12,6 +12,7 @@ class PermissionsController extends Controller
     /**
      * 返回定义的所有权限
      *
+     * @rbacDescription 所有定义的权限返回
      * @return Response
      */
     public function actionIndex()
@@ -25,6 +26,7 @@ class PermissionsController extends Controller
     /**
      * 添加权限
      *
+     * @rbacDescription 添加权限
      * @return Response
      */
     public function actionCreate()
@@ -77,6 +79,7 @@ class PermissionsController extends Controller
     /**
      * 删除权限
      *
+     * @rbacDescription 删除权限
      * @param string $name
      * @return Response
      */

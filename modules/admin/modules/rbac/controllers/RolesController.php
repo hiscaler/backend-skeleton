@@ -26,6 +26,12 @@ class RolesController extends Controller
         ];
     }
 
+    /**
+     *返回所有定义的角色
+     *
+     * @rbacDescription 所有角色获取权限
+     * @return Response
+     */
     public function actionIndex()
     {
         return new Response([
@@ -34,6 +40,12 @@ class RolesController extends Controller
         ]);
     }
 
+    /**
+     * 添加角色
+     *
+     * @rbacDescription 角色添加权限
+     * @return Response
+     */
     public function actionCreate()
     {
         $request = Yii::$app->getRequest();
@@ -75,6 +87,7 @@ class RolesController extends Controller
     /**
      * 删除角色
      *
+     * @rbacDescription 角色删除权限
      * @param string $name
      * @return Response
      */
@@ -105,6 +118,7 @@ class RolesController extends Controller
     /**
      * 获取角色关联的权限
      *
+     * @rbacDescription 角色关联的权限数据列表获取权限
      * @param string $roleName
      * @return Response
      */
@@ -121,6 +135,7 @@ class RolesController extends Controller
     /**
      * 添加角色和权限关联关系
      *
+     * @rbacDescription 添加角色和权限关联关系权限
      * @param string $roleName
      * @param string $permissionName
      * @return Response
@@ -150,6 +165,7 @@ class RolesController extends Controller
     /**
      * 添加所有权限至指定的角色
      *
+     * @rbacDescription 添加所有权限至指定的角色权限
      * @param $roleName
      * @return Response
      */
@@ -191,6 +207,7 @@ class RolesController extends Controller
     /**
      * 移除角色和权限关联关系
      *
+     * @rbacDescription 移除角色和权限关联关系权限
      * @param string $roleName
      * @param string $permissionName
      * @return Response
@@ -218,6 +235,7 @@ class RolesController extends Controller
     /**
      * 删除角色关联的所有权限
      *
+     * @rbacDescription 删除角色关联的所有权限
      * @param string $name
      * @return Response
      */

@@ -12,6 +12,7 @@ class UsersController extends Controller
     /**
      * 获取所有用户
      *
+     * @rbacDescription 获取所有用户权限
      * @return Response
      */
     public function actionIndex()
@@ -59,6 +60,7 @@ class UsersController extends Controller
     /**
      * 用户分配的角色
      *
+     * @rbacDescription 获取用户分配的角色权限
      * @param integer|mixed $id 用户 id
      * @return Response
      */
@@ -77,6 +79,7 @@ class UsersController extends Controller
     /**
      * 用户分配的权限
      *
+     * @rbacDescription 获取用户分配的权限
      * @param integer|mixed $id
      * @return Response
      */
@@ -92,6 +95,14 @@ class UsersController extends Controller
         ]);
     }
 
+    /**
+     * 用户授权列表
+     *
+     * @rbacDescription 获取用户授权列表权限
+     * @param null $id
+     * @return Response
+     * @throws \yii\db\Exception
+     */
     public function actionAuths($id = null)
     {
         $items = [];
@@ -127,6 +138,7 @@ class UsersController extends Controller
     /**
      * 分配用户角色
      *
+     * @rbacDescription 分配用户角色权限
      * @return Response
      */
     public function actionAssign()
@@ -157,6 +169,7 @@ class UsersController extends Controller
     /**
      * 撤销用户角色
      *
+     * @rbacDescription 撤销用户角色权限
      * @return Response
      */
     public function actionRevoke()
