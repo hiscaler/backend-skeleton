@@ -9,8 +9,8 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="module-index">
     <ul class="tabs-common">
-        <li class="active"><a href="javascript:;" data-toggle="panel-installed"><?= Yii::t('module', 'Installed modules') ?></a></li>
-        <li><a href="javascript:;" data-toggle="panel-notinstalled"><?= Yii::t('module', 'Pending install modules') ?></a></li>
+        <li id="tab-installed" class="active"><a href="javascript:;" data-toggle="panel-installed"><?= Yii::t('module', 'Installed modules') ?><span class="badges badges-red"><?= count($installedModules) ?></span></a></li>
+        <li id="tab-not-installed"><a href="javascript:;" data-toggle="panel-notinstalled"><?= Yii::t('module', 'Pending install modules') ?><span class="badges badges-red"><?= count($notInstalledModules) ?></span></a></li>
     </ul>
     <div class="panels">
         <div id="panel-installed" class="tab-panel">
@@ -130,6 +130,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             if ($('#panel-notinstalled').find('li').length === 0) {
                                 $('#panel-notinstalled').append('<div class="notice">所有模块都已经安装完毕。</div>');
                             }
+
+                            // 更新统计数据
+                            $('#tab-installed span').html(parseInt($('#tab-installed span').html()) + 1);
+                            $('#tab-not-installed span').html(parseInt($('#tab-not-installed span').html()) - 1);
                         } else {
                             if ($('#panel-notinstalled').find('ul').length === 0) {
                                 $('#panel-notinstalled .notice').remove();
@@ -141,6 +145,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             if ($('#panel-installed').find('li').length === 0) {
                                 $('#panel-installed').append('<div class="notice">所有模块都已经卸载完毕。</div>');
                             }
+
+                            // 更新统计数据
+                            $('#tab-installed span').html(parseInt($('#tab-installed span').html()) - 1);
+                            $('#tab-not-installed span').html(parseInt($('#tab-not-installed span').html()) + 1);
 
                             $('#control-panel-module-' + $t.attr('data-key')).parent().remove();
                         }
