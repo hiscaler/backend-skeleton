@@ -244,7 +244,7 @@ class FileUploadConfig extends BaseActiveRecord
                 $attributeLabels = Yii::createObject($modelNamespace)->attributeLabels();
                 foreach ($tableSchema->columns as $name => $column) {
                     if ($column->type === 'string' && (in_array($name, ['avatar', 'icon', 'picture', 'pic', 'image', 'img']) || strpos($name, '_path') !== false)) {
-                        $options[$modelNamespace . ':' . $name] = '「' . Yii::t($isCore ? 'model' : "$moduleName.model", Inflector::camel2words($modelName)) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
+                        $options[$modelNamespace . ':' . $name] = '「' . Yii::t($isCore ? 'model' : "$moduleName", Inflector::camel2words($modelName)) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
                     }
                 }
             } catch (\Exception $ex) {
