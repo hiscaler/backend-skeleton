@@ -8,7 +8,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel \app\modules\admin\modules\slide\models\SlideSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('slide.model', 'Slides');
+$this->title = Yii::t('slide', 'Slides');
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [

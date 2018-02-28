@@ -3,7 +3,7 @@
 /* @var $model \app\modules\admin\modules\slide\models\Slide */
 
 $this->title = Yii::t('app', 'Create');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('slide.model', 'Slides'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('slide', 'Slides'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [

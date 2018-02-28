@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Slide */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('slide.model', 'Slides'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('slide', 'Slides'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [
