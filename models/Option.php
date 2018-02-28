@@ -2,9 +2,7 @@
 
 namespace app\models;
 
-use yadjet\helpers\TreeFormatHelper;
 use Yii;
-use yii\db\Query;
 use yii\helpers\Inflector;
 
 class Option
@@ -129,7 +127,7 @@ class Option
                     if ($namespace) {
                         $models[$table] = "app\\modules\\admin\\modules\\$moduleName\\models\\$modelName";
                     } else {
-                        $models[$table] = "$moduleName: " . Yii::t("$moduleName.model", Inflector::camel2words($modelName));
+                        $models[$table] = "$moduleName: " . Yii::t("$moduleName", Inflector::camel2words($modelName));
                     }
                 }
             }

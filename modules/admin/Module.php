@@ -19,6 +19,18 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
+        $i18nTranslations = [
+            '*' => [
+                'class' => '\yii\i18n\PhpMessageSource',
+                'basePath' => '@app/messages',
+            ]
+        ];
+        foreach (\app\models\Module::getInstalledModules() as $installedModule) {
+            $i18nTranslations[$installedModule['alias'] . '*'] = [
+                'class' => '\yii\i18n\PhpMessageSource',
+                'basePath' => "@app/modules/admin/modules/{$installedModule['alias']}/messages",
+            ];
+        }
         \Yii::$app->setComponents([
             'user' => [
                 'class' => 'yii\web\User',
@@ -48,16 +60,7 @@ class Module extends \yii\base\Module
             ],
             'i18n' => [
                 'class' => 'yii\i18n\I18N',
-                'translations' => [
-                    '*' => [
-                        'class' => '\yii\i18n\PhpMessageSource',
-                        'basePath' => '@app/messages',
-                    ],
-                    $this->id => [
-                        'class' => '\yii\i18n\PhpMessageSource',
-                        'basePath' => $this->basePath . '/messages',
-                    ],
-                ],
+                'translations' => $i18nTranslations,
             ],
             'authManager' => [
                 'class' => 'yii\rbac\DbManager',

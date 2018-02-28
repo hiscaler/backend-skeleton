@@ -107,7 +107,7 @@ class Formatter extends \yii\i18n\Formatter
             $value = Yii::t('model', substr($value, 11));
         } else {
             list($moduleName, $modelName) = explode('\models\\', substr($value, 26));
-            $value = Yii::t("$moduleName.model", $modelName);
+            $value = Yii::t($moduleName, $modelName);
         }
 
         return $value;
