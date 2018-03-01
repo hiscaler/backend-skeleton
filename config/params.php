@@ -21,6 +21,12 @@ return [
         ],
          */
         'System Manage' => [
+            'db' => [
+                'id' => 'db',
+                'label' => 'Db',
+                'url' => ['db/index'],
+                'forceEmbed' => true,
+            ],
             'app-models-User' => [
                 'id' => 'users',
                 'label' => 'Users',
