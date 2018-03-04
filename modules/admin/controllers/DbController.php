@@ -54,6 +54,7 @@ class DbController extends Controller
     public function actionIndex()
     {
         $histories = FileHelper::findDirectories(Yii::getAlias('@app/backup'));
+        rsort($histories);
         foreach ($histories as $key => $history) {
             $name = basename($history, '.bak');
             $histories[$key] = [
@@ -82,7 +83,7 @@ class DbController extends Controller
         $schema = $db->getSchema();
         $tablePrefix = $db->tablePrefix;
         $tables = $schema->getTableNames();
-        $backupDir = date('Ymd');
+        $backupDir = date('YmdHis');
         $backupPath = Yii::getAlias('@app/backup/' . $backupDir);
         if (!file_exists($backupDir)) {
             FileHelper::createDirectory($backupPath);
