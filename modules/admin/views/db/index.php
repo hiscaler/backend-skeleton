@@ -9,10 +9,14 @@ use yii\helpers\Html;
 
 $this->title = '数据库管理';
 $this->params['breadcrumbs'][] = $this->title;
-?>
 
-<a href="<?= \yii\helpers\Url::toRoute('backup') ?>">备份数据库</a>
+?>
 <?php if ($histories): ?>
+    <?php
+    $this->params['menus'] = [
+        ['label' => '备份数据库', 'url' => ['backup'], 'htmlOptions' => ['class' => 'btn-db-backup']],
+    ];
+    ?>
     <div class="grid-view">
         <table class="table">
             <thead>
@@ -39,6 +43,39 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 <?php else: ?>
     <?= \app\modules\admin\components\MessageBox::widget([
-        'message' => '您还没有备份过数据库。<a class="button" href="' . \yii\helpers\Url::toRoute('backup') . '">开始备份数据库</a>',
+        'message' => '您还没有备份过数据库。<a class="button btn-db-backup" href="' . \yii\helpers\Url::toRoute('backup') . '">备份数据库</a>',
     ]) ?>
 <?php endif; ?>
+<?php \app\modules\admin\components\JsBlock::begin() ?>
+    <script type="text/javascript">
+        $(function () {
+            $('.btn-db-backup').click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('href'),
+                    dataType: 'json',
+                    beforeSend: function (xhr) {
+                        $.fn.lock();
+                    }, success: function (response) {
+                        if (response.success) {
+                            layer.msg('数据库备份成功。', {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                window.document.location.href = '<?= \yii\helpers\Url::toRoute(['index']) ?>';
+                            });
+                        } else {
+                            layer.alert(response.error.message);
+                        }
+                        $.fn.unlock();
+                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText);
+                        $.fn.unlock();
+                    }
+                });
+
+                return false;
+            });
+        });
+    </script>
+<?php \app\modules\admin\components\JsBlock::end() ?>

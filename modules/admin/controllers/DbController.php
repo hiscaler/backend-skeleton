@@ -3,13 +3,13 @@
 namespace app\modules\admin\controllers;
 
 use DateTime;
-use EasyWeChat\Store\Store;
-use PDOException;
 use Yii;
 use yii\db\Query;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\FileHelper;
-use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * 数据库管理
@@ -19,6 +19,32 @@ use yii\web\NotFoundHttpException;
  */
 class DbController extends Controller
 {
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'backup', 'restore'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'backup' => ['post'],
+                    'restore' => ['post'],
+                ],
+            ],
+        ];
+    }
 
     /**
      * 备份历史记录
@@ -85,9 +111,18 @@ class DbController extends Controller
             }
         }
 
-        return $this->render('backup', [
-            'processTables' => $processTables,
-        ]);
+        if (Yii::$app->getRequest()->getIsAjax()) {
+            return new Response([
+                'format' => Response::FORMAT_JSON,
+                'data' => [
+                    'success' => true,
+                ]
+            ]);
+        } else {
+            return $this->render('backup', [
+                'processTables' => $processTables,
+            ]);
+        }
     }
 
     /**
