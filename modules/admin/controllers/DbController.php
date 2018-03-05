@@ -157,18 +157,14 @@ class DbController extends Controller
                         if (!in_array($table, $tables)) {
                             continue;
                         }
-                        $tableSchema = $db->getTableSchema($table);
-                        foreach ($tableSchema->foreignKeys as $def) {
-                            $tmpTable = $def[0];
-                            $tmpTableSchema = $db->getTableSchema($tmpTable);
-                            foreach ($tmpTableSchema->foreignKeys as $tmpDef) {
-                                $cmd->delete($tmpDef[0])->execute();
-                            }
-                            $cmd->delete($tmpTable)->execute();
-                        }
 
                         if ($currentTable != $table) {
-                            $cmd->truncateTable($table)->execute();
+                            $tableSchema = $db->getTableSchema($table);
+                            if ($tableSchema->foreignKeys) {
+                                $cmd->delete($table)->execute();
+                            } else {
+                                $cmd->truncateTable($table)->execute();
+                            }
                         }
                         $rows = $rawData['data'];
                         if (!$rows) {
