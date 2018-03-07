@@ -55,26 +55,30 @@ class ImageController extends BaseController
 
         switch ($imgType) {
             case IMAGETYPE_GIF:
-                $ext = 'gif';
+                $extensionName = 'gif';
                 break;
 
             case IMAGETYPE_JPEG:
-                $ext = 'jpg';
+                $extensionName = 'jpg';
                 break;
 
             case IMAGETYPE_PNG:
-                $ext = 'png';
+                $extensionName = 'png';
                 break;
 
             case IMAGETYPE_BMP:
-                $ext = 'bmp';
+                $extensionName = 'bmp';
                 break;
 
             case IMAGETYPE_JPEG2000:
-                $ext = 'jpeg';
+                $extensionName = 'jpeg';
+                break;
+
+            default:
+                $extensionName = 'jpg';
                 break;
         }
-        $filename = md5($url) . ".$ext"; // 源文件名称
+        $filename = md5($url) . ".$extensionName"; // 源文件名称
         $path = Yii::getAlias('@runtime/images/' . substr($filename, 0, 2) . DIRECTORY_SEPARATOR . substr($filename, 2, 2));
         if (!file_exists($path)) {
             FileHelper::createDirectory($path);
@@ -88,7 +92,7 @@ class ImageController extends BaseController
             // 返回原始图片
             $img = isset($img) ? $img : file_get_contents($beforeFile);
         } else {
-            $afterFile = substr($beforeFile, 0, -(strlen($ext) + 1)) . "-$size.$ext";
+            $afterFile = substr($beforeFile, 0, -(strlen($extensionName) + 1)) . "-$size.$extensionName";
             if (!file_exists($afterFile)) {
                 (new Imagine())
                     ->open($beforeFile)
