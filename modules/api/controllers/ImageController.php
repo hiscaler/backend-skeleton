@@ -3,8 +3,11 @@
 namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\BaseController;
+use Imagine\Gd\Imagine;
+use Imagine\Image\Box;
 use Yii;
 use yii\base\InvalidArgumentException;
+use yii\helpers\FileHelper;
 use yii\helpers\StringHelper;
 use yii\web\Response;
 
@@ -23,13 +26,14 @@ class ImageController extends BaseController
      * @param string $action
      * @param $url
      * @param null $size
-     * @return \yii\console\Response|Response
+     * @return \yii\web\Response|Response
+     * @throws \yii\base\Exception
      */
-    public function actionIndex($action = 'clip', $url, $size = null)
+    public function actionIndex($action = 'thumb', $url, $size = null)
     {
-        $actions = ['clip'];
+        $actions = ['thumb'];
         if (!in_array($action, $actions)) {
-            $action = 'clip';
+            $action = 'thumb';
         }
         if (stripos($url, 'http') === false) {
             $url = StringHelper::base64UrlDecode($url);
@@ -37,16 +41,61 @@ class ImageController extends BaseController
         if (stripos($url, 'http') === false) {
             throw new InvalidArgumentException('无效的 p 参数。');
         }
-        list($imgWidth, $imgHeight) = getimagesize($url);
+        list($imgWidth, $imgHeight, $imgType) = getimagesize($url);
         if (!$imgWidth || !$imgHeight) {
             throw new InvalidArgumentException('无效的图片。');
         }
-        $cacheKey = 'api-image-index-' . md5($action . $url . $size);
-        $cache = Yii::$app->getCache();
-        $img = $cache->get($cacheKey);
-        if ($img === false) {
+
+        $size = trim(strtolower($size));
+        if ($size && strpos($size, 'x')) {
+            list($width, $height) = explode('x', $size);
+        } else {
+            $size = null;
+        }
+
+        switch ($imgType) {
+            case IMAGETYPE_GIF:
+                $ext = 'gif';
+                break;
+
+            case IMAGETYPE_JPEG:
+                $ext = 'jpg';
+                break;
+
+            case IMAGETYPE_PNG:
+                $ext = 'png';
+                break;
+
+            case IMAGETYPE_BMP:
+                $ext = 'bmp';
+                break;
+
+            case IMAGETYPE_JPEG2000:
+                $ext = 'jpeg';
+                break;
+        }
+        $filename = md5($url) . ".$ext"; // 源文件名称
+        $path = Yii::getAlias('@runtime/images/' . substr($filename, 0, 2) . DIRECTORY_SEPARATOR . substr($filename, 2, 2));
+        if (!file_exists($path)) {
+            FileHelper::createDirectory($path);
+        }
+        $beforeFile = $path . DIRECTORY_SEPARATOR . $filename;
+        if (!file_exists($beforeFile)) {
             $img = file_get_contents($url);
-            $cache->set($cacheKey, $img, 0);
+            file_put_contents($beforeFile, $img);
+        }
+        if ($size == null) {
+            // 返回原始图片
+            $img = isset($img) ? $img : file_get_contents($beforeFile);
+        } else {
+            $afterFile = substr($beforeFile, 0, -(strlen($ext) + 1)) . "-$size.$ext";
+            if (!file_exists($afterFile)) {
+                (new Imagine())
+                    ->open($beforeFile)
+                    ->thumbnail(new Box($width, $height))
+                    ->save($afterFile);
+            }
+            $img = file_get_contents($afterFile);
         }
 
         $response = \Yii::$app->getResponse();
