@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 use app\modules\api\extensions\BaseController;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
+use Imagine\Image\ImageInterface;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\helpers\FileHelper;
@@ -87,12 +88,20 @@ class ImageController extends BaseController
             } else {
                 $width = $height = (int) $size;
             }
-            $size = "{$width}x{$height}";
-            $afterFile = substr($beforeFile, 0, -(strlen($extensionName) + 1)) . "-$size.$extensionName";
+
+            if ($width > $imgWidth) {
+                $width = $imgWidth;
+                $height = $imgHeight;
+                $sign = "0x0";
+            } else {
+                $sign = "{$width}x{$height}";
+            }
+
+            $afterFile = substr($beforeFile, 0, -(strlen($extensionName) + 1)) . "-$sign.$extensionName";
             if (!file_exists($afterFile)) {
                 (new Imagine())
                     ->open($beforeFile)
-                    ->thumbnail(new Box($width, $height))
+                    ->thumbnail(new Box($width, $height), ImageInterface::THUMBNAIL_OUTBOUND)
                     ->save($afterFile);
             }
             $img = file_get_contents($afterFile);
