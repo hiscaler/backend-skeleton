@@ -3,12 +3,11 @@
 namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\BaseController;
-use Imagine\Gd\Imagine;
-use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\helpers\FileHelper;
+use yii\imagine\Image;
 use yii\web\Response;
 
 /**
@@ -98,13 +97,12 @@ class ImageController extends BaseController
             }
 
             $afterFile = substr($beforeFile, 0, -(strlen($extensionName) + 1)) . "-$sign.$extensionName";
-            if (!file_exists($afterFile)) {
-                (new Imagine())
-                    ->open($beforeFile)
-                    ->thumbnail(new Box($width, $height), ImageInterface::THUMBNAIL_OUTBOUND)
+            if (file_exists($afterFile)) {
+                $img = file_get_contents($afterFile);
+            } else {
+                $img = Image::thumbnail($beforeFile, $width, $height, ImageInterface::THUMBNAIL_OUTBOUND)
                     ->save($afterFile);
             }
-            $img = file_get_contents($afterFile);
         } else {
             // 返回原始图片
             $img = isset($img) ? $img : file_get_contents($beforeFile);
