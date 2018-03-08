@@ -39,7 +39,7 @@ class ImageController extends BaseController
             $url = StringHelper::base64UrlDecode($url);
         }
         if (stripos($url, 'http') === false) {
-            throw new InvalidArgumentException('无效的 p 参数。');
+            throw new InvalidArgumentException('无效的 URL 参数。');
         }
         list($imgWidth, $imgHeight, $imgType) = getimagesize($url);
         if (!$imgWidth || !$imgHeight) {
