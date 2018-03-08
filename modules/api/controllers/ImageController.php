@@ -8,7 +8,6 @@ use Imagine\Image\Box;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\helpers\FileHelper;
-use yii\helpers\StringHelper;
 use yii\web\Response;
 
 /**
@@ -24,7 +23,7 @@ class ImageController extends BaseController
      * 图片处理
      *
      * @param string $action
-     * @param $url
+     * @param $url 使用 urlencode 编码过的字符串
      * @param null $size
      * @return \yii\web\Response|Response
      * @throws \yii\base\Exception
@@ -35,10 +34,8 @@ class ImageController extends BaseController
         if (!in_array($action, $actions)) {
             $action = 'thumb';
         }
-        if (stripos($url, 'http') === false) {
-            $url = StringHelper::base64UrlDecode($url);
-        }
-        if (stripos($url, 'http') === false) {
+        $url = urldecode($url);
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('无效的 URL 参数。');
         }
         list($imgWidth, $imgHeight, $imgType) = getimagesize($url);
