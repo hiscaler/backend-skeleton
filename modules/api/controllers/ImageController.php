@@ -43,13 +43,6 @@ class ImageController extends BaseController
             throw new InvalidArgumentException('无效的图片。');
         }
 
-        $size = trim(strtolower($size));
-        if ($size && strpos($size, 'x')) {
-            list($width, $height) = explode('x', $size);
-        } else {
-            $size = null;
-        }
-
         switch ($imgType) {
             case IMAGETYPE_GIF:
                 $extensionName = 'gif';
@@ -85,10 +78,16 @@ class ImageController extends BaseController
             $img = file_get_contents($url);
             file_put_contents($beforeFile, $img);
         }
-        if ($size == null) {
-            // 返回原始图片
-            $img = isset($img) ? $img : file_get_contents($beforeFile);
-        } else {
+
+        $size = trim(strtolower($size));
+        if ($size) {
+            if (strpos($size, 'x')) {
+                list($width, $height) = explode('x', $size);
+                $height || $height = $width;
+            } else {
+                $width = $height = (int) $size;
+            }
+            $size = "{$width}x{$height}";
             $afterFile = substr($beforeFile, 0, -(strlen($extensionName) + 1)) . "-$size.$extensionName";
             if (!file_exists($afterFile)) {
                 (new Imagine())
@@ -97,6 +96,9 @@ class ImageController extends BaseController
                     ->save($afterFile);
             }
             $img = file_get_contents($afterFile);
+        } else {
+            // 返回原始图片
+            $img = isset($img) ? $img : file_get_contents($beforeFile);
         }
 
         $response = \Yii::$app->getResponse();
