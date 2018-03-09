@@ -24,7 +24,7 @@ class ImageController extends BaseController
      *
      * @param string $action
      * @param $url 使用 urlencode 编码过的字符串
-     * @param null $size
+     * @param null $size 格式为宽度x高度，比如：60x90，如果只输入一个数字，则表示高度和宽度一致
      * @return \yii\web\Response|Response
      * @throws \yii\base\Exception
      */
