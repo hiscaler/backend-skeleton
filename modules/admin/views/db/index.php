@@ -22,19 +22,19 @@ $this->params['breadcrumbs'][] = $this->title;
             <thead>
             <tr>
                 <th>序号</th>
-                <th>名称</th>
                 <th>备份时间</th>
-                <th class="buttons-2 last">&nbsp;</th>
+                <th>名称</th>
+                <th class="button-1 last">&nbsp;</th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($histories as $i => $history): ?>
                 <tr>
                     <td class="serial-number"><?= $i + 1 ?></td>
-                    <td><?= $history['name'] ?></td>
                     <td class="datetime"><?= $history['date'] ?></td>
+                    <td><?= $history['name'] ?></td>
                     <td>
-                        <a href="<?= \yii\helpers\Url::toRoute(['restore', 'name' => $history['name']]) ?>">恢复备份</a>
+                        <a data-method="POST" data-confirm="是否确认恢复该备份？" title="恢复数据库备份" href="<?= \yii\helpers\Url::toRoute(['restore', 'name' => $history['name']]) ?>"><span class="glyphicon glyphicon-restore"></span></a>
                     </td>
                 </tr>
             <?php endforeach; ?>
