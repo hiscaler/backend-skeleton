@@ -9,10 +9,13 @@ use yii\helpers\Html;
 
 $this->title = '数据库管理';
 $this->params['breadcrumbs'][] = $this->title;
-
-?>
-<?php if ($histories): ?>
-    <?php
+$session = Yii::$app->getSession();
+if ($session->hasFlash('notice')) {
+    echo \app\modules\admin\components\MessageBox::widget([
+        'message' => $session->getFlash('notice'),
+    ]);
+}
+if ($histories):
     $this->params['menus'] = [
         ['label' => '备份数据库', 'url' => ['backup'], 'htmlOptions' => ['class' => 'btn-db-backup']],
     ];

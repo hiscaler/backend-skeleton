@@ -147,35 +147,44 @@ class DbController extends Controller
             $tables = $db->getSchema()->getTableNames();
             $files = FileHelper::findFiles($path);
             $currentTable = null;
-            foreach ($files as $file) {
-                $data = file_get_contents($file);
-                if ($data !== false) {
-                    $rawData = gzuncompress($data);
-                    if ($rawData !== false) {
-                        $rawData = unserialize($rawData);
-                        $table = $tablePrefix . $rawData['table'];
-                        if (!in_array($table, $tables)) {
-                            continue;
-                        }
-
-                        if ($currentTable != $table) {
-                            $tableSchema = $db->getTableSchema($table);
-                            if ($tableSchema->foreignKeys) {
-                                $cmd->delete($table)->execute();
-                            } else {
-                                $cmd->truncateTable($table)->execute();
+            $transaction = $db->beginTransaction();
+            try {
+                foreach ($files as $file) {
+                    $data = file_get_contents($file);
+                    if ($data !== false) {
+                        $rawData = gzuncompress($data);
+                        if ($rawData !== false) {
+                            $rawData = unserialize($rawData);
+                            $table = $tablePrefix . $rawData['table'];
+                            if (!in_array($table, $tables)) {
+                                continue;
                             }
+
+                            if ($currentTable != $table) {
+                                $tableSchema = $db->getTableSchema($table);
+                                if ($tableSchema->foreignKeys) {
+                                    $cmd->delete($table)->execute();
+                                } else {
+                                    $cmd->truncateTable($table)->execute();
+                                }
+                            }
+                            $rows = $rawData['data'];
+                            if (!$rows) {
+                                continue;
+                            }
+                            $cmd->batchInsert($table, array_keys($rows[0]), $rows)->execute();
+                        } else {
+                            throw new \Exception(basename($file) . ' 文件读取失败。');
                         }
-                        $rows = $rawData['data'];
-                        if (!$rows) {
-                            continue;
-                        }
-                        $cmd->batchInsert($table, array_keys($rows[0]), $rows)->execute();
-                    } else {
-                        throw new \Exception(basename($file) . ' 文件读取失败。');
                     }
                 }
+                $transaction->commit();
+                Yii::$app->getSession()->setFlash('notice', "$name 恢复成功。");
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->getSession()->setFlash('notice', "$name 恢复失败，失败原因：" . $e->getMessage());
             }
+            $this->redirect(['index']);
         } else {
             throw new NotFoundHttpException("$name 备份不存在。");
         }
