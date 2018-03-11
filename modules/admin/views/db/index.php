@@ -27,7 +27,7 @@ if ($histories):
                 <th>序号</th>
                 <th>备份时间</th>
                 <th>名称</th>
-                <th class="button-1 last">&nbsp;</th>
+                <th class="buttons-2 last">&nbsp;</th>
             </tr>
             </thead>
             <tbody>
@@ -38,6 +38,7 @@ if ($histories):
                     <td><?= $history['name'] ?></td>
                     <td>
                         <a data-method="POST" data-confirm="是否确认恢复该备份？" title="恢复数据库备份" href="<?= \yii\helpers\Url::toRoute(['restore', 'name' => $history['name']]) ?>"><span class="glyphicon glyphicon-restore"></span></a>
+                        <a data-method="POST" data-confirm="是否确认删除该备份？" title="删除数据库备份" href="<?= \yii\helpers\Url::toRoute(['delete', 'name' => $history['name']]) ?>"><span class="glyphicon glyphicon-trash"></span></a>
                     </td>
                 </tr>
             <?php endforeach; ?>

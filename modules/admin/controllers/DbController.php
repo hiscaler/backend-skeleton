@@ -30,7 +30,7 @@ class DbController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'backup', 'restore'],
+                        'actions' => ['index', 'backup', 'restore', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -41,6 +41,7 @@ class DbController extends Controller
                 'actions' => [
                     'backup' => ['post'],
                     'restore' => ['post'],
+                    'delete' => ['post'],
                 ],
             ],
         ];
@@ -188,6 +189,26 @@ class DbController extends Controller
         } else {
             throw new NotFoundHttpException("$name 备份不存在。");
         }
+    }
+
+    /**
+     * 删除数据库备份
+     *
+     * @param $name
+     * @throws NotFoundHttpException
+     * @throws \yii\base\ErrorException
+     */
+    public function actionDelete($name)
+    {
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', 0);
+        $path = Yii::getAlias("@app/backup/$name");
+        if (file_exists($path)) {
+            FileHelper::removeDirectory($path);
+        } else {
+            throw new NotFoundHttpException("$name 备份不存在。");
+        }
+        $this->redirect(['index']);
     }
 
 }
