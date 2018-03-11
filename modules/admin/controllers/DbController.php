@@ -179,10 +179,10 @@ class DbController extends Controller
                     }
                 }
                 $transaction->commit();
-                Yii::$app->getSession()->setFlash('notice', "$name 恢复成功。");
+                Yii::$app->getSession()->setFlash('notice', "$name 备份恢复成功。");
             } catch (\Exception $e) {
                 $transaction->rollBack();
-                Yii::$app->getSession()->setFlash('notice', "$name 恢复失败，失败原因：" . $e->getMessage());
+                Yii::$app->getSession()->setFlash('notice', "$name 备份恢复失败，失败原因：" . $e->getMessage());
             }
             $this->redirect(['index']);
         } else {
