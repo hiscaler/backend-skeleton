@@ -102,7 +102,7 @@ class SiteLogsController extends Controller
     {
         $query = QueryConditionCache::get(AccessStatisticSiteLog::class);
         if ($query) {
-            $items = $query->orderBy(['id' => SORT_DESC])->all();
+            $items = $query->orderBy(['ip' => SORT_ASC])->all();
         } else {
             $items = AccessStatisticSiteLog::find()->all();
         }

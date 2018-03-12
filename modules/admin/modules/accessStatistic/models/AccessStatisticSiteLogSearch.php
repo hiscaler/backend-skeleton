@@ -59,7 +59,7 @@ class AccessStatisticSiteLogSearch extends AccessStatisticSiteLog
             ],
             'sort' => [
                 'defaultOrder' => [
-                    'id' => SORT_DESC,
+                    'ip' => SORT_ASC,
                 ]
             ]
         ]);
