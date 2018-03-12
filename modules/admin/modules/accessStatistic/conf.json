@@ -1,0 +1,22 @@
+{
+    "name": "访问统计",
+    "author": "hiscaler",
+    "version": "0.0.1",
+    "description": "访问统计模块",
+    "url": "http://www.github.com/hiscaler",
+    "menus": [
+        {
+            "label": "站点管理",
+            "url": [
+                "accessStatistic/default/index"
+            ]
+        },
+        {
+            "label": "统计数据",
+            "url": [
+                "accessStatistic/site-logs/index"
+            ]
+        }
+    ],
+    "depends": []
+}
