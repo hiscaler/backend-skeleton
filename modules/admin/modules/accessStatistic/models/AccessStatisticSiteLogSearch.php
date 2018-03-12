@@ -2,10 +2,10 @@
 
 namespace app\modules\admin\modules\accessStatistic\models;
 
-use Yii;
+use DateTime;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLog;
+use yii\db\Query;
 
 /**
  * AccessStatisticSiteLogSearch represents the model behind the search form of `app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLog`.
@@ -13,14 +13,19 @@ use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLog;
 class AccessStatisticSiteLogSearch extends AccessStatisticSiteLog
 {
 
+    public $ip_repeat_times;
+    public $access_begin_datetime;
+    public $access_end_datetime;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'site_id', 'access_datetime'], 'integer'],
+            [['site_id', 'ip_repeat_times'], 'integer'],
             [['ip', 'referrer'], 'safe'],
+            [['access_begin_datetime', 'access_end_datetime'], 'safe'],
         ];
     }
 
@@ -60,14 +65,39 @@ class AccessStatisticSiteLogSearch extends AccessStatisticSiteLog
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
             'site_id' => $this->site_id,
-            'access_datetime' => $this->access_datetime,
         ]);
+
+        if (!$this->access_begin_datetime || !$this->access_end_datetime) {
+            $this->access_begin_datetime = $this->access_end_datetime = (new DateTime())->setTime(0, 0, 0)->format('Y-m-d');
+        }
+
+        $query->andWhere(['between', 'access_datetime', (new DateTime($this->access_begin_datetime))->setTime(0, 0, 0)->getTimestamp(), (new DateTime($this->access_end_datetime))->setTime(23, 59, 59)->getTimestamp()]);
 
         $query->andFilterWhere(['like', 'ip', $this->ip])
             ->andFilterWhere(['like', 'referrer', $this->referrer]);
 
+        if ($this->ip_repeat_times) {
+            $subQuery = (new Query())->select(['ip', 'COUNT(*) AS c'])
+                ->from('{{%access_statistic_site_log}}')
+                ->groupBy('ip')
+                ->having('c >= :c', [':c' => $this->ip_repeat_times])
+                ->all();
+            $query->andWhere(['IN', 'ip', $subQuery]);
+        }
+
+//        echo $query->createCommand()->getRawSql();exit;
+
         return $dataProvider;
     }
+
+    public function attributeLabels()
+    {
+        return array_merge(parent::attributeLabels(), [
+            'ip_repeat_times' => 'IP 重复次数',
+            'access_begin_datetime' => '开始时间',
+            'access_end_datetime' => '结束时间',
+        ]);
+    }
+
 }

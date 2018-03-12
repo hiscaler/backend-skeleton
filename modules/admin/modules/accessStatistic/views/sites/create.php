@@ -3,8 +3,8 @@
 /* @var $this yii\web\View */
 /* @var $model app\modules\admin\modules\accessStatistic\models\AccessStatisticSite */
 
-$this->title = 'Create Access Statistic Site';
-$this->params['breadcrumbs'][] = ['label' => 'Access Statistic Sites', 'url' => ['index']];
+$this->title = '添加';
+$this->params['breadcrumbs'][] = ['label' => '访问统计站点管理', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [

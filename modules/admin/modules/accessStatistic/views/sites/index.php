@@ -8,7 +8,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Access Statistic Sites';
+$this->title = '访问统计站点管理';
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [

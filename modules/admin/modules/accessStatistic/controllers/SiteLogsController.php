@@ -5,7 +5,7 @@ namespace app\modules\admin\modules\accessStatistic\controllers;
 use Yii;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLog;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLogSearch;
-use yii\web\Controller;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -14,14 +14,25 @@ use yii\filters\VerbFilter;
  */
 class SiteLogsController extends Controller
 {
+
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'view', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -31,6 +42,7 @@ class SiteLogsController extends Controller
 
     /**
      * Lists all AccessStatisticSiteLog models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -46,6 +58,7 @@ class SiteLogsController extends Controller
 
     /**
      * Displays a single AccessStatisticSiteLog model.
+     *
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -58,46 +71,9 @@ class SiteLogsController extends Controller
     }
 
     /**
-     * Creates a new AccessStatisticSiteLog model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new AccessStatisticSiteLog();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing AccessStatisticSiteLog model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
      * Deletes an existing AccessStatisticSiteLog model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -112,6 +88,7 @@ class SiteLogsController extends Controller
     /**
      * Finds the AccessStatisticSiteLog model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param integer $id
      * @return AccessStatisticSiteLog the loaded model
      * @throws NotFoundHttpException if the model cannot be found

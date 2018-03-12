@@ -1,13 +1,12 @@
 <?php
 
-use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\admin\modules\accessStatistic\models\AccessStatisticSite */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Access Statistic Sites', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => '访问统计站点管理', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [

@@ -5,7 +5,7 @@ namespace app\modules\admin\modules\accessStatistic\controllers;
 use Yii;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSite;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteSearch;
-use yii\web\Controller;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -21,8 +21,18 @@ class SitesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
