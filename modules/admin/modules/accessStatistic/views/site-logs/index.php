@@ -9,6 +9,10 @@ use yii\widgets\Pjax;
 
 $this->title = '访问统计站点日志管理';
 $this->params['breadcrumbs'][] = $this->title;
+
+$this->params['menus'] = [
+    ['label' => '导出为 Excel', 'url' => ['to-excel']],
+];
 ?>
 <div class="access-statistic-site-log-index">
     <?php Pjax::begin(); ?>
@@ -35,6 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     return '<a href="javascript:;" class="btn-copy" data-clipboard-target="#referrer-' . $model['id'] . '" title="复制">&nbsp;</a><span id="referrer-' . $model['id'] . '">' . $model['referrer'] . '</span>';
                 },
             ],
+            'browser',
+            'browser_lang',
+            'os',
             [
                 'attribute' => 'access_datetime',
                 'format' => 'datetime',

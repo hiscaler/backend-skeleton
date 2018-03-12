@@ -29,7 +29,8 @@
         "yadjet/yii2-ueditor": "dev-master",
         "yadjet/yii2-ztree": "dev-master",
         "overtrue/wechat": "~3.1",
-        "yiisoft/yii2-imagine": "~2.1.0"
+        "yiisoft/yii2-imagine": "~2.1.0",
+        "phpoffice/phpexcel": "^1.8"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

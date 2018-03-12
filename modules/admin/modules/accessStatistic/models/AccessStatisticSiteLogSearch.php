@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\accessStatistic\models;
 
+use app\modules\admin\components\QueryConditionCache;
 use DateTime;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -53,6 +54,14 @@ class AccessStatisticSiteLogSearch extends AccessStatisticSiteLog
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ]
         ]);
 
         $this->load($params);
@@ -86,7 +95,7 @@ class AccessStatisticSiteLogSearch extends AccessStatisticSiteLog
             $query->andWhere(['IN', 'ip', $subQuery]);
         }
 
-//        echo $query->createCommand()->getRawSql();exit;
+        QueryConditionCache::set(get_parent_class(self::class), $query);
 
         return $dataProvider;
     }
