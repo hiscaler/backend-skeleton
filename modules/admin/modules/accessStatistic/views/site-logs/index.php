@@ -28,7 +28,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'ip',
                 'contentOptions' => ['class' => 'ip-address']
             ],
-            'referrer',
+            [
+                'attribute' => 'referrer',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return '<a href="javascript:;" class="btn-copy" data-clipboard-target="#referrer-' . $model['id'] . '" title="复制">&nbsp;</a><span id="referrer-' . $model['id'] . '">' . $model['referrer'] . '</span>';
+                },
+            ],
             [
                 'attribute' => 'access_datetime',
                 'format' => 'datetime',
