@@ -21,8 +21,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'yii\grid\SerialColumn',
                 'contentOptions' => ['class' => 'serial-number']
             ],
-            'site.name',
-            'ip',
+            [
+                'attribute' => 'site.name',
+                'contentOptions' => ['style' => 'width: 80px;']
+            ],
+            [
+                'attribute' => 'ip',
+                'contentOptions' => ['class' => 'ip-address']
+            ],
             'referrer',
             [
                 'attribute' => 'access_datetime',
