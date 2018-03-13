@@ -46,7 +46,9 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             [
                 'attribute' => 'description',
                 'header' => Yii::t('category', 'Description'),
-                'format' => 'ntext',
+                'value' => function ($model) {
+                    return \yii\helpers\StringHelper::truncate($model['description'], 30);
+                }
             ],
             [
                 'attribute' => 'enabled',
