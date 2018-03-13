@@ -5,6 +5,9 @@ namespace app\modules\api\controllers;
 use app\models\Category;
 use app\modules\api\extensions\BaseController;
 use yadjet\helpers\ArrayHelper;
+use Yii;
+use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * Class CategoryController
@@ -14,6 +17,18 @@ use yadjet\helpers\ArrayHelper;
  */
 class CategoryController extends BaseController
 {
+
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'create' => ['post'],
+                ],
+            ],
+        ];
+    }
 
     /**
      * 分类数据
@@ -38,4 +53,65 @@ class CategoryController extends BaseController
 
         return $items;
     }
+
+    /**
+     * 添加分类
+     *
+     * @return Category|array
+     */
+    public function actionCreate()
+    {
+        $model = new Category();
+        $model->loadDefaultValues();
+        $model->load(Yii::$app->getRequest()->post(), '');
+        if ($model->validate()) {
+            $model->save(false);
+
+            return $model;
+        } else {
+            Yii::$app->getResponse()->setStatusCode(400);
+
+            return $model->getFirstErrors();
+        }
+    }
+
+    /**
+     * 更新分类
+     *
+     * @param $id
+     * @return Category|array
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $model->load(Yii::$app->getRequest()->post(), '');
+        if ($model->validate()) {
+            $model->save(false);
+
+            return $model;
+        } else {
+            Yii::$app->getResponse()->setStatusCode(400);
+
+            return $model->getFirstErrors();
+        }
+    }
+
+    /**
+     * Finds the Category model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param integer $id
+     * @return Category the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Category::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
 }
