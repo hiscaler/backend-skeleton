@@ -10,16 +10,8 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\modules\admin\modules\news\models\PostRawSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = '资讯管理';
+$this->title = '队列任务管理';
 $this->params['breadcrumbs'][] = $this->title;
-
-$this->params['menus'] = [
-    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
-    ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
-    ['label' => Yii::t('app', 'Search'), 'url' => '#'],
-];
-
-$baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 ?>
 <div class="news-index">
     <?php // $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>
@@ -35,9 +27,13 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'class' => 'yii\grid\SerialColumn',
                 'contentOptions' => ['class' => 'serial-number']
             ],
-            'channel',
+            [
+                'attribute' => 'channel',
+                'header' => '频道',
+            ],
             [
                 'attribute' => 'job',
+                'header' => '任务',
                 'format' => 'ntext',
                 'value' => function ($model) {
                     $obj = unserialize($model['job']);
@@ -51,33 +47,39 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             ],
             [
                 'attribute' => 'pushed_at',
+                'header' => '入队时间',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime'],
             ],
             [
                 'attribute' => 'ttr',
+                'header' => 'TTR',
                 'contentOptions' => ['style' => 'width: 30px;']
             ],
             [
                 'attribute' => 'delay',
+                'header' => '延时（秒）',
                 'contentOptions' => ['style' => 'width: 30px;']
             ],
             [
                 'attribute' => 'priority',
+                'header' => '权重',
                 'contentOptions' => ['style' => 'width: 30px;']
             ],
             [
                 'attribute' => 'reserved_at',
+                'header' => '上次运行时间',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime'],
             ],
             [
                 'attribute' => 'attempt',
+                'header' => '尝试次数',
                 'contentOptions' => ['class' => 'number'],
             ],
-
             [
                 'attribute' => 'done_at',
+                'header' => '完成时间',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime'],
             ],
