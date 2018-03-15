@@ -2,19 +2,12 @@
 
 namespace app\modules\admin\modules\queue\controllers;
 
-use app\models\Meta;
 use app\modules\admin\extensions\BaseController;
-use app\modules\admin\forms\DynamicForm;
-use app\modules\admin\modules\post\models\PostRaw;
-use app\modules\admin\modules\post\models\PostRawContent;
 use Yii;
-use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\queue\db\Queue;
-use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -24,6 +17,15 @@ use yii\web\NotFoundHttpException;
  */
 class DefaultController extends BaseController
 {
+
+    /* @var $queue yii\queue\db\Queue */
+    protected $queue;
+
+    public function init()
+    {
+        parent::init();
+        $this->queue = Yii::$app->queue;
+    }
 
     /**
      * @inheritdoc
@@ -35,7 +37,7 @@ class DefaultController extends BaseController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'update', 'delete'],
+                        'actions' => ['index', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -51,20 +53,19 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Lists all PostRaw models.
+     * 查看队列数据
      *
-     * @rbacDescription 资讯数据列表查看权限
+     * @rbacDescription 队列任务数据列表查看权限
      * @return mixed
      */
     public function actionIndex()
     {
-        /* @var $queue Queue */
-        $queue = Yii::$app->queue;
-        $query = (new Query())->from($queue->tableName)
+        $query = (new Query())->from($this->queue->tableName)
             ->orderBy(['id' => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'key' => 'id',
         ]);
 
         return $this->render('index', [
@@ -73,70 +74,36 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Updates an existing PostRaw model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 删除队列任务
      *
-     * @rbacDescription 资讯更新权限
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-        $newsContent = $model->newsContent ?: new PostRawContent();
-        $dynamicModel = new DynamicForm(Meta::getItems($model));
-
-        $post = Yii::$app->getRequest()->post();
-        if (($model->load($post) && $newsContent->load($post) && Model::validateMultiple([$model, $newsContent])) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
-            $transaction = Yii::$app->getDb()->beginTransaction();
-            try {
-                $model->save(false);
-                $model->saveContent($newsContent); // 保存资讯正文
-                $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
-                $transaction->commit();
-            } catch (Exception $e) {
-                $transaction->rollback();
-                throw new HttpException(500, $e->getMessage());
-            }
-
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-            'newsContent' => $newsContent,
-            'dynamicModel' => $dynamicModel,
-        ]);
-    }
-
-    /**
-     * Deletes an existing PostRaw model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @rbacDescription 资讯删除权限
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @rbacDescription 队列任务删除权限
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        \Yii::$app->getDb()->createCommand('DELETE FROM ' . $this->queue->tableName . ' WHERE [[id]] = :id', [':id' => $model['id']])->execute();
 
-        return $this->redirect(['index']);
+        return $this->redirect(Yii::$app->getRequest()->getReferrer());
     }
 
     /**
-     * Finds the PostRaw model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
+     * 返回某一队列任务详情
      *
-     * @param integer $id
-     * @return PostRaw the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|bool
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {
-        if (($model = PostRaw::findOne($id)) !== null) {
+        $model = (new Query())
+            ->from($this->queue->tableName)
+            ->where(['id' => (int) $id])
+            ->one();
+        if ($model !== false) {
             return $model;
         }
 
