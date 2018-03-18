@@ -94,6 +94,15 @@ $(function () {
         
         return false;
     });
+    
+    $('#logout').click(function () {
+        var $t = $(this);
+        layer.confirm('您是否确认退出本系统？', function (index) {
+            layer.close(index);
+            window.location.href = $t.attr('href');
+        });
+        return false;
+    });
 });
 
 function clone(myObj) {
