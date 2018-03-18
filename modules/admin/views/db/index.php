@@ -1,11 +1,6 @@
 <?php
 
-use yii\grid\GridView;
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\CategorySearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = '数据库管理';
 $this->params['breadcrumbs'][] = $this->title;
@@ -15,9 +10,11 @@ if ($session->hasFlash('notice')) {
         'message' => $session->getFlash('notice'),
     ]);
 }
+
 if ($histories):
     $this->params['menus'] = [
         ['label' => '备份数据库', 'url' => ['backup'], 'htmlOptions' => ['class' => 'btn-db-backup']],
+        ['label' => '清理所有备份', 'url' => ['clean'], 'htmlOptions' => ['data-method' => 'POST', 'data-confirm' => '是否确认清理掉所有备份？']],
     ];
     ?>
     <div class="grid-view">
