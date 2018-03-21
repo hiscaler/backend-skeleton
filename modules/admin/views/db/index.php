@@ -59,9 +59,10 @@ if ($histories):
                         $.fn.lock();
                     }, success: function (response) {
                         if (response.success) {
-                            layer.msg('数据库备份成功。', {
+                            layer.msg('数据库备份成功。共操作 ' + response.data.processTablesCount + ' 个表，合计备份 ' + response.data.processRowsCount + ' 条数据。', {
                                 icon: 1,
-                                time: 1000
+                                time: 6000,
+                                btn: ['关闭']
                             }, function () {
                                 window.document.location.href = '<?= \yii\helpers\Url::toRoute(['index']) ?>';
                             });

@@ -91,10 +91,10 @@ class DbController extends Controller
             FileHelper::createDirectory($backupPath);
         }
 
-        $processTables = [];
+        $processTablesCount = $processRowsCount = 0;
         foreach ($tables as $table) {
             $totalCount = $db->createCommand("SELECT COUNT(*) FROM $table")->queryScalar();
-            $processTables[$table] = 0;
+            $processTablesCount += 1;
             if (!$totalCount) {
                 continue;
             }
@@ -105,7 +105,7 @@ class DbController extends Controller
                     ->offset(($page - 1) * $pageSize)
                     ->limit($pageSize)
                     ->all();
-                $processTables[$table] += count($data);
+                $processRowsCount += count($data);
                 $data = gzcompress(serialize([
                     'table' => str_replace($tablePrefix, '', $table),
                     'data' => $data,
@@ -114,18 +114,16 @@ class DbController extends Controller
             }
         }
 
-        if (Yii::$app->getRequest()->getIsAjax()) {
-            return new Response([
-                'format' => Response::FORMAT_JSON,
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => [
+                'success' => true,
                 'data' => [
-                    'success' => true,
+                    'processTablesCount' => $processTablesCount,
+                    'processRowsCount' => $processRowsCount,
                 ]
-            ]);
-        } else {
-            return $this->render('backup', [
-                'processTables' => $processTables,
-            ]);
-        }
+            ]
+        ]);
     }
 
     /**
