@@ -193,7 +193,7 @@ class BaseActiveRecord extends ActiveRecord
     {
         parent::afterFind();
         if (!$this->isNewRecord) {
-            $this->entityLabels = Label::getEntityLabelIds($this->id, static::class);
+            $this->entityLabels = Label::getEntityLabelIds($this->getPrimaryKey(), static::class);
             $this->_oldEntityLabels = $this->entityLabels;
         }
     }
@@ -250,7 +250,7 @@ class BaseActiveRecord extends ActiveRecord
                 $userId = Yii::$app->getUser()->getId();
                 $now = time();
                 foreach ($insertLabels as $labelId) {
-                    $rows[] = [$this->id, static::class, $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
+                    $rows[] = [$this->getPrimaryKey(), static::class, $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
                 }
                 if ($rows) {
                     $db->createCommand()->batchInsert('{{%entity_label}}', ['entity_id', 'model_name', 'label_id', 'enabled', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], $rows)->execute();
@@ -260,7 +260,7 @@ class BaseActiveRecord extends ActiveRecord
             // Delete data
             if ($deleteLabels) {
                 $db->createCommand()->delete('{{%entity_label}}', [
-                    'entity_id' => $this->id,
+                    'entity_id' => $this->getPrimaryKey(),
                     'model_name' => static::class,
                     'label_id' => $deleteLabels
                 ])->execute();
@@ -279,7 +279,7 @@ class BaseActiveRecord extends ActiveRecord
         // Delete label relation data and update label frequency value
         $db = Yii::$app->getDb();
         $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [
-            ':entityId' => $this->id,
+            ':entityId' => $this->getPrimaryKey(),
             ':modelName' => static::class
         ])->queryAll();
         if ($labels) {
