@@ -135,6 +135,7 @@ yadjet.actions = yadjet.actions || {
         var dataExt = arguments[2] ? arguments[2] : {};
         var trData = arguments[3] ? arguments[3] : [];
         $(document).off(selector).on('click', selector, function (event) {
+            event.stopImmediatePropagation();
             event.stopPropagation();
             var $this = $(this);
             var $tr = $this.parent().parent();
