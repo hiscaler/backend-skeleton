@@ -429,8 +429,6 @@ class ModulesController extends Controller
                         'updated_by' => Yii::$app->getUser()->getId(),
                     ], ['id' => $moduleId])->execute();
 
-                    copy(Yii::getAlias("@app/modules/admin/modules/$alias") . DIRECTORY_SEPARATOR . 'icon.png', Yii::getAlias('@webroot') . "/admin/images/module-icons/{$alias}-icon.png");
-
                     $success = true;
                 } catch (\Exception $ex) {
                     $errorMessage = $ex->getMessage();
