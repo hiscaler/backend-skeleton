@@ -25,10 +25,10 @@ class Module extends \yii\base\Module
                 'basePath' => '@app/messages',
             ]
         ];
-        foreach (\app\models\Module::getInstalledModules() as $installedModule) {
-            $i18nTranslations[$installedModule['alias'] . '*'] = [
+        foreach (\app\models\Module::getItems() as $alias => $name) {
+            $i18nTranslations["$alias*"] = [
                 'class' => '\yii\i18n\PhpMessageSource',
-                'basePath' => "@app/modules/admin/modules/{$installedModule['alias']}/messages",
+                'basePath' => "@app/modules/admin/modules/$alias/messages",
             ];
         }
         \Yii::$app->setComponents([
@@ -78,11 +78,10 @@ class Module extends \yii\base\Module
         ]);
         \Yii::$app->getErrorHandler()->errorAction = '/admin/default/error';
 
-        // 载入模块
-        $installedModules = \app\models\Module::getInstalledModules();
-        foreach ($installedModules as $module) {
-            $this->setModule($module['alias'], [
-                'class' => 'app\\modules\\admin\\modules\\' . $module['alias'] . '\\Module',
+        // 载入安装的模块
+        foreach (\app\models\Module::getItems() as $alias => $name) {
+            $this->setModule($alias, [
+                'class' => 'app\\modules\\admin\\modules\\' . $alias . '\\Module',
                 'layout' => '@app/modules/admin/views/layouts/main.php',
             ]);
         }

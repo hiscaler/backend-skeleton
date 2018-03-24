@@ -54,11 +54,10 @@ class Module extends \yii\base\Module
         $response = Yii::$app->getResponse();
         $response->format && $response->format = Response::FORMAT_JSON;
 
-        // 载入模块
-        $installedModules = \app\models\Module::getInstalledModules();
-        foreach ($installedModules as $module) {
-            $this->setModule($module['alias'], [
-                'class' => 'app\\modules\\api\\modules\\' . $module['alias'] . '\\Module',
+        // 载入已经安装的模块
+        foreach (\app\models\Module::getItems() as $alias => $name) {
+            $this->setModule($alias, [
+                'class' => 'app\\modules\\api\\modules\\' . $alias . '\\Module',
             ]);
         }
     }

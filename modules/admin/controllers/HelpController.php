@@ -23,7 +23,7 @@ class HelpController extends Controller
         $markdown = new GithubMarkdown();
         $appPath = Yii::getAlias('@app');
         $files = FileHelper::findFiles($appPath . '/docs');
-        foreach (\app\models\Module::getModules() as $alias => $name) {
+        foreach (\app\models\Module::getItems() as $alias => $name) {
             $path = $appPath . "/modules/api/modules/{$alias}/docs";
             if (file_exists($path)) {
                 $files = array_merge($files, FileHelper::findFiles($path));

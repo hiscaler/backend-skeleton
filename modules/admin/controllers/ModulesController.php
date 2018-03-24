@@ -5,7 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\Constant;
 use app\models\Module;
 use Yii;
-use yii\base\InvalidParamException;
+use yii\base\InvalidArgumentException;
 use yii\console\controllers\MigrateController;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -54,7 +54,7 @@ class ModulesController extends Controller
         }
         $handle = opendir($baseDirectory);
         if ($handle === false) {
-            throw new InvalidParamException("Unable to open directory: {$baseDirectory}");
+            throw new InvalidArgumentException("Unable to open directory: {$baseDirectory}");
         }
         while (($dir = readdir($handle)) !== false) {
             if ($dir === '.' || $dir === '..' || $dir === 'admin' || $dir === 'api' || !file_exists($baseDirectory . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'Module.php')) {

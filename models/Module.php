@@ -17,7 +17,6 @@ use yii\db\Query;
  * @property string $url
  * @property string $description
  * @property string $menus
- * @property integer $enabled
  * @property integer $created_at
  * @property integer $created_by
  * @property integer $updated_at
@@ -47,7 +46,7 @@ class Module extends \yii\db\ActiveRecord
         return [
             [['alias', 'name', 'author', 'version'], 'required'],
             [['alias', 'name', 'author', 'version', 'url', 'description', 'menus'], 'trim'],
-            [['enabled', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['alias', 'author'], 'string', 'max' => 20],
             [['name'], 'string', 'max' => 30],
             [['version'], 'string', 'max' => 10],
@@ -72,7 +71,6 @@ class Module extends \yii\db\ActiveRecord
             'icon' => Yii::t('module', 'Icon'),
             'url' => Yii::t('module', 'Url'),
             'description' => Yii::t('module', 'Description'),
-            'enabled' => Yii::t('app', 'Enabled'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -96,12 +94,11 @@ class Module extends \yii\db\ActiveRecord
      *
      * @return array
      */
-    public static function getModules()
+    public static function getItems()
     {
         return (new Query())
             ->select(['name'])
             ->from('{{%module}}')
-            ->where([])
             ->indexBy('alias')
             ->column();
     }
