@@ -10,11 +10,10 @@ use app\modules\api\models\Member;
 use BadMethodCallException;
 use EasyWeChat\Foundation\Application;
 use Yii;
+use yii\base\InvalidArgumentException;
 use yii\base\InvalidConfigException;
-use yii\base\InvalidParamException;
 use yii\base\InvalidValueException;
 use yii\helpers\Url;
-use yii\helpers\VarDumper;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -61,7 +60,7 @@ class WxappController extends BaseController
      * 根据小程序提供的 key 获取用户的登录资料
      *
      * @return mixed
-     * @throws InvalidParamException
+     * @throws InvalidArgumentException
      * @throws InvalidValueException
      * @throws \Exception
      */
@@ -70,7 +69,7 @@ class WxappController extends BaseController
         $request = Yii::$app->getRequest();
         $code = $request->getQueryParam('code');
         if (empty($code)) {
-            throw new InvalidParamException('code 值不能为空。');
+            throw new InvalidArgumentException('code 值不能为空。');
         }
         $info = $request->getQueryParam('info');
         $userInfoIsValid = empty($info) ? false : true;
@@ -88,7 +87,7 @@ class WxappController extends BaseController
             }
         }
         if (!$userInfoIsValid) {
-            throw new InvalidParamException('info 值无效。');
+            throw new InvalidArgumentException('info 值无效。');
         }
 
         $options = Yii::$app->params['wechat'];
@@ -168,7 +167,7 @@ class WxappController extends BaseController
     {
         $session = Yii::$app->getRequest()->get("session");
         if (empty($session)) {
-            throw new InvalidParamException("Session value can't empty.");
+            throw new InvalidArgumentException("Session value can't empty.");
         }
         $accessToken = Yii::$app->getDb()->createCommand('SELECT [[access_token]] FROM {{%member}} WHERE [[access_token]] = :accessToken', [':accessToken' => $session])->queryScalar();
         if ($accessToken) {
@@ -199,15 +198,15 @@ class WxappController extends BaseController
         $outTradeNo || $outTradeNo = date('YmdHis') . mt_rand(1000, 9999);
         $totalFee = (int) $request->post('total_fee');
         if (!$totalFee) {
-            throw new InvalidParamException('无效的 total_fee 参数值。');
+            throw new InvalidArgumentException('无效的 total_fee 参数值。');
         }
         $openid = trim($request->post('openid'));
         if (!$openid) {
-            throw new InvalidParamException('无效的 openid 参数值。');
+            throw new InvalidArgumentException('无效的 openid 参数值。');
         }
         $exist = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
         if (!$exist) {
-            throw new InvalidParamException("openid $openid 不存在。");
+            throw new InvalidArgumentException("openid $openid 不存在。");
         }
 
         $attributes = [

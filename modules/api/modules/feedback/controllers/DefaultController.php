@@ -7,7 +7,7 @@ use app\modules\admin\forms\DynamicForm;
 use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\modules\feedback\models\Feedback;
 use Yii;
-use yii\base\InvalidParamException;
+use yii\base\InvalidArgumentException;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\helpers\Inflector;
@@ -143,7 +143,7 @@ class DefaultController extends Controller
 
             return $model->errors;
         } else {
-            throw new InvalidParamException('未检测到提交的内容。');
+            throw new InvalidArgumentException('未检测到提交的内容。');
         }
     }
 

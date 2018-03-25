@@ -4,12 +4,12 @@ namespace app\modules\api\modules\news\controllers;
 
 use app\models\Category;
 use app\modules\api\extensions\BaseController;
+use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\Constant;
 use app\modules\api\modules\news\models\News;
 use app\modules\api\modules\news\models\NewsContent;
-use yii\data\ActiveDataProvider;
-use app\modules\api\extensions\UtilsHelper;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\db\Query;
 
 /**
@@ -390,7 +390,7 @@ class DefaultController extends BaseController
                 return array_merge($model->errors, $newsContent->errors);
             }
         } else {
-            throw new \yii\base\InvalidParamException('未检测到提交的内容。');
+            throw new \yii\base\InvalidArgumentException('未检测到提交的内容。');
         }
     }
 
