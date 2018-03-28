@@ -82,7 +82,7 @@ $this->params['menus'] = [
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update} {change-password} {auth} {delete}',
+                'template' => $hasCategoryData ? '{update} {change-password} {auth} {delete}' : '{update} {change-password} {delete}',
                 'buttons' => [
                     'change-password' => function ($url, $model, $key) use ($baseUrl) {
                         return Html::a(Html::img($baseUrl . '/images/change-password.png'), $url, ['title' => Yii::t('app', 'Change Password')]);
@@ -91,7 +91,7 @@ $this->params['menus'] = [
                         return Html::a(Html::img($baseUrl . '/images/auth.png'), $url, ['data-pjax' => 0, 'class' => 'user-auth', 'data-name' => $model['username'], 'title' => Yii::t('app', 'Please choice this user can manager categories')]);
                     },
                 ],
-                'headerOptions' => ['class' => 'buttons-4 last'],
+                'headerOptions' => ['class' => 'buttons-' . ($hasCategoryData ? 4 : 3) . ' last'],
             ],
         ],
     ]);

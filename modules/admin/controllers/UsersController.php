@@ -60,10 +60,12 @@ class UsersController extends Controller
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $hasCategoryData = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%category}}')->queryScalar();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'hasCategoryData' => $hasCategoryData
         ]);
     }
 
