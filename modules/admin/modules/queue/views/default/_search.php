@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::boolean(), ['prompt' => '']) ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'language')->dropDownList(\app\models\Yad::getLanguages()) ?>
+            <?= $form->field($model, 'language')->dropDownList(\app\models\Option::languages()) ?>
         </div>
         <div class="entry">
             <?= $form->field($model, 'id') ?>
