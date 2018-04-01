@@ -18,6 +18,6 @@ return [
     'Etc/GMT+7' => 'Etc/GMT+7',
     'Etc/GMT+8' => 'Etc/GMT+8',
     'Etc/GMT+9' => 'Etc/GMT+9',
-    'Etc/UTC' => '格林威治时间/世界标准时间',
-    'PRC' => '中华人民共和国',
+    'Etc/UTC' => '世界标准时间',
+    'PRC' => '中国标准时间',
 ];
