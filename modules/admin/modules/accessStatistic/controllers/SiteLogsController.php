@@ -99,7 +99,7 @@ class SiteLogsController extends Controller
      */
     public function actionStatistics($hours = 24)
     {
-        $firstAccessDatetime = time() - ($hours * 3600);
+        $firstAccessDatetime = time() - (abs((int) $hours) * 3600);
         $items = \Yii::$app->getDb()->createCommand('SELECT MIN([[access_datetime]]) AS [[first_access_datetime]], MAX([[access_datetime]]) AS [[last_access_datetime]], [[ip]], COUNT(*) AS [[count]] FROM {{%access_statistic_site_log}} WHERE [[access_datetime]] > :datetime GROUP BY [[ip]] HAVING COUNT(*) > 2 ORDER BY [[count]] DESC', [':datetime' => $firstAccessDatetime])->queryAll();
         $dataProvider = new ArrayDataProvider([
             'allModels' => $items,
