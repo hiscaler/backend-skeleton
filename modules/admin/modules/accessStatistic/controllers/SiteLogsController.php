@@ -5,7 +5,6 @@ namespace app\modules\admin\modules\accessStatistic\controllers;
 use app\modules\admin\components\QueryConditionCache;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLog;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLogSearch;
-use DateTime;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Style_Alignment;
@@ -13,7 +12,6 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 
 /**
