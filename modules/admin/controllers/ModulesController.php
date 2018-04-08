@@ -279,6 +279,11 @@ class ModulesController extends Controller
             FileHelper::createDirectory($this->_iconDestDirectory);
         }
         foreach ($installedModules as $key => $module) {
+            if (!isset($notInstalledModules[$module['alias']])) {
+                // 已经安装但是不存在模块程序的则丢弃
+                unset($installedModules[$key]);
+                continue;
+            }
             $iconName = md5($module['alias'] . '-icon') . '.png';
             if (!file_exists(Yii::getAlias('@webroot') . $module['icon'])) {
                 copy(Yii::getAlias('@app/modules/admin/modules/' . $module['alias'] . DIRECTORY_SEPARATOR . 'icon.png'), $this->_iconDestDirectory . "/$iconName");
