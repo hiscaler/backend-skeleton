@@ -5,10 +5,12 @@ namespace app\modules\admin\modules\accessStatistic\controllers;
 use app\modules\admin\components\QueryConditionCache;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLog;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLogSearch;
+use DateTime;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Style_Alignment;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\VarDumper;
@@ -30,7 +32,7 @@ class SiteLogsController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'delete', 'to-excel'],
+                        'actions' => ['index', 'view', 'delete', 'to-excel', 'statistics'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -88,6 +90,27 @@ class SiteLogsController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * 分类统计
+     *
+     * @param int $hours
+     * @return string
+     * @throws \yii\db\Exception
+     */
+    public function actionStatistics($hours = 24)
+    {
+        $firstAccessDatetime = time() - ($hours * 3600);
+        $items = \Yii::$app->getDb()->createCommand('SELECT MIN([[access_datetime]]) AS [[first_access_datetime]], MAX([[access_datetime]]) AS [[last_access_datetime]], [[ip]], COUNT(*) AS [[count]] FROM {{%access_statistic_site_log}} WHERE [[access_datetime]] > :datetime GROUP BY [[ip]] HAVING COUNT(*) > 2', [':datetime' => $firstAccessDatetime])->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $items,
+            'pagination' => false,
+        ]);
+
+        return $this->render('statistics', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**

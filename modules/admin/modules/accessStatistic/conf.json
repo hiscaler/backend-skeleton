@@ -16,6 +16,12 @@
             "url": [
                 "accessStatistic/site-logs/index"
             ]
+        },
+        {
+            "label": "分类统计",
+            "url": [
+                "accessStatistic/site-logs/statistics"
+            ]
         }
     ],
     "depends": []
