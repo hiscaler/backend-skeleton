@@ -99,11 +99,41 @@ class SiteLogsController extends Controller
      */
     public function actionStatistics($hours = 24)
     {
-        $firstAccessDatetime = time() - (abs((int) $hours) * 3600);
-        $items = \Yii::$app->getDb()->createCommand('SELECT MIN([[access_datetime]]) AS [[first_access_datetime]], MAX([[access_datetime]]) AS [[last_access_datetime]], [[ip]], COUNT(*) AS [[count]] FROM {{%access_statistic_site_log}} WHERE [[access_datetime]] > :datetime GROUP BY [[ip]] HAVING COUNT(*) > 2 ORDER BY [[count]] DESC', [':datetime' => $firstAccessDatetime])->queryAll();
+        $seconds = $hours * 3600;
+        $db = \Yii::$app->getDb();
+        $db->emulatePrepare = 0;
+        $sqls = [
+            'DROP TEMPORARY TABLE IF EXISTS tmp_first_last_access_datetime;'
+        ];
+        $sqls[] = <<<SQL
+CREATE TEMPORARY TABLE tmp_first_last_access_datetime
+SELECT access_datetime, ip
+FROM www_access_statistic_site_log
+WHERE ip IN (
+SELECT ip
+FROM www_access_statistic_site_log
+GROUP BY ip
+HAVING COUNT(ip) >= 2);
+SQL;
+        $sqls['last'] = <<<EOT
+SELECT MIN(access_datetime) AS first_access_datetime, MAX(access_datetime) AS last_access_datetime, ip, COUNT(ip) AS 'count'
+FROM tmp_first_last_access_datetime
+GROUP BY ip
+HAVING last_access_datetime - first_access_datetime >= $seconds
+ORDER BY `count` DESC;
+EOT;
+
+        $items = [];
+        foreach ($sqls as $key => $sql) {
+            if ($key === 'last') {
+                $items = $db->createCommand($sql)->queryAll();
+            } else {
+                $db->createCommand($sql)->execute();
+            }
+        }
+
         $dataProvider = new ArrayDataProvider([
             'allModels' => $items,
-            'pagination' => false,
         ]);
 
         return $this->render('statistics', [
