@@ -80,6 +80,9 @@ class DbController extends Controller
      */
     public function actionBackup()
     {
+        ignore_user_abort(true);
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', 0);
         $pageSize = 100;
         $db = Yii::$app->getDb();
         $schema = $db->getSchema();
@@ -137,6 +140,7 @@ class DbController extends Controller
      */
     public function actionRestore($name)
     {
+        ignore_user_abort(true);
         ini_set('memory_limit', -1);
         ini_set('max_execution_time', 0);
         $path = Yii::getAlias("@app/backup/$name");
@@ -199,6 +203,7 @@ class DbController extends Controller
      */
     public function actionDelete($name)
     {
+        ignore_user_abort(true);
         ini_set('memory_limit', -1);
         ini_set('max_execution_time', 0);
         $path = Yii::getAlias("@app/backup/$name");
@@ -218,6 +223,7 @@ class DbController extends Controller
      */
     public function actionClean()
     {
+        ignore_user_abort(true);
         ini_set('memory_limit', -1);
         ini_set('max_execution_time', 0);
         $path = Yii::getAlias("@app/backup");
