@@ -30,7 +30,7 @@ class SiteLogsController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'delete', 'to-excel', 'statistics'],
+                        'actions' => ['index', 'view', 'delete', 'to-excel', 'statistics', 'statistics-to-excel'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -138,7 +138,109 @@ EOT;
 
         return $this->render('statistics', [
             'dataProvider' => $dataProvider,
+            'hours' => $hours,
         ]);
+    }
+
+    /**
+     * 导出为 Excel 文件
+     *
+     * @throws \PHPExcel_Exception
+     * @throws \PHPExcel_Reader_Exception
+     * @throws \PHPExcel_Writer_Exception
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function actionStatisticsToExcel($hours = 24)
+    {
+        $seconds = $hours * 3600;
+        $db = \Yii::$app->getDb();
+        $db->emulatePrepare = 0;
+        $sqls = [
+            'DROP TEMPORARY TABLE IF EXISTS tmp_first_last_access_datetime;'
+        ];
+        $sqls[] = <<<SQL
+CREATE TEMPORARY TABLE tmp_first_last_access_datetime
+SELECT access_datetime, ip
+FROM www_access_statistic_site_log
+WHERE ip IN (
+SELECT ip
+FROM www_access_statistic_site_log
+GROUP BY ip
+HAVING COUNT(ip) >= 2);
+SQL;
+        $sqls['last'] = <<<EOT
+SELECT MIN(access_datetime) AS first_access_datetime, MAX(access_datetime) AS last_access_datetime, ip, COUNT(ip) AS 'count'
+FROM tmp_first_last_access_datetime
+GROUP BY ip
+HAVING last_access_datetime - first_access_datetime >= $seconds
+ORDER BY `count` DESC;
+EOT;
+
+        $items = [];
+        foreach ($sqls as $key => $sql) {
+            if ($key === 'last') {
+                $items = $db->createCommand($sql)->queryAll();
+            } else {
+                $db->createCommand($sql)->execute();
+            }
+        }
+        $phpExcel = new PHPExcel();
+
+        $phpExcel->getProperties()->setCreator("Microsoft")
+            ->setLastModifiedBy("Microsoft")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+            ->setKeywords("office 2007 openxml php")
+            ->setCategory("Access Statistics");
+
+        $phpExcel->setActiveSheetIndex(0);
+        $activeSheet = $phpExcel->getActiveSheet();
+        $phpExcel->getDefaultStyle()
+            ->getFont()->setSize(14);
+
+        $activeSheet->getDefaultRowDimension()->setRowHeight(25);
+
+        $cols = ['A' => 4, 'B' => 16, 'C' => 30, 'D' => 12, 'E' => 12, 'F' => 12, 'G' => 20];
+        foreach ($cols as $col => $width) {
+            $activeSheet->getColumnDimension($col)->setWidth($width);
+        }
+
+        $activeSheet->setCellValue('A1', '访问 IP 统计')->mergeCells('A1:E1')->getStyle()->applyFromArray(array(
+            'font' => array(
+                'bold' => true,
+                'size' => 16,
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            ),
+        ));
+
+        $activeSheet->setCellValue("A2", '序号')
+            ->setCellValue("B2", 'IP 地址')
+            ->setCellValue("C2", '首次访问时间')
+            ->setCellValue("D2", '最后访问时间')
+            ->setCellValue("E2", '访问次数');
+
+        $formatter = Yii::$app->getFormatter();
+        $row = 3;
+        foreach ($items as $i => $item) {
+            $activeSheet->setCellValue("A{$row}", $i + 1)
+                ->setCellValue("B{$row}", $item['ip'])
+                ->setCellValue("C{$row}", $formatter->asDatetime($item['first_access_datetime']))
+                ->setCellValue("D{$row}", $formatter->asDatetime($item['last_access_datetime']))
+                ->setCellValue("E{$row}", $item['count']);
+            $row++;
+        }
+
+        $phpExcel->getActiveSheet()->setTitle('统计表');
+        $phpExcel->setActiveSheetIndex(0);
+        $objWriter = PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');
+        $filename = '统计表.xlsx';
+        $file = Yii::getAlias('@runtime') . DIRECTORY_SEPARATOR . urlencode($filename);
+        $objWriter->save($file);
+
+        Yii::$app->getResponse()->sendFile($file, $filename, ['mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']);
     }
 
     /**

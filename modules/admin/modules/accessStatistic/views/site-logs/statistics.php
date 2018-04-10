@@ -9,10 +9,13 @@ use yii\widgets\Pjax;
 
 $this->title = '分类统计';
 $this->params['breadcrumbs'][] = $this->title;
+
+$this->params['menus'] = [
+    ['label' => '导出为 Excel', 'url' => ['statistics-to-excel', 'hours' => $hours]],
+];
 ?>
 <div class="access-statistic-site-log-index">
-    <?php Pjax::begin(); ?>
-    <?= $this->render('_staticstics_search'); ?>
+    <?= $this->render('_staticstics_search', ['hours' => $hours]); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -43,5 +46,4 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-    <?php Pjax::end(); ?>
 </div>

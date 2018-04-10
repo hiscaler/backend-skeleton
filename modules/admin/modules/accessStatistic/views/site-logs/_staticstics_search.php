@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
         <div class="entry">
             <div class="form-group">
                 <?= Html::label('间隔时间', 'hours', ['class' => 'control-label']) ?>
-                <?= Html::textInput('hours', Yii::$app->getRequest()->get('hours') ?: 24, ['class' => 'form-control']) ?> 小时
+                <?= Html::textInput('hours', $hours, ['class' => 'form-control']) ?> 小时
             </div>
         </div>
         <div class="form-group buttons">
