@@ -510,13 +510,13 @@ class Meta extends \yii\db\ActiveRecord
      * 更新自定义表单数据值
      *
      * @param $tableName
-     * @param $key
      * @param $objectId
+     * @param $key
      * @param $value
      * @return bool
      * @throws \yii\db\Exception
      */
-    public static function updateValue($tableName, $key, $objectId, $value)
+    public static function updateValue($tableName, $objectId, $key, $value)
     {
         $success = false;
         $db = Yii::$app->getDb();
@@ -551,13 +551,13 @@ class Meta extends \yii\db\ActiveRecord
      * 增加自定义表单项目值
      *
      * @param $tableName
-     * @param $key
      * @param $objectId
+     * @param $key
      * @param $value
      * @return int|null
      * @throws \yii\db\Exception
      */
-    public static function increaseValue($tableName, $key, $objectId, $value)
+    public static function increaseValue($tableName, $objectId, $key, $value)
     {
         $result = null;
         $db = Yii::$app->getDb();
@@ -592,13 +592,13 @@ class Meta extends \yii\db\ActiveRecord
      * 减少自定义表单项目值
      *
      * @param $tableName
-     * @param $key
      * @param $objectId
+     * @param $key
      * @param $value
      * @return int|null
      * @throws \yii\db\Exception
      */
-    public static function decreaseValue($tableName, $key, $objectId, $value)
+    public static function decreaseValue($tableName, $objectId, $key, $value)
     {
         $result = null;
         $db = Yii::$app->getDb();
