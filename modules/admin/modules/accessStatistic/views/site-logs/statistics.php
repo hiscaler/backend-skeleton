@@ -11,11 +11,11 @@ $this->title = '分类统计';
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [
-    ['label' => '导出为 Excel', 'url' => ['statistics-to-excel', 'hours' => $hours]],
+    ['label' => '导出为 Excel', 'url' => ['statistics-to-excel', 'beginDatetime' => $beginDatetime, 'endDatetime' => $endDatetime, 'hours' => $hours]],
 ];
 ?>
 <div class="access-statistic-site-log-index">
-    <?= $this->render('_staticstics_search', ['hours' => $hours]); ?>
+    <?= $this->render('_staticstics_search', ['beginDatetime' => $beginDatetime, 'endDatetime' => $endDatetime, 'hours' => $hours]); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [

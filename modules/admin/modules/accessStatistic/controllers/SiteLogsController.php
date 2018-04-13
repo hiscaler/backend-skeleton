@@ -5,6 +5,7 @@ namespace app\modules\admin\modules\accessStatistic\controllers;
 use app\modules\admin\components\QueryConditionCache;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLog;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLogSearch;
+use DateTime;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Style_Alignment;
@@ -93,11 +94,13 @@ class SiteLogsController extends Controller
     /**
      * 分类统计
      *
+     * @param null $beginDatetime
+     * @param null $endDatetime
      * @param int $hours
      * @return string
      * @throws \yii\db\Exception
      */
-    public function actionStatistics($hours = 24)
+    public function actionStatistics($beginDatetime = null, $endDatetime = null, $hours = 24)
     {
         $seconds = $hours * 3600;
         $db = \Yii::$app->getDb();
@@ -105,23 +108,29 @@ class SiteLogsController extends Controller
         $sqls = [
             'DROP TEMPORARY TABLE IF EXISTS tmp_first_last_access_datetime;'
         ];
+        $where = '';
+        if ($beginDatetime && $endDatetime) {
+            $beginTimestamp = (new DateTime($beginDatetime))->setTime(0, 0, 0)->getTimestamp();
+            $endTimestamp = (new DateTime($endDatetime))->setTime(23, 59, 59)->getTimestamp();
+            $where = " WHERE access_datetime BETWEEN $beginTimestamp AND $endTimestamp";
+        }
         $sqls[] = <<<SQL
 CREATE TEMPORARY TABLE tmp_first_last_access_datetime
 SELECT access_datetime, ip
 FROM www_access_statistic_site_log
 WHERE ip IN (
 SELECT ip
-FROM www_access_statistic_site_log
+FROM www_access_statistic_site_log$where
 GROUP BY ip
 HAVING COUNT(ip) >= 2);
 SQL;
-        $sqls['last'] = <<<EOT
+        $sqls['last'] = <<<SQL
 SELECT MIN(access_datetime) AS first_access_datetime, MAX(access_datetime) AS last_access_datetime, ip, COUNT(ip) AS 'count'
 FROM tmp_first_last_access_datetime
 GROUP BY ip
 HAVING last_access_datetime - first_access_datetime >= $seconds
 ORDER BY `count` DESC;
-EOT;
+SQL;
 
         $items = [];
         foreach ($sqls as $key => $sql) {
@@ -138,6 +147,8 @@ EOT;
 
         return $this->render('statistics', [
             'dataProvider' => $dataProvider,
+            'beginDatetime' => $beginDatetime,
+            'endDatetime' => $endDatetime,
             'hours' => $hours,
         ]);
     }
@@ -145,12 +156,16 @@ EOT;
     /**
      * 导出为 Excel 文件
      *
+     * @param null $beginDatetime
+     * @param null $endDatetime
+     * @param int $hours
      * @throws \PHPExcel_Exception
      * @throws \PHPExcel_Reader_Exception
      * @throws \PHPExcel_Writer_Exception
      * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
-    public function actionStatisticsToExcel($hours = 24)
+    public function actionStatisticsToExcel($beginDatetime = null, $endDatetime = null, $hours = 24)
     {
         $seconds = $hours * 3600;
         $db = \Yii::$app->getDb();
@@ -158,23 +173,29 @@ EOT;
         $sqls = [
             'DROP TEMPORARY TABLE IF EXISTS tmp_first_last_access_datetime;'
         ];
+        $where = '';
+        if ($beginDatetime && $endDatetime) {
+            $beginTimestamp = (new DateTime($beginDatetime))->setTime(0, 0, 0)->getTimestamp();
+            $endTimestamp = (new DateTime($endDatetime))->setTime(23, 59, 59)->getTimestamp();
+            $where = " WHERE access_datetime BETWEEN $beginTimestamp AND $endTimestamp";
+        }
         $sqls[] = <<<SQL
 CREATE TEMPORARY TABLE tmp_first_last_access_datetime
 SELECT access_datetime, ip
 FROM www_access_statistic_site_log
 WHERE ip IN (
 SELECT ip
-FROM www_access_statistic_site_log
+FROM www_access_statistic_site_log$where
 GROUP BY ip
 HAVING COUNT(ip) >= 2);
 SQL;
-        $sqls['last'] = <<<EOT
+        $sqls['last'] = <<<SQL
 SELECT MIN(access_datetime) AS first_access_datetime, MAX(access_datetime) AS last_access_datetime, ip, COUNT(ip) AS 'count'
 FROM tmp_first_last_access_datetime
 GROUP BY ip
 HAVING last_access_datetime - first_access_datetime >= $seconds
 ORDER BY `count` DESC;
-EOT;
+SQL;
 
         $items = [];
         foreach ($sqls as $key => $sql) {

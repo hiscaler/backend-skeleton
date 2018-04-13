@@ -18,6 +18,20 @@ use yii\widgets\ActiveForm;
         ]); ?>
         <div class="entry">
             <div class="form-group">
+                <?= Html::label('时间范围', '', ['class' => 'control-label']) ?>
+                <?= \yadjet\datePicker\my97\DatePicker::widget([
+                    'name' => 'beginDatetime',
+                    'pickerType' => 'date',
+                    'value' => $beginDatetime
+                ]) ?>
+                -
+                <?= \yadjet\datePicker\my97\DatePicker::widget([
+                    'name' => 'endDatetime',
+                    'pickerType' => 'date',
+                    'value' => $endDatetime
+                ]) ?>
+            </div>
+            <div class="form-group">
                 <?= Html::label('间隔时间', 'hours', ['class' => 'control-label']) ?>
                 <?= Html::textInput('hours', $hours, ['class' => 'form-control']) ?> 小时
             </div>
