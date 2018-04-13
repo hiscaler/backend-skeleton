@@ -433,30 +433,45 @@ class Meta extends \yii\db\ActiveRecord
      * @param array $keys 需要获取字段列表
      * @return array
      */
-    public static function getValues(\yii\db\ActiveRecord $activeRecord, $objectId, $keys = array())
+    public static function getValues($tableName, $objectId, $keys)
     {
-        $values = [];
-        foreach ($keys as $key) {
-            $values[$key] = [
+        if (!is_array($keys)) {
+            $keys = [(string) $keys];
+        }
+        foreach ($keys as $key => $value) {
+            if (is_int($key)) {
+                // 0 => 'key' 形式，无默认值
+                $k = $value;
+                $v = null;
+            } else {
+                //　'key' => 'default value'
+                $k = $key;
+                $v = $value;
+            }
+            $values[$k] = [
                 'id' => null,
                 'label' => null,
                 'description' => null,
-                'value' => null,
+                'value' => $v,
             ];
         }
 
+        $tableName = strtolower(trim($tableName));
+        if (strpos($tableName, '{{') !== false) {
+            $tableName = str_replace(['{', '%', '}'], '', $tableName);
+        }
         $where = [
-            'table_name' => strtr($activeRecord->tableName(), ['{{%' => '', '}}' => ''])
+            'table_name' => $tableName
         ];
         if ($keys) {
-            $where['key'] = $keys;
+            $where['key'] = array_keys($values);
         }
         $rawValues = (new Query())
             ->select(['m.id', 'm.key', 'm.label', 'm.description', 't.value'])
             ->from('{{%meta_value}} t')
             ->leftJoin('{{%meta}} m', '[[t.meta_id]] = [[m.id]]')
             ->where(['t.object_id' => (int) $objectId])
-            ->andWhere(['in', 't.meta_id', (new Query())->select(['id'])->from('{{%meta}}')->where($where)])
+            ->andWhere(['IN', 't.meta_id', (new Query())->select(['id'])->from('{{%meta}}')->where($where)])
             ->all();
         foreach ($rawValues as $data) {
             $values[$data['key']] = [
@@ -470,16 +485,20 @@ class Meta extends \yii\db\ActiveRecord
         return $values;
     }
 
-    public static function getValue($tableName, $key, $objectId)
+    public static function getValue($tableName, $objectId, $key, $defaultValue = null)
     {
         $value = null;
+        $tableName = strtolower(trim($tableName));
+        if (strpos($tableName, '{{') !== false) {
+            $tableName = str_replace(['{', '%', '}'], '', $tableName);
+        }
         $db = Yii::$app->getDb();
         $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $value = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar() ?: null;
         }
 
-        return $value;
+        return $value == null ? $defaultValue : $value;
     }
 
     /**
