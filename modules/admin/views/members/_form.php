@@ -18,8 +18,11 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
         <div class="tab-panel" id="tab-panel-basic">
             <?php // $form->field($model, 'type')->textInput() ?>
-
-            <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+            <?php
+            $options = ['maxlength' => true];
+            !$model->getIsNewRecord() && $options['disabled'] = 'disabled';
+            echo $form->field($model, 'username')->textInput($options);
+            ?>
 
             <?= $form->field($model, 'nickname')->textInput(['maxlength' => true]) ?>
 
@@ -29,7 +32,6 @@ use yii\widgets\ActiveForm;
 
                 <?= $form->field($model, 'confirm_password')->passwordInput(['maxlength' => true]) ?>
             <?php endif; ?>
-
             <?php
             $template = '{label}{input}{thumb}{error}';
             $thumb = '';
@@ -50,9 +52,20 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'remark')->textarea(['rows' => 6]) ?>
         </div>
         <div class="tab-panel" id="tab-panel-metas" style="display: none">
-            <?php foreach ($dynamicModel->getMetaOptions() as $metaItem): ?>
-                <?= $form->field($dynamicModel, $metaItem['key'])->{$metaItem['input_type']}(['value' => $metaItem['value']])->label($metaItem['label']) ?>
-            <?php endforeach; ?>
+            <?php
+            foreach ($dynamicModel->getMetaOptions() as $metaItem) {
+                $inputType = $metaItem['input_type'];
+                switch ($inputType) {
+                    case 'dropDownList':
+                        echo $form->field($dynamicModel, $metaItem['key'])->$inputType($metaItem['input_candidate_value'], ['value' => $metaItem['value'], 'prompt' => ''])->label($metaItem['label']);
+                        break;
+
+                    default:
+                        echo $form->field($dynamicModel, $metaItem['key'])->$inputType(['value' => $metaItem['value']])->label($metaItem['label']);
+                        break;
+                }
+            }
+            ?>
         </div>
         <div class="form-group buttons">
             <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
