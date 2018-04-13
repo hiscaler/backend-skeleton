@@ -334,7 +334,6 @@ class ModulesController extends Controller
                         'url' => $module['url'],
                         'description' => $module['description'],
                         'menus' => $module['menus'] ? json_encode($module['menus'], JSON_UNESCAPED_UNICODE + JSON_NUMERIC_CHECK) : null,
-                        'enabled' => Constant::BOOLEAN_TRUE,
                         'created_at' => $now,
                         'created_by' => $userId,
                         'updated_at' => $now,
