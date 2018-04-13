@@ -243,10 +243,18 @@ class Meta extends \yii\db\ActiveRecord
                     $inputCandidateValue = [];
                     $rawInputCandidateValue = $data['input_candidate_value'];
                     if (!empty($rawInputCandidateValue)) {
-                        foreach (explode(PHP_EOL, $rawInputCandidateValue) as $row) {
-                            $row = explode(':', $row);
-                            if (count($row) == 2 && !empty($row[0]) && !empty($row[1])) {
-                                $inputCandidateValue[$row[0]] = $row[1];
+                        // 检查是否为类静态函数调用方式 (\app\models\Option::boolean())
+                        // pattern /\\[a-z\\]*[A-Z][a-z]*::[A-Za-z]*\(\)/
+                        if (strpos($rawInputCandidateValue, '::') !== false) {
+                            list($class, $method) = explode('::', $rawInputCandidateValue);
+                            $method = str_replace(['(', ')'], '', $method);
+                            $inputCandidateValue = $class::$method();
+                        } else {
+                            foreach (explode(PHP_EOL, $rawInputCandidateValue) as $row) {
+                                $row = explode(':', $row);
+                                if (count($row) == 2 && !empty($row[0]) && !empty($row[1])) {
+                                    $inputCandidateValue[$row[0]] = $row[1];
+                                }
                             }
                         }
                     }
