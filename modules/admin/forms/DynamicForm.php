@@ -51,6 +51,27 @@ class DynamicForm extends DynamicModel
     }
 
     /**
+     * 数据自定义字段表单数据
+     *
+     * @param $form
+     */
+    public function render($form)
+    {
+        foreach ($this->getMetaOptions() as $metaItem) {
+            $inputType = $metaItem['input_type'];
+            switch ($inputType) {
+                case 'dropDownList':
+                    echo $form->field($this, $metaItem['key'])->$inputType($metaItem['input_candidate_value'], ['value' => $metaItem['value'], 'prompt' => ''])->label($metaItem['label']);
+                    break;
+
+                default:
+                    echo $form->field($this, $metaItem['key'])->$inputType(['value' => $metaItem['value']])->label($metaItem['label']);
+                    break;
+            }
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function attributeLabels()
