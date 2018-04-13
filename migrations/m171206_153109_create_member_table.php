@@ -9,6 +9,7 @@ use yii\db\Migration;
  */
 class m171206_153109_create_member_table extends Migration
 {
+
     /**
      * @inheritdoc
      */
@@ -17,8 +18,9 @@ class m171206_153109_create_member_table extends Migration
         $this->createTable('{{%member}}', [
             'id' => $this->primaryKey(),
             'type' => $this->smallInteger()->notNull()->defaultValue(0)->comment('会员类型'),
-            'username' => $this->string(20)->notNull()->unique()->comment('用户名'),
+            'username' => $this->string(20)->notNull()->unique()->comment('帐号'),
             'nickname' => $this->string(20)->notNull()->comment('昵称'),
+            'real_name' => $this->string(20)->comment('姓名'),
             'avatar' => $this->string(200)->comment('头像'),
             'auth_key' => $this->string(32)->notNull()->comment('认证 key'),
             'password_hash' => $this->string()->notNull()->comment('密码'),

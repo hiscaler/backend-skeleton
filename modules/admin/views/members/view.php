@@ -35,6 +35,7 @@ $wechatModel = $model->wechat;
 //                        'type',
                         'username',
                         'nickname',
+                        'real_name',
                         [
                             'attribute' => 'avatar',
                             'format' => 'image',

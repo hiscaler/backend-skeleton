@@ -54,6 +54,10 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'attribute' => 'nickname',
                 'contentOptions' => ['class' => 'username'],
             ],
+            [
+                'attribute' => 'real_name',
+                'contentOptions' => ['class' => 'username'],
+            ],
             'email:email',
             [
                 'attribute' => 'tel',

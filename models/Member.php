@@ -12,6 +12,7 @@ use yii\web\IdentityInterface;
  * @property integer $type
  * @property string $username
  * @property string $nickname
+ * @property string $real_name
  * @property string $avatar
  * @property string $auth_key
  * @property string $password_hash
@@ -58,10 +59,10 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['type', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
-            [['username', 'nickname', 'tel', 'mobile_phone', 'email'], 'trim'],
+            [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'email'], 'trim'],
             [['type'], 'default', 'value' => 0],
             [['remark'], 'string'],
-            [['username', 'nickname'], 'string', 'max' => 20],
+            [['username', 'nickname', 'real_name'], 'string', 'max' => 20],
             [['avatar'], 'string', 'max' => 200],
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
@@ -83,8 +84,9 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             'id' => 'ID',
             'type' => '会员类型',
-            'username' => '用户名',
+            'username' => '帐号',
             'nickname' => '昵称',
+            'real_name' => '姓名',
             'avatar' => '头像',
             'auth_key' => '认证 key',
             'password_hash' => '密码',

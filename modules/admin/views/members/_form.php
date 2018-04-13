@@ -23,6 +23,7 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'nickname')->textInput(['maxlength' => true]) ?>
 
+            <?= $form->field($model, 'real_name')->textInput(['maxlength' => true]) ?>
             <?php if ($model->isNewRecord): ?>
                 <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 
