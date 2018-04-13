@@ -241,14 +241,11 @@ class Meta extends \yii\db\ActiveRecord
 
                     // 候选值处理
                     $inputCandidateValue = [];
-                    $rawInputCandidateValue = $data['input_candidate_value'];
+                    $rawInputCandidateValue = trim($data['input_candidate_value']);
                     if (!empty($rawInputCandidateValue)) {
                         // 检查是否为类静态函数调用方式 (\app\models\Option::boolean())
-                        // pattern /\\[a-z\\]*[A-Z][a-z]*::[A-Za-z]*\(\)/
-                        if (strpos($rawInputCandidateValue, '::') !== false) {
-                            list($class, $method) = explode('::', $rawInputCandidateValue);
-                            $method = str_replace(['(', ')'], '', $method);
-                            $inputCandidateValue = $class::$method();
+                        if (preg_match('/(\\\[a-z\\\]*[A-Z][a-z]*)::([A-Za-z]*)\((.*)\)/', $rawInputCandidateValue, $matches)) {
+                            $inputCandidateValue = call_user_func_array([$matches[1], $matches[2]], explode(',', str_replace(' ', '', $matches[3])));
                         } else {
                             foreach (explode(PHP_EOL, $rawInputCandidateValue) as $row) {
                                 $row = explode(':', $row);
