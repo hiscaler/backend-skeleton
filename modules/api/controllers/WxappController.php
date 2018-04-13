@@ -402,7 +402,7 @@ EOT;
         $db = \Yii::$app->getDb();
         $wechatMember = $db->createCommand('SELECT * FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryOne();
         if ($wechatMember && $wechatMember['member_id'] == \Yii::$app->getUser()->getId()) {
-            $money = (int) Meta::getValue('member', 'money', $wechatMember['member_id']);
+            $money = (int) Meta::getValue('member', $wechatMember['member_id'], 'money', 0);
             if ($money && $money >= $amount) {
                 $artnerTradeNo = md5(uniqid(microtime()));
                 $amount = $amount * 100;
