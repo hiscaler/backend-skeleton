@@ -276,6 +276,22 @@ class Meta extends \yii\db\ActiveRecord
     }
 
     /**
+     * 移除表前缀，获取单独的表名称
+     *
+     * @param $tableName
+     * @return mixed|string
+     */
+    private static function _fixTableName($tableName)
+    {
+        $tableName = strtolower(trim($tableName));
+        if (strpos($tableName, '{{') !== false) {
+            $tableName = str_replace(['{', '%', '}'], '', $tableName);
+        }
+
+        return $tableName;
+    }
+
+    /**
      * 获取数据验证规则
      *
      * @param $tableName
@@ -285,7 +301,7 @@ class Meta extends \yii\db\ActiveRecord
     public static function getRules($tableName)
     {
         $rules = [];
-        $validators = Yii::$app->getDb()->createCommand('SELECT [[name]], [[options]] FROM {{%meta_validator}} WHERE [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName)', [':tableName' => trim($tableName)])->queryAll();
+        $validators = Yii::$app->getDb()->createCommand('SELECT [[name]], [[options]] FROM {{%meta_validator}} WHERE [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName)', [':tableName' => self::_fixTableName($tableName)])->queryAll();
         foreach ($validators as $validator) {
             $options = unserialize($validator['options']) ?: [];
             foreach ($options as $key => $value) {
@@ -433,10 +449,10 @@ class Meta extends \yii\db\ActiveRecord
     /**
      * 获取自定义字段内容值
      *
-     * @param \yii\db\ActiveRecord $activeRecord
-     * @param integer $objectId
-     * @param array $keys 需要获取字段列表
-     * @return array
+     * @param $tableName
+     * @param $objectId
+     * @param $keys
+     * @return mixed
      */
     public static function getValues($tableName, $objectId, $keys)
     {
@@ -461,12 +477,8 @@ class Meta extends \yii\db\ActiveRecord
             ];
         }
 
-        $tableName = strtolower(trim($tableName));
-        if (strpos($tableName, '{{') !== false) {
-            $tableName = str_replace(['{', '%', '}'], '', $tableName);
-        }
         $where = [
-            'table_name' => $tableName
+            'table_name' => self::_fixTableName($tableName)
         ];
         if ($keys) {
             $where['key'] = array_keys($values);
@@ -493,12 +505,8 @@ class Meta extends \yii\db\ActiveRecord
     public static function getValue($tableName, $objectId, $key, $defaultValue = null)
     {
         $value = null;
-        $tableName = strtolower(trim($tableName));
-        if (strpos($tableName, '{{') !== false) {
-            $tableName = str_replace(['{', '%', '}'], '', $tableName);
-        }
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $value = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar() ?: null;
         }
@@ -520,7 +528,7 @@ class Meta extends \yii\db\ActiveRecord
     {
         $success = false;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar() ?: null;
             // @todo 验证 objectId 是否有效
@@ -561,7 +569,7 @@ class Meta extends \yii\db\ActiveRecord
     {
         $result = null;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
             // @todo 验证 objectId 是否有效
@@ -602,7 +610,7 @@ class Meta extends \yii\db\ActiveRecord
     {
         $result = null;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => strtolower(trim($tableName)), ':key' => trim($key)])->queryScalar();
+        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryScalar();
         if ($metaId) {
             $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
             // @todo 验证 objectId 是否有效
