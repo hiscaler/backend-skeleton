@@ -247,10 +247,18 @@ class Meta extends \yii\db\ActiveRecord
                         if (preg_match('/(\\\[a-z\\\]*[A-Z][a-z]*)::([A-Za-z]*)\((.*)\)/', $rawInputCandidateValue, $matches)) {
                             $inputCandidateValue = call_user_func_array([$matches[1], $matches[2]], explode(',', str_replace(' ', '', $matches[3])));
                         } else {
+                            /**
+                             * 处理如下格式的内容
+                             *
+                             * 1:China
+                             * 2:USA
+                             * 3:China:Japan
+                             */
                             foreach (explode(PHP_EOL, $rawInputCandidateValue) as $row) {
-                                $row = explode(':', $row);
-                                if (count($row) == 2 && !empty($row[0]) && !empty($row[1])) {
-                                    $inputCandidateValue[$row[0]] = $row[1];
+                                $row = array_map('trim', explode(':', $row));
+                                if (isset($row[1]) && !empty($row[0]) && !empty($row[1])) {
+                                    $key = array_shift($row);
+                                    $inputCandidateValue[$key] = isset($row[2]) ? implode(':', $row) : $row[1];
                                 }
                             }
                         }
