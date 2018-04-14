@@ -539,7 +539,6 @@ class Meta extends \yii\db\ActiveRecord
                     'object_id' => $objectId,
                     'value' => $value,
                 ])->execute();
-                $success = true;
             } else {
                 // Update
                 $db->createCommand()->update('{{%meta_value}}', [
@@ -548,8 +547,8 @@ class Meta extends \yii\db\ActiveRecord
                     'meta_id' => $metaId,
                     'object_id' => $objectId
                 ])->execute();
-                $success = true;
             }
+            $success = true;
         }
 
         return $success;
@@ -565,7 +564,7 @@ class Meta extends \yii\db\ActiveRecord
      * @return int|null
      * @throws \yii\db\Exception
      */
-    public static function increaseValue($tableName, $objectId, $key, $value)
+    public static function increaseValue($tableName, $objectId, $key, $value = 1)
     {
         $result = null;
         $db = Yii::$app->getDb();
@@ -606,7 +605,7 @@ class Meta extends \yii\db\ActiveRecord
      * @return int|null
      * @throws \yii\db\Exception
      */
-    public static function decreaseValue($tableName, $objectId, $key, $value)
+    public static function decreaseValue($tableName, $objectId, $key, $value = 1)
     {
         $result = null;
         $db = Yii::$app->getDb();
