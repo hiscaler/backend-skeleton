@@ -28,7 +28,14 @@ class WechatController extends BaseController
         }
     }
 
-    public function actionAuth($redirectUri)
+    /**
+     * 微信认证
+     *
+     * @param $redirectUrl
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     */
+    public function actionAuth($redirectUrl)
     {
         $db = Yii::$app->getDb();
         $application = new Application(Yii::$app->params['wechat']);
@@ -72,14 +79,15 @@ class WechatController extends BaseController
                 $accessToken = null;
             }
 
-            if (strpos($redirectUri, '?') === false) {
-                $redirectUri .= '?';
+            $redirectUrl = urldecode($redirectUrl);
+            if (strpos($redirectUrl, '?') === false) {
+                $redirectUrl .= '?';
             } else {
-                $redirectUri .= '&';
+                $redirectUrl .= '&';
             }
-            $redirectUri .= "accessToken=$accessToken";
+            $redirectUrl .= "accessToken=$accessToken";
 
-            $this->redirect($redirectUri);
+            $this->redirect($redirectUrl);
         } else {
             throw new InvalidCallException('拉取微信认证失败。');
         }
@@ -110,4 +118,5 @@ class WechatController extends BaseController
 
         return $config;
     }
+
 }
