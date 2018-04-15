@@ -245,7 +245,12 @@ class Meta extends \yii\db\ActiveRecord
                     if (!empty($rawInputCandidateValue)) {
                         // 检查是否为类静态函数调用方式 (\app\models\Option::boolean())
                         if (preg_match('/(\\\[a-z\\\]*[A-Z][a-z]*)::([A-Za-z]*)\((.*)\)/', $rawInputCandidateValue, $matches)) {
-                            $inputCandidateValue = call_user_func_array([$matches[1], $matches[2]], explode(',', str_replace(' ', '', $matches[3])));
+                            $params = array_map(function ($v) {
+                                $v = str_replace([' ', '', "'"], '', $v);
+
+                                return $v;
+                            }, explode(',', $matches[3]));
+                            $inputCandidateValue = call_user_func_array([$matches[1], $matches[2]], $params);
                         } else {
                             /**
                              * 处理如下格式的内容
