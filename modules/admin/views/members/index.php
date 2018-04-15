@@ -48,6 +48,10 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             ],
             [
                 'attribute' => 'username',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Html::a($model['username'], ['view', 'id' => $model['id']]);
+                },
                 'contentOptions' => ['class' => 'username'],
             ],
             [
