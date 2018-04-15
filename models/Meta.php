@@ -469,6 +469,7 @@ class Meta extends \yii\db\ActiveRecord
      */
     public static function getValues($tableName, $objectId, $keys)
     {
+        $values = [];
         if (!is_array($keys)) {
             $keys = [(string) $keys];
         }
