@@ -166,6 +166,22 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Finds user by openid
+     *
+     * @param string $username
+     * @return static|null
+     */
+    public static function findByOpenid($openid, $type = null)
+    {
+        $memberId = \Yii::$app->getDb()->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
+        if ($memberId) {
+            return static::findIdentity($memberId);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Finds user by password reset token
      *
      * @param string $token password reset token
