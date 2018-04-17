@@ -126,7 +126,10 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
                 $tokenType = strtolower($tokens[0]);
                 $tokenValue = $tokens[1];
                 $tokenExpireDate = $tokens[2];
-            } else {
+            } elseif (count($tokens) ==2) {
+                $tokenValue = $tokens[0];
+                $tokenExpireDate = $tokens[1];
+            }else {
                 $tokenType = $tokenExpireDate = null;
                 $tokenValue = $token;
             }
