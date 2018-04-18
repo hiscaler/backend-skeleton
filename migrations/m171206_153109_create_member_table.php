@@ -17,6 +17,7 @@ class m171206_153109_create_member_table extends Migration
     {
         $this->createTable('{{%member}}', [
             'id' => $this->primaryKey(),
+            'category_id' => $this->integer()->notNull()->defaultValue(0)->comment('分类'),
             'type' => $this->smallInteger()->notNull()->defaultValue(0)->comment('会员类型'),
             'username' => $this->string(20)->notNull()->unique()->comment('帐号'),
             'nickname' => $this->string(20)->notNull()->comment('昵称'),

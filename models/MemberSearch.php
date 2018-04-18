@@ -17,7 +17,7 @@ class MemberSearch extends Member
     public function rules()
     {
         return [
-            [['status'], 'integer'],
+            [['status', 'category_id'], 'integer'],
             [['username', 'mobile_phone'], 'safe'],
         ];
     }
@@ -62,6 +62,12 @@ class MemberSearch extends Member
         $query->andFilterWhere([
             'status' => $this->status,
         ]);
+
+        if ($this->category_id) {
+            $categoryIds = Category::getChildrenIds($this->category_id);
+            $categoryIds[] = $this->category_id;
+            $query->andWhere(['IN', 'category_id', $categoryIds]);
+        }
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'mobile_phone', $this->mobile_phone]);

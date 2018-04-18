@@ -10,6 +10,7 @@ use yii\web\IdentityInterface;
  *
  * @property integer $id
  * @property integer $type
+ * @property integer $category_id
  * @property string $username
  * @property string $nickname
  * @property string $real_name
@@ -57,10 +58,11 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['type', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'category_id', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'email'], 'trim'],
             [['type'], 'default', 'value' => 0],
+            [['category_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
             [['username', 'nickname', 'real_name'], 'string', 'max' => 20],
             [['avatar'], 'string', 'max' => 200],
@@ -84,6 +86,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             'id' => 'ID',
             'type' => '会员类型',
+            'category_id' => '分类',
             'username' => '帐号',
             'nickname' => '昵称',
             'real_name' => '姓名',
@@ -126,10 +129,10 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
                 $tokenType = strtolower($tokens[0]);
                 $tokenValue = $tokens[1];
                 $tokenExpireDate = $tokens[2];
-            } elseif (count($tokens) ==2) {
+            } elseif (count($tokens) == 2) {
                 $tokenValue = $tokens[0];
                 $tokenExpireDate = $tokens[1];
-            }else {
+            } else {
                 $tokenType = $tokenExpireDate = null;
                 $tokenValue = $token;
             }
@@ -317,6 +320,16 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function getWechat()
     {
         return $this->hasOne(WechatMember::class, ['member_id' => 'id']);
+    }
+
+    /**
+     * 分类
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
     // Events
