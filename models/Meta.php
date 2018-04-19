@@ -6,6 +6,7 @@ use Yii;
 use yii\base\ErrorException;
 use yii\db\ActiveRecord;
 use yii\db\Query;
+use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
 /**
@@ -46,9 +47,10 @@ class Meta extends \yii\db\ActiveRecord
     /**
      * 数据值返回类型
      */
-    const RETURN_VALUE_TYPE_STRING = 0;
-    const RETURN_VALUE_TYPE_INTEGER = 1;
-    const RETURN_VALUE_TYPE_ARRAY = 2;
+    const RETURN_VALUE_TYPE_STRING = 1;
+    const RETURN_VALUE_TYPE_TEXT = 2;
+    const RETURN_VALUE_TYPE_INTEGER = 3;
+    const RETURN_VALUE_TYPE_DECIMAL = 4;
 
     /**
      * @inheritdoc
@@ -66,6 +68,7 @@ class Meta extends \yii\db\ActiveRecord
         return [
             [['table_name', 'key', 'label', 'description', 'input_type'], 'required'],
             [['return_value_type', 'enabled', 'created_by', 'created_at', 'updated_by', 'updated_at', 'deleted_by', 'deleted_at'], 'integer'],
+            ['return_value_type', 'default', 'value' => self::RETURN_VALUE_TYPE_STRING],
             ['enabled', 'boolean'],
             [['table_name'], 'string', 'max' => 60],
             [['key'], 'string', 'max' => 30],
@@ -142,8 +145,9 @@ class Meta extends \yii\db\ActiveRecord
     {
         return [
             self::RETURN_VALUE_TYPE_STRING => '字符串',
-            self::RETURN_VALUE_TYPE_INTEGER => '数字',
-            self::RETURN_VALUE_TYPE_ARRAY => '数组',
+            self::RETURN_VALUE_TYPE_TEXT => '大段内容',
+            self::RETURN_VALUE_TYPE_INTEGER => '数字（不带小数）',
+            self::RETURN_VALUE_TYPE_DECIMAL => '数字（带小数）',
         ];
     }
 
@@ -168,7 +172,7 @@ class Meta extends \yii\db\ActiveRecord
     public static function getItems(ActiveRecord $activeRecord)
     {
         $items = [];
-        $rawData = (new Query())->select(['id', 'key', 'label', 'description', 'input_type', 'input_candidate_value', 'default_value'])
+        $rawData = (new Query())->select(['id', 'key', 'label', 'description', 'input_type', 'input_candidate_value', 'default_value', 'return_value_type'])
             ->from(static::tableName())
             ->where([
                 'table_name' => strtr($activeRecord->tableName(), ['{{%' => '', '}}' => '']),
@@ -190,13 +194,34 @@ class Meta extends \yii\db\ActiveRecord
                 ->all();
             foreach ($rawValues as $item) {
                 $key = "{$item['meta_id']}.{$item['object_id']}";
+                switch ($rawData[$item['meta_id']]['return_value_type']) {
+                    case self::RETURN_VALUE_TYPE_STRING:
+                        $value = $item['string_value'];
+                        break;
+
+                    case self::RETURN_VALUE_TYPE_TEXT:
+                        $value = $item['text_value'];
+                        break;
+
+                    case self::RETURN_VALUE_TYPE_INTEGER:
+                        $value = $item['integer_value'];
+                        break;
+
+                    case self::RETURN_VALUE_TYPE_DECIMAL:
+                        $value = $item['decimal_value'];
+                        break;
+
+                    default:
+                        $value = $item['string_value'];
+                        break;
+                }
                 if (!isset($values[$key])) {
-                    $values[$key] = $item['value'];
+                    $values[$key] = $value;
                 } else {
                     if (is_array($values[$key])) {
-                        $values[$key][] = $item['value'];
+                        $values[$key][] = $value;
                     } else {
-                        $values[$key] = [$values[$key], $item['value']];
+                        $values[$key] = [$values[$key], $value];
                     }
                 }
             }
@@ -373,14 +398,17 @@ class Meta extends \yii\db\ActiveRecord
                 return null;
             }
             $objectId = $activeRecord->getPrimaryKey();
-            $metaList = (new Query())
-                ->select('id')
-                ->from('{{%meta}}')
-                ->indexBy('key')
-                ->where([
-                    'key' => array_keys($attributes),
-                ])
-                ->column();
+            $metaList = [];
+            $keys = array_keys($attributes);
+            if ($keys) {
+                $rawMetaList = $db->createCommand("SELECT [[id]], [[key]], [[return_value_type]] FROM {{%meta}} WHERE [[key]] IN ('" . implode("', '", $keys) . "')")->queryAll();
+                foreach ($rawMetaList as $item) {
+                    $metaList[$item['key']] = [
+                        'id' => $item['id'],
+                        'returnValueType' => $item['return_value_type']
+                    ];
+                }
+            }
 
             $batchInsertRows = [];
             $reservedMetaIds = [];
@@ -414,7 +442,7 @@ class Meta extends \yii\db\ActiveRecord
                             continue;
                         } else {
                             $value = null;
-                            $reservedMetaIds[] = $metaList[$key];
+                            $reservedMetaIds[] = $metaList[$key]['id'];
                         }
                     }
                 } else {
@@ -423,15 +451,41 @@ class Meta extends \yii\db\ActiveRecord
                 if (!isset($metaList[$key]) || $value === '' || $value === null || (is_string($value) && trim($value) === '') || ($value == '' && !$isFile)) {
                     continue;
                 }
-                $batchInsertRows[] = [
+                $columns = [
                     'object_id' => $objectId,
-                    'meta_id' => $metaList[$key],
-                    'value' => $value,
+                    'meta_id' => $metaList[$key]['id'],
+                    'string_value' => null,
+                    'text_value' => null,
+                    'integer_value' => null,
+                    'decimal_value' => null,
                 ];
+                switch ($metaList[$key]['returnValueType']) {
+                    case self::RETURN_VALUE_TYPE_STRING:
+                        $valueField = 'string_value';
+                        break;
+
+                    case self::RETURN_VALUE_TYPE_TEXT:
+                        $valueField = 'text_value';
+                        break;
+
+                    case self::RETURN_VALUE_TYPE_INTEGER:
+                        $valueField = 'integer_value';
+                        break;
+
+                    case self::RETURN_VALUE_TYPE_DECIMAL:
+                        $valueField = 'decimal_value';
+                        break;
+
+                    default:
+                        $valueField = 'string_value';
+                        break;
+                }
+                $columns[$valueField] = $value;
+                $batchInsertRows[] = $columns;
             }
 
             if (!$activeRecord->isNewRecord) {
-                $deleteMetaIds = array_values($metaList);
+                $deleteMetaIds = ArrayHelper::getColumn($metaList, 'id');
                 if ($reservedMetaIds) {
                     $deleteMetaIds = array_diff($deleteMetaIds, $reservedMetaIds);
                 }
@@ -457,6 +511,59 @@ class Meta extends \yii\db\ActiveRecord
                 return false;
             }
         }
+    }
+
+    public static function parseReturnKey($returnValueType = self::RETURN_VALUE_TYPE_STRING)
+    {
+        switch ($returnValueType) {
+            case self::RETURN_VALUE_TYPE_TEXT:
+                $key = 'text';
+                break;
+
+            case self::RETURN_VALUE_TYPE_INTEGER:
+                $key = 'integer';
+                break;
+
+            case self::RETURN_VALUE_TYPE_DECIMAL:
+                $key = 'decimal';
+                break;
+
+            default:
+                $key = 'string';
+                break;
+        }
+
+        return "{$key}_value";
+    }
+
+    /**
+     * 根据返回值类型获取返回的值
+     *
+     * @param $values
+     * @param int $returnValueType
+     * @return null
+     */
+    public static function parseReturnValue($values, $returnValueType = self::RETURN_VALUE_TYPE_STRING)
+    {
+        switch ($returnValueType) {
+            case self::RETURN_VALUE_TYPE_TEXT:
+                $key = 'text';
+                break;
+
+            case self::RETURN_VALUE_TYPE_INTEGER:
+                $key = 'integer';
+                break;
+
+            case self::RETURN_VALUE_TYPE_DECIMAL:
+                $key = 'decimal';
+                break;
+
+            default:
+                $key = 'string';
+                break;
+        }
+
+        return isset($values["{$key}_value"]) ? $values["{$key}_value"] : null;
     }
 
     /**
@@ -498,18 +605,39 @@ class Meta extends \yii\db\ActiveRecord
             $where['key'] = array_keys($values);
         }
         $rawValues = (new Query())
-            ->select(['m.id', 'm.key', 'm.label', 'm.description', 't.value'])
+            ->select(['m.id', 'm.key', 'm.label', 'm.description', 'm.return_value_type', 't.string_value', 't.text_value', 't.integer_value', 't.decimal_value'])
             ->from('{{%meta_value}} t')
             ->leftJoin('{{%meta}} m', '[[t.meta_id]] = [[m.id]]')
             ->where(['t.object_id' => (int) $objectId])
             ->andWhere(['IN', 't.meta_id', (new Query())->select(['id'])->from('{{%meta}}')->where($where)])
             ->all();
         foreach ($rawValues as $data) {
+            switch ($data['returnValueType']) {
+                case self::RETURN_VALUE_TYPE_STRING:
+                    $value = $data['string_value'];
+                    break;
+
+                case self::RETURN_VALUE_TYPE_TEXT:
+                    $value = $data['text_value'];
+                    break;
+
+                case self::RETURN_VALUE_TYPE_INTEGER:
+                    $value = $data['integer_value'];
+                    break;
+
+                case self::RETURN_VALUE_TYPE_DECIMAL:
+                    $value = $data['decimal_value'];
+                    break;
+
+                default:
+                    $value = $data['string_value'];
+                    break;
+            }
             $values[$data['key']] = [
                 'id' => $data['id'],
                 'label' => $data['label'],
                 'description' => $data['description'],
-                'value' => $data['value'],
+                'value' => $value,
             ];
         }
 
@@ -520,12 +648,31 @@ class Meta extends \yii\db\ActiveRecord
     {
         $value = null;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryScalar();
-        if ($metaId) {
-            $value = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar() ?: null;
+        $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
+        if ($meta) {
+            if (is_array($objectId)) {
+                $rawValues = $db->createCommand('SELECT [[object_id]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] IN (' . implode(', ', $objectId) . ')', [':metaId' => $meta['id']])->queryAll();
+                if ($rawValues) {
+                    $values = [];
+                    foreach ($rawValues as $item) {
+                        $values[$item['object_id']] = self::parseReturnValue($item, $meta['return_value_type']);
+                    }
+
+                    return $values;
+                }
+            } else {
+                $values = $db->createCommand('SELECT [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $meta['id'], ':objectId' => (int) $objectId])->queryOne();
+                if ($values) {
+                    return self::parseReturnValue($values, $meta['return_value_type']);
+                }
+            }
         }
 
-        return $value == null ? $defaultValue : $value;
+        if (is_array($objectId)) {
+            return [];
+        } else {
+            return $value == null ? $defaultValue : $value;
+        }
     }
 
     /**
@@ -662,19 +809,23 @@ class Meta extends \yii\db\ActiveRecord
                 $this->updated_by = Yii::$app->getUser()->getId();
             }
 
-            // Fixed `return value type`
-            switch ($this->input_type) {
-                case self::INPUT_TYPE_TEXTAREA:
-                case self::INPUT_TYPE_FILE:
-                    $this->return_value_type = self::RETURN_VALUE_TYPE_STRING;
+            if ($this->input_type == self::INPUT_TYPE_TEXT || $this->input_type == self::INPUT_TYPE_FILE) {
+                $this->return_value_type = self::RETURN_VALUE_TYPE_STRING;
+            } elseif ($this->input_type == self::INPUT_TYPE_TEXTAREA) {
+                $this->return_value_type = self::RETURN_VALUE_TYPE_TEXT;
+            }
+
+            $defaultValue = trim($this->default_value);
+            switch ($this->return_value_type) {
+                case self::RETURN_VALUE_TYPE_INTEGER:
+                    $defaultValue = intval($defaultValue);
                     break;
 
-                case self::INPUT_TYPE_DROPDOWNLIST:
-                case self::INPUT_TYPE_CHECKBOXLIST:
-                case self::INPUT_TYPE_RADIOLIST:
-                    $this->return_value_type = self::RETURN_VALUE_TYPE_ARRAY;
+                case self::RETURN_VALUE_TYPE_DECIMAL:
+                    $defaultValue = floatval($defaultValue);
                     break;
             }
+            $this->default_value = $defaultValue;
 
             return true;
         } else {

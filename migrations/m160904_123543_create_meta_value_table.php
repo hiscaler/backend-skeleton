@@ -16,7 +16,9 @@ class m160904_123543_create_meta_value_table extends Migration
         $this->createTable('{{%meta_value}}', [
             'meta_id' => $this->integer()->notNull()->comment('Meta id'),
             'object_id' => $this->integer()->notNull()->comment('数据 id'),
-            'value' => $this->text()->notNull()->comment('值'),
+            'string_value' => $this->string()->comment('字符值'),
+            'int_value' => $this->integer()->comment('数字值'),
+            'text_value' => $this->text()->comment('大段字符值'),
         ]);
 
         // Create index
