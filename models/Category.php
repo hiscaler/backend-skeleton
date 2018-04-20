@@ -25,6 +25,7 @@ use yii\helpers\Inflector;
  * @property string $description
  * @property integer $enabled
  * @property integer $ordering
+ * @property integer $quantity
  * @property integer $created_at
  * @property integer $created_by
  * @property integer $updated_at
@@ -66,8 +67,8 @@ class Category extends BaseActiveRecord
         return [
             [['name', 'ordering'], 'required'],
             [['sign', 'alias', 'name', 'short_name', 'description'], 'trim'],
-            [['parent_id', 'level', 'enabled', 'ordering', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['parent_id', 'level'], 'default', 'value' => 0],
+            [['parent_id', 'level', 'enabled', 'ordering', 'quantity', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['parent_id', 'level', 'quantity'], 'default', 'value' => 0],
             [['enabled'], 'boolean'],
             [['enabled'], 'default', 'value' => Constant::BOOLEAN_TRUE],
             [['description'], 'string'],
@@ -129,6 +130,7 @@ class Category extends BaseActiveRecord
             'icon' => Yii::t('category', 'Icon'),
             'description' => Yii::t('category', 'Description'),
             'ordering' => Yii::t('app', 'Ordering'),
+            'quantity' => Yii::t('category', 'Quantity'),
         ]);
     }
 

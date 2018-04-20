@@ -57,6 +57,11 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'boolean pointer enabled-handler'],
             ],
             [
+                'attribute' => 'quantity',
+                'header' => Yii::t('category', 'Quantity'),
+                'contentOptions' => ['class' => 'number'],
+            ],
+            [
                 'attribute' => 'created_by',
                 'header' => Yii::t('app', 'Created By'),
                 'value' => function ($model) {

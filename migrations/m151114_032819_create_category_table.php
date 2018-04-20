@@ -25,6 +25,7 @@ class m151114_032819_create_category_table extends Migration
             'icon' => $this->string(100)->comment('分类图标'),
             'description' => $this->text()->comment('描述'),
             'ordering' => $this->smallInteger()->notNull()->defaultValue(0)->comment('排序'),
+            'quantity' => $this->integer()->notNull()->defaultValue(0)->comment('数量'),
             'enabled' => $this->boolean()->notNull()->defaultValue(1)->comment('激活'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'created_by' => $this->integer()->notNull()->comment('添加人'),
