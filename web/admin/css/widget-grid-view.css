@@ -489,6 +489,7 @@ Description: Grid view 样式
     border-radius: 5px;
     padding: 0 5px;
     margin-left: 10px;
+    float: right;
 }
 
 .grid-view table.table td span.labels {

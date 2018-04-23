@@ -36,6 +36,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'value' => function ($model) {
                     return "<span class=\"pk\">[ {$model['ordering']} ]</span>" . Html::a($model['name'], ['update', 'id' => $model['id']]) . ' <span class="badges badges-gray">' . $model['short_name'] . '</span>' . ' <span class="badges badges-gray">#' . $model['id'] . '</span>' . ($model['sign'] ? ' <span class="badges badges-red">' . $model['sign'] . '</span>' : '') . '<span class="alias">' . $model['alias'] . '</span>';
                 },
+                'contentOptions' => ['class' => 'wrap'],
             ],
             [
                 'header' => Yii::t('category', 'Icon'),
