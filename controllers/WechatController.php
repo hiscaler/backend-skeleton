@@ -10,6 +10,7 @@ namespace app\controllers;
 
 use app\models\Member;
 use EasyWeChat\Foundation\Application;
+use Yii;
 use yii\base\InvalidCallException;
 
 class WechatController extends Controller
