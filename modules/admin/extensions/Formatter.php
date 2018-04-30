@@ -232,4 +232,15 @@ class Formatter extends \yii\i18n\Formatter
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }
 
+    public function asWeekDay($value)
+    {
+        if ($value === null) {
+            return $this->nullDisplay;
+        }
+
+        $options = Option::weekDays();
+
+        return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
+    }
+
 }
