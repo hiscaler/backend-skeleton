@@ -22,7 +22,12 @@ class AccessTokenAuth extends AuthMethod
      */
     public function authenticate($user, $request, $response)
     {
-        $accessToken = $request->get($this->tokenParam);
+        $tokenKey = $this->tokenParam;
+        $accessToken = $request->get($tokenKey);
+        if (empty($accessToken)) {
+            $headers = \Yii::$app->getRequest()->getHeaders();
+            $accessToken = $headers->has($tokenKey) ? $headers->get($tokenKey) : null;
+        }
         if (is_string($accessToken)) {
             $identity = $user->loginByAccessToken($accessToken, get_class($this));
             if ($identity !== null) {

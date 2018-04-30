@@ -12,6 +12,10 @@ class AuthController extends BaseController
     {
         $behaviors = parent::behaviors();
         $token = \Yii::$app->getRequest()->get('accessToken');
+        if (empty($token)) {
+            $headers = \Yii::$app->getRequest()->getHeaders();
+            $token = $headers->has('accessToken') ? $headers->get('accessToken') : null;
+        }
         if (!empty($token)) {
             $class = AccessTokenAuth::class;
         } else {
