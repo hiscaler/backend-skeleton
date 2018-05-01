@@ -1,0 +1,21 @@
+{
+    "name": "投票管理",
+    "author": "hiscaler",
+    "version": "0.0.1",
+    "description": "投票管理模块",
+    "url": "http://www.github.com/hiscaler",
+    "menus": [
+        {
+            "label": "投票项目管理",
+            "url": [
+                "vote/votes/index"
+            ]
+        },
+        {
+            "label": "投票结果管理",
+            "url": [
+                "vote/default/index"
+            ]
+        }
+    ]
+}
