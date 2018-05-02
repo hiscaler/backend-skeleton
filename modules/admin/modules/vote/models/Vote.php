@@ -20,7 +20,6 @@ use Yii;
  * @property int $allow_view_results 允许查看结果
  * @property int $allow_multiple_choice 允许多选
  * @property int $interval_seconds 间隔时间
- * @property string $items 投票内容选项
  * @property int $ordering 排序
  * @property int $enabled 激活
  * @property int $created_at 添加时间
@@ -47,7 +46,7 @@ class Vote extends \yii\db\ActiveRecord
         return [
             [['category_id', 'total_votes_count', 'interval_seconds', 'ordering', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title', 'begin_datetime', 'end_datetime'], 'required'],
-            [['description', 'items'], 'string'],
+            [['description'], 'string'],
             [['title'], 'string', 'max' => 100],
             ['begin_datetime', 'datetime', 'format' => 'php:Y-m-d H:i:s', 'timestampAttribute' => 'begin_datetime'],
             ['end_datetime', 'datetime', 'format' => 'php:Y-m-d H:i:s', 'timestampAttribute' => 'end_datetime'],
@@ -112,6 +111,11 @@ class Vote extends \yii\db\ActiveRecord
         return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
+    /**
+     * 投票选项
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getOptions()
     {
         return $this->hasMany(VoteOption::class, ['vote_id' => 'id']);

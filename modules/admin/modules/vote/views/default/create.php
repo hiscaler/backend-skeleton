@@ -1,19 +1,18 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\admin\modules\article\models\Article */
+/* @var $model app\modules\admin\modules\vote\models\Vote */
 
-$this->title = '添加文章';
-$this->params['breadcrumbs'][] = ['label' => '文章管理', 'url' => ['index']];
+$this->title = '添加';
+$this->params['breadcrumbs'][] = ['label' => '投票管理', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
 ];
 ?>
-<div class="article-create">
+<div class="vote-create">
     <?= $this->render('_form', [
         'model' => $model,
-        'dynamicModel' => $dynamicModel,
     ]) ?>
 </div>

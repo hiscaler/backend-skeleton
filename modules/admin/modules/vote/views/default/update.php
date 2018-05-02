@@ -1,10 +1,12 @@
 <?php
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\admin\modules\article\models\Article */
+use yii\helpers\Html;
 
-$this->title = 'Update Article: {nameAttribute}';
-$this->params['breadcrumbs'][] = ['label' => '文章管理', 'url' => ['index']];
+/* @var $this yii\web\View */
+/* @var $model app\modules\admin\modules\vote\models\Vote */
+
+$this->title = '更新';
+$this->params['breadcrumbs'][] = ['label' => '投票管理', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = '更新';
 
@@ -14,9 +16,8 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'View'), 'url' => ['view', 'id' => $model->id]]
 ];
 ?>
-<div class="article-update">
+<div class="vote-update">
     <?= $this->render('_form', [
         'model' => $model,
-        'dynamicModel' => $dynamicModel,
     ]) ?>
 </div>

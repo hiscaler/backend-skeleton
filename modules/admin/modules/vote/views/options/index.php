@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 
 $this->title = '投票选项';
 $this->params['breadcrumbs'][] = ['label' => '投票管理', 'url' => ['votes/index']];
+$this->params['breadcrumbs'][] = ['label' => "{$vote->title} 投票选项设置", 'url' => ['votes/index', 'voteId' => $vote['id']]];
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [

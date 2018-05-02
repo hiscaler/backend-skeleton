@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\vote\models;
 
+use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 
 /**
@@ -37,8 +38,23 @@ class VoteOption extends \yii\db\ActiveRecord
             [['vote_id', 'ordering', 'votes_count'], 'integer'],
             [['description'], 'string'],
             [['title'], 'string', 'max' => 60],
-            [['photo'], 'string', 'max' => 100],
             [['enabled'], 'boolean'],
+            ['photo', 'image',
+                'extensions' => 'jpg,jpeg,png',
+                'minSize' => 1024,
+                'maxSize' => 201800,
+            ],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ImageUploadBehavior::class,
+                'attribute' => 'photo',
+                'thumb' => false
+            ],
         ];
     }
 

@@ -2,20 +2,16 @@
 
 namespace app\modules\admin\modules\vote\controllers;
 
-use app\models\Meta;
 use app\modules\admin\extensions\BaseController;
-use app\modules\admin\forms\DynamicForm;
-use app\modules\admin\modules\article\models\Article;
-use app\modules\admin\modules\article\models\ArticleSearch;
+use app\modules\admin\modules\vote\models\Vote;
+use app\modules\admin\modules\vote\models\VoteSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 
 /**
- * 单文章管理
- *
- * @author hiscaler <hiscaler@gmail.com>
+ * VotesController implements the CRUD actions for Vote model.
  */
 class DefaultController extends BaseController
 {
@@ -46,15 +42,14 @@ class DefaultController extends BaseController
     }
 
     /**
-     * 显示所有单文章
+     * Lists all Vote models.
      *
-     * @rbacDescription 单文章列表查看权限
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ArticleSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $searchModel = new VoteSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -63,9 +58,8 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Displays a single Article model.
+     * Displays a single Vote model.
      *
-     * @rbacDescription 单文章详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -78,37 +72,28 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Creates a new Article model.
+     * Creates a new Vote model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
-     * @rbacDescription 单文章添加权限
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Article();
-        $dynamicModel = new DynamicForm(Meta::getItems($model));
+        $model = new Vote();
 
-        $post = Yii::$app->getRequest()->post();
-
-        if (($model->load($post) && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
-            $model->save(false);
-            $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
-
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
-            'dynamicModel' => $dynamicModel,
         ]);
     }
 
     /**
-     * Updates an existing Article model.
+     * Updates an existing Vote model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
-     * @rbacDescription 单文章更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -116,27 +101,20 @@ class DefaultController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $dynamicModel = new DynamicForm(Meta::getItems($model));
 
-        $post = Yii::$app->getRequest()->post();
-        if (($model->load($post) && $model->validate()) && (!$dynamicModel->attributes || ($dynamicModel->load($post) && $dynamicModel->validate()))) {
-            $model->save(false);
-            $dynamicModel->attributes && Meta::saveValues($model, $dynamicModel, true);
-
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'dynamicModel' => $dynamicModel,
         ]);
     }
 
     /**
-     * Deletes an existing Article model.
+     * Deletes an existing Vote model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
-     * @rbacDescription 单文章删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -149,16 +127,16 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Finds the Article model based on its primary key value.
+     * Finds the Vote model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param integer $id
-     * @return Article the loaded model
+     * @return Vote the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Article::findOne($id)) !== null) {
+        if (($model = Vote::findOne($id)) !== null) {
             return $model;
         }
 
