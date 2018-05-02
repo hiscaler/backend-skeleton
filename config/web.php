@@ -57,7 +57,14 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => true,
-            'rules' => [],
+            'rules' => [
+                'admin/<controller>' => 'admin/<controller>/index',
+                'admin/<controller>/<id:\d+>' => 'admin/<controller>/view',
+                'admin/<controller>/update/<id:\d+>' => 'admin/<controller>/update',
+                'admin/<module>/<controller>' => 'admin/<module>/<controller>/index',
+                'admin/<module>/<controller>/<id:\d+>' => 'admin/<module>/<controller>/view',
+                'admin/<module>/<controller>/update/<id:\d+>' => 'admin/<module>/<controller>/update',
+            ],
         ],
         'i18n' => [
             'translations' => [
