@@ -114,7 +114,7 @@ class UtilsHelper
      */
     public static function fixStaticAssetUrl($url)
     {
-        if (strncmp($url, 'http', 4) !== 0 || strncmp($url, '//', 2) !== 0) {
+        if (!empty($url) && (strncmp($url, 'http', 4) !== 0 || strncmp($url, '//', 2) !== 0)) {
             return Yii::$app->getRequest()->getHostInfo() . '/' . trim($url, '/');
         } else {
             return $url;
@@ -136,7 +136,7 @@ class UtilsHelper
                 $hostInfo = Yii::$app->getRequest()->hostInfo . '/';
                 $replacePairs = [];
                 foreach ($matches[1] as $img) {
-                    if (strncmp($img, 'http', 4) !== 0 || strncmp($img, '//', 2) !== 0) {
+                    if (!empty($img) && (strncmp($img, 'http', 4) !== 0 || strncmp($img, '//', 2) !== 0)) {
                         $replacePairs[$img] = $hostInfo . trim($img, '/');
                     }
                 }
