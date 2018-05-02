@@ -3,11 +3,9 @@
 namespace app\modules\api\modules\news\models;
 
 use app\models\BaseActiveRecord;
-use app\models\Constant;
 use app\models\FileUploadConfig;
+use app\modules\api\extensions\UtilsHelper;
 use yadjet\behaviors\ImageUploadBehavior;
-use Yii;
-use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "{{%news}}".
@@ -132,7 +130,7 @@ class News extends BaseActiveRecord
             'description',
             'isPictureNews' => 'is_picture_news',
             'picturePath' => function () {
-                return $this->picture_path;
+                return UtilsHelper::fixStaticAssetUrl($this->picture_path);
             },
             'enabledComment' => 'enabled_comment',
             'commentsCount' => 'comments_count',
@@ -147,7 +145,7 @@ class News extends BaseActiveRecord
     {
         return [
             'content' => function () {
-                return $this->newsContent->content;
+                return UtilsHelper::fixContentAssetUrl($this->newsContent->content);
             }
         ];
     }
