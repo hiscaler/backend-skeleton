@@ -2,6 +2,7 @@
 
 namespace app\modules\api\extensions;
 
+use Yii;
 use yii\helpers\Inflector;
 
 /**
@@ -103,6 +104,50 @@ class UtilsHelper
     public static function cleanIntegerNumbers($string)
     {
         return array_filter(array_unique(array_map('intval', explode(',', $string))));
+    }
+
+    /**
+     * 处理图片、视频等静态资源的 URL 地址
+     *
+     * @param string $url
+     * @return string
+     */
+    public static function fixStaticAssetUrl($url)
+    {
+        if (strncmp($url, 'http', 4) !== 0 || strncmp($url, '//', 2) !== 0) {
+            return Yii::$app->getRequest()->getHostInfo() . '/' . trim($url, '/');
+        } else {
+            return $url;
+        }
+    }
+
+    /**
+     * 处理正文内容的静态资源地址
+     *
+     * @param string $content
+     * @return string
+     */
+    public static function fixContentAssetUrl($content)
+    {
+        if (!empty($content)) {
+            $pattern = "/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/";
+            preg_match_all($pattern, $content, $matches);
+            if ($matches) {
+                $hostInfo = Yii::$app->getRequest()->hostInfo . '/';
+                $replacePairs = [];
+                foreach ($matches[1] as $img) {
+                    if (strncmp($img, 'http', 4) !== 0 || strncmp($img, '//', 2) !== 0) {
+                        $replacePairs[$img] = $hostInfo . trim($img, '/');
+                    }
+                }
+
+                return strtr($content, $replacePairs);
+            } else {
+                return $content;
+            }
+        } else {
+            return $content;
+        }
     }
 
 }
