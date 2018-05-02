@@ -2,6 +2,7 @@
 
 namespace app\modules\api\modules\article\models;
 
+use app\modules\api\extensions\UtilsHelper;
 use yii\db\ActiveRecord;
 
 /**
@@ -37,7 +38,9 @@ class Article extends ActiveRecord
             'title',
             'keyword',
             'description',
-            'content',
+            'content' => function () {
+                return UtilsHelper::fixContentAssetUrl($this->content);
+            },
             'createdAt' => 'created_at',
             'createdBy' => 'created_by',
             'updatedAt' => 'updated_at',
