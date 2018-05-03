@@ -1,0 +1,21 @@
+{
+    "name": "签到管理",
+    "author": "hiscaler",
+    "version": "0.0.1",
+    "description": "签到管理模块",
+    "url": "http://www.github.com/hiscaler",
+    "menus": [
+        {
+            "label": "签到管理",
+            "url": [
+                "signin/default/index"
+            ]
+        },
+        {
+            "label": "签到设置",
+            "url": [
+                "signin/configs/index"
+            ]
+        }
+    ]
+}
