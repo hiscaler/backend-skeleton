@@ -50,6 +50,8 @@ $wechatModel = $model->wechat;
                                 return long2ip($model['register_ip']);
                             },
                         ],
+                        'total_credits',
+                        'available_credits',
                         'login_count',
                         [
                             'attribute' => 'last_login_ip',

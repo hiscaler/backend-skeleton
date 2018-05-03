@@ -23,6 +23,8 @@ use yii\web\IdentityInterface;
  * @property string $tel
  * @property string $mobile_phone
  * @property integer $register_ip
+ * @property integer $total_credits
+ * @property integer $available_credits
  * @property integer $login_count
  * @property integer $last_login_ip
  * @property integer $last_login_time
@@ -58,10 +60,11 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['type', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'email'], 'trim'],
             [['type'], 'default', 'value' => 0],
+            [['total_credits', 'available_credits'], 'default', 'value' => 0],
             [['remark'], 'string'],
             [['username', 'nickname', 'real_name'], 'string', 'max' => 20],
             [['avatar'], 'string', 'max' => 200],
@@ -93,6 +96,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'tel',
             'mobilePhone' => 'mobile_phone',
             'registerIp' => 'register_ip',
+            'totalCredits' => 'total_credits',
+            'availableCredits' => 'available_credits',
             'loginCount' => 'login_count',
             'lastLoginIp' => 'last_login_ip',
             'lastLoginTime' => 'last_login_time',

@@ -76,6 +76,14 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'attribute' => 'login_count',
                 'contentOptions' => ['class' => 'number'],
             ],
+            [
+                'attribute' => 'total_credits',
+                'contentOptions' => ['class' => 'number'],
+            ],
+            [
+                'attribute' => 'available_credits',
+                'contentOptions' => ['class' => 'number'],
+            ],
             // 'last_login_ip',
             [
                 'attribute' => 'last_login_time',

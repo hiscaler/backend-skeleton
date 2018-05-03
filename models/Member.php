@@ -23,6 +23,8 @@ use yii\web\IdentityInterface;
  * @property string $tel
  * @property string $mobile_phone
  * @property integer $register_ip
+ * @property integer $total_credits
+ * @property integer $available_credits
  * @property integer $login_count
  * @property integer $last_login_ip
  * @property integer $last_login_time
@@ -58,7 +60,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['type', 'category_id', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'category_id', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'email'], 'trim'],
             [['type'], 'default', 'value' => 0],
@@ -98,6 +100,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'tel' => '电话号码',
             'mobile_phone' => '手机号码',
             'register_ip' => '注册 IP',
+            'total_credits' => '总积分',
+            'available_credits' => '可用积分',
             'login_count' => '登录次数',
             'last_login_ip' => '最后登录 IP',
             'last_login_time' => '最后登录时间',
