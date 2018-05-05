@@ -43,11 +43,11 @@ class DefaultController extends AuthController
                 'ip_address' => Yii::$app->getRequest()->getRemoteIP(),
             ])->execute();
             if ($creditConfig['credits']) {
-                $db->createCommand('UPDATE {{%member}} SET [[total_credits]] = [[total_credits]] + :n, [[available_credits]] = [[available_credits]] + :n', [':n' => $creditConfig['credits']])->execute();
+                $db->createCommand('UPDATE {{%member}} SET [[total_credits]] = [[total_credits]] + :n1, [[available_credits]] = [[available_credits]] + :n2 WHERE [[id]] = :memberId', [':n1' => $creditConfig['credits'], ':n2' => $creditConfig['credits'], ':memberId' => $memberId])->execute();
             }
             $transaction->commit();
 
-            return $creditConfig();
+            return $creditConfig;
         } catch (\Exception $e) {
             $transaction->rollBack();
             throw $e;
