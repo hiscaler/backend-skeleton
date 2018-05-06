@@ -34,11 +34,12 @@ class CategoryController extends BaseController
      * 分类数据
      *
      * @param null|string $sign
+     * @param int $level
      * @param bool $flat
      * @return array
      * @throws \yii\db\Exception
      */
-    public function actionIndex($sign = null, $flat = true)
+    public function actionIndex($sign = null, $level = 0, $flat = true)
     {
         if ($sign) {
             $parentId = \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $sign])->queryScalar();
@@ -48,7 +49,7 @@ class CategoryController extends BaseController
         } else {
             $parentId = 0;
         }
-        $items = Category::getChildren($parentId);
+        $items = Category::getChildren($parentId, $level);
         !$flat && $items = ArrayHelper::toTree($items, 'id', 'parent');
 
         return $items;

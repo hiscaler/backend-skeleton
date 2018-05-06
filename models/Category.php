@@ -148,7 +148,7 @@ class Category extends BaseActiveRecord
         $items = $cache->get($cacheKey);
         if ($items === false) {
             $url = Yii::$app->getRequest()->getHostInfo();
-            $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
+            $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[sign]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
             foreach ($items as $key => $item) {
                 $items[$key]['enabled'] = $item['enabled'] ? true : false;
                 $item['icon'] && $items[$key]['icon'] = $url . $item['icon'];
@@ -275,16 +275,34 @@ class Category extends BaseActiveRecord
      *
      * @param $items
      * @param $parent
+     * @param $level
      * @return array
      */
-    private static function _getChildren($items, $parent)
+    private static function _getChildren($items, $parent, $level, $getAll = false)
     {
         $children = [];
+        $currentLevel = 0;
+        $currentParent = 0;
         foreach ($items as $i => $item) {
             if ($item['parent'] == $parent) {
+                if (!$getAll && $item['enabled'] == Constant::BOOLEAN_FALSE) {
+                    continue;
+                }
                 $children[] = $item;
-                unset($items[$i]);
-                $children = array_merge($children, self::_getChildren($items, $item['id']));
+                if (!$level) {
+                    unset($items[$i]);
+                    $children = array_merge($children, self::_getChildren($items, $item['id'], $level));
+                } else {
+                    if ($currentParent != $item['parent']) {
+                        $currentParent = $item['parent'];
+                        $currentLevel++;
+                    }
+                    if ($currentLevel <= $level) {
+                        unset($items[$i]);
+                        $currentLevel = 0;
+                        $children = array_merge($children, self::_getChildren($items, $item['id'], $level));
+                    }
+                }
             }
         }
 
@@ -295,24 +313,28 @@ class Category extends BaseActiveRecord
      * 获取所有子节点数据
      *
      * @param int $parent
+     * @param int $level
+     * @param bool $getAll
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function getChildren($parent = 0)
+    public static function getChildren($parent = 0, $level = 0, $getAll = false)
     {
-        return self::_getChildren(self::rawData(false), (int) $parent);
+        return self::_getChildren(self::rawData(false), (int) $parent, (int) $level, $getAll);
     }
 
     /**
      * 获取所有子节点 id 集合
      *
      * @param mixed|integer $parent
+     * @param int $level
      * @return array
+     * @throws \yii\db\Exception
      */
-    public static function getChildrenIds($parent = 0)
+    public static function getChildrenIds($parent = 0, $level = 0)
     {
         $ids = [];
-        foreach (self::getChildren($parent) as $child) {
+        foreach (self::getChildren($parent, $level) as $child) {
             $ids[] = (int) $child['id'];
         }
 
