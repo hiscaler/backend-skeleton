@@ -9,6 +9,7 @@ use app\modules\api\models\Constant;
 use app\modules\api\models\Member;
 use BadMethodCallException;
 use EasyWeChat\Foundation\Application;
+use GuzzleHttp\Client;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\base\InvalidConfigException;
@@ -71,42 +72,30 @@ class WxappController extends BaseController
         if (empty($code)) {
             throw new InvalidArgumentException('code 值不能为空。');
         }
-        $info = $request->getQueryParam('info');
-        $userInfoIsValid = empty($info) ? false : true;
-        if ($userInfoIsValid) {
-            $info = json_decode($info, true);
-            if ($info === null) {
-                $userInfoIsValid = false; // Is not a valid json string
-            } else {
-                foreach (['avatarUrl', 'nickName', 'gender'] as $key) {
-                    if (!isset($info[$key])) {
-                        $userInfoIsValid = false;
-                        break;
-                    }
-                }
-            }
-        }
-        if (!$userInfoIsValid) {
-            throw new InvalidArgumentException('info 值无效。');
-        }
 
         $options = Yii::$app->params['wechat'];
         $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$options['app_id']}&secret={$options['secret']}&js_code={$code}&grant_type=authorization_code";
-        $token = file_get_contents($url);
-        $token && $token = json_decode($token, true);
-        if (empty($token) || isset($token['errcode'])) {
-            throw new InvalidValueException("微信接口访问出错（{$token['errmsg']}）。");
+        $response = (new Client())->get($url);
+        if ($response->getStatusCode() != 200) {
+            throw new BadRequestHttpException("Access wechat api error: ({$response->getStatusCode()}).");
         }
-        $openid = $token['openid'];
+        $wechatResponseBody = $response->getBody();
+        $wechatResponseBody = json_decode($wechatResponseBody, true);
+        if (empty($wechatResponseBody) || isset($wechatResponseBody['errcode'])) {
+            throw new InvalidValueException("Access wechat api error: ({$wechatResponseBody['errmsg']}).");
+        }
+        $openid = $wechatResponseBody['openid'];
         if (empty($openid)) {
             throw new InvalidValueException('openid 无效。');
         }
 
         $now = time();
-        $accessToken = 'wxapp.' . md5($openid . $token['session_key']) . '.' . ($now + 7200);
+        $accessToken = 'wxapp.' . md5($openid . $wechatResponseBody['session_key']) . '.' . ($now + 24 * 3600);
         $db = \Yii::$app->getDb();
         $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
-        $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $info["nickName"]);
+        $membersCount = $db->createCommand('SELECT COUNT(*) FROM {{%member}}')->queryScalar();
+        $membersCount += 1;
+        $nickname = "wx$membersCount";
         if ($memberId) {
             // 更新会员的相关信息
             $member = Member::findOne($memberId);
@@ -116,38 +105,35 @@ class WxappController extends BaseController
             // 添加新会员
             $member = new Member();
             $member->setPassword(substr($openid, -10));
-            $member->username = substr(md5($openid), -20);
-            $member->nickname = $nickname ?: $member->username;
+            $member->username = $nickname;
+            $member->nickname = $nickname;
             $member->login_count = 1;
             $isNewRecord = true;
         }
-        $nickname && $member->nickname = $nickname;
         $member->last_login_time = $now;
         $member->last_login_ip = ip2long(Yii::$app->getRequest()->getUserIP());
         $member->access_token = $accessToken;
         if ($member->validate() && $member->save()) {
-            $wechatMember = [
-                'openid' => $openid,
-                'nickname' => $nickname,
-                'sex' => $info['gender'],
-                'country' => isset($info['country']) ? $info['country'] : null,
-                'province' => isset($info['province']) ? $info['province'] : null,
-                'city' => isset($info['city']) ? $info['city'] : null,
-                'language' => isset($info['language']) ? $info['language'] : null,
-                'headimgurl' => $info['avatarUrl'],
-                'unionid' => isset($info['union_id']) ? $info['union_id'] : null,
-            ];
             if ($isNewRecord) {
-                $wechatMember['member_id'] = $member->id;
-                $wechatMember['subscribe'] = Constant::BOOLEAN_FALSE;
-                $wechatMember['subscribe_time'] = null;
+                $wechatMember = [
+                    'openid' => $openid,
+                    'member_id' => $member->id,
+                    'nickname' => $nickname,
+                    'sex' => Constant::SEX_UNKNOWN,
+                    'country' => null,
+                    'province' => null,
+                    'city' => null,
+                    'language' => null,
+                    'headimgurl' => null,
+                    'subscribe' => Constant::BOOLEAN_FALSE,
+                    'subscribe_time' => null,
+                    'unionid' => isset($wechatResponseBody['union_id']) ? $wechatResponseBody['union_id'] : null,
+                ];
                 $db->createCommand()->insert('{{%wechat_member}}', $wechatMember)->execute();
-            } else {
-                $db->createCommand()->update('{{%wechat_member}}', $wechatMember, ['openid' => $openid])->execute();
             }
 
             return [
-                'session' => $accessToken,
+                'sessionKey' => $accessToken,
                 'openid' => $openid,
             ];
         } else {
