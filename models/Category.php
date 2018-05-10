@@ -297,7 +297,7 @@ class Category extends BaseActiveRecord
                         $currentParent = $item['parent'];
                         $currentLevel++;
                     }
-                    if ($currentLevel <= $level) {
+                    if ($currentLevel < $level) {
                         unset($items[$i]);
                         $currentLevel = 0;
                         $children = array_merge($children, self::_getChildren($items, $item['id'], $level));
