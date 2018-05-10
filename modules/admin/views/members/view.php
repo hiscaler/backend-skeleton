@@ -44,6 +44,7 @@ $wechatModel = $model->wechat;
                         'email:email',
                         'tel',
                         'mobile_phone',
+                        'address',
                         [
                             'attribute' => 'register_ip',
                             'value' => function ($model) {

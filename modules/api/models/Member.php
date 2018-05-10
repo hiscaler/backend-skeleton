@@ -22,6 +22,7 @@ use yii\web\IdentityInterface;
  * @property string $email
  * @property string $tel
  * @property string $mobile_phone
+ * @property string $address
  * @property integer $register_ip
  * @property integer $total_credits
  * @property integer $available_credits
@@ -62,7 +63,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['type', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
-            [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'email'], 'trim'],
+            [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email'], 'trim'],
             [['type'], 'default', 'value' => 0],
             [['total_credits', 'available_credits'], 'default', 'value' => 0],
             [['remark'], 'string'],
@@ -73,6 +74,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['email'], 'string', 'max' => 50],
             [['tel'], 'string', 'max' => 30],
             [['mobile_phone'], 'string', 'max' => 35],
+            [['address'], 'string', 'max' => 100],
             [['username'], 'unique'],
             [['access_token'], 'string'],
             [['access_token'], 'unique'],
@@ -95,6 +97,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'email',
             'tel',
             'mobilePhone' => 'mobile_phone',
+            'address',
             'registerIp' => 'register_ip',
             'totalCredits' => 'total_credits',
             'availableCredits' => 'available_credits',
