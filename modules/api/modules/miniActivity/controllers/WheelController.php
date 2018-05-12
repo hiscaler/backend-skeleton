@@ -20,7 +20,7 @@ use yii\web\NotFoundHttpException;
 class WheelController extends Controller
 {
 
-    public $modelClass = 'app\modules\api\modules\article\models\Wheel';
+    public $modelClass = 'app\modules\api\modules\miniActivity\models\Wheel';
 
     /**
      * 列表
