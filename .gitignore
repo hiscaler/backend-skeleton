@@ -1,3 +1,5 @@
 .idea/
 /vendor
 /messages/zh-CN/*.model.php
+
+/spa/node_modules

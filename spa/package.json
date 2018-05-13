@@ -1,0 +1,15 @@
+{
+    "name": "spa",
+    "version": "1.0.0",
+    "description": "Frontend for backend-skeleton",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "hiscaler",
+    "license": "ISC",
+    "devDependencies": {
+        "webpack": "^4.8.2",
+        "webpack-cli": "^2.1.3"
+    }
+}
