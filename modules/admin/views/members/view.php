@@ -32,7 +32,7 @@ $wechatModel = $model->wechat;
                     'model' => $model,
                     'attributes' => [
                         'id',
-//                        'type',
+                        'type:memberType',
                         'username',
                         'nickname',
                         'real_name',

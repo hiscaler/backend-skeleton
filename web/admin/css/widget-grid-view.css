@@ -265,6 +265,10 @@ Description: Grid view 样式
     width: 80px;
 }
 
+.grid-view table.table td.member-type {
+    width: 60px;
+}
+
 .grid-view table.table td.avatar {
     width: 30px;
     text-align: center;

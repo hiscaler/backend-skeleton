@@ -216,6 +216,23 @@ class Formatter extends \yii\i18n\Formatter
     // Member
 
     /**
+     * 会员类型
+     *
+     * @param $value
+     * @return string
+     */
+    public function asMemberType($value)
+    {
+        if ($value === null) {
+            return $this->nullDisplay;
+        }
+
+        $options = Member::typeOptions();
+
+        return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
+    }
+
+    /**
      * 会员状态
      *
      * @param integer $value

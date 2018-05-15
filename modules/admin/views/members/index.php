@@ -39,6 +39,11 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'serial-number']
             ],
             [
+                'attribute' => 'type',
+                'format' => 'memberType',
+                'contentOptions' => ['class' => 'member-type'],
+            ],
+            [
                 'attribute' => 'avatar',
                 'format' => 'raw',
                 'value' => function ($model) {

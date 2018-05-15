@@ -39,6 +39,9 @@ use yii\web\IdentityInterface;
 class Member extends \yii\db\ActiveRecord implements IdentityInterface
 {
 
+    const TYPE_MEMBER = 0;
+    const TYPE_OTHER = 1;
+
     /**
      * 用户状态
      */
@@ -64,7 +67,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['type', 'category_id', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email'], 'trim'],
-            [['type'], 'default', 'value' => 0],
+            [['type'], 'default', 'value' => self::TYPE_MEMBER],
             [['category_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
             [['username', 'nickname', 'real_name'], 'string', 'max' => 20],
@@ -181,8 +184,10 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * Finds user by openid
      *
-     * @param string $username
+     * @param $openid
+     * @param null $type
      * @return static|null
+     * @throws \yii\db\Exception
      */
     public static function findByOpenid($openid, $type = null)
     {
@@ -302,6 +307,14 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function removeAccessToken()
     {
         $this->access_token = $this->access_token_expire_datetime = null;
+    }
+
+    public static function typeOptions()
+    {
+        return [
+            self::TYPE_MEMBER => '会员',
+            self::TYPE_OTHER => '其他',
+        ];
     }
 
     /**
