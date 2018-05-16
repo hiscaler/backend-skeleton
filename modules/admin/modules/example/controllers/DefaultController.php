@@ -2,12 +2,10 @@
 
 namespace app\modules\admin\modules\example\controllers;
 
-use app\modules\admin\extensions\BaseController;
-
 /**
  * `example` 子模块
  */
-class DefaultController extends BaseController
+class DefaultController extends Controller
 {
 
     /**
