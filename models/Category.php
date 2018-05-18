@@ -271,6 +271,21 @@ class Category extends BaseActiveRecord
     }
 
     /**
+     * 获取分类顶级目录
+     *
+     * @param $id
+     * @return mixed
+     * @throws \yii\db\Exception
+     */
+    public static function getRoot($id)
+    {
+        $items = self::getParents($id, true);
+        reset($items);
+
+        return current($items);
+    }
+
+    /**
      * 获取子节点数据
      *
      * @param $items
@@ -339,6 +354,20 @@ class Category extends BaseActiveRecord
         }
 
         return $ids;
+    }
+
+    public static function getFullName($id)
+    {
+        $name = [];
+        $parents = self::getParents($id);
+        foreach ($parents as $parent) {
+            if ($parent['parent']) {
+                $name[] = $parent['name'];
+            }
+        }
+        krsort($name);
+
+        return implode('/', $name);
     }
 
     // 事件
