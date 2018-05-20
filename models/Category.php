@@ -356,6 +356,33 @@ class Category extends BaseActiveRecord
         return $ids;
     }
 
+    /**
+     * 根据 sign 值获取 id
+     *
+     * @param $sign
+     * @return null
+     * @throws \yii\db\Exception
+     */
+    public static function getIdBySign($sign)
+    {
+        $id = null;
+        foreach (self::rawData(false) as $data) {
+            if ($data['sign'] == $sign) {
+                $id = $data['id'];
+                break;
+            }
+        }
+
+        return $id;
+    }
+
+    /**
+     * 获取分类全路径名称
+     *
+     * @param $id
+     * @return string
+     * @throws \yii\db\Exception
+     */
     public static function getFullName($id)
     {
         $name = [];
