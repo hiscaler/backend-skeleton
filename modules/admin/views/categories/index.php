@@ -63,26 +63,10 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'number'],
             ],
             [
-                'attribute' => 'created_by',
-                'header' => Yii::t('app', 'Created By'),
-                'value' => function ($model) {
-                    return $model['creater']['nickname'];
-                },
-                'contentOptions' => ['class' => 'username']
-            ],
-            [
                 'attribute' => 'created_at',
                 'header' => Yii::t('app', 'Created At'),
                 'format' => 'date',
                 'contentOptions' => ['class' => 'date']
-            ],
-            [
-                'attribute' => 'updated_by',
-                'header' => Yii::t('app', 'Updated By'),
-                'value' => function ($model) {
-                    return $model['updater']['nickname'];
-                },
-                'contentOptions' => ['class' => 'username']
             ],
             [
                 'attribute' => 'updated_at',
