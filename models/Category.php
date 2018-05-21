@@ -398,12 +398,18 @@ class Category extends BaseActiveRecord
     }
 
     // 事件
-    private $_alias;
+    private $_alias = null;
+    private $_parent_id = null;
+    private $_level = null;
 
     public function afterFind()
     {
         parent::afterFind();
-        $this->_alias = $this->alias;
+        if (!$this->isNewRecord) {
+            $this->_alias = $this->alias;
+            $this->_parent_id = $this->parent_id;
+            $this->_level = $this->level;
+        }
     }
 
     public function beforeSave($insert)
@@ -413,10 +419,14 @@ class Category extends BaseActiveRecord
             if (empty($this->alias) && !empty($this->name)) {
                 $this->alias = Inflector::slug($this->name);
             }
+            $level = 0;
             empty($this->short_name) && $this->short_name = $this->name;
-            if ($this->parent_id && strpos($this->alias, '/') === false) {
-                $parentAlias = Yii::$app->getDb()->createCommand('SELECT [[alias]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $this->parent_id])->queryScalar();
-                $parentAlias && $this->alias = "$parentAlias/$this->alias";
+            if ($this->parent_id) {
+                $parent = Yii::$app->getDb()->createCommand('SELECT [[level]], [[alias]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $this->parent_id])->queryOne();
+                if (strpos($this->alias, '/') === false) {
+                    $parent['alias'] && $this->alias = "{$parent['alias']}/$this->alias";
+                }
+                $level = $parent['level'] + 1;
             }
 
             return true;
@@ -440,6 +450,35 @@ class Category extends BaseActiveRecord
                     }
                     $alias = implode('/', $childAlias);
                     $cmd->update('{{%category}}', ['alias' => $alias], ['id' => $child['id']])->execute();
+                }
+            }
+        }
+
+        if (!$insert) {
+            if ($this->parent_id != $this->_parent_id) {
+                $parents = self::getParents($this->id);
+                if ($parents) {
+                    $ids = $names = [];
+                    foreach ($parents as $parent) {
+                        $ids[] = $parents['id'];
+                        $names[] = $parents['name'];
+                    }
+                    $this->parent_ids = implode(',', $ids);
+                    $this->parent_names = implode(',', $names);
+                }
+            }
+            if ($this->level != $this->_level) {
+                $children = self::getChildrenIds($this->id);
+                if ($children) {
+                    $value = $this->level - $this->_level;
+                    $sql = 'UPDATE {{%category}} SET [[level]] = [[level]]';
+                    if ($value) {
+                        $sql .= ' + :value';
+                    } else {
+                        $sql .= ' - :value';
+                    }
+                    $sql .= ' WHERE [[id]] IN (' . implode(',', $children) . ')';
+                    \Yii::$app->getDb()->createCommand($sql, [':value' => abs($value)])->execute();
                 }
             }
         }
