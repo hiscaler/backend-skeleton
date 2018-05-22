@@ -3,9 +3,11 @@
 namespace app\modules\admin\controllers;
 
 use app\models\Category;
-use app\models\CategorySearch;
+use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\base\InvalidCallException;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -53,8 +55,17 @@ class CategoriesController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CategorySearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $rawData = (new Query())->from('{{%category}}')->all();
+        if ($rawData) {
+            $rawData = Category::sortItems(['children' => ArrayHelper::toTree($rawData, 'id')]);
+            unset($rawData[0]);
+        }
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $rawData,
+            'key' => 'id',
+            'pagination' => false,
+        ]);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
