@@ -40,6 +40,12 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
 {
 
     /**
+     * 会员类型
+     */
+    const TYPE_MEMBER = 0;
+    const TYPE_OTHER = 1;
+
+    /**
      * 用户状态
      */
     const STATUS_PENDING = 0; // 待审核状态
@@ -64,7 +70,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['type', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email'], 'trim'],
-            [['type'], 'default', 'value' => 0],
+            [['type'], 'default', 'value' => self::TYPE_MEMBER],
             [['total_credits', 'available_credits'], 'default', 'value' => 0],
             [['remark'], 'string'],
             [['username', 'nickname', 'real_name'], 'string', 'max' => 20],
@@ -177,6 +183,9 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public static function findByUsername($username, $type = null)
     {
         $condition = ['username' => $username, 'status' => self::STATUS_ACTIVE];
+        if ($type !== null) {
+            $condition['type'] = (int) $type;
+        }
 
         return static::findOne($condition);
     }
@@ -256,6 +265,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
+     * @throws \yii\base\Exception
      */
     public function setPassword($password)
     {
