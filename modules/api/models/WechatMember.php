@@ -39,7 +39,7 @@ class WechatMember extends \yii\db\ActiveRecord
             'id',
             'memberId' => 'member_id',
             'subscribe' => function () {
-                return $this->subscribe ? true : false;
+                return boolval($this->subscribe);
             },
             'openid',
             'nickname',
@@ -53,4 +53,5 @@ class WechatMember extends \yii\db\ActiveRecord
             'unionid',
         ];
     }
+
 }
