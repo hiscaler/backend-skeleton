@@ -76,9 +76,9 @@ class Option
     public static function sexes()
     {
         return [
-            Constant::SEX_UNKNOWN => '未知',
             Constant::SEX_MALE => '男',
             Constant::SEX_FEMALE => '女',
+            Constant::SEX_UNKNOWN => '未知',
         ];
     }
 
