@@ -438,11 +438,12 @@ class Category extends BaseActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
+        $db = \Yii::$app->getDb();
+        $cmd = $db->createCommand();
         if (!$insert && ($this->_alias != $this->alias)) {
             // 更新子栏目别名数据
             $children = self::getChildren($this->id);
             if ($children) {
-                $cmd = Yii::$app->getDb()->createCommand();
                 foreach ($children as $child) {
                     $childAlias = explode('/', $child['alias']);
                     foreach (explode('/', $this->alias) as $key => $value) {
@@ -460,11 +461,17 @@ class Category extends BaseActiveRecord
                 if ($parents) {
                     $ids = $names = [];
                     foreach ($parents as $parent) {
-                        $ids[] = $parents['id'];
-                        $names[] = $parents['name'];
+                        $ids[] = $parent['id'];
+                        $names[] = $parent['name'];
                     }
-                    $this->parent_ids = implode(',', $ids);
-                    $this->parent_names = implode(',', $names);
+                    $parentIds = implode(',', $ids);
+                    $parentNames = implode(',', $names);
+                    if ($parentIds || $parentNames) {
+                        $columns = [];
+                        $parentIds && $columns['parent_ids'] = $parentIds;
+                        $parentNames && $columns['parent_names'] = $parentNames;
+                        $cmd->update('{{%category}}', $columns, ['id' => $this->id])->execute();
+                    }
                 }
             }
             if ($this->level != $this->_level) {
@@ -478,7 +485,7 @@ class Category extends BaseActiveRecord
                         $sql .= ' - :value';
                     }
                     $sql .= ' WHERE [[id]] IN (' . implode(',', $children) . ')';
-                    \Yii::$app->getDb()->createCommand($sql, [':value' => abs($value)])->execute();
+                    $db->createCommand($sql, [':value' => abs($value)])->execute();
                 }
             }
         }
