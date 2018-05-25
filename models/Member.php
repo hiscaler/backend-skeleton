@@ -378,4 +378,11 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             return false;
         }
     }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        \Yii::$app->getDb()->createCommand('DELETE FROM {{%wechat_member}} WHERE [[member_id]] = :memberId', [':memberId' => $this->id])->execute();
+    }
+
 }
