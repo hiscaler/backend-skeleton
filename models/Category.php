@@ -428,6 +428,7 @@ class Category extends BaseActiveRecord
                 }
                 $level = $parent['level'] + 1;
             }
+            $this->level = $level;
 
             return true;
         } else {
@@ -495,6 +496,11 @@ class Category extends BaseActiveRecord
     {
         parent::afterDelete();
         \Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['category_id' => $this->id])->execute();
+        $icon = $this->icon;
+        if ($icon) {
+            $icon = Yii::getAlias('@web' . $icon);
+            file_exists($icon) && unlink($icon);
+        }
     }
 
 }
