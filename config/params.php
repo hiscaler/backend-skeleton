@@ -8,6 +8,12 @@ return [
     'fromMailAddress' => [
         'admin@example.com' => 'you name',
     ],
+    // 翻译设置
+    'translate' => [
+        'class' => 'sogou',
+        'pid' => '',
+        'secretKey' => ''
+    ],
     // 微信公众号设置
     'wechat' => require(__DIR__ . '/wechat.php'),
     'modules' => [
