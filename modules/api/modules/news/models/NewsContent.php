@@ -29,6 +29,18 @@ class NewsContent extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public function rules()
+    {
+        return [
+            [['content'], 'required'],
+            [['news_id'], 'integer'],
+            [['content'], 'string'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [

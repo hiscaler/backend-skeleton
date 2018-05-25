@@ -364,10 +364,10 @@ class DefaultController extends BaseController
                 if (isset($_FILES['picture_path']) && $_FILES['picture_path']) {
                     $file = \yii\web\UploadedFile::getInstanceByName('picture_path');
                     if ($file instanceof \yii\web\UploadedFile && $file->error != UPLOAD_ERR_NO_FILE) {
-                        $model->is_picture_news = Option::BOOLEAN_TRUE;
+                        $model->is_picture_news = Constant::BOOLEAN_TRUE;
                         $fileUrl = '/uploads/' . date('Ymd') . '/' . \yadjet\helpers\StringHelper::generateRandomString() . '.' . $file->getExtension();
                         $path = Yii::getAlias('@app/web') . $fileUrl;
-                        $model->picture_path = "http://api.apdnews.com{$fileUrl}";
+                        $model->picture_path = $fileUrl;
                         @mkdir(pathinfo($path, PATHINFO_DIRNAME), 0777, true);
                         $file->saveAs($path);
                     }
