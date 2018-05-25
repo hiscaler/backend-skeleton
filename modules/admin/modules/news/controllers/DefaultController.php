@@ -64,7 +64,7 @@ class DefaultController extends BaseController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'categories' => Category::tree('news.module.category', Category::RETURN_TYPE_PRIVATE),
+            'categories' => Category::tree('news.module.category'),
         ]);
     }
 
