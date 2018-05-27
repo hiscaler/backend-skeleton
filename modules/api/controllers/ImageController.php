@@ -2,7 +2,6 @@
 
 namespace app\modules\api\controllers;
 
-use app\modules\api\extensions\BaseController;
 use Imagine\Image\ImageInterface;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -16,8 +15,10 @@ use yii\web\Response;
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class ImageController extends BaseController
+class ImageController extends FileController
 {
+
+    protected $type = 'image';
 
     /**
      * 图片处理
