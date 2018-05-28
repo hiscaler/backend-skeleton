@@ -3,6 +3,7 @@
 namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\BaseController;
+use DOMDocument;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Yii;
@@ -46,10 +47,111 @@ class TranslateController extends BaseController
         }
     }
 
-    private function _parseHtml($html)
+    private function _htmlTranslateByNode(&$x, $config)
     {
-        // @todo Parse HTML
-        return $html;
+        foreach ($x->childNodes as $p)
+            if ($this->_htmlNodeHasChild($p)) {
+                $this->_htmlTranslateByNode($p, $config);
+            } elseif ($p->nodeType == XML_ELEMENT_NODE) {
+                // @
+            } else {
+                $value = $p->textContent;
+                $value = trim($value);
+                if ($value) {
+                    $translateRes = $this->_t($value, 'en', 'zh-CHS', null, $config);
+                    if ($translateRes && $translateRes['success']) {
+                        $value = $translateRes['message'];
+                    }
+                    $p->textContent = $value;
+                }
+            }
+    }
+
+    private function _htmlNodeHasChild($p)
+    {
+        if ($p->hasChildNodes()) {
+            foreach ($p->childNodes as $c) {
+                if ($c->nodeType == XML_ELEMENT_NODE or $c->nodeType == XML_TEXT_NODE)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function _t($text, $from = 'en', $to = 'zh-CHS', $client = null, $config = null)
+    {
+        if ($client === null) {
+            $client = new Client([
+                'base_uri' => 'http://fanyi.sogou.com/reventondc/api/sogouTranslate',
+                'timeout' => 10,
+                'allow_redirects' => false,
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded;',
+                    'Accept' => 'application/json',
+                ]
+            ]);
+        }
+        $salt = $config['class'] . time() . rand(1, 99999);
+        try {
+            $response = $client->request('POST', '', [
+                'form_params' => [
+                    'q' => $text,
+                    'from' => $from,
+                    'to' => $to,
+                    'pid' => $config['pid'],
+                    'salt' => $salt,
+                    'sign' => md5($config['pid'] . $text . $salt . $config['secretKey']),
+                    'charset' => 'UTF-8',
+                ]
+            ]);
+            if ($response->getStatusCode() == 200) {
+                $body = json_decode($response->getBody(), true);
+                if ($body) {
+                    if ($body['errorCode'] == 0) {
+                        return [
+                            'success' => true,
+                            '_message' => $body['query'],
+                            'message' => $body['translation'],
+                        ];
+                    } else {
+                        // Fail
+                        return [
+                            'success' => false,
+                            'error' => [
+                                'code' => $body['errorCode'],
+                                'message' => isset($this->errors[$body['errorCode']]) ? $this->errors[$body['errorCode']] : '未知错误。'
+                            ]
+                        ];
+                    }
+                } else {
+                    return [
+                        'success' => false,
+                        'error' => [
+                            'message' => $response->getBody(),
+                        ]
+                    ];
+                }
+            } else {
+                return [
+                    'success' => false,
+                    'error' => [
+                        'message' => $response->getReasonPhrase(),
+                    ]
+                ];
+            }
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
+                return [
+                    'success' => false,
+                    'error' => [
+                        'message' => $e->getResponse(),
+                    ]
+                ];
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -73,46 +175,66 @@ class TranslateController extends BaseController
         $message = trim(Yii::$app->getRequest()->post('message'));
         if ($message) {
             if ($isHtml) {
-                $message = $this->_parseHtml($message);
-            }
-            $client = new Client([
-                'base_uri' => 'http://fanyi.sogou.com/reventondc/api/sogouTranslate',
-                'timeout' => 10,
-                'allow_redirects' => false,
-                'headers' => [
-                    'Content-Type' => 'application/x-www-form-urlencoded;',
-                    'Accept' => 'application/json',
-                ]
-            ]);
-            $salt = $config['class'] . time() . rand(1, 99999);
-            try {
-                $response = $client->request('POST', '', [
-                    'form_params' => [
-                        'q' => $message,
-                        'from' => $from,
-                        'to' => $to,
-                        'pid' => $pid,
-                        'salt' => $salt,
-                        'sign' => md5($pid . $message . $salt . $secretKey),
-                        'charset' => 'UTF-8',
+                $x = new DOMDocument();
+                $tag = 'TRANSLATEHTML';
+                $x->loadXML("<{$tag}>{$message}</{$tag}>");
+                $this->_htmlTranslateByNode($x, $config);
+                $translateMessage = $x->saveHTML();
+                $translateMessage = str_replace(['<TRANSLATEHTML>', '</TRANSLATEHTML>'], '', $translateMessage);
+
+                return [
+                    '_message' => $message,
+                    'message' => $translateMessage,
+                ];
+            } else {
+                $client = new Client([
+                    'base_uri' => 'http://fanyi.sogou.com/reventondc/api/sogouTranslate',
+                    'timeout' => 10,
+                    'allow_redirects' => false,
+                    'headers' => [
+                        'Content-Type' => 'application/x-www-form-urlencoded;',
+                        'Accept' => 'application/json',
                     ]
                 ]);
-                if ($response->getStatusCode() == 200) {
-                    $body = json_decode($response->getBody(), true);
-                    if ($body) {
-                        if ($body['errorCode'] == 0) {
-                            return [
-                                '_message' => $body['query'],
-                                'message' => $body['translation'],
-                            ];
+
+                $salt = $config['class'] . time() . rand(1, 99999);
+                try {
+                    $response = $client->request('POST', '', [
+                        'form_params' => [
+                            'q' => $message,
+                            'from' => $from,
+                            'to' => $to,
+                            'pid' => $pid,
+                            'salt' => $salt,
+                            'sign' => md5($pid . $message . $salt . $secretKey),
+                            'charset' => 'UTF-8',
+                        ]
+                    ]);
+                    if ($response->getStatusCode() == 200) {
+                        $body = json_decode($response->getBody(), true);
+                        if ($body) {
+                            if ($body['errorCode'] == 0) {
+                                return [
+                                    '_message' => $body['query'],
+                                    'message' => $body['translation'],
+                                ];
+                            } else {
+                                // Fail
+                                Yii::$app->getResponse()->setStatusCode($response->getStatusCode());
+
+                                return [
+                                    'error' => [
+                                        'code' => $body['errorCode'],
+                                        'message' => isset($this->errors[$body['errorCode']]) ? $this->errors[$body['errorCode']] : '未知错误。'
+                                    ]
+                                ];
+                            }
                         } else {
-                            // Fail
                             Yii::$app->getResponse()->setStatusCode($response->getStatusCode());
 
                             return [
                                 'error' => [
-                                    'code' => $body['errorCode'],
-                                    'message' => isset($this->errors[$body['errorCode']]) ? $this->errors[$body['errorCode']] : '未知错误。'
+                                    'message' => $response->getBody(),
                                 ]
                             ];
                         }
@@ -121,22 +243,14 @@ class TranslateController extends BaseController
 
                         return [
                             'error' => [
-                                'message' => $response->getBody(),
+                                'message' => $response->getReasonPhrase(),
                             ]
                         ];
                     }
-                } else {
-                    Yii::$app->getResponse()->setStatusCode($response->getStatusCode());
-
-                    return [
-                        'error' => [
-                            'message' => $response->getReasonPhrase(),
-                        ]
-                    ];
-                }
-            } catch (RequestException $e) {
-                if ($e->hasResponse()) {
-                    throw new BadRequestHttpException($e->getResponse());
+                } catch (RequestException $e) {
+                    if ($e->hasResponse()) {
+                        throw new BadRequestHttpException($e->getResponse());
+                    }
                 }
             }
         } else {
