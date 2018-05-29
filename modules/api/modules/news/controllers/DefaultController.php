@@ -84,6 +84,7 @@ class DefaultController extends BaseController
      * @param integer $offset
      * @param integer $limit
      * @return Query
+     * @throws \yii\db\Exception
      */
     private function parserQuery($fields = null, $category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $offset = null, $limit = null)
     {
@@ -107,7 +108,7 @@ class DefaultController extends BaseController
         // Picture news
         $picture = UtilsHelper::cleanString($picture);
         if (!empty($picture) && in_array($picture, ['y', 'n'])) {
-            $condition['t.is_picture_news'] = $picture == 'y' ? Option::BOOLEAN_TRUE : Option::BOOLEAN_FALSE;
+            $condition['t.is_picture_news'] = $picture == 'y' ? Constant::BOOLEAN_TRUE : Constant::BOOLEAN_FALSE;
         }
 
         // Category condition
@@ -280,6 +281,7 @@ class DefaultController extends BaseController
      * @param integer $page
      * @param integer $pageSize
      * @return ActiveDataProvider
+     * @throws \yii\db\Exception
      */
     public function actionIndex($category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $page = 1, $pageSize = 20)
     {
@@ -303,13 +305,13 @@ class DefaultController extends BaseController
      * @param string $date
      * @param string $author
      * @param string $keywords
-     * @param string $rank
      * @param string $reject
      * @param string $combinationMethod
      * @param string $orderBy
      * @param integer $offset
      * @param integer $limit
-     * @return array
+     * @return ActiveDataProvider
+     * @throws \yii\db\Exception
      */
     public function actionList($fields = null, $category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $offset = 0, $limit = 10)
     {
@@ -351,7 +353,8 @@ class DefaultController extends BaseController
      * 资讯提交接口
      *
      * @return News
-     * @throws HttpException
+     * @throws \Exception
+     * @throws \yii\db\Exception
      */
     public function actionCreate()
     {
