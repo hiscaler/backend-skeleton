@@ -63,7 +63,7 @@ class FileController extends BaseController
             /* @var $file \yii\web\UploadedFile */
             $file = $model->$key;
             $path = $config['path'];
-            $absolutePath = Yii::getAlias('@web') . $path;
+            $absolutePath = Yii::getAlias('@web') . $path . DIRECTORY_SEPARATOR . date("Ymd");
             !file_exists($absolutePath) && FileHelper::createDirectory($absolutePath);
             $fileNameHash = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz1234567890'), 0, 5);
             $filename = sprintf('%s%s.%s', $fileNameHash, date('YmdHis'), $file->getExtension());
