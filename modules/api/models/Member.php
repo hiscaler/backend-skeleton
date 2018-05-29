@@ -99,7 +99,16 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'username',
             'nickname',
             'realName' => 'real_name',
-            'avatar',
+            'avatar' => function () {
+                $avatar = $this->avatar;
+                foreach (['http', 'https', '//'] as $prefix) {
+                    if (strncasecmp($avatar, $prefix, strlen($prefix)) === 0) {
+                        return $avatar;
+                    }
+                }
+
+                return Yii::$app->getRequest()->hostInfo . $avatar;
+            },
             'email',
             'tel',
             'mobilePhone' => 'mobile_phone',
