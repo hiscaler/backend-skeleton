@@ -93,9 +93,8 @@ class WxappController extends BaseController
         $accessToken = 'wxapp.' . md5($openid . $wechatResponseBody['session_key']) . '.' . ($now + 24 * 3600);
         $db = \Yii::$app->getDb();
         $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
-        $membersCount = $db->createCommand('SELECT COUNT(*) FROM {{%member}}')->queryScalar();
-        $membersCount += 1;
-        $nickname = "wx$membersCount";
+        $maxId = $db->createCommand('SELECT MAX([[id]]) FROM {{%member}}')->queryScalar();
+        $username = sprintf('wx%08d', $maxId + 1);
         if ($memberId) {
             // 更新会员的相关信息
             $member = Member::findOne($memberId);
@@ -104,9 +103,9 @@ class WxappController extends BaseController
         } else {
             // 添加新会员
             $member = new Member();
-            $member->setPassword(substr($openid, -10));
-            $member->username = $nickname;
-            $member->nickname = $nickname;
+            $member->setPassword($username);
+            $member->username = $username;
+            $member->nickname = $username;
             $member->login_count = 1;
             $isNewRecord = true;
         }
@@ -118,7 +117,7 @@ class WxappController extends BaseController
                 $wechatMember = [
                     'openid' => $openid,
                     'member_id' => $member->id,
-                    'nickname' => $nickname,
+                    'nickname' => $username,
                     'sex' => Constant::SEX_UNKNOWN,
                     'country' => null,
                     'province' => null,
