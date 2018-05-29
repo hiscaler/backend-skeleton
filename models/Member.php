@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 use yii\web\IdentityInterface;
 
@@ -71,7 +72,6 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['category_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
             [['username', 'nickname', 'real_name'], 'string', 'max' => 20],
-            [['avatar'], 'string', 'max' => 200],
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 50],
@@ -82,6 +82,21 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['access_token'], 'string'],
             [['access_token'], 'unique'],
             [['password_reset_token'], 'unique'],
+            ['avatar', 'file',
+                'extensions' => 'jpg,gif,png,jpeg',
+                'minSize' => 1024,
+                'maxSize' => 1024 * 200,
+            ],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ImageUploadBehavior::class,
+                'attribute' => 'avatar'
+            ],
         ];
     }
 
