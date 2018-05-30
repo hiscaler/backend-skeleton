@@ -178,6 +178,26 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * 用户名
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * 用户角色
+     *
+     * @return string
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getAuthKey()
