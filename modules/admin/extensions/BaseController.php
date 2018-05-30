@@ -22,25 +22,42 @@ class BaseController extends Controller
             $formatter->timeFormat = Lookup::getValue('system.time-format', 'php:H:i:s');
 
             $authManager = Yii::$app->getAuthManager();
-            if ($authManager && !Lookup::getValue('system.rbac.debug', true)) {
-                $defaultRoles = Yii::$app->getCache()->get('admin.rbac.default.roles');
-                $defaultRoles || $defaultRoles = [];
-                $defaultRoles = array_merge($defaultRoles, [
-                    'admin-default.login',
-                    'admin-default.logout',
-                    'admin-default.error',
-                    'admin-default.captcha',
-                ]);
-                $authManager->defaultRoles = $defaultRoles;
-                $key = str_replace('/', '-', $this->module->getUniqueId());
-                if ($key) {
-                    $key .= '-';
+            if ($authManager) {
+                $rbacConfig = isset(Yii::$app->params['rbac']) ? Yii::$app->params['rbac'] : [];
+                $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
+                if ($requireCheckAuth) {
+                    $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
+                    if (!is_array($ignoreUsers)) {
+                        $ignoreUsers = [];
+                    }
+                    if ($ignoreUsers) {
+                        $user = \Yii::$app->getUser();
+                        if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
+                            $requireCheckAuth = false;
+                        }
+                    }
                 }
-                $key = $key . Inflector::camel2id(Yii::$app->controller->id) . '.' . Inflector::camel2id($action->id);
-                if (in_array($key, $defaultRoles) || Yii::$app->getUser()->can($key)) {
-                    return true;
-                } else {
-                    throw new UnauthorizedHttpException('对不起，您没有操作该项目的权限。');
+
+                if ($requireCheckAuth) {
+                    $defaultRoles = Yii::$app->getCache()->get('admin.rbac.default.roles');
+                    $defaultRoles || $defaultRoles = [];
+                    $defaultRoles = array_merge($defaultRoles, [
+                        'admin-default.login',
+                        'admin-default.logout',
+                        'admin-default.error',
+                        'admin-default.captcha',
+                    ]);
+                    $authManager->defaultRoles = $defaultRoles;
+                    $key = str_replace('/', '-', $this->module->getUniqueId());
+                    if ($key) {
+                        $key .= '-';
+                    }
+                    $key = $key . Inflector::camel2id(Yii::$app->controller->id) . '.' . Inflector::camel2id($action->id);
+                    if (in_array($key, $defaultRoles) || Yii::$app->getUser()->can($key)) {
+                        return true;
+                    } else {
+                        throw new UnauthorizedHttpException('对不起，您没有操作该项目的权限。');
+                    }
                 }
             }
 

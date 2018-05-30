@@ -2,7 +2,6 @@
 
 namespace app\modules\admin\widgets;
 
-use app\models\Lookup;
 use app\models\Module;
 use Yii;
 use yii\base\Widget;
@@ -19,7 +18,20 @@ class GlobalControlPanel extends Widget
     public function getItems()
     {
         $user = \Yii::$app->getUser();
-        $rbacDebug = Lookup::getValue('system.rbac.debug', true);
+        $rbacConfig = isset(Yii::$app->params['rbac']) ? Yii::$app->params['rbac'] : [];
+        $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
+        if ($requireCheckAuth) {
+            $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
+            if (!is_array($ignoreUsers)) {
+                $ignoreUsers = [];
+            }
+            if ($ignoreUsers) {
+                $user = \Yii::$app->getUser();
+                if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
+                    $requireCheckAuth = false;
+                }
+            }
+        }
         $items = [];
         $request = Yii::$app->getRequest();
         $controller = Yii::$app->controller;
@@ -35,7 +47,7 @@ class GlobalControlPanel extends Widget
                     $url = $value['url'];
                     $r = $url[0];
                     $rArr = explode('/', $r);
-                    if (!$rbacDebug) {
+                    if ($requireCheckAuth) {
                         if ($rArr[0] == 'admin') {
                             array_shift($rArr);
                         }
@@ -120,15 +132,33 @@ class GlobalControlPanel extends Widget
                     $t['url'] = $moduleMenus[0]['url'];
                 }
 
-                if (!$rbacDebug) {
-                    $rArr = explode('/', trim($t['url'][0], '/'));
-                    $permissionName = array_shift($rArr) . '-' . array_shift($rArr) . '-' . implode('.', $rArr);
-                    if (!$user->can($permissionName)) {
-                        continue;
+                if ($requireCheckAuth) {
+                    if (isset($t['items'])) {
+                        // 有子菜单
+                        $urls = [];
+                        foreach ($t['items'] as $key => $moduleMenu) {
+                            $urls[$key] = trim($moduleMenu['url'][0], '/');
+                        }
+                        $hasChildrenMenu = true;
+                    } else {
+                        // 无子菜单
+                        $urls = [trim($t['url'][0], '/')];
+                        $hasChildrenMenu = false;
+                    }
+                    foreach ($urls as $key => $url) {
+                        $rArr = explode('/', $url);
+                        $permissionName = array_shift($rArr) . '-' . array_shift($rArr) . '-' . implode('.', $rArr);
+                        if (!$user->can($permissionName)) {
+                            if ($hasChildrenMenu) {
+                                unset($t['items'][$key]);
+                            } else {
+                                $t = [];
+                            }
+                        }
                     }
                 }
 
-                $items[] = $t;
+                $t && $items[] = $t;
             }
         }
 
