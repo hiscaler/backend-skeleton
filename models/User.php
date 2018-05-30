@@ -10,7 +10,7 @@ use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 /**
- * This is the model class for table "mai_user".
+ * This is the model class for table "{{%user}}".
  *
  * @property integer $id
  * @property string $username
