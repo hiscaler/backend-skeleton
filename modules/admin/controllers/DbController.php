@@ -51,6 +51,8 @@ class DbController extends Controller
     /**
      * 备份历史记录
      *
+     * @rbacDescription 备份历史记录查看权限
+     *
      * @return string
      */
     public function actionIndex()
@@ -72,6 +74,8 @@ class DbController extends Controller
 
     /**
      * 数据库备份
+     *
+     * @rbacDescription 数据库备份权限
      *
      * @return string
      * @throws \yii\base\Exception
@@ -131,6 +135,8 @@ class DbController extends Controller
 
     /**
      * 恢复数据库数据
+     *
+     * @rbacDescription 数据库恢复权限
      *
      * @param $name
      * @throws NotFoundHttpException
@@ -197,6 +203,8 @@ class DbController extends Controller
     /**
      * 删除数据库备份
      *
+     * @rbacDescription 数据库备份删除权限
+     *
      * @param $name
      * @throws NotFoundHttpException
      * @throws \yii\base\ErrorException
@@ -217,6 +225,8 @@ class DbController extends Controller
 
     /**
      * 清理掉所有备份
+     *
+     * @rbacDescription 数据库备份清理权限
      *
      * @throws NotFoundHttpException
      * @throws \yii\base\ErrorException
