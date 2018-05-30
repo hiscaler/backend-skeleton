@@ -36,9 +36,9 @@ class Yad
      */
     public static function getTextImages($content, $order = 'ALL')
     {
-        $images = null;
+        $images = [];
         if (!empty($content)) {
-            $pattern = "/<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg]))[\'|\"].*?[\/]?>/";
+            $pattern = "/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/";
             preg_match_all($pattern, $content, $match);
             if (isset($match[1]) && !empty($match[1])) {
                 if ($order === 'ALL') {
