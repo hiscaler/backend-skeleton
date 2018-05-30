@@ -15,13 +15,15 @@ use yii\web\BadRequestHttpException;
  *
  * Class TranslateController
  *
+ * @see http://deepi.sogou.com/docs/fanyiDoc
+ *
  * @package app\modules\api\controllers
  */
 class TranslateController extends BaseController
 {
 
     private $languages = [
-        'ar', 'et', 'bg', 'pl', 'ko', 'bs-Latn',
+        'ar', 'et', 'bg', 'pl', 'ko', 'bs-Latn', 'fa', 'mww', 'da', 'de', 'ru', 'fr', 'fi', 'tlh-Qaak', 'tlh', 'hr', 'otq', 'ca', 'cs', 'ro', 'lv', 'ht', 'lt', 'nl', 'ms', 'mt', 'pt', 'ja', 'sl', 'th', 'tr', 'sr-Latn', 'sr-Cyrl', 'sk', 'sw', 'af', 'no', 'en', 'es', 'uk', 'ur', 'el', 'hu', 'cy', 'dddddd', 'yua', 'he', 'zh-CHS', 'it', 'hi', 'id', 'zh-CHT', 'vi', 'sv', 'yue', 'fj', 'fil', 'sm', 'to', 'ty', 'mg', 'bn'
     ];
 
     private $errors = [
@@ -49,20 +51,19 @@ class TranslateController extends BaseController
 
     private function _htmlTranslateByNode(&$x, $config)
     {
-        foreach ($x->childNodes as $p)
-            if ($this->_htmlNodeHasChild($p)) {
-                $this->_htmlTranslateByNode($p, $config);
-            } elseif ($p->nodeType == XML_ELEMENT_NODE) {
+        foreach ($x->childNodes as $node)
+            if ($this->_htmlNodeHasChild($node)) {
+                $this->_htmlTranslateByNode($node, $config);
+            } elseif ($node->nodeType == XML_ELEMENT_NODE) {
                 // @
             } else {
-                $value = $p->textContent;
-                $value = trim($value);
+                $value = trim($node->textContent);
                 if ($value) {
                     $translateRes = $this->_t($value, 'en', 'zh-CHS', null, $config);
                     if ($translateRes && $translateRes['success']) {
                         $value = $translateRes['message'];
                     }
-                    $p->textContent = $value;
+                    $node->textContent = $value;
                 }
             }
     }
@@ -71,8 +72,9 @@ class TranslateController extends BaseController
     {
         if ($p->hasChildNodes()) {
             foreach ($p->childNodes as $c) {
-                if ($c->nodeType == XML_ELEMENT_NODE or $c->nodeType == XML_TEXT_NODE)
+                if ($c->nodeType == XML_ELEMENT_NODE or $c->nodeType == XML_TEXT_NODE) {
                     return true;
+                }
             }
         }
 
@@ -112,7 +114,7 @@ class TranslateController extends BaseController
                         return [
                             'success' => true,
                             '_message' => $body['query'],
-                            'message' => $body['translation'],
+                            'message' => isset($body['translation']) ? $body['translation'] : $body['query'],
                         ];
                     } else {
                         // Fail
@@ -166,6 +168,13 @@ class TranslateController extends BaseController
      */
     public function actionIndex($from = 'en', $to = 'zh-CHS', $isHtml = false)
     {
+        if (!in_array($from, $this->languages)) {
+            throw new BadRequestHttpException('from 参数无效，可用参数为：' . implode(', ', $this->languages));
+        }
+        if (!in_array($to, $this->languages)) {
+            throw new BadRequestHttpException('to 参数无效，可用参数为：' . implode(', ', $this->languages));
+        }
+
         $config = Yii::$app->params['translate'];
         if ($config['class'] == 'sogou') {
             $pid = $config['pid'];
@@ -175,12 +184,12 @@ class TranslateController extends BaseController
         $message = trim(Yii::$app->getRequest()->post('message'));
         if ($message) {
             if ($isHtml) {
-                $x = new DOMDocument();
+                $doc = new DOMDocument();
                 $tag = 'TRANSLATEHTML';
-                $x->loadXML("<{$tag}>{$message}</{$tag}>");
-                $this->_htmlTranslateByNode($x, $config);
-                $translateMessage = $x->saveHTML();
-                $translateMessage = str_replace(['<TRANSLATEHTML>', '</TRANSLATEHTML>'], '', $translateMessage);
+                $doc->loadXML("<{$tag}>{$message}</{$tag}>");
+                $this->_htmlTranslateByNode($doc, $config);
+                $translateMessage = $doc->saveHTML();
+                $translateMessage = str_replace(["<$tag>", "</$tag>"], '', $translateMessage);
 
                 return [
                     '_message' => $message,
