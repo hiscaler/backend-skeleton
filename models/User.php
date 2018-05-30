@@ -208,6 +208,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
+     * @throws \yii\base\Exception
      */
     public function setPassword($password)
     {
@@ -343,6 +344,7 @@ class User extends ActiveRecord implements IdentityInterface
      *
      * @param integer $userId
      * @return boolean
+     * @throws \yii\db\Exception
      */
     public static function fixUserGroup($userId)
     {
@@ -417,7 +419,8 @@ class User extends ActiveRecord implements IdentityInterface
                                 $authManager->revoke($oldRole, $this->id);
                             }
                         }
-                        $authManager->assign($role, $this->id);
+                        $roles = $authManager->getRolesByUser($this->id);
+                        $roles && !in_array($role, $roles) && $authManager->assign($role, $this->id);
                     }
                 }
             } elseif (!$insert) {
