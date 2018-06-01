@@ -157,16 +157,30 @@ class TranslateController extends BaseController
     }
 
     /**
+     * 清理 Html 中的样式
+     *
+     * @param $content
+     * @return string
+     */
+    private function _clean($content)
+    {
+        return \yii\helpers\HtmlPurifier::process($content, [
+            'HTML.Allowed' => 'div,em,a[href|title|style],ul,ol,li,p[style],br',
+        ]);
+    }
+
+    /**
      * 翻译
      *
      * @param string $from
      * @param string $to
      * @param bool $isHtml
+     * @param bool $clean
      * @return array
      * @throws BadRequestHttpException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function actionIndex($from = 'en', $to = 'zh-CHS', $isHtml = false)
+    public function actionIndex($from = 'en', $to = 'zh-CHS', $isHtml = false, $clean = false)
     {
         if (!in_array($from, $this->languages)) {
             throw new BadRequestHttpException('from 参数无效，可用参数为：' . implode(', ', $this->languages));
@@ -183,7 +197,11 @@ class TranslateController extends BaseController
 
         $message = trim(Yii::$app->getRequest()->post('message'));
         if ($message) {
+            $message = preg_replace('/>\s+</', '><', $message);
             if ($isHtml) {
+                if ($clean) {
+                    $message = $this->_clean($message);
+                }
                 $doc = new DOMDocument();
                 $tag = 'TRANSLATEHTML';
                 $doc->loadXML("<{$tag}>{$message}</{$tag}>");
