@@ -9,7 +9,7 @@ $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
     'language' => 'zh-CN',
-    'bootstrap' => ['log', 'queue'],
+    'bootstrap' => ['log'],
     'controllerNamespace' => 'app\commands',
     'controllerMap' => [
         'migrate' => [
@@ -44,14 +44,6 @@ $config = [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
-        'queue' => [
-            'class' => \yii\queue\db\Queue::class,
-            'db' => 'db',
-            'tableName' => '{{%queue}}',
-            'channel' => 'default',
-            'mutex' => \yii\mutex\MysqlMutex::class,
-            'as log' => \yii\queue\LogBehavior::class
-        ],
     ],
     'params' => $params,
 ];
@@ -61,6 +53,18 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
+    ];
+}
+
+if (class_exists('\yii\queue\db\Queue')) {
+    $config['bootstrap'][] = 'queue';
+    $config['components']['queue'] = [
+        'class' => \yii\queue\db\Queue::class,
+        'db' => 'db',
+        'tableName' => '{{%queue}}',
+        'channel' => 'default',
+        'mutex' => \yii\mutex\MysqlMutex::class,
+        'as log' => \yii\queue\LogBehavior::class
     ];
 }
 
