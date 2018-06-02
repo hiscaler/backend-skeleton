@@ -46,18 +46,18 @@ class GlobalControlPanel extends Widget
                 if ((isset($value['forceEmbed']) && $value['forceEmbed'])) {
                     $url = $value['url'];
                     $r = $url[0];
-                    $rArr = explode('/', $r);
+                    $urlArray = explode('/', $r);
                     if ($requireCheckAuth) {
-                        if ($rArr[0] == 'admin') {
-                            array_shift($rArr);
+                        if ($urlArray[0] == 'admin') {
+                            array_shift($urlArray);
                         }
-                        if (!$user->can('admin-' . implode('.', $rArr))) {
+                        if (!$user->can('admin-' . implode('.', $urlArray))) {
                             continue;
                         }
                     }
 
                     $urlControllerId = null;
-                    foreach ($rArr as $d) {
+                    foreach ($urlArray as $d) {
                         if (!empty($d)) {
                             $urlControllerId = $d;
                             break;
@@ -137,24 +137,29 @@ class GlobalControlPanel extends Widget
                         // 有子菜单
                         $urls = [];
                         foreach ($t['items'] as $key => $moduleMenu) {
-                            $urls[$key] = trim($moduleMenu['url'][0], '/');
+                            $urls[$key] = $moduleMenu['url'][0];
                         }
                         $hasChildrenMenu = true;
                     } else {
                         // 无子菜单
-                        $urls = [trim($t['url'][0], '/')];
+                        $urls = [$t['url'][0]];
                         $hasChildrenMenu = false;
                     }
                     foreach ($urls as $key => $url) {
-                        $rArr = explode('/', $url);
-                        $permissionName = array_shift($rArr) . '-' . array_shift($rArr) . '-' . implode('.', $rArr);
+                        $urlArray = explode('/', trim($url, '/'));
+                        $permissionName = array_shift($urlArray) . '-' . array_shift($urlArray) . '-' . implode('.', $urlArray);
                         if (!$user->can($permissionName)) {
                             if ($hasChildrenMenu) {
                                 unset($t['items'][$key]);
                             } else {
                                 $t = [];
                             }
+                        } elseif (!isset($rootUrl)) {
+                            $rootUrl = $url;
                         }
+                    }
+                    if (isset($rootUrl)) {
+                        $t['url'] = [$rootUrl];
                     }
                 }
 
