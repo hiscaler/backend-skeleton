@@ -94,7 +94,7 @@ class WxappController extends BaseController
         $db = \Yii::$app->getDb();
         $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
         $maxId = $db->createCommand('SELECT MAX([[id]]) FROM {{%member}}')->queryScalar();
-        $username = sprintf('wx%08d', $maxId + 1);
+        $username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
         if ($memberId) {
             // 更新会员的相关信息
             $member = Member::findOne($memberId);
@@ -146,6 +146,7 @@ class WxappController extends BaseController
      * 验证 session 值是否有效
      *
      * @return array
+     * @throws NotFoundHttpException
      * @throws \yii\db\Exception
      */
     public function actionCheckSession()
@@ -172,7 +173,6 @@ class WxappController extends BaseController
      *
      * @return array|string
      * @throws BadRequestHttpException
-     * @throws InvalidConfigException
      * @throws \yii\db\Exception
      */
     public function actionPayment()
@@ -232,9 +232,9 @@ class WxappController extends BaseController
     /**
      * 支付回调通知
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws InvalidConfigException
+     * @return void
      * @throws \EasyWeChat\Core\Exceptions\FaultException
+     * @throws \yii\base\ExitException
      */
     public function actionPaymentNotify()
     {
