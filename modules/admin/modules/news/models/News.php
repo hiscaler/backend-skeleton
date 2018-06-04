@@ -195,13 +195,12 @@ class News extends BaseActiveRecord
     {
         parent::afterDelete();
         // 清理资讯相关联数据
-        $entityName = self::class;
         $db = \Yii::$app->getDb();
         $cmd = $db->createCommand();
         $cmd->delete('{{%news_content}}', ['news_id' => $this->id])->execute();
 
         // 推送位处理
-        $entityAttributes = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[entity_name]] = :entityName', [':entityId' => $this->id, ':entityName' => $entityName])->queryAll();
+        $entityAttributes = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [':entityId' => $this->id, ':modelName' => self::class])->queryAll();
         if ($entityAttributes) {
             $entityAttributeIds = $attributeIds = [];
             foreach ($entityAttributes as $entityAttribute) {
