@@ -56,6 +56,7 @@ class DefaultController extends BaseController
             'normal' => [],
         ];
         $className = str_replace([Yii::getAlias('@app'), '.php'], ['app'], FileHelper::normalizePath($file));
+        $className = str_replace('/', '\\', $className);
         $reflection = new \ReflectionClass($className);
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
