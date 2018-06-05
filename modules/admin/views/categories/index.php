@@ -22,6 +22,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             return [
+                'id' => 'row-' . $model['id'],
                 'data-tt-id' => $model['id'],
                 'class' => $model['enabled'] ? 'enabled' : 'disabled',
                 'data-tt-parent-id' => $model['parent_id'],
@@ -99,7 +100,19 @@ $this->registerJsFile($baseUrl . '/jquery.treetable.js', [
 \app\modules\admin\components\JsBlock::begin();
 ?>
 <script type="text/javascript">
-    yadjet.actions.toggle("table td.enabled-handler img", "<?= yii\helpers\Url::toRoute('toggle') ?>");
+    yadjet.actions.toggle("table td.enabled-handler img", "<?= yii\helpers\Url::toRoute('toggle') ?>", function (response) {
+        if (response.success) {
+            var data = response.data,
+                ids = data.ids;
+            if (ids.length > 1) {
+                var src = yadjet.icons.boolean[data.value ? 1 : 0];
+                for (var i = 1, l = ids.length; i < l; i++) {
+                    $('#row-' + ids[i]).find('td.boolean > img').attr('src', src).end().find('td.rb-updated-at').html(data.updatedAt);
+                }
+            }
+        }
+    });
+
     $(".table").treetable({expandable: true, initialState: "expand"});
 </script>
 <?php \app\modules\admin\components\JsBlock::end() ?>

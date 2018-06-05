@@ -19,8 +19,8 @@ use yii\helpers\Inflector;
  * @property string $short_name
  * @property integer $parent_id
  * @property integer $level
- * @property string $parent_ids
- * @property string $parent_names
+ * @property string $id_path
+ * @property string $name_path
  * @property string $icon
  * @property string $description
  * @property integer $enabled
@@ -79,8 +79,8 @@ class Category extends BaseActiveRecord
             [['sign'], 'unique'],
             [['name', 'short_name'], 'string', 'max' => 30],
             [['parent_id'], 'checkParent'],
-            [['parent_ids'], 'string', 'max' => 100],
-            [['parent_names'], 'string', 'max' => 255],
+            [['id_path'], 'string', 'max' => 100],
+            [['name_path'], 'string', 'max' => 255],
             ['alias', 'unique', 'targetAttribute' => ['alias']],
             ['icon', 'file',
                 'extensions' => $this->_fileUploadConfig['extensions'],
@@ -125,8 +125,8 @@ class Category extends BaseActiveRecord
             'short_name' => Yii::t('category', 'Short Name'),
             'parent_id' => Yii::t('category', 'Parent ID'),
             'level' => Yii::t('category', 'Level'),
-            'parent_ids' => Yii::t('category', 'Parent Ids'),
-            'parent_names' => Yii::t('category', 'Parent Names'),
+            'id_path' => Yii::t('category', 'ID Path'),
+            'name_path' => Yii::t('category', 'Name Path'),
             'icon' => Yii::t('category', 'Icon'),
             'description' => Yii::t('category', 'Description'),
             'ordering' => Yii::t('app', 'Ordering'),
@@ -242,16 +242,18 @@ class Category extends BaseActiveRecord
 
     private static function _getParents($items, $id)
     {
-        $children = [];
+        $parents = [];
         foreach ($items as $i => $item) {
             if ($item['id'] == $id) {
-                $children[] = $item;
+                $parents[] = $item;
                 unset($items[$i]);
-                $children = array_merge($children, self::_getParents($items, $item['parent']));
+                if ($item['parent']) {
+                    $parents = array_merge($parents, self::_getParents($items, $item['parent']));
+                }
             }
         }
 
-        return $children;
+        return $parents;
     }
 
     /**
@@ -266,6 +268,9 @@ class Category extends BaseActiveRecord
     {
         $parents = self::_getParents(self::rawData(false), (int) $id);
         !$self && array_shift($parents);
+
+        $parents = array_reverse($parents);
+        array_shift($parents);
 
         return $parents;
     }
@@ -327,29 +332,29 @@ class Category extends BaseActiveRecord
     /**
      * 获取所有子节点数据
      *
-     * @param int $parent
+     * @param int $id
      * @param int $level
      * @param bool $getAll
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function getChildren($parent = 0, $level = 0, $getAll = false)
+    public static function getChildren($id = 0, $level = 0, $getAll = false)
     {
-        return self::_getChildren(self::rawData(false), (int) $parent, (int) $level, $getAll);
+        return self::_getChildren(self::rawData(false), (int) $id, (int) $level, $getAll);
     }
 
     /**
      * 获取所有子节点 id 集合
      *
-     * @param mixed|integer $parent
+     * @param mixed|integer $id
      * @param int $level
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function getChildrenIds($parent = 0, $level = 0)
+    public static function getChildrenIds($id = 0, $level = 0)
     {
         $ids = [];
-        foreach (self::getChildren($parent, $level) as $child) {
+        foreach (self::getChildren($id, $level) as $child) {
             $ids[] = (int) $child['id'];
         }
 
@@ -357,23 +362,27 @@ class Category extends BaseActiveRecord
     }
 
     /**
+     * 判断是否有子项目
+     *
+     * @param $id
+     * @return bool
+     * @throws \yii\db\Exception
+     */
+    public static function hasChildren($id)
+    {
+        return \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%category}} WHERE [[parent_id]] = :parentId', [':parentId' => (int) $id])->queryScalar() ? true : false;
+    }
+
+    /**
      * 根据 sign 值获取 id
      *
      * @param $sign
-     * @return null
+     * @return false|null|string
      * @throws \yii\db\Exception
      */
     public static function getIdBySign($sign)
     {
-        $id = null;
-        foreach (self::rawData(false) as $data) {
-            if ($data['sign'] == $sign) {
-                $id = $data['id'];
-                break;
-            }
-        }
-
-        return $id;
+        return \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $sign])->queryScalar();
     }
 
     /**
@@ -458,23 +467,23 @@ class Category extends BaseActiveRecord
 
         if (!$insert) {
             if ($this->parent_id != $this->_parent_id) {
-                $parents = self::getParents($this->id);
-                if ($parents) {
-                    $ids = $names = [];
+                $childrenIds = self::getChildrenIds($this->id);
+                $childrenIds[] = $this->id;
+                foreach ($childrenIds as $childId) {
+                    $parents = self::getParents($childId);
+                    $idPath = $namePath = [];
                     foreach ($parents as $parent) {
-                        $ids[] = $parent['id'];
-                        $names[] = $parent['name'];
+                        $idPath[] = $parent['id'];
+                        $namePath[] = $parent['name'];
                     }
-                    $parentIds = implode(',', $ids);
-                    $parentNames = implode(',', $names);
-                    if ($parentIds || $parentNames) {
-                        $columns = [];
-                        $parentIds && $columns['parent_ids'] = $parentIds;
-                        $parentNames && $columns['parent_names'] = $parentNames;
-                        $cmd->update('{{%category}}', $columns, ['id' => $this->id])->execute();
-                    }
+                    $columns = [
+                        'id_path' => implode(',', $idPath),
+                        'name_path' => implode(',', $namePath),
+                    ];
+                    $cmd->update('{{%category}}', $columns, ['id' => $childId])->execute();
                 }
             }
+
             if ($this->level != $this->_level) {
                 $children = self::getChildrenIds($this->id);
                 if ($children) {

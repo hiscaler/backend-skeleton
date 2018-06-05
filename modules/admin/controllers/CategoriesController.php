@@ -111,6 +111,7 @@ class CategoriesController extends Controller
      * @rbacDescription 更新分类权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -132,11 +133,15 @@ class CategoriesController extends Controller
      * @rbacDescription 删除分类权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\Exception
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $children = Category::getChildrenIds($model['id']);
+        $children = Category::hasChildren($model['id']);
         if ($children) {
             throw new InvalidCallException('该分类有下级分类，禁止删除。');
         } else {
@@ -151,28 +156,29 @@ class CategoriesController extends Controller
      *
      * @rbacDescription 激活、禁止操作分类权限
      * @return Response
+     * @throws \Throwable
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionToggle()
     {
-        $id = Yii::$app->getRequest()->post('id');
+        $id = (int) Yii::$app->getRequest()->post('id');
         $db = Yii::$app->getDb();
-        $value = $db->createCommand('SELECT [[enabled]] FROM {{%category}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        $value = $db->createCommand('SELECT [[enabled]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $id])->queryScalar();
         if ($value !== null) {
             $value = !$value;
             $now = time();
+            $ids = [$id];
             if (!$value) {
-                $ids = Category::getChildrenIds($id);
-                $ids[] = $id;
-            } else {
-                $ids = [$id];
+                $ids = array_merge($ids, Category::getChildrenIds($id));
             }
             $db->createCommand()->update('{{%category}}', ['enabled' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], ['id' => $ids])->execute();
             $responseData = [
                 'success' => true,
                 'data' => [
+                    'ids' => $ids,
                     'value' => $value,
                     'updatedAt' => Yii::$app->getFormatter()->asDate($now),
-                    'updatedBy' => Yii::$app->getUser()->getIdentity()->username,
                 ],
             ];
         } else {
