@@ -3,14 +3,19 @@
 namespace app\modules\api\modules\news\controllers;
 
 use app\models\Category;
+use app\models\Yad;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\Constant;
 use app\modules\api\modules\news\models\News;
 use app\modules\api\modules\news\models\NewsContent;
+use GuzzleHttp\Client;
+use RuntimeException;
+use yadjet\helpers\StringHelper;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
+use yii\helpers\FileHelper;
 
 /**
  * /api/news/default
@@ -374,6 +379,85 @@ class DefaultController extends BaseController
                         @mkdir(pathinfo($path, PATHINFO_DIRNAME), 0777, true);
                         $file->saveAs($path);
                     }
+                }
+                // 解析文本内容，提取图片并下载
+                $sourceUrl = $model['source_url'];
+                $url = '';
+                if ($sourceUrl) {
+                    $urlConf = parse_url($sourceUrl);
+                    if ($urlConf !== false) {
+                        if (isset($urlConf['schema'])) {
+                            $url .= $urlConf['schema'];
+                        } else {
+                            $url = 'http';
+                        }
+                        $url .= '://';
+                        if (isset($urlConf['host'])) {
+                            $url .= $urlConf['host'];
+                        }
+                        if (isset($urlConf['port']) && $urlConf['port'] != 80 && $urlConf['port'] != 443) {
+                            $url .= ":{$urlConf['port']}";
+                        }
+                    }
+                }
+                $directory = date('Ymd');
+                $webRoot = Yii::getAlias('@webroot');
+                $savePath = $webRoot . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $directory;
+                if (!file_exists($savePath)) {
+                    FileHelper::createDirectory($savePath);
+                }
+                $replaceParis = [];
+                $content = $newsContent['content'];
+                $images = Yad::getTextImages($content);
+                foreach ($images as $image) {
+                    if (file_exists($webRoot . $image)) {
+                        continue;
+                    }
+                    if (strncasecmp($image, '//', 2) !== 0 && strncasecmp($image, 'http', 4) !== 0 && strncasecmp($image, 'https', 5) !== 0) {
+                        $image = $url . '/' . ltrim($image, ' / ');
+                    }
+                    if (strncasecmp($image, '//', 2) === 0 || strncasecmp($image, 'http', 4) === 0 || strncasecmp($image, 'https', 5) === 0) {
+                        try {
+                            $client = new Client();
+                            $response = $client->get($image);
+                            $headers = $response->getHeaders();
+                            $ext = pathinfo($image, PATHINFO_EXTENSION);
+                            if (empty($ext) && isset($headers['Content-Type'][0])) {
+                                switch ($headers['Content-Type'][0]) {
+                                    case 'image/jpeg':
+                                        $ext = 'jpg';
+                                        break;
+
+                                    case 'image/gif':
+                                        $ext == 'gif';
+                                        break;
+
+                                    case 'image/png':
+                                        $ext == 'png';
+                                        break;
+
+                                    case 'image/vnd.wap.wbmp':
+                                        $ext == 'wbmp';
+                                        break;
+
+                                    default:
+                                        $ext = 'jpg';
+                                        break;
+                                }
+                            }
+                            empty($ext) && $ext = 'jpg';
+                            $filename = StringHelper::generateRandomString() . ".$ext";
+                            if ($response->getStatusCode() == 200) {
+                                $img = $response->getBody();
+                                file_put_contents($savePath . DIRECTORY_SEPARATOR . $filename, $img);
+                                $replaceParis[$image] = "/uploads/$directory/$filename";
+                            }
+                        } catch (RuntimeException $e) {
+                        }
+                    }
+                }
+                if ($replaceParis) {
+                    $newsContent->content = strtr($content, $replaceParis);
                 }
                 $db = Yii::$app->getDb();
                 $transaction = $db->beginTransaction();
