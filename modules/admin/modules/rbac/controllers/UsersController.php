@@ -3,11 +3,35 @@
 namespace app\modules\admin\modules\rbac\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use yii\rbac\Item;
 use yii\web\Response;
 
+/**
+ * Class UsersController
+ * 用户接口
+ *
+ * @package app\modules\admin\modules\rbac\controllers
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class UsersController extends Controller
 {
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'roles', 'permissions', 'auths', 'assign', 'revoke'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 
     /**
      * 获取所有用户
@@ -140,6 +164,7 @@ class UsersController extends Controller
      *
      * @rbacDescription 分配用户角色权限
      * @return Response
+     * @throws \Exception
      */
     public function actionAssign()
     {

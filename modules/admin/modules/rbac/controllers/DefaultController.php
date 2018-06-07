@@ -7,12 +7,16 @@ use app\modules\admin\modules\rbac\helpers\RbacHelper;
 use Yii;
 use yii\base\Exception;
 use yii\base\Module;
+use yii\filters\AccessControl;
 use yii\helpers\FileHelper;
 use yii\helpers\Inflector;
 use yii\web\Response;
 
 /**
- * `rbac` 子模块
+ * Class DefaultController
+ *
+ * @package app\modules\admin\modules\rbac\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends BaseController
 {
@@ -21,6 +25,22 @@ class DefaultController extends BaseController
 
     /** @var \yii\rbac\DbManager $auth */
     protected $auth;
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'scan'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 
     public function init()
     {

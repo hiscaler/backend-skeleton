@@ -4,6 +4,8 @@ namespace app\modules\admin\modules\rbac;
 
 /**
  * `rbac` 子模块
+ *
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class Module extends \app\modules\admin\Module
 {

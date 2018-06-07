@@ -2,6 +2,8 @@
 
 namespace app\modules\admin\modules\rbac\helpers;
 
+use Yii;
+
 trait RbacHelper
 {
 
@@ -43,7 +45,12 @@ trait RbacHelper
         if ($this instanceof \yii\web\Controller) {
             $options = property_exists($this->module, 'options') ? $this->module->options : [];
 
-            return \yii\helpers\ArrayHelper::merge($this->defaultModuleOptions, $options);
+            $defaultModuleOptions = isset(Yii::$app->params['rbac']) ? Yii::$app->params['rbac'] : $this->defaultModuleOptions;
+            if ($defaultModuleOptions) {
+                $options = \yii\helpers\ArrayHelper::merge($defaultModuleOptions, $options);
+            }
+
+            return $options;
         } else {
             throw new \yii\base\InvalidCallException(get_class($this) . ' must is a \yii\web\Controller instance.');
         }

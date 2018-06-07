@@ -5,6 +5,13 @@ namespace app\modules\admin\modules\rbac\controllers;
 use app\modules\admin\modules\rbac\helpers\RbacHelper;
 use yii\base\Exception;
 
+/**
+ * Class Controller
+ * 基类
+ *
+ * @package app\modules\admin\modules\rbac\controllers
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class Controller extends \yii\rest\Controller
 {
 

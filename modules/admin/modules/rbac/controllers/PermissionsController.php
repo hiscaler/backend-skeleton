@@ -4,10 +4,34 @@ namespace app\modules\admin\modules\rbac\controllers;
 
 use Exception;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Response;
 
+/**
+ * Class PermissionsController
+ * 权限接口
+ *
+ * @package app\modules\admin\modules\rbac\controllers
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class PermissionsController extends Controller
 {
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 
     /**
      * 返回定义的所有权限

@@ -4,15 +4,33 @@ namespace app\modules\admin\modules\rbac\controllers;
 
 use Yii;
 use yii\base\Exception;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
+/**
+ * Class RolesController
+ * 角色接口
+ *
+ * @package app\modules\admin\modules\rbac\controllers
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class RolesController extends Controller
 {
 
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'delete', 'permissions-by-role', 'add-child', 'add-children', 'remove-child', 'remove-children'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -45,6 +63,7 @@ class RolesController extends Controller
      *
      * @rbacDescription 角色添加权限
      * @return Response
+     * @throws \Exception
      */
     public function actionCreate()
     {
@@ -250,7 +269,7 @@ class RolesController extends Controller
             if (!$result) {
                 $responseBody['error']['message'] = 'Unknown Error.';
             }
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
             $responseBody = [
                 'success' => false,
                 'error' => [

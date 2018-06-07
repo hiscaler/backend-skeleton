@@ -12,6 +12,28 @@ return [
     'rbac' => [
         'debug' => false, // 是否调试模式(调试模式下不启用权限认证)
         'ignoreUsers' => ['admin'], // 启用权限认证的情况下这些用户名登录的用户不受控制，可以使用全部的权限，方便调试。
+        'userTable' => [
+            'name' => '{{%user}}', // 查询的用户表
+            'columns' => [
+                'id' => 'id', // 主键
+                'username' => 'username', // 用户名
+                /**
+                 * 扩展字段（数据库字段名称 => 显示名称）
+                 *
+                 * [
+                 *     'nickname' => '昵称',
+                 *     'email' => '邮箱',
+                 * ]
+                 */
+                'extra' => [
+                    'nickname' => '昵称',
+                    'role' => '角色',
+                ],
+            ],
+            'where' => [], // 查询条件
+        ],
+        'disabledScanModules' => ['gii', 'debug', 'api'], // 禁止扫描的模块
+        'selfish' => true, // 是否只显示当前应用的相关数据
     ],
     // 翻译设置
     'translate' => [

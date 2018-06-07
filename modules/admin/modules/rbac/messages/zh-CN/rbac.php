@@ -6,7 +6,7 @@ return [
     'Permissions' => '权限管理',
     'Permissions Scan' => '权限扫描',
     // user
-    'Username' => '姓名',
+    'Username' => '账号',
     // role
     'Role Name' => '角色名称',
     'Description' => '描述',
