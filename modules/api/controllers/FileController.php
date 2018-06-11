@@ -26,7 +26,7 @@ class FileController extends BaseController
 
     protected function generateUniqueFilename()
     {
-        return '';
+        return StringHelper::generateRandomString();
     }
 
     /**
@@ -50,34 +50,89 @@ class FileController extends BaseController
             throw new InvalidConfigException("无效的 $type 上传配置。");
         }
 
+        $request = Yii::$app->getRequest();
+        $file = UploadedFile::getInstanceByName($key);
+        $validator = null;
+        if ($file) {
+            $validator = $type;
+        } else {
+            $file = $request->post($key);
+            !$file && $file = $request->get($key);
+            if ($file) {
+                $validator = 'string';
+            }
+        }
+        if (empty($file)) {
+            throw new BadRequestHttpException("key 参数值无效。");
+        }
+
         $model = new DynamicModel([$key]);
-        $model->$key = UploadedFile::getInstanceByName($key);
-        $model->addRule($key, $type, [
-            'skipOnEmpty' => false,
-            'enableClientValidation' => false,
-            'extensions' => $config[$type]['extensions'],
-            'minSize' => isset($config[$type]['minSize']) ? $config[$type]['minSize'] : 1024,
-            'maxSize' => isset($config[$type]['maxSize']) ? $config[$type]['maxSize'] : (1024 * 1024 * 200),
-        ]);
+        $model->$key = $file;
+        switch ($validator) {
+            case 'file':
+            case 'image':
+                $model->addRule($key, $validator, [
+                    'skipOnEmpty' => false,
+                    'enableClientValidation' => false,
+                    'extensions' => $config[$type]['extensions'],
+                    'minSize' => isset($config[$type]['minSize']) ? $config[$type]['minSize'] : 1024,
+                    'maxSize' => isset($config[$type]['maxSize']) ? $config[$type]['maxSize'] : (1024 * 1024 * 200),
+                ]);
+                break;
+
+            default:
+                // Is base64 format
+                $model->addRule($key, $validator, ['min' => 1]);
+                break;
+        }
+
         if ($model->validate()) {
             /* @var $file \yii\web\UploadedFile */
             $file = $model->$key;
-            $path = $config['path'];
-            $absolutePath = Yii::getAlias('@web') . $path . DIRECTORY_SEPARATOR . date("Ymd");
+            $path = $request->getBaseUrl() . '/' . trim($config['path'], '/') . '/' . date('Ymd');
+            $absolutePath = FileHelper::normalizePath(Yii::getAlias('@webroot') . $path);
             !file_exists($absolutePath) && FileHelper::createDirectory($absolutePath);
-            $fileNameHash = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz1234567890'), 0, 5);
-            $filename = sprintf('%s%s.%s', $fileNameHash, date('YmdHis'), $file->getExtension());
-            $success = $file->saveAs($absolutePath . DIRECTORY_SEPARATOR . $filename);
+            $originalName = null;
+            $extensionName = null;
+            if ($validator == 'string') {
+                $t = explode(';', $file);
+                $mimeType = substr($t[0], 5);
+                $extensionName = FileHelper::getExtensionsByMimeType($mimeType);
+                if ($extensionName) {
+                    $extensionName = $extensionName[0];
+                } else {
+                    $extensionName = 'jpg';
+                }
+
+                $fileSize = 0;
+            } else {
+                $originalName = $file->name;
+                $extensionName = $file->getExtension();
+                $fileSize = $file->size;
+                $mimeType = FileHelper::getMimeTypeByExtension($extensionName);
+            }
+            $filename = $this->generateUniqueFilename() . '.' . $extensionName;
+            $absoluteSavePath = $absolutePath . DIRECTORY_SEPARATOR . $filename;
+            if ($validator == 'string') {
+                $success = file_put_contents($absoluteSavePath, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file)));
+                $fileSize = filesize($absoluteSavePath);
+            } else {
+                $success = $file->saveAs($absoluteSavePath);
+            }
+
             if ($success) {
-                $path = "/$path/$filename";
+                $path = "$path/$filename";
+                $imgBinary = fread(fopen($absoluteSavePath, "r"), filesize($absoluteSavePath));
+                $imageBase64 = 'data:image/' . $mimeType . ';base64,' . base64_encode($imgBinary);
 
                 return [
-                    'originalName' => $file->name,
+                    'originalName' => $originalName,
                     'realName' => $filename,
                     'path' => $path,
-                    'fullPath' => Yii::$app->getRequest()->getHostInfo() . $path,
-                    'size' => $file->size,
-                    'type' => $file->getExtension(),
+                    'fullPath' => $request->getHostInfo() . $path,
+                    'base64' => $imageBase64,
+                    'size' => $fileSize,
+                    'mimeType' => $mimeType,
                 ];
             } else {
                 Yii::$app->getResponse()->setStatusCode(400);
