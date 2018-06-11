@@ -20,7 +20,7 @@ class m171206_153127_create_wechat_member_table extends Migration
             'member_id' => $this->integer()->comment('会员 id'),
             'subscribe' => $this->boolean()->notNull()->defaultValue(1)->comment('是否关注'),
             'openid' => $this->string(28)->notNull()->unique()->comment('openid'),
-            'nickname' => $this->string(50)->notNull()->comment('昵称'),
+            'nickname' => $this->string(60)->notNull()->comment('昵称'),
             'sex' => $this->smallInteger()->notNull()->defaultValue(0)->comment('性别'),
             'country' => $this->string(50)->comment('国家'),
             'province' => $this->string(50)->comment('省份'),
