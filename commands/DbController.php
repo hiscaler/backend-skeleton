@@ -28,7 +28,7 @@ class DbController extends Controller
         }
         $tableHeader = [
             ['序号', '字段名称', '类型', '长度', '允许 NULL', '默认值', '备注'],
-            ['---', '---', '---', '---', '---', '---', '---']
+            [':---:', '---', '---', ':---:', ':---:', ':---:', '---']
         ];
         $db = \Yii::$app->getDb();
         $schema = $db->getSchema();
@@ -46,7 +46,7 @@ class DbController extends Controller
                     $column->type,
                     $column->size,
                     $column->allowNull ? 'Y' : 'N',
-                    $column->defaultValue ?: ' ',
+                    $column->defaultValue,
                     $column->comment,
                 ];
                 $i += 1;
@@ -54,7 +54,7 @@ class DbController extends Controller
             $doc = '';
             $tableRows = array_merge($tableHeader, $tableRows);
             foreach ($tableRows as $row) {
-                $doc .= '|' . implode('|', $row) . '|' . PHP_EOL;
+                $doc .= '| ' . implode(' | ', $row) . ' | ' . PHP_EOL;
             }
 
             file_put_contents($path . DIRECTORY_SEPARATOR . str_replace($db->tablePrefix, '', $table) . ".md", $doc);
