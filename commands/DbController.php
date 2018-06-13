@@ -15,14 +15,20 @@ class DbController extends Controller
 {
 
     /**
-     * 生成数据字典
+     * 生成数据表字典
      *
+     * @param null $path
      * @throws \yii\base\Exception
      * @throws \yii\base\NotSupportedException
      */
-    public function actionGenerateDict()
+    public function actionGenerateDict($path = null)
     {
-        $path = Yii::getAlias('@app') . DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR . 'db-dict';
+        if ($path) {
+            $path = Yii::getAlias('@app') . DIRECTORY_SEPARATOR . trim($path, '\/');
+        } else {
+            $path = Yii::getAlias('@app') . DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR . 'db-dict';
+        }
+
         if (!file_exists($path)) {
             FileHelper::createDirectory($path);
         }
@@ -51,9 +57,32 @@ class DbController extends Controller
                 ];
                 $i += 1;
             }
-            $doc = '';
-            $tableRows = array_merge($tableHeader, $tableRows);
+            $doc = "**$table**" . PHP_EOL;
+            $doc .= "---" . PHP_EOL;
+            $columnWidths = [];
             foreach ($tableRows as $row) {
+                foreach ($row as $key => $column) {
+                    $width = mb_strlen($column);
+                    if (isset($columnWidths[$key])) {
+                        if ($width > $columnWidths[$key]) {
+                            $columnWidths[$key] = $width;
+                        }
+                    } else {
+                        $columnWidths[$key] = $width;
+                    }
+                }
+            }
+
+            $tableRows = array_merge($tableHeader, $tableRows);
+            foreach ($tableRows as $i => $row) {
+                if ($i > 1) {
+                    foreach ($row as $key => $item) {
+                        if (mb_strlen($item) < $columnWidths[$key]) {
+                            $row[$key] = str_pad($item, $columnWidths[$key], ' ', $key == 0 ? STR_PAD_LEFT : STR_PAD_RIGHT);
+                        }
+                    }
+                }
+
                 $doc .= '| ' . implode(' | ', $row) . ' | ' . PHP_EOL;
             }
 
