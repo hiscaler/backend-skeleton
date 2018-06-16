@@ -83,6 +83,27 @@ class Option
     }
 
     /**
+     * 系统核心表
+     *
+     * @param bool $withPrefix 是否带表前缀
+     * @return array
+     */
+    public static function coreTables($withPrefix = false)
+    {
+        $tables = ['category', 'entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'member', 'meta', 'meta_validator', 'meta_value', 'migration', 'module', 'user', 'user_auth_category', 'user_credit_log', 'user_group', 'user_login_log', 'wechat_member'];
+        if ($withPrefix) {
+            $tablePrefix = \Yii::$app->getDb()->tablePrefix;
+            if ($tablePrefix) {
+                foreach ($tables as &$table) {
+                    $table = $tablePrefix . $table;
+                }
+            }
+        }
+
+        return $tables;
+    }
+
+    /**
      * 获取所有表名称
      *
      * @return string[]
@@ -104,7 +125,7 @@ class Option
     {
         $models = [];
         $tablePrefix = \Yii::$app->getDb()->tablePrefix;
-        $coreTables = ['category', 'entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'member', 'meta', 'meta_validator', 'meta_value', 'migration', 'module', 'user', 'user_auth_category', 'user_credit_log', 'user_group', 'user_login_log', 'wechat_member'];
+        $coreTables = self::coreTables();
         $path = Yii::getAlias('@app');
         foreach (self::tables() as $table) {
             $table = str_replace($tablePrefix, '', $table);

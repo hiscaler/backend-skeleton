@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use app\models\Option;
 use Yii;
 use yii\console\Controller;
 use yii\helpers\FileHelper;
@@ -17,11 +18,12 @@ class DbController extends Controller
     /**
      * 生成数据表字典
      *
-     * @param null $path
+     * @param null $path 保存路径
+     * @param bool $coreTables 是否只生成核心表数据词典
      * @throws \yii\base\Exception
      * @throws \yii\base\NotSupportedException
      */
-    public function actionGenerateDict($path = null)
+    public function actionGenerateDict($path = null, $coreTables = true)
     {
         if ($path) {
             $path = Yii::getAlias('@app') . DIRECTORY_SEPARATOR . trim($path, '\/');
@@ -38,8 +40,8 @@ class DbController extends Controller
         ];
         $db = \Yii::$app->getDb();
         $schema = $db->getSchema();
-        $tables = $schema->getTableNames();
-
+        $tablePrefix = $db->tablePrefix;
+        $tables = $coreTables ? Option::coreTables(true) : $schema->getTableNames();
         foreach ($tables as $table) {
             echo "Generate $table table dict..." . PHP_EOL;
             $tableSchema = $schema->getTableSchema($table, true);
@@ -86,7 +88,7 @@ class DbController extends Controller
                 $doc .= '| ' . implode(' | ', $row) . ' | ' . PHP_EOL;
             }
 
-            file_put_contents($path . DIRECTORY_SEPARATOR . str_replace($db->tablePrefix, '', $table) . ".md", $doc);
+            file_put_contents($path . DIRECTORY_SEPARATOR . str_replace($tablePrefix, '', $table) . ".md", $doc);
         }
         echo "Done.";
     }
