@@ -2,7 +2,6 @@
 
 namespace app\modules\admin\modules\slide\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 

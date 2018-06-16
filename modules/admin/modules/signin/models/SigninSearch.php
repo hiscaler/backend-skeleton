@@ -2,10 +2,8 @@
 
 namespace app\modules\admin\modules\signin\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\admin\modules\signin\models\Signin;
 
 /**
  * SigninSearch represents the model behind the search form of `app\modules\admin\modules\signin\models\Signin`.

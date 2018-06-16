@@ -2,10 +2,8 @@
 
 namespace app\modules\admin\modules\miniActivity\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\admin\modules\miniActivity\models\WheelLog;
 
 /**
  * WheelLogSearch represents the model behind the search form of `app\modules\admin\modules\miniActivity\models\WheelLog`.
