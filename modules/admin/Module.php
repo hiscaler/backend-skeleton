@@ -25,7 +25,12 @@ class Module extends \yii\base\Module
                 'basePath' => '@app/messages',
             ]
         ];
-        foreach (\app\models\Module::getItems() as $alias => $name) {
+        $enableRbac = false;
+        $modules = \app\models\Module::getItems();
+        foreach ($modules as $alias => $name) {
+            if ($alias == 'rbac') {
+                $enableRbac = true;
+            }
             $i18nTranslations["$alias*"] = [
                 'class' => '\yii\i18n\PhpMessageSource',
                 'basePath' => "@app/modules/admin/modules/$alias/messages",
@@ -62,9 +67,6 @@ class Module extends \yii\base\Module
                 'class' => 'yii\i18n\I18N',
                 'translations' => $i18nTranslations,
             ],
-            'authManager' => [
-                'class' => 'yii\rbac\DbManager',
-            ],
             'response' => [
                 'class' => '\yii\web\Response',
                 'formatters' => [
@@ -76,10 +78,18 @@ class Module extends \yii\base\Module
                 ],
             ],
         ]);
+        if ($enableRbac) {
+            \Yii::$app->setComponents([
+
+                'authManager' => [
+                    'class' => 'yii\rbac\DbManager',
+                ],
+            ]);
+        }
         \Yii::$app->getErrorHandler()->errorAction = '/admin/default/error';
 
         // 载入安装的模块
-        foreach (\app\models\Module::getItems() as $alias => $name) {
+        foreach ($modules as $alias => $name) {
             $this->setModule($alias, [
                 'class' => 'app\\modules\\admin\\modules\\' . $alias . '\\Module',
                 'layout' => '@app/modules/admin/views/layouts/main.php',
