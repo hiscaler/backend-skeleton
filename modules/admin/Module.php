@@ -51,17 +51,6 @@ class Module extends \yii\base\Module
             'assetManager' => [
                 'class' => '\yii\web\AssetManager',
                 'appendTimestamp' => true,
-                'bundles' => [
-                    'yii\web\JqueryAsset' => [
-                        'sourcePath' => null, // do not publish the bundle
-                        'js' => [
-                            '/admin/js/jquery.min.js',
-                        ]
-                    ],
-                    'yii\grid\GridViewAsset' => [
-                        'js' => ['/admin/js/yii.gridView.js'],
-                    ],
-                ],
             ],
             'i18n' => [
                 'class' => 'yii\i18n\I18N',
@@ -80,7 +69,6 @@ class Module extends \yii\base\Module
         ]);
         if ($enableRbac) {
             \Yii::$app->setComponents([
-
                 'authManager' => [
                     'class' => 'yii\rbac\DbManager',
                 ],
