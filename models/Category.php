@@ -222,24 +222,6 @@ class Category extends BaseActiveRecord
         return $tree;
     }
 
-    public static function sortItems($tree)
-    {
-        $ret = [];
-        if (isset($tree['children']) && is_array($tree['children'])) {
-            $children = $tree['children'];
-            unset($tree['children']);
-            $ret[] = $tree;
-            foreach ($children as $child) {
-                $ret = array_merge($ret, self::sortItems($child, 'children'));
-            }
-        } else {
-            unset($tree['children']);
-            $ret[] = $tree;
-        }
-
-        return $ret;
-    }
-
     private static function _getParents($items, $id)
     {
         $parents = [];

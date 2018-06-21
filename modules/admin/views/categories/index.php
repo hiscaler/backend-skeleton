@@ -19,6 +19,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 <div class="categories-index">
     <?=
     GridView::widget([
+        'id' => 'grid-table-categories',
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             return [
@@ -113,6 +114,6 @@ $this->registerJsFile($baseUrl . '/jquery.treetable.js', [
         }
     });
 
-    $(".table").treetable({expandable: true, initialState: "expand"});
+    $("#grid-table-categories table.table").treetable({expandable: true, initialState: "expand"});
 </script>
 <?php \app\modules\admin\components\JsBlock::end() ?>

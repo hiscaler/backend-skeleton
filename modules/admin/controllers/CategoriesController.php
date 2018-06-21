@@ -3,7 +3,6 @@
 namespace app\modules\admin\controllers;
 
 use app\models\Category;
-use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\base\InvalidCallException;
 use yii\data\ArrayDataProvider;
@@ -55,12 +54,7 @@ class CategoriesController extends Controller
      */
     public function actionIndex()
     {
-        $rawData = (new Query())->from('{{%category}}')->all();
-        if ($rawData) {
-            $rawData = Category::sortItems(['children' => ArrayHelper::toTree($rawData, 'id')]);
-            unset($rawData[0]);
-        }
-
+        $rawData = (new Query())->from('{{%category}}')->orderBy(['ordering' => SORT_ASC])->all();
         $dataProvider = new ArrayDataProvider([
             'allModels' => $rawData,
             'key' => 'id',
@@ -77,7 +71,9 @@ class CategoriesController extends Controller
      * If creation is successful, the browser will be redirected to the 'index' page.
      *
      * @rbacDescription 新建分类权限
+     * @param int $parentId
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionCreate($parentId = 0)
     {
