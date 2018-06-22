@@ -277,4 +277,13 @@ class Lookup extends BaseActiveRecord
         }
     }
 
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        if ($this->input_method == self::INPUT_METHOD_FILE && $file = unserialize($this->value)) {
+            $file = Yii::getAlias('@webroot') . '/' . trim($file, '/');
+            file_exists($file) && unlink($file);
+        }
+    }
+
 }
