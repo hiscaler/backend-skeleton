@@ -41,7 +41,7 @@ class WechatMember extends \yii\db\ActiveRecord
             [['member_id', 'subscribe', 'sex', 'subscribe_time'], 'integer'],
             [['openid', 'nickname'], 'required'],
             [['openid'], 'string', 'max' => 28],
-            [['nickname', 'country', 'province', 'city', 'language'], 'string', 'max' => 50],
+            [['country', 'province', 'city', 'language'], 'string', 'max' => 50],
             [['nickname'], 'string', 'max' => 60],
             [['headimgurl'], 'string', 'max' => 200],
             [['unionid'], 'string', 'max' => 29],
