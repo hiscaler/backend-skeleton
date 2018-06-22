@@ -71,7 +71,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['type'], 'default', 'value' => self::TYPE_MEMBER],
             [['category_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
-            [['username', 'nickname', 'real_name'], 'string', 'max' => 20],
+            [['username', 'real_name'], 'string', 'max' => 20],
             [['nickname'], 'string', 'max' => 60],
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
