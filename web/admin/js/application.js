@@ -131,7 +131,7 @@ yadjet.utils = yadjet.utils || {
     }
 };
 yadjet.actions = yadjet.actions || {
-    toggle: function (selector, url) {
+    toggle: function (selector, url, callback) {
         var dataExt = arguments[2] ? arguments[2] : {};
         var trData = arguments[3] ? arguments[3] : [];
         $(document).off(selector).on('click', selector, function (event) {
@@ -177,6 +177,9 @@ yadjet.actions = yadjet.actions || {
                         }
                         if (data.onOffDatetime) {
                             $tr.find('td.rb-on-off-datetime').html(data.onOffDatetime);
+                        }
+                        if (callback) {
+                            callback(response);
                         }
                     } else {
                         layer.alert(response.error.message);
