@@ -3,6 +3,7 @@
 namespace app\modules\admin\controllers;
 
 use app\models\Category;
+use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\base\InvalidCallException;
 use yii\data\ArrayDataProvider;
@@ -46,7 +47,6 @@ class CategoriesController extends Controller
     }
 
     /**
-     *
      * Lists all Category models.
      *
      * @rbacDescription 查看分类列表权限
@@ -54,9 +54,13 @@ class CategoriesController extends Controller
      */
     public function actionIndex()
     {
-        $rawData = (new Query())->from('{{%category}}')->orderBy(['ordering' => SORT_ASC])->all();
+        $models = (new Query())->from('{{%category}}')->orderBy(['ordering' => SORT_ASC])->all();
+        if ($models) {
+            $tree = ArrayHelper::toTree($models, 'id');
+            $models = ArrayHelper::treeToArray($tree[0]);
+        }
         $dataProvider = new ArrayDataProvider([
-            'allModels' => $rawData,
+            'allModels' => $models,
             'key' => 'id',
             'pagination' => false,
         ]);

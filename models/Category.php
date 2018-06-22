@@ -447,38 +447,36 @@ class Category extends BaseActiveRecord
             }
         }
 
-        if (!$insert) {
-            if ($this->parent_id != $this->_parent_id) {
-                $childrenIds = self::getChildrenIds($this->id);
-                $childrenIds[] = $this->id;
-                foreach ($childrenIds as $childId) {
-                    $parents = self::getParents($childId);
-                    $idPath = $namePath = [];
-                    foreach ($parents as $parent) {
-                        $idPath[] = $parent['id'];
-                        $namePath[] = $parent['name'];
-                    }
-                    $columns = [
-                        'id_path' => implode(',', $idPath),
-                        'name_path' => implode(',', $namePath),
-                    ];
-                    $cmd->update('{{%category}}', $columns, ['id' => $childId])->execute();
+        if ($this->parent_id != $this->_parent_id) {
+            $childrenIds = self::getChildrenIds($this->id);
+            $childrenIds[] = $this->id;
+            foreach ($childrenIds as $childId) {
+                $parents = self::getParents($childId);
+                $idPath = $namePath = [];
+                foreach ($parents as $parent) {
+                    $idPath[] = $parent['id'];
+                    $namePath[] = $parent['name'];
                 }
+                $columns = [
+                    'id_path' => implode(',', $idPath),
+                    'name_path' => implode(',', $namePath),
+                ];
+                $cmd->update('{{%category}}', $columns, ['id' => $childId])->execute();
             }
+        }
 
-            if ($this->level != $this->_level) {
-                $children = self::getChildrenIds($this->id);
-                if ($children) {
-                    $value = $this->level - $this->_level;
-                    $sql = 'UPDATE {{%category}} SET [[level]] = [[level]]';
-                    if ($value) {
-                        $sql .= ' + :value';
-                    } else {
-                        $sql .= ' - :value';
-                    }
-                    $sql .= ' WHERE [[id]] IN (' . implode(',', $children) . ')';
-                    $db->createCommand($sql, [':value' => abs($value)])->execute();
+        if ($this->level != $this->_level) {
+            $children = self::getChildrenIds($this->id);
+            if ($children) {
+                $value = $this->level - $this->_level;
+                $sql = 'UPDATE {{%category}} SET [[level]] = [[level]]';
+                if ($value) {
+                    $sql .= ' + :value';
+                } else {
+                    $sql .= ' - :value';
                 }
+                $sql .= ' WHERE [[id]] IN (' . implode(',', $children) . ')';
+                $db->createCommand($sql, [':value' => abs($value)])->execute();
             }
         }
     }
