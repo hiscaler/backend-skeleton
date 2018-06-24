@@ -189,12 +189,6 @@ class InitController extends Controller
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
                     'value' => 0,
                 ],
-                // RBAC 调试模式
-                'system.rbac.debug' => [
-                    'returnType' => Lookup::RETURN_TYPE_BOOLEAN,
-                    'inputMethod' => Lookup::INPUT_METHOD_CHECKBOX,
-                    'value' => 1,
-                ],
             ],
         ];
         $cmd = $db->createCommand();
