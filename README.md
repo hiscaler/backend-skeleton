@@ -25,16 +25,23 @@ Backend Skeleton 旨在提供一个通用的后台管理程序，方便用于基
 
 最低要求 PHP>=5.5.9 版本
 
+执行核心数据表迁移操作
+-------------------
+```
+yii migrate --migrationPath=@app/migrations
+```
+
 创建模块
 -------
+使用 Gii 创建您的模块，或者直接从 example 模块复制后进行修改。
 
-创建数据库表迁移文件
+创建模块数据库表迁移文件
 -----------------
 ```
 yii migrate/create create_you-module-name_demo_table --migrationPath=@app/modules/admin/modules/YOU-MODULE-NAME/migrations
 ```
 
-执行数据表迁移文件
+执行模块数据表迁移文件
 ---------------
 1. 通过后台的模块安装会同步执行数据表迁移文件的处理
 2. 执行如下语句
