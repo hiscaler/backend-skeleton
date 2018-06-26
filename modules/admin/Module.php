@@ -25,12 +25,8 @@ class Module extends \yii\base\Module
                 'basePath' => '@app/messages',
             ]
         ];
-        $enableRbac = false;
         $modules = \app\models\Module::getItems();
         foreach ($modules as $alias => $name) {
-            if ($alias == 'rbac') {
-                $enableRbac = true;
-            }
             $i18nTranslations["$alias*"] = [
                 'class' => '\yii\i18n\PhpMessageSource',
                 'basePath' => "@app/modules/admin/modules/$alias/messages",
@@ -67,10 +63,20 @@ class Module extends \yii\base\Module
                 ],
             ],
         ]);
-        if ($enableRbac) {
+        if (isset($modules['rbac'])) {
             \Yii::$app->setComponents([
                 'authManager' => [
                     'class' => 'yii\rbac\DbManager',
+                ],
+            ]);
+        }
+        if (isset($modules['queue'])) {
+            \Yii::$app->setComponents([
+                'queue' => [
+                    'class' => \yii\queue\db\Queue::class,
+                    'mutex' => \yii\mutex\MysqlMutex::class,
+                    'channel' => 'default',
+                    'as log' => \yii\queue\LogBehavior::class,
                 ],
             ]);
         }
