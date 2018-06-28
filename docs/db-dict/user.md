@@ -10,7 +10,7 @@
 |  6 | password_hash        | string   | 255 | N |   | 密码     | 
 |  7 | password_reset_token | string   | 255 | Y |   | 密码重置 token | 
 |  8 | email                | string   | 50  | Y |   | 邮箱     | 
-|  9 | role                 | smallint | 6   | N | 0 | 角色     | 
+|  9 | role                 | string   | 64  | Y |   | 角色     | 
 | 10 | credits_count        | integer  | 11  | N | 0 | 积分     | 
 | 11 | user_group           | string   | 20  | Y |   | 用户组  | 
 | 12 | system_group         | string   | 20  | Y |   | 系统组  | 

@@ -4,7 +4,7 @@
 | :---: | --- | --- | :---: | :---: | :---: | --- | 
 |  1 | id         | integer | 11 | N |   |        | 
 |  2 | entity_id  | integer | 11 | N |   | 数据 id | 
-|  3 | model_name | string  | 60 | N |   | 数据名称 | 
+|  3 | model_name | string  | 60 | N |   | 模型名称 | 
 |  4 | label_id   | integer | 11 | N |   | 推送位 id | 
 |  5 | ordering   | integer | 11 | N | 0 | 排序 | 
 |  6 | enabled    | tinyint | 1  | N | 1 | 激活 | 
