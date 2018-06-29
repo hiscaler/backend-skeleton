@@ -70,7 +70,7 @@ class Module extends \yii\base\Module
                 ],
             ]);
         }
-        if (isset($modules['queue'])) {
+        if (isset($modules['queue']) && class_exists('\yii\queue\db\Queue')) {
             \Yii::$app->setComponents([
                 'queue' => [
                     'class' => \yii\queue\db\Queue::class,
