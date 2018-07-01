@@ -2,14 +2,14 @@
 
 namespace app\forms;
 
-use app\models\User;
+use app\models\Member;
 use Yii;
 use yii\base\Model;
 
 /**
  * 会员登录
  */
-class SigninForm extends Model
+class MemberLoginForm extends Model
 {
 
     public $username;
@@ -66,12 +66,12 @@ class SigninForm extends Model
     /**
      * Finds user by [[username]]
      *
-     * @return User|null
+     * @return Member|null
      */
     protected function getUser()
     {
         if ($this->_user === null) {
-            $user = User::findOne(['username' => $this->username, 'type' => User::TYPE_MEMBER]);
+            $user = Member::findOne(['username' => $this->username, 'type' => Member::TYPE_MEMBER]);
             $this->_user = $user;
         }
 

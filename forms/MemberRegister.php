@@ -2,13 +2,14 @@
 
 namespace app\forms;
 
+use app\models\Member;
 use app\models\User;
 use Yii;
 
 /**
  * 会员注册表单
  */
-class SignupForm extends User
+class MemberRegisterForm extends Member
 {
 
     public $password;

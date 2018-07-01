@@ -3,9 +3,9 @@
 namespace app\controllers;
 
 use app\forms\ForgetPasswordForm;
+use app\forms\MemberLoginForm;
+use app\forms\MemberRegisterForm;
 use app\forms\ResetPasswordForm;
-use app\forms\SigninForm;
-use app\forms\SignupForm;
 use app\models\Meta;
 use app\modules\admin\components\DynamicMetaModel;
 use Yii;
@@ -67,16 +67,16 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionSignup($next = null)
+    public function actionRegister($next = null)
     {
         $this->layout = 'base';
         $next = strtolower($next);
         if ($next == 'message') {
-            return $this->render('signup', [
+            return $this->render('register', [
                 'next' => $next,
             ]);
         } else {
-            $model = new SignupForm();
+            $model = new MemberRegisterForm();
             $metaItems = Meta::getItems($model, $this->tenantId);
             $dynamicModel = DynamicMetaModel::make($metaItems);
 
@@ -89,7 +89,7 @@ class SiteController extends Controller
                 }
             }
 
-            return $this->render('signup', [
+            return $this->render('register', [
                 'model' => $model,
                 'metaItems' => $metaItems,
                 'dynamicModel' => $dynamicModel,
@@ -102,19 +102,19 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionSignin()
+    public function ationLogin()
     {
         $this->layout = 'base';
         if (!Yii::$app->getUser()->isGuest) {
             return $this->goHome();
         }
 
-        $model = new SigninForm();
+        $model = new MemberLoginForm();
         if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
             return $this->goBack();
         }
 
-        return $this->render('signin', [
+        return $this->render('login', [
             'model' => $model,
         ]);
     }
