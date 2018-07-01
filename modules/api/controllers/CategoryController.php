@@ -18,16 +18,35 @@ use yii\web\NotFoundHttpException;
 class CategoryController extends BaseController
 {
 
+    /**
+     * @return array
+     * @throws \yii\db\Exception
+     */
     public function behaviors()
     {
-        return [
+        $cmd = Yii::$app->getDb()->createCommand('SELECT MAX([[updated_at]]) FROM {{%category}}');
+        if ($this->dbCacheTime !== null) {
+            $cmd->cache($this->dbCacheTime);
+        }
+        $timestamp = $cmd->queryScalar();
+
+        return array_merge(parent::behaviors(), [
+            [
+                'class' => 'yii\filters\HttpCache',
+                'lastModified' => function () use ($timestamp) {
+                    return $timestamp;
+                },
+                'etagSeed' => function () use ($timestamp) {
+                    return $timestamp;
+                }
+            ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
                     'create' => ['post'],
                 ],
             ],
-        ];
+        ]);
     }
 
     /**
