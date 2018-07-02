@@ -4,10 +4,9 @@ namespace app\modules\api\controllers;
 
 use app\models\Lookup;
 use app\modules\api\extensions\BaseController;
-use yii\web\NotFoundHttpException;
 
 /**
- * Class CategoryController
+ * Class LookupController
  *
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
@@ -19,17 +18,12 @@ class LookupController extends BaseController
      * 获取常规设定值
      *
      * @param $key
+     * @param null $defaultValue
      * @return mixed|null
-     * @throws NotFoundHttpException
      * @throws \yii\db\Exception
      */
-    public function actionValue($key)
+    public function actionValue($key, $defaultValue = null)
     {
-        $value = Lookup::getValue($key);
-        if ($value === null) {
-            throw new NotFoundHttpException("$key 值不存在。");
-        }
-
-        return $value;
+        return Lookup::getValue($key, $defaultValue);
     }
 }
