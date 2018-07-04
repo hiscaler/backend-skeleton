@@ -30,6 +30,13 @@ $config = [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning', 'info', 'trace', 'profile'],
+                    'logVars' => [],
+                    'categories' => ['app\jobs\*'],
+                    'logFile' => '@runtime/logs/queue.log',
+                ],
             ],
         ],
         'db' => $db,
