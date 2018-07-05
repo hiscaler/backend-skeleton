@@ -87,7 +87,7 @@ class BaseActiveRecord extends ActiveRecord
     /**
      * 数据关联的推送位
      *
-     * @return ActiveRecord
+     * @return \yii\db\ActiveQuery
      */
     public function getRelatedLabels()
     {
@@ -101,7 +101,7 @@ class BaseActiveRecord extends ActiveRecord
     /**
      * 自定义推送位数据
      *
-     * @return ActiveRecord
+     * @return \yii\db\ActiveQuery
      */
     public function getCustomLabels()
     {
@@ -109,8 +109,7 @@ class BaseActiveRecord extends ActiveRecord
             ->select(['id', 'name'])
             ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
                 $query->where(['model_name' => static::class]);
-            }
-            );
+            });
     }
 
     /**
