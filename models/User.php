@@ -7,6 +7,7 @@ use yadjet\behaviors\FileUploadBehavior;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 use yii\web\IdentityInterface;
 
 /**
@@ -357,6 +358,27 @@ class User extends ActiveRecord implements IdentityInterface
         $options = UserGroup::systemGroupOptions();
 
         return isset($options[$this->system_group]) ? $options[$this->system_group] : null;
+    }
+
+    /**
+     * 人员列表
+     *
+     * @param null $role
+     * @return array
+     */
+    public static function map($role = null)
+    {
+        $where = [];
+        if ($role !== null) {
+            $where['role'] = $role;
+        }
+
+        return (new Query())
+            ->select('nickname')
+            ->from('{{%user}}')
+            ->where($where)
+            ->indexBy('id')
+            ->column();
     }
 
     /**
