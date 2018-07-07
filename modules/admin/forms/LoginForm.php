@@ -24,15 +24,20 @@ class LoginForm extends Model
      */
     public function rules()
     {
-        return [
+        $rules = [
             // username and password are both required
             [['username', 'password'], 'required'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
-            ['verifyCode', 'captcha', 'captchaAction' => '/admin/default/captcha'],
         ];
+
+        if (isset(Yii::$app->params['hideCaptcha']) && !Yii::$app->params['hideCaptcha']) {
+            $rules[] = ['verifyCode', 'captcha', 'captchaAction' => '/admin/default/captcha'];
+        }
+
+        return $rules;
     }
 
     /**

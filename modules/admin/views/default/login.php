@@ -38,11 +38,13 @@ $name = (\app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name) . 
 
             <?= $form->field($model, 'password', $fieldConfigs)->passwordInput(); ?>
 
-            <?=
-            $form->field($model, 'verifyCode', $fieldConfigs)->widget(Captcha::class, [
-                'template' => '{input}{image}',
-                'captchaAction' => 'default/captcha',
-            ]);
+            <?php
+            if (isset(Yii::$app->params['hideCaptcha']) && Yii::$app->params['hideCaptcha'] == false) {
+                echo $form->field($model, 'verifyCode', $fieldConfigs)->widget(Captcha::class, [
+                    'template' => '{input}{image}',
+                    'captchaAction' => 'default/captcha',
+                ]);
+            }
             ?>
             <li>
                 <input type="submit" name="bt_login" id="bt_login" value="" class="button" />
