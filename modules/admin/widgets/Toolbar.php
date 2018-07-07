@@ -2,9 +2,6 @@
 
 namespace app\modules\admin\widgets;
 
-use app\models\Constant;
-use app\models\User;
-use app\models\Yad;
 use Yii;
 use yii\base\Widget;
 
@@ -16,8 +13,9 @@ class Toolbar extends Widget
         $items = [];
         $user = Yii::$app->getUser();
         if (!$user->isGuest) {
+            $identity = $user->getIdentity();
             $items[] = [
-                'label' => $user->getIdentity()->username,
+                'label' => $identity->getUsername() . ($identity->getRole() ? " [ {$identity->getRole()} ] " : ''),
                 'url' => ['/admin/account/index'],
             ];
 
