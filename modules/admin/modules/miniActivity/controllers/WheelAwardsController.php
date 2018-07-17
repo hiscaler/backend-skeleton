@@ -40,7 +40,7 @@ class WheelAwardsController extends Controller
         $wheel = $this->findWheelModel($wheelId);
         $searchModel = new WheelAwardSearch();
         $searchModel->wheel_id = (int) $wheelId;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'wheel' => $wheel,
@@ -77,7 +77,7 @@ class WheelAwardsController extends Controller
         $model->wheel_id = $wheel['id'];
         $model->loadDefaultValues();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -98,7 +98,7 @@ class WheelAwardsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

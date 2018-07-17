@@ -57,7 +57,7 @@ class GridColumnConfigsController extends Controller
     public function actionIndex($name)
     {
         $request = Yii::$app->getRequest();
-        if (!$request->isAjax && !$request->isPjax) {
+        if (!$request->getIsAjax() && !$request->getIsPjax()) {
             throw new BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         }
         try {

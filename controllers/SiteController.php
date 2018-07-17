@@ -105,7 +105,7 @@ class SiteController extends Controller
     public function ationLogin()
     {
         $this->layout = 'base';
-        if (!Yii::$app->getUser()->isGuest) {
+        if (!Yii::$app->getUser()->getIsGuest()) {
             return $this->goHome();
         }
 

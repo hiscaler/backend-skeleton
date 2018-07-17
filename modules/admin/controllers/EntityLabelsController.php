@@ -61,7 +61,7 @@ class EntityLabelsController extends Controller
      */
     public function actionIndex($entityId, $modelName)
     {
-        if (Yii::$app->getRequest()->isAjax) {
+        if (Yii::$app->getRequest()->getIsAjax()) {
             $attributes = [];
             $groups = [];
             $entityLabels = Label::getEntityItems($entityId, ApplicationHelper::id2ClassName($modelName));

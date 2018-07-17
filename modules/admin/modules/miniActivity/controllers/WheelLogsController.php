@@ -42,7 +42,7 @@ class WheelLogsController extends Controller
 
         $searchModel = new WheelLogSearch();
         $searchModel->wheel_id = $wheel->id;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'wheel' => $wheel,
@@ -78,7 +78,7 @@ class WheelLogsController extends Controller
         $model->wheel_id = $wheelId->id;
         $model->loadDefaultValues();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -99,7 +99,7 @@ class WheelLogsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

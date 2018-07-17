@@ -56,7 +56,7 @@ class PermissionsController extends Controller
     public function actionCreate()
     {
         $request = Yii::$app->getRequest();
-        if ($request->isPost) {
+        if ($request->getIsPost()) {
             $success = true;
             $errorMessage = null;
             $rawBody = $request->getRawBody();

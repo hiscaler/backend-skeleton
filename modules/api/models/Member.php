@@ -320,7 +320,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             if ($insert) {
                 $this->generateAuthKey();
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
-                if (Yii::$app->getUser()->isGuest) {
+                if (Yii::$app->getUser()->getIsGuest()) {
                     $this->created_by = $this->updated_by = 0;
                 } else {
                     $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
@@ -328,7 +328,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->created_at = $this->updated_at = time();
             } else {
                 $this->updated_at = time();
-                if (!Yii::$app->getUser()->isGuest) {
+                if (!Yii::$app->getUser()->getIsGuest()) {
                     $this->updated_by = Yii::$app->getUser()->getId();
                 }
             }

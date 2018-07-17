@@ -70,6 +70,7 @@ class AccountController extends Controller
      *
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException
+     * @throws \yii\base\Exception
      */
     public function actionChangePassword()
     {
@@ -104,7 +105,7 @@ class AccountController extends Controller
     public function actionLoginLogs()
     {
         $loginLogs = [];
-        $formatter = Yii::$app->formatter;
+        $formatter = Yii::$app->getFormatter();
         $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.login_ip]], [[t.client_information]], [[t.login_at]] FROM {{%user_login_log}} t WHERE [[t.user_id]] = :userId ORDER BY [[t.login_at]] DESC', [':userId' => Yii::$app->getUser()->getId()])->queryAll();
         foreach ($rawData as $data) {
             $data['login_ip'] = long2ip($data['login_ip']);
@@ -116,6 +117,10 @@ class AccountController extends Controller
         ]);
     }
 
+    /**
+     * @return User|null
+     * @throws NotFoundHttpException
+     */
     public function findCurrentUserModel()
     {
         if (($model = User::findOne(Yii::$app->getUser()->getId())) !== null) {

@@ -57,7 +57,7 @@ class LookupsController extends Controller
     public function actionForm()
     {
         $db = Yii::$app->getDb();
-        if (Yii::$app->getRequest()->isPost) {
+        if (Yii::$app->getRequest()->getIsPost()) {
             $postData = Yii::$app->getRequest()->post();
             $inputValues = isset($postData['inputValues']) ? $postData['inputValues'] : [];
             $updateCommand = $db->createCommand();

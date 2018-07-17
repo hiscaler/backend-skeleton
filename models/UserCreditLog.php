@@ -121,7 +121,7 @@ class UserCreditLog extends \yii\db\ActiveRecord
                 $posterId = (int) $posterId;
                 if (!$posterId) {
                     $user = Yii::$app->getUser();
-                    $posterId = $user->isGuest ? 0 : $user->getId();
+                    $posterId = $user->getIsGuest() ? 0 : $user->getId();
                 }
                 $columns = [
                     'user_id' => $userId,

@@ -26,7 +26,7 @@ class WechatController extends Controller
         }
         $webUser = Yii::$app->getUser();
         $db = Yii::$app->getDb();
-        if ($webUser->isGuest) {
+        if ($webUser->getIsGuest()) {
             $application = new Application(Yii::$app->params['wechat']);
 
             if ($redirect) {

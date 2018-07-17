@@ -203,8 +203,8 @@ class UsersController extends Controller
         }
         $existingCategoryIds = $db->createCommand('SELECT [[category_id]] FROM {{%user_auth_category}} WHERE [[user_id]] = :userId', [':userId' => $userId])->queryColumn();
         $request = Yii::$app->getRequest();
-        if ($request->isAjax) {
-            if ($request->isPost) {
+        if ($request->getIsAjax()) {
+            if ($request->getIsPost()) {
                 $choiceCategoryIds = $request->post('choiceCategoryIds');
                 if (!empty($choiceCategoryIds)) {
                     $choiceCategoryIds = explode(',', $choiceCategoryIds);
