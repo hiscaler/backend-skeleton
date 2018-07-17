@@ -75,10 +75,11 @@ class DefaultController extends Controller
      *
      * @rbacIgnore true
      * @return string|\yii\web\Response
+     * @throws \yii\db\Exception
      */
     public function actionLogin()
     {
-        if (!Yii::$app->getUser()->isGuest) {
+        if (!Yii::$app->getUser()->getIsGuest()) {
             return $this->redirect(['default/index']);
         }
         $this->layout = false;
@@ -97,13 +98,13 @@ class DefaultController extends Controller
      * 用户注销
      *
      * @rbacIgnore true
-     * @return \yii\web\Response
+     * @return void
      */
     public function actionLogout()
     {
         Yii::$app->getUser()->logout();
 
-        return $this->goHome();
+        $this->redirect(['default/login']);
     }
 
 }
