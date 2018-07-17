@@ -2,7 +2,6 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\BaseActiveRecord;
 use app\models\Constant;
 use app\models\GridColumnConfig;
 use Yii;
@@ -11,6 +10,7 @@ use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Inflector;
+use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -49,13 +49,16 @@ class GridColumnConfigsController extends Controller
     /**
      * Lists all GridColumnConfig models.
      *
+     * @param $name
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws BadRequestHttpException
      */
     public function actionIndex($name)
     {
         $request = Yii::$app->getRequest();
         if (!$request->isAjax && !$request->isPjax) {
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+            throw new BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         }
         try {
             $attributeLabels = Yii::createObject($name)->attributeLabels();
@@ -68,9 +71,9 @@ class GridColumnConfigsController extends Controller
         }
         $columns = Yii::$app->params['gridColumns'][$name];
         $invisibleColumns = GridColumnConfig::getInvisibleColumns($name);
-        $rawData = [];
+        $models = [];
         foreach ($columns as $value) {
-            $rawData[] = [
+            $models[] = [
                 'id' => $value,
                 'attribute' => isset($attributeLabels[$value]) ? $attributeLabels[$value] : Inflector::camel2words(Inflector::camelize($value)),
                 'visible' => !in_array($value, $invisibleColumns)
@@ -79,7 +82,7 @@ class GridColumnConfigsController extends Controller
 
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
-            'allModels' => $rawData,
+            'allModels' => $models,
             'pagination' => [
                 'pageSize' => 10
             ]
@@ -91,24 +94,29 @@ class GridColumnConfigsController extends Controller
         ]);
     }
 
+    /**
+     * @return Response
+     * @throws \yii\db\Exception
+     */
     public function actionToggle()
     {
         $attribute = Yii::$app->getRequest()->post('id');
         $name = Yii::$app->getRequest()->post('name');
+        $userId = \Yii::$app->getUser()->getId();
         $db = Yii::$app->getDb();
-        $value = $db->createCommand('SELECT [[visible]] FROM {{%grid_column_config}} WHERE [[user_id]] = :userId AND [[name]] = :name AND [[attribute]] = :attribute')->bindValues([
-            ':userId' => Yii::$app->getUser()->getId(),
+        $value = $db->createCommand('SELECT [[visible]] FROM {{%grid_column_config}} WHERE [[user_id]] = :userId AND [[name]] = :name AND [[attribute]] = :attribute', [
+            ':userId' => $userId,
             ':name' => $name,
             ':attribute' => $attribute
         ])->queryScalar();
         if ($value !== false) {
             $value = $value ? Constant::BOOLEAN_FALSE : Constant::BOOLEAN_TRUE;
             $db->createCommand()->update('{{%grid_column_config}}', ['visible' => $value], '[[user_id]] = :userId AND [[name]] = :name AND [[attribute]] = :attribute', [
-                ':userId' => Yii::$app->getUser()->getId(),
+                ':userId' => $userId,
                 ':name' => $name,
                 ':attribute' => $attribute
             ])->execute();
-            $responseData = [
+            $responseBody = [
                 'success' => true,
                 'data' => [
                     'value' => $value
@@ -120,10 +128,10 @@ class GridColumnConfigsController extends Controller
                 'name' => $name,
                 'attribute' => $attribute,
                 'visible' => Constant::BOOLEAN_FALSE,
-                'user_id' => Yii::$app->getUser()->getId(),
+                'user_id' => $userId,
             ])->execute();
 
-            $responseData = [
+            $responseBody = [
                 'success' => true,
                 'alias' => 'value',
                 'data' => [
@@ -134,7 +142,7 @@ class GridColumnConfigsController extends Controller
 
         return new Response([
             'format' => Response::FORMAT_JSON,
-            'data' => $responseData,
+            'data' => $responseBody,
         ]);
     }
 
