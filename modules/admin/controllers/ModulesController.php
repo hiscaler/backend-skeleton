@@ -2,7 +2,6 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\Constant;
 use app\models\Module;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -41,6 +40,9 @@ class ModulesController extends Controller
      */
     private $_localModules = [];
 
+    /**
+     * @throws \yii\base\Exception
+     */
     public function init()
     {
         parent::init();
@@ -172,6 +174,7 @@ class ModulesController extends Controller
      * @return string
      * @throws \yii\base\InvalidRouteException
      * @throws \yii\console\Exception
+     * @throws \yii\db\Exception
      */
     private function _migrate($moduleId, $action = 'up')
     {
@@ -270,6 +273,8 @@ class ModulesController extends Controller
      *
      * @rbacDescription 模块列表数据查看权限
      * @return mixed
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {

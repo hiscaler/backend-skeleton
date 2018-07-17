@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\Module;
 use cebe\markdown\GithubMarkdown;
 use Yii;
 use yii\helpers\FileHelper;
@@ -23,7 +24,7 @@ class HelpController extends Controller
         $markdown = new GithubMarkdown();
         $appPath = Yii::getAlias('@app');
         $files = FileHelper::findFiles($appPath . '/docs');
-        foreach (\app\models\Module::getItems() as $alias => $name) {
+        foreach (Module::getItems() as $alias => $name) {
             $path = $appPath . "/modules/api/modules/{$alias}/docs";
             if (file_exists($path)) {
                 $files = array_merge($files, FileHelper::findFiles($path));

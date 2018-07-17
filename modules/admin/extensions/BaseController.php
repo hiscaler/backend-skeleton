@@ -11,6 +11,15 @@ use yii\web\UnauthorizedHttpException;
 class BaseController extends Controller
 {
 
+    /**
+     * @param $action
+     * @return bool
+     * @throws UnauthorizedHttpException
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\Exception
+     * @throws \yii\web\BadRequestHttpException
+     */
     public function beforeAction($action)
     {
         if (parent::beforeAction($action)) {
