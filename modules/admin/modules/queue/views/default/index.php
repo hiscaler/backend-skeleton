@@ -8,20 +8,25 @@ use yii\widgets\Pjax;
 
 $this->title = '队列任务管理';
 $this->params['breadcrumbs'][] = $this->title;
+
+$this->params['menus'] = [
+    ['label' => Yii::t('app', 'List'), 'url' => ['index']],
+    ['label' => '批量删除', 'url' => ['batch-delete'], 'htmlOptions' => ['class' => 'btn-batch-delete']],
+];
 ?>
 <div class="news-index">
-    <?php // $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>
+    <?= $this->render('_search', ['channel' => $channel]); ?>
     <?php Pjax::begin([
-        'formSelector' => '#form-post',
-        'linkSelector' => '#grid-view-post a',
+        'formSelector' => '#form-queue-search',
+        'linkSelector' => '#grid-view-queues a',
     ]); ?>
     <?= GridView::widget([
-        'id' => 'grid-view-post',
+        'id' => 'grid-view-queues',
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'class' => 'yii\grid\SerialColumn',
-                'contentOptions' => ['class' => 'serial-number']
+                'class' => 'yii\grid\CheckboxColumn',
+                'contentOptions' => ['class' => 'checkbox-column']
             ],
             [
                 'attribute' => 'channel',
@@ -89,3 +94,38 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
+<?php \app\modules\admin\components\JsBlock::begin() ?>
+<script type="text/javascript">
+    $(function () {
+        // 批量删除
+        $('.btn-batch-delete').on('click', function () {
+            var ids = $('#grid-view-queues').yiiGridView('getSelectedRows');
+            if (ids.length) {
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('href'),
+                    data: {ids: ids.toString()},
+                    beforeSend: function (xhr) {
+                        $.fn.lock();
+                    }, success: function (response) {
+                        if (response.success) {
+                            window.location.reload(true);
+                        } else {
+                            layer.alert(response.error.message);
+                        }
+                        $.fn.unlock();
+                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText, {icon: 2});
+                        $.fn.unlock();
+                    }
+                });
+            } else {
+                layer.alert('请选择您要批量操作的数据。');
+            }
+
+            return false;
+        });
+    });
+</script>
+<?php \app\modules\admin\components\JsBlock::end() ?>
+

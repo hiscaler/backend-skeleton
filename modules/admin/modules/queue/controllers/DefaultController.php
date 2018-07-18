@@ -9,6 +9,7 @@ use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * 队列管理
@@ -37,7 +38,7 @@ class DefaultController extends BaseController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'delete'],
+                        'actions' => ['index', 'delete', 'batch-delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -56,11 +57,18 @@ class DefaultController extends BaseController
      * 查看队列数据
      *
      * @rbacDescription 队列任务数据列表查看权限
+     * @param null $channel
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($channel = null)
     {
-        $query = (new Query())->from($this->queue->tableName)
+        $where = [];
+        if ($channel = trim($channel)) {
+            $where['channel'] = $channel;
+        }
+        $query = (new Query())
+            ->from($this->queue->tableName)
+            ->where($where)
             ->orderBy(['id' => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
@@ -69,6 +77,7 @@ class DefaultController extends BaseController
         ]);
 
         return $this->render('index', [
+            'channel' => $channel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -88,6 +97,41 @@ class DefaultController extends BaseController
         \Yii::$app->getDb()->createCommand('DELETE FROM ' . $this->queue->tableName . ' WHERE [[id]] = :id', [':id' => $model['id']])->execute();
 
         return $this->redirect(Yii::$app->getRequest()->getReferrer());
+    }
+
+    /**
+     * 批量删除
+     *
+     * @return Response
+     * @throws \yii\db\Exception
+     */
+    public function actionBatchDelete()
+    {
+        $success = false;
+        $errorMessage = null;
+        $request = Yii::$app->getRequest();
+        $ids = $request->post('ids');
+        $ids = array_filter(array_unique(explode(',', $ids)));
+        if ($ids) {
+            \Yii::$app->getDb()
+                ->createCommand()
+                ->delete($this->queue->tableName, ['id' => $ids])
+                ->execute();
+
+            $success = true;
+        } else {
+            $errorMessage = '请选择您要同步的站点。';
+        }
+
+        $responseBody = ['success' => $success];
+        if (!$success) {
+            $responseBody['error']['message'] = $errorMessage;
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseBody,
+        ]);
     }
 
     /**
