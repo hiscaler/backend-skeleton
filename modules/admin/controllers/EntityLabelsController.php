@@ -2,7 +2,6 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\Attribute;
 use app\models\Constant;
 use app\models\Label;
 use app\modules\admin\components\ApplicationHelper;
@@ -79,7 +78,7 @@ class EntityLabelsController extends Controller
                         'enabled' => isset($entityLabels[$key])
                     ];
                 } else {
-                    $groups['*'] = Yii::t('app', 'Common Attributes List');
+                    $groups['*'] = Yii::t('app', 'Common Labels List');
                     $attributes[$groups['*']][] = [
                         'id' => $key,
                         'name' => $value,
@@ -108,7 +107,7 @@ class EntityLabelsController extends Controller
     }
 
     /**
-     * Deletes an existing Attribute model.
+     * Deletes an existing Label model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
      * @param integer $id
@@ -312,7 +311,7 @@ class EntityLabelsController extends Controller
     }
 
     /**
-     * Finds the Attribute model based on its primary key value.
+     * Finds the Label model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param integer $id
