@@ -37,7 +37,6 @@ return array(
     'Entity Labels' => '推送位',
     'Relation Node' => '关联节点',
     'Model Name' => '模型名称',
-    'Draft' => '草稿',
     'Content Image Number' => '获取图片',
     // action
     'List' => '列表',
@@ -69,7 +68,7 @@ return array(
     'Logout' => '注销',
     'Frontend Page' => '前台页面',
     'Choice' => '选择',
-    'Common Attributes List' => '公共推送位列表',
+    'Common Labels List' => '公共推送位列表',
     'No Relationship Nodes.' => '暂无相关节点',
     'Send Mail' => '发送邮件',
     // Menus
@@ -78,7 +77,7 @@ return array(
     'Account Profile' => '帐号信息',
     'Change Password' => '修改密码',
     'Login Logs' => '登录日志',
-    // Cotrol Panels
+    // Control Panels
     'System Manage' => '系统管理',
     'Site Manage' => '站点管理',
     'Content Manage' => '内容管理',
@@ -105,6 +104,6 @@ return array(
     'Please choice this user can manager categories' => '请选择该用户可管理的分类',
     'Are you sure you want to undo this item?' => '您确定要还原此项吗？',
     'Incorrect username or password.' => '错误的用户名或密码。',
-    'User profile save successed.' => '用户资料保存成功。',
+    'User profile save successfully.' => '用户资料保存成功。',
     'Prompt Message' => '提示信息',
 );

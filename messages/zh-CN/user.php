@@ -35,5 +35,4 @@ return [
     'Base Information' => '基础信息',
     "Management's Sites" => '管理的站点',
     'Locked' => '锁定',
-    'Active' => '激活',
 ];

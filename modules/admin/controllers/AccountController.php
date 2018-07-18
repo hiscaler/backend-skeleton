@@ -52,7 +52,7 @@ class AccountController extends Controller
         $model = $this->findCurrentUserModel();
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            Yii::$app->getSession()->setFlash('notice', Yii::t('app', 'User profile save successed.'));
+            Yii::$app->getSession()->setFlash('notice', Yii::t('app', 'User profile save successfully.'));
 
             $this->refresh();
         } else {
