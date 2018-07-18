@@ -124,6 +124,7 @@ class FileUploadConfig extends BaseActiveRecord
      *
      * @param array $pairs
      * @return array
+     * @throws \yii\db\Exception
      */
     public static function getConfigs($pairs = [])
     {
@@ -186,6 +187,7 @@ class FileUploadConfig extends BaseActiveRecord
      * 获取有效模型名称列表
      *
      * @return array
+     * @throws \yii\db\Exception
      */
     public static function validModelNames()
     {
@@ -216,7 +218,7 @@ class FileUploadConfig extends BaseActiveRecord
         $options = [];
         $db = Yii::$app->getDb();
         $tablePrefix = $db->tablePrefix;
-        $coreTables = ['category', 'entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'member', 'meta', 'meta_validator', 'meta_value', 'migration', 'module', 'user', 'user_auth_category', 'user_credit_log', 'user_group', 'user_login_log', 'wechat_member'];
+        $coreTables = Option::coreTables();
         foreach ($db->getSchema()->getTableSchemas() as $tableSchema) {
             $tableName = str_replace($tablePrefix, '', $tableSchema->name);
             if ($tableName == 'migration') {
