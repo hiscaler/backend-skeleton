@@ -46,7 +46,7 @@ class EntityLabelsController extends Controller
                 'actions' => [
                     'delete' => ['post'],
                     'toggle' => ['post'],
-                    'set-entity-label' => ['post'],
+                    'set' => ['post'],
                 ],
             ],
         ];
@@ -58,6 +58,7 @@ class EntityLabelsController extends Controller
      * @param integer $entityId
      * @param string $modelName
      * @return mixed
+     * @throws BadRequestHttpException
      */
     public function actionIndex($entityId, $modelName)
     {
@@ -112,6 +113,7 @@ class EntityLabelsController extends Controller
      *
      * @param integer $id
      * @return mixed
+     * @throws Exception
      */
     public function actionDelete($id)
     {
@@ -124,17 +126,16 @@ class EntityLabelsController extends Controller
      * 激活禁止操作
      *
      * @return Response
+     * @throws Exception
      */
     public function actionToggle()
     {
         $id = Yii::$app->getRequest()->post('id');
-        $connection = Yii::$app->getDb();
-        $command = $connection->createCommand('SELECT [[enabled]] FROM {{%entity_label}} WHERE [[id]] = :id');
-        $command->bindValue(':id', (int) $id, PDO::PARAM_INT);
-        $value = $command->queryScalar();
+        $db = Yii::$app->getDb();
+        $value = $db->createCommand('SELECT [[enabled]] FROM {{%entity_label}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
         if ($value !== null) {
             $value = !$value;
-            $connection->createCommand()->update('{{%entity_label}}', ['enabled' => $value], '[[id]] = :id', [':id' => (int) $id])->execute();
+            $db->createCommand()->update('{{%entity_label}}', ['enabled' => $value], '[[id]] = :id', [':id' => (int) $id])->execute();
             $responseData = [
                 'success' => true,
                 'data' => [
@@ -252,7 +253,9 @@ class EntityLabelsController extends Controller
      * 自定义属性关联的实体数据
      *
      * @param string $modelName
+     * @param null $labelId
      * @return ActiveDataProvider
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionEntities($modelName, $labelId = null)
     {
@@ -313,7 +316,8 @@ class EntityLabelsController extends Controller
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param integer $id
-     * @return Attribute the loaded model
+     * @return array|false the loaded model
+     * @throws Exception
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
