@@ -53,7 +53,7 @@ class OptionsController extends Controller
         $vote = $this->findVoteModel($voteId);
         $searchModel = new VoteOptionSearch();
         $searchModel->vote_id = (int) $voteId;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'vote' => $vote,
@@ -89,7 +89,7 @@ class OptionsController extends Controller
         $model->vote_id = $vote->id;
         $model->loadDefaultValues();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -111,7 +111,7 @@ class OptionsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

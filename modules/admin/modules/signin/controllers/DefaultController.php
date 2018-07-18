@@ -49,7 +49,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $searchModel = new SigninSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -81,7 +81,7 @@ class DefaultController extends Controller
     {
         $model = new Signin();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -102,7 +102,7 @@ class DefaultController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

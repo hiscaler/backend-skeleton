@@ -51,7 +51,7 @@ class ConfigsController extends Controller
     public function actionIndex()
     {
         $searchModel = new SigninCreditConfigSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -69,7 +69,7 @@ class ConfigsController extends Controller
     {
         $model = new SigninCreditConfig();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['index']);
         }
 
@@ -90,7 +90,7 @@ class ConfigsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['index']);
         }
 

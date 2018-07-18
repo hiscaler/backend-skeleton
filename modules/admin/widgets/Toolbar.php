@@ -12,7 +12,7 @@ class Toolbar extends Widget
     {
         $items = [];
         $user = Yii::$app->getUser();
-        if (!$user->isGuest) {
+        if (!$user->getIsGuest()) {
             $identity = $user->getIdentity();
             $items[] = [
                 'label' => $identity->getUsername() . ($identity->getRole() ? " [ {$identity->getRole()} ] " : ''),
