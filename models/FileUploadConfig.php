@@ -174,6 +174,7 @@ class FileUploadConfig extends BaseActiveRecord
      * @param string $modelName
      * @param string $attribute
      * @return array
+     * @throws \yii\db\Exception
      */
     public static function getConfig($modelName, $attribute)
     {
@@ -221,16 +222,17 @@ class FileUploadConfig extends BaseActiveRecord
         $coreTables = Option::coreTables();
         foreach ($db->getSchema()->getTableSchemas() as $tableSchema) {
             $tableName = str_replace($tablePrefix, '', $tableSchema->name);
-            if ($tableName == 'migration') {
+            // 排除核心表表中已知未含有上传字段的表
+            if (in_array($tableName, ['entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'meta', 'meta_validator', 'meta_value', 'migration', 'user_auth_category', 'user_credit_log', 'user_group', 'user_login_log', 'wechat_member'])) {
                 continue;
             }
             $modelName = Inflector::id2camel($tableName, '_');
             $moduleName = null;
             if (in_array($tableName, $coreTables)) {
-                $isCore = true;
+                $isCoreTable = true;
                 $modelNamespace = "app\\models\\$modelName";
             } else {
-                $isCore = false;
+                $isCoreTable = false;
                 $index = stripos($tableName, '_');
                 if ($index === false) {
                     $moduleName = $modelName = $tableName;
@@ -243,13 +245,23 @@ class FileUploadConfig extends BaseActiveRecord
                 $modelNamespace = "app\\modules\\admin\\modules\\$moduleName\\models\\$modelName";
             }
             try {
-                $attributeLabels = Yii::createObject($modelNamespace)->attributeLabels();
-                foreach ($tableSchema->columns as $name => $column) {
-                    if ($column->type === 'string' && (in_array($name, ['avatar', 'icon', 'picture', 'pic', 'image', 'img']) || strpos($name, '_path') !== false)) {
-                        $options[$modelNamespace . ':' . $name] = '「' . Yii::t($isCore ? 'model' : "$moduleName", Inflector::camel2words($modelName)) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
+                $object = Yii::createObject($modelNamespace);
+                if ($object->hasProperty('fileFields', true, false)) {
+                    $fileFields = $object->fileFields;
+                    if ($fileFields) {
+                        if (!is_array($fileFields)) {
+                            $fileFields = [(string) $fileFields];
+                        }
+                        $attributeLabels = $object->attributeLabels();
+                        foreach ($tableSchema->columns as $name => $column) {
+                            if ($column->type === 'string' && in_array($name, $fileFields)) {
+                                $options[$modelNamespace . ':' . $name] = '「' . Yii::t($isCoreTable ? 'model' : "$moduleName", Inflector::camel2words($modelName)) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
+                            }
+                        }
                     }
                 }
             } catch (\Exception $ex) {
+                Yii::error($ex->getMessage());
             }
         }
 
@@ -274,9 +286,9 @@ class FileUploadConfig extends BaseActiveRecord
             $this->min_size *= 1024;
             $this->max_size *= 1024;
 
-            $modelAttribute = explode(':', $this->model_attribute);
-            $this->model_name = $modelAttribute[0];
-            $this->attribute = $modelAttribute[1];
+            list($modelName, $attribute) = explode(':', $this->model_attribute);
+            $this->model_name = $modelName;
+            $this->attribute = $attribute;
 
             if ($this->type == self::TYPE_FILE) {
                 $this->thumb_width = $this->thumb_height = null;

@@ -49,6 +49,11 @@ class User extends ActiveRecord implements IdentityInterface
 
     private $_fileUploadConfig;
 
+    /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'avatar';
+
     public function init()
     {
         $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'avatar');

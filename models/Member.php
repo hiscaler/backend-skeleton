@@ -52,6 +52,11 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 3; // 删除状态
 
     /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'avatar';
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
