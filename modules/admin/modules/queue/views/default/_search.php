@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
         <div class="entry">
-            <div class="form-group field-keywordsearch-name">
+            <div class="form-group field-channel">
                 <?= Html::label('频道', 'channel', ['class' => 'control-label']) ?>
 
                 <?= Html::textInput('channel', $channel, ['class' => 'form-control']) ?>
