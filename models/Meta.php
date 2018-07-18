@@ -29,7 +29,7 @@ use yii\web\UploadedFile;
  * @property integer $deleted_by
  * @property integer $deleted_at
  */
-class Meta extends \yii\db\ActiveRecord
+class Meta extends ActiveRecord
 {
 
     public $validatorsList;
@@ -387,7 +387,7 @@ class Meta extends \yii\db\ActiveRecord
      * @throws ErrorException
      * @throws \yii\db\Exception
      */
-    public static function saveValues(\yii\db\ActiveRecord $activeRecord, \yii\base\DynamicModel $dynamicModel, $throwException = false)
+    public static function saveValues(ActiveRecord $activeRecord, \yii\base\DynamicModel $dynamicModel, $throwException = false)
     {
         $db = \Yii::$app->getDb();
         $command = $db->createCommand();
