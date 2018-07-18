@@ -14,6 +14,7 @@ use yii\web\Response;
 /**
  * 队列管理
  *
+ * @package app\modules\admin\modules\queue\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends BaseController
@@ -94,7 +95,9 @@ class DefaultController extends BaseController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        \Yii::$app->getDb()->createCommand('DELETE FROM ' . $this->queue->tableName . ' WHERE [[id]] = :id', [':id' => $model['id']])->execute();
+        \Yii::$app->getDb()->createCommand()
+            ->delete($this->queue->tableName, ['id' => $model['id']])
+            ->execute();
 
         return $this->redirect(Yii::$app->getRequest()->getReferrer());
     }
@@ -109,8 +112,7 @@ class DefaultController extends BaseController
     {
         $success = false;
         $errorMessage = null;
-        $request = Yii::$app->getRequest();
-        $ids = $request->post('ids');
+        $ids = trim(Yii::$app->getRequest()->post('ids'));
         $ids = array_filter(array_unique(explode(',', $ids)));
         if ($ids) {
             \Yii::$app->getDb()
@@ -120,7 +122,7 @@ class DefaultController extends BaseController
 
             $success = true;
         } else {
-            $errorMessage = '请选择您要同步的站点。';
+            $errorMessage = '请选择您要删除的数据。';
         }
 
         $responseBody = ['success' => $success];
