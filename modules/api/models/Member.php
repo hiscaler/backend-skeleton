@@ -78,6 +78,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 50],
+            [['email'], 'email'],
             [['tel'], 'string', 'max' => 30],
             [['mobile_phone'], 'string', 'max' => 35],
             [['address'], 'string', 'max' => 100],
@@ -101,13 +102,21 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'realName' => 'real_name',
             'avatar' => function () {
                 $avatar = $this->avatar;
-                foreach (['http', 'https', '//'] as $prefix) {
-                    if (strncasecmp($avatar, $prefix, strlen($prefix)) === 0) {
-                        return $avatar;
+                if (!empty($avatar)) {
+                    $addUrl = true;
+                    foreach (['http', 'https', '//'] as $prefix) {
+                        if (strncasecmp($avatar, $prefix, strlen($prefix)) === 0) {
+                            $addUrl = false;
+                            break;
+                        }
+                    }
+
+                    if ($addUrl) {
+                        $avatar = Yii::$app->getRequest()->hostInfo . $avatar;
                     }
                 }
 
-                return Yii::$app->getRequest()->hostInfo . $avatar;
+                return $avatar;
             },
             'email',
             'tel',
@@ -125,15 +134,16 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'createdBy' => 'created_by',
             'updatedAt' => 'updated_at',
             'updatedBy' => 'updated_by',
-            'metas' => function () {
-                $metas = [];
+            'metaItems' => function () {
+                $items = [];
                 $objectName = strtr(static::tableName(), ['{{%' => '', '}}' => '']);
-                $items = \Yii::$app->getDb()->createCommand('SELECT [[m.key]], [[t.value]] FROM {{%meta_value}} t LEFT JOIN {{%meta}} m ON [[t.meta_id]] = [[m.id]] WHERE [[t.object_id]] = :objectId AND [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName)', [':objectId' => $this->id, ':objectName' => $objectName])->queryAll();
-                foreach ($items as $item) {
-                    $metas[$item['key']] = $item['value'];
+                $rawItems = \Yii::$app->getDb()->createCommand('SELECT [[m.key]], [[m.return_value_type]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} t LEFT JOIN {{%meta}} m ON [[t.meta_id]] = [[m.id]] WHERE [[t.object_id]] = :objectId AND [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[object_name]] = :objectName)', [':objectId' => $this->id, ':objectName' => $objectName])->queryAll();
+                foreach ($rawItems as $item) {
+                    $valueKey = Meta::parseReturnKey($item['return_value_type']);
+                    $items[$item['key']] = $item[$valueKey];
                 }
 
-                return $metas;
+                return $items;
             }
         ];
     }
@@ -154,9 +164,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         if ($type == 'app\modules\api\extensions\yii\filters\auth\AccessTokenAuth') {
             $tokens = explode('.', $token);
             if (count($tokens) == 3) {
-                $tokenType = strtolower($tokens[0]);
-                $tokenValue = $tokens[1];
-                $tokenExpireDate = $tokens[2];
+                list ($tokenType, $tokenValue, $tokenExpireDate) = $tokens;
+                $tokenType = strtolower($tokenType);
             } else {
                 $tokenType = $tokenExpireDate = null;
                 $tokenValue = $token;
