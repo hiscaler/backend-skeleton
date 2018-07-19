@@ -215,6 +215,12 @@ class BaseActiveRecord extends ActiveRecord
         }
     }
 
+    /**
+     * @param $insert
+     * @param $changedAttributes
+     * @throws Exception
+     * @throws HttpException
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -272,6 +278,9 @@ class BaseActiveRecord extends ActiveRecord
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function afterDelete()
     {
         parent::afterDelete();

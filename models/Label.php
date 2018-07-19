@@ -64,6 +64,7 @@ class Label extends BaseActiveRecord
      * @param boolean $all // 是否查询出所有数据
      * @param boolean $group // 是否分组
      * @return array
+     * @throws \yii\db\Exception
      */
     public static function getItems($all = false, $group = false)
     {
@@ -177,6 +178,9 @@ class Label extends BaseActiveRecord
         }
     }
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function afterDelete()
     {
         parent::afterDelete();

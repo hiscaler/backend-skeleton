@@ -82,7 +82,7 @@ class Lookup extends BaseActiveRecord
             [['type'], 'default', 'value' => self::TYPE_PUBLIC],
             ['key', 'match', 'pattern' => '/^[a-z][a-z.].*[a-z]$/'],
             ['label', 'unique'],
-            ['enabled', 'default', 'value' => 0],
+            ['enabled', 'default', 'value' => Constant::BOOLEAN_TRUE],
             ['enabled', 'boolean'],
             [['return_type', 'enabled', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
             [['key', 'label'], 'string', 'max' => 60],

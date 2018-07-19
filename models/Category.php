@@ -45,6 +45,9 @@ class Category extends BaseActiveRecord
 
     private $_fileUploadConfig;
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function init()
     {
         $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'icon');
@@ -403,6 +406,11 @@ class Category extends BaseActiveRecord
         }
     }
 
+    /**
+     * @param $insert
+     * @return bool
+     * @throws \yii\db\Exception
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -427,6 +435,12 @@ class Category extends BaseActiveRecord
         }
     }
 
+    /**
+     * @param $insert
+     * @param $changedAttributes
+     * @throws \yii\db\Exception
+     * @throws \yii\web\HttpException
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -481,12 +495,14 @@ class Category extends BaseActiveRecord
         }
     }
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function afterDelete()
     {
         parent::afterDelete();
         \Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['category_id' => $this->id])->execute();
-        $icon = $this->icon;
-        if ($icon) {
+        if ($icon = $this->icon) {
             $icon = Yii::getAlias('@web' . $icon);
             file_exists($icon) && unlink($icon);
         }
