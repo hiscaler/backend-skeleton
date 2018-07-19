@@ -72,7 +72,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['type', 'category_id', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
-            [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email'], 'trim'],
+            [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email', 'remark'], 'trim'],
             [['type'], 'default', 'value' => self::TYPE_MEMBER],
             [['category_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
@@ -81,6 +81,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 50],
+            [['email'], 'email'],
             [['tel'], 'string', 'max' => 30],
             [['mobile_phone'], 'string', 'max' => 35],
             [['address'], 'string', 'max' => 100],
@@ -295,6 +296,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
+     * @throws \yii\base\Exception
      */
     public function setPassword($password)
     {
@@ -303,6 +305,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
 
     /**
      * Generates "remember me" authentication key
+     *
+     * @throws \yii\base\Exception
      */
     public function generateAuthKey()
     {
@@ -311,6 +315,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
 
     /**
      * Generates new password reset token
+     *
+     * @throws \yii\base\Exception
      */
     public function generatePasswordResetToken()
     {
@@ -374,6 +380,12 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     // Events
+
+    /**
+     * @param bool $insert
+     * @return bool
+     * @throws \yii\base\Exception
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -400,6 +412,9 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function afterDelete()
     {
         parent::afterDelete();
