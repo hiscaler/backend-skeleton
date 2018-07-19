@@ -7,6 +7,7 @@ use yii\base\ErrorException;
 use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
 
 /**
@@ -513,6 +514,12 @@ class Meta extends ActiveRecord
         }
     }
 
+    /**
+     * 根据返回值类型获取对应的表字段名称
+     *
+     * @param int $returnValueType
+     * @return string
+     */
     public static function parseReturnKey($returnValueType = self::RETURN_VALUE_TYPE_STRING)
     {
         switch ($returnValueType) {
@@ -644,6 +651,16 @@ class Meta extends ActiveRecord
         return $values;
     }
 
+    /**
+     * 获取值
+     *
+     * @param $tableName
+     * @param $objectId
+     * @param $key
+     * @param null $defaultValue
+     * @return array|false|null
+     * @throws \yii\db\Exception
+     */
     public static function getValue($tableName, $objectId, $key, $defaultValue = null)
     {
         $value = null;
@@ -689,23 +706,24 @@ class Meta extends ActiveRecord
     {
         $success = false;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryScalar();
-        if ($metaId) {
-            $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar() ?: null;
+        $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
+        if ($meta) {
+            $v = $db->createCommand('SELECT [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $meta['id'], ':objectId' => (int) $objectId])->queryScalar() ?: null;
             // @todo 验证 objectId 是否有效
+            $valueKey = self::parseReturnKey($meta['return_value_type']);
             if ($v === null) {
                 // insert
                 $db->createCommand()->insert('{{%meta_value}}', [
-                    'meta_id' => $metaId,
+                    'meta_id' => $meta['id'],
                     'object_id' => $objectId,
-                    'value' => $value,
+                    $valueKey => $value,
                 ])->execute();
             } else {
                 // Update
                 $db->createCommand()->update('{{%meta_value}}', [
-                    'value' => $value,
+                    $valueKey => $value,
                 ], [
-                    'meta_id' => $metaId,
+                    'meta_id' => $meta['id'],
                     'object_id' => $objectId
                 ])->execute();
             }
@@ -729,24 +747,32 @@ class Meta extends ActiveRecord
     {
         $result = null;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryScalar();
-        if ($metaId) {
-            $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
+        $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
+        if ($meta && in_array($meta['return_value_type'], [self::RETURN_VALUE_TYPE_INTEGER, self::RETURN_VALUE_TYPE_DECIMAL])) {
+            $valueKey = self::parseReturnKey($meta['return_value_type']);
+            $oldValue = $db->createCommand("SELECT [[$valueKey]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId", [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
             // @todo 验证 objectId 是否有效
-            if ($v === false) {
+            if ($meta['return_value_type'] == self::RETURN_VALUE_TYPE_INTEGER) {
+                $value = intval($value);
+                $oldValue !== false && $oldValue = intval($oldValue);
+            } else {
+                $value = floatval($value);
+                $oldValue !== false && $oldValue = floatval($oldValue);
+            }
+            if ($oldValue === false) {
                 // Insert
                 $db->createCommand()->insert('{{%meta_value}}', [
-                    'value' => (int) $value,
-                    'meta_id' => $metaId,
+                    $valueKey => $value,
+                    'meta_id' => $meta['id'],
                     'object_id' => $objectId
                 ])->execute();
             } else {
-                $value = intval($v) + (int) $value;
+                $value = $oldValue + $value;
                 // Update
                 $db->createCommand()->update('{{%meta_value}}', [
-                    'value' => $value,
+                    $valueKey => $value,
                 ], [
-                    'meta_id' => $metaId,
+                    'meta_id' => $meta['id'],
                     'object_id' => $objectId
                 ])->execute();
                 $result = $value;
@@ -770,24 +796,32 @@ class Meta extends ActiveRecord
     {
         $result = null;
         $db = Yii::$app->getDb();
-        $metaId = $db->createCommand('SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryScalar();
-        if ($metaId) {
-            $v = $db->createCommand('SELECT [[value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
+        $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
+        if ($meta && in_array($meta['return_value_type'], [self::RETURN_VALUE_TYPE_INTEGER, self::RETURN_VALUE_TYPE_DECIMAL])) {
+            $valueKey = self::parseReturnKey($meta['return_value_type']);
+            $oldValue = $db->createCommand("SELECT [[$valueKey]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId", [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
             // @todo 验证 objectId 是否有效
-            if ($v === false) {
+            if ($meta['return_value_type'] == self::RETURN_VALUE_TYPE_INTEGER) {
+                $value = intval($value);
+                $oldValue !== false && $oldValue = intval($oldValue);
+            } else {
+                $value = floatval($value);
+                $oldValue !== false && $oldValue = floatval($oldValue);
+            }
+            if ($oldValue === false) {
                 // Insert
                 $db->createCommand()->insert('{{%meta_value}}', [
-                    'value' => (int) $value,
-                    'meta_id' => $metaId,
+                    $valueKey => $value,
+                    'meta_id' => $meta['id'],
                     'object_id' => $objectId
                 ])->execute();
             } else {
-                $value = intval($v) - (int) $value;
+                $value = $oldValue - $value;
                 // Update
                 $db->createCommand()->update('{{%meta_value}}', [
-                    'value' => $value,
+                    $valueKey => $value,
                 ], [
-                    'meta_id' => $metaId,
+                    'meta_id' => $meta['id'],
                     'object_id' => $objectId
                 ])->execute();
                 $result = $value;
@@ -833,6 +867,11 @@ class Meta extends ActiveRecord
         }
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @throws \yii\db\Exception
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -859,13 +898,18 @@ class Meta extends ActiveRecord
         }
     }
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function afterDelete()
     {
         parent::afterDelete();
         // 删除 meta 数据同时清理掉相关的验证规则以及保存的值
         $cmd = Yii::$app->getDb()->createCommand();
-        $cmd->delete('{{%meta_validator}}', ['meta_id' => $this->id])->execute();
-        $cmd->delete('{{%meta_value}}', ['meta_id' => $this->id])->execute();
+        $relationalTables = ['meta_validator', 'meta_value'];
+        foreach ($relationalTables as $table) {
+            $cmd->delete("{{%$table}}", ['meta_id' => $this->id])->execute();
+        }
     }
 
 }
