@@ -55,6 +55,7 @@ class UsersController extends Controller
      *
      * @rbacDescription 系统用户列表数据查看权限
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -75,6 +76,9 @@ class UsersController extends Controller
      *
      * @rbacDescription 系统用户添加权限
      * @return mixed
+     * @throws \yii\base\ErrorException
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
      */
     public function actionCreate()
     {
@@ -136,6 +140,7 @@ class UsersController extends Controller
      * @rbacDescription 系统用户删除权限
      * @param integer $id
      * @return mixed
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
@@ -146,11 +151,10 @@ class UsersController extends Controller
         $model = $this->findModel($id);
         $userId = $model->id;
         $db = Yii::$app->getDb();
-        $db->transaction(function ($db) use ($userId) {
-            $bindValues = [
-                ':userId' => $userId
-            ];
-            $db->createCommand('DELETE FROM {{%user_auth_category}} WHERE [[user_id]] = :userId AND [[category_id]] IN (SELECT [[id]] FROM {{%category}})')->bindValues($bindValues)->execute();
+        $db->transaction(function ($db) use ($userId, $model) {
+            $model->delete();
+            /* @var $db \yii\db\Connection */
+            $db->createCommand()->delete('{{%user_auth_category}}', ['user_id' => $userId])->execute();
         });
 
         return $this->redirect(['index']);
@@ -163,6 +167,7 @@ class UsersController extends Controller
      * @param $id
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException
+     * @throws \yii\base\Exception
      */
     public function actionChangePassword($id)
     {
@@ -257,18 +262,18 @@ class UsersController extends Controller
                 ]);
             }
 
-            $nodes = $db->createCommand('SELECT [[id]], [[parent_id]] AS [[pId]], [[name]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
+            $categories = $db->createCommand('SELECT [[id]], [[parent_id]] AS [[pId]], [[name]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
             if ($existingCategoryIds) {
-                foreach ($nodes as $key => $node) {
+                foreach ($categories as $key => $node) {
                     if (in_array($node['id'], $existingCategoryIds)) {
-                        $nodes[$key]['checked'] = true;
+                        $categories[$key]['checked'] = true;
                     }
                 }
             }
-            $nodes = ArrayHelper::toTree($nodes, 'id', 'pId');
+            $categories = ArrayHelper::toTree($categories, 'id', 'pId');
 
             return $this->renderAjax('auth', [
-                'categories' => $nodes,
+                'categories' => $categories,
             ]);
         } else {
             throw new InvalidCallException('无效的访问方式。');
@@ -280,6 +285,9 @@ class UsersController extends Controller
      *
      * @rbacDescription 设置系统用户记录、禁止状态操作权限
      * @return Response
+     * @throws \Throwable
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionToggle()
     {

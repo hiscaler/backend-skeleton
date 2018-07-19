@@ -448,6 +448,11 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @throws \Exception
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -480,12 +485,18 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function afterDelete()
     {
         parent::afterDelete();
         if ($authManager = Yii::$app->getAuthManager()) {
             $authManager->revokeAll($this->id);
         }
+
+        // 删除关联分类数据
+        \Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['user_id' => $this->id])->execute();
     }
 
 }
