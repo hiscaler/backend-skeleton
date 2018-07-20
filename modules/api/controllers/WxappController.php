@@ -9,6 +9,7 @@ use app\modules\api\models\Constant;
 use app\modules\api\models\Member;
 use BadMethodCallException;
 use EasyWeChat\Foundation\Application;
+use Exception;
 use GuzzleHttp\Client;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -33,6 +34,9 @@ class WxappController extends BaseController
     /* @var \EasyWeChat\Foundation\Application */
     private $wechatApplication;
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
@@ -112,33 +116,40 @@ class WxappController extends BaseController
         $member->last_login_time = $now;
         $member->last_login_ip = ip2long(Yii::$app->getRequest()->getUserIP());
         $member->access_token = $accessToken;
-        if ($member->validate() && $member->save()) {
-            if ($isNewRecord) {
-                $wechatMember = [
+        $transaction = $db->beginTransaction();
+        try {
+            $transaction->commit();
+            if ($member->validate() && $member->save()) {
+                if ($isNewRecord) {
+                    $wechatMember = [
+                        'openid' => $openid,
+                        'member_id' => $member->id,
+                        'nickname' => $username,
+                        'sex' => Constant::SEX_UNKNOWN,
+                        'country' => null,
+                        'province' => null,
+                        'city' => null,
+                        'language' => null,
+                        'headimgurl' => null,
+                        'subscribe' => Constant::BOOLEAN_FALSE,
+                        'subscribe_time' => null,
+                        'unionid' => isset($wechatResponseBody['union_id']) ? $wechatResponseBody['union_id'] : null,
+                    ];
+                    $db->createCommand()->insert('{{%wechat_member}}', $wechatMember)->execute();
+                }
+
+                return [
+                    'sessionKey' => $accessToken,
                     'openid' => $openid,
-                    'member_id' => $member->id,
-                    'nickname' => $username,
-                    'sex' => Constant::SEX_UNKNOWN,
-                    'country' => null,
-                    'province' => null,
-                    'city' => null,
-                    'language' => null,
-                    'headimgurl' => null,
-                    'subscribe' => Constant::BOOLEAN_FALSE,
-                    'subscribe_time' => null,
-                    'unionid' => isset($wechatResponseBody['union_id']) ? $wechatResponseBody['union_id'] : null,
                 ];
-                $db->createCommand()->insert('{{%wechat_member}}', $wechatMember)->execute();
+            } else {
+                Yii::$app->getResponse()->setStatusCode(400);
+
+                return $member->errors;
             }
-
-            return [
-                'sessionKey' => $accessToken,
-                'openid' => $openid,
-            ];
-        } else {
-            Yii::$app->getResponse()->setStatusCode(400);
-
-            return $member->errors;
+        } catch (Exception $e) {
+            $transaction->rollBack();
+            throw new Exception($e->getMessage());
         }
     }
 
