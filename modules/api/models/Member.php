@@ -161,34 +161,20 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        if ($type == 'app\modules\api\extensions\yii\filters\auth\AccessTokenAuth') {
+        $member = static::findOne(['access_token' => $token]);
+        if ($member) {
             $tokens = explode('.', $token);
-            if (count($tokens) == 3) {
-                list ($tokenType, $tokenValue, $tokenExpireDate) = $tokens;
-                $tokenType = strtolower($tokenType);
-            } else {
-                $tokenType = $tokenExpireDate = null;
-                $tokenValue = $token;
-            }
-            switch ($tokenType) {
-                case 'wxapp':
-                    break;
+            if (isset($tokens[2])) {
+                list (, , $expire) = $tokens;
+                $accessTokenExpire = isset(Yii::$app->params['member.accessTokenExpire']) ? Yii::$app->params['member.accessTokenExpire'] : 86400;
+                $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
 
-                case 'wechat':
-                    break;
-
-                default:
-                    break;
-            }
-
-            return static::findOne(['access_token' => $token]);
-        } else {
-            $user = static::findOne(['access_token' => $token]);
-            if ($user) {
-                return (int) substr($token, strrpos($token, '.') + 1) > time() ? $user : null;
+                return ((int) $expire + $accessTokenExpire) > time() ? $member : null;
             } else {
                 return null;
             }
+        } else {
+            return null;
         }
     }
 
@@ -196,6 +182,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      * Finds user by username
      *
      * @param string $username
+     * @param null $type
      * @return static|null
      */
     public static function findByUsername($username, $type = null)
@@ -292,6 +279,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
 
     /**
      * Generates "remember me" authentication key
+     *
+     * @throws \yii\base\Exception
      */
     public function generateAuthKey()
     {
@@ -300,10 +289,12 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
 
     /**
      * Generates new password reset token
+     *
+     * @throws \yii\base\Exception
      */
     public function generatePasswordResetToken()
     {
-        $this->password_reset_token = Yii::$app->getSecurity()->generateRandomString() . '_' . time();
+        $this->password_reset_token = Yii::$app->getSecurity()->generateRandomString() . '.' . time();
     }
 
     /**
@@ -314,12 +305,27 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
 
+    /**
+     * @param string $prefix
+     * @throws \yii\base\Exception
+     */
+    public function generateAccessToken($prefix = 'pp')
+    {
+        $this->access_token = $prefix . '.' . Yii::$app->getSecurity()->generateRandomString() . '.' . time();
+    }
+
     public function removeAccessToken()
     {
-        $this->access_token = $this->access_token_expire_datetime = null;
+        $this->access_token = null;
     }
 
     // Events
+
+    /**
+     * @param bool $insert
+     * @return bool
+     * @throws \yii\base\Exception
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
