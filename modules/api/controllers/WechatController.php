@@ -6,12 +6,13 @@ use app\models\Member;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Constant;
 use EasyWeChat\Foundation\Application;
+use Exception;
 use Yii;
 use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 
 /**
- * 微信接口处理
+ * 微信处理接口
  * Class WechatController
  *
  * @package app\modules\api\controllers
@@ -20,6 +21,9 @@ use yii\base\InvalidConfigException;
 class WechatController extends BaseController
 {
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
@@ -34,6 +38,7 @@ class WechatController extends BaseController
      * @param $redirectUrl
      * @throws \yii\base\Exception
      * @throws \yii\db\Exception
+     * @throws Exception
      */
     public function actionAuth($redirectUrl)
     {
@@ -41,6 +46,8 @@ class WechatController extends BaseController
         $application = new Application(Yii::$app->params['wechat']);
         $user = $application->oauth->scopes(['snsapi_userinfo'])->user();
         if ($user) {
+            $now = time();
+            $accessToken = null;
             $openid = $user->openid;
             $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
             if (!$memberId) {
@@ -52,43 +59,51 @@ class WechatController extends BaseController
                 $member->setPassword($member->username);
                 $member->avatar = $user->headimgurl;
                 $member->status = Member::STATUS_ACTIVE;
-                if ($member->save()) {
-                    $memberId = $member->id;
-                    $columns = [
-                        'member_id' => $memberId,
-                        'subscribe' => Constant::BOOLEAN_TRUE,
-                        'openid' => $openid,
-                        'nickname' => $user->nickname,
-                        'sex' => $user->sex,
-                        'country' => $user->country,
-                        'province' => $user->province,
-                        'city' => $user->city,
-                        'language' => $user->language,
-                        'headimgurl' => $user->headimgurl,
-                        'subscribe_time' => time(),
-                    ];
-                    $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
-                } else {
+                $transaction = $db->beginTransaction();
+                try {
+                    if ($member->save()) {
+                        $memberId = $member->id;
+                        $columns = [
+                            'member_id' => $memberId,
+                            'subscribe' => Constant::BOOLEAN_TRUE,
+                            'openid' => $openid,
+                            'nickname' => $user->nickname,
+                            'sex' => $user->sex,
+                            'country' => $user->country,
+                            'province' => $user->province,
+                            'city' => $user->city,
+                            'language' => $user->language,
+                            'headimgurl' => $user->headimgurl,
+                            'subscribe_time' => $now,
+                        ];
+                        $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
+                        if ($memberId) {
+                            $accessTokenExpire = isset(Yii::$app->params['user.accessTokenExpire']) ? (int) Yii::$app->params['user.accessTokenExpire'] : 7200;
+                            $accessTokenExpire = $accessTokenExpire ?: 7200;
+                            $accessToken = Yii::$app->getSecurity()->generateRandomString() . '.' . ($now + $accessTokenExpire);
+                            // Update user access_token value
+                            $db->createCommand()->update('{{%member}}', ['access_token' => $accessToken], ['id' => $memberId])->execute();
+                        }
+                        $transaction->commit();
+                    } else {
+                        $memberId = null;
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
                     $memberId = null;
+                    throw new Exception($e->getMessage());
                 }
-            }
-            if ($memberId) {
-                $accessTokenExpire = isset(Yii::$app->params['user.accessTokenExpire']) ? (int) Yii::$app->params['user.accessTokenExpire'] : 7200;
-                $accessTokenExpire = $accessTokenExpire ?: 7200;
-                $accessToken = Yii::$app->getSecurity()->generateRandomString() . '.' . (time() + $accessTokenExpire);
-                // Update user access_token value
-                $db->createCommand()->update('{{%member}}', ['access_token' => $accessToken], ['id' => $memberId])->execute();
-            } else {
-                $accessToken = null;
             }
 
             $redirectUrl = urldecode($redirectUrl);
-            if (strpos($redirectUrl, '?') === false) {
-                $redirectUrl .= '?';
-            } else {
-                $redirectUrl .= '&';
+            if ($accessToken) {
+                if (strpos($redirectUrl, '?') === false) {
+                    $redirectUrl .= '?';
+                } else {
+                    $redirectUrl .= '&';
+                }
+                $redirectUrl .= "accessToken=$accessToken";
             }
-            $redirectUrl .= "accessToken=$accessToken";
 
             $this->redirect($redirectUrl);
         } else {
