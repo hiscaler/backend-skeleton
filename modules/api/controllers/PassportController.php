@@ -2,7 +2,9 @@
 
 namespace app\modules\api\controllers;
 
+use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Member;
+use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
@@ -13,8 +15,13 @@ use yii\web\BadRequestHttpException;
  * @package backend\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class PassportController extends Controller
+class PassportController extends BaseController
 {
+
+    /**
+     * @var string token 参数名称
+     */
+    private $_token_param = 'accessToken';
 
     public function behaviors()
     {
@@ -38,32 +45,29 @@ class PassportController extends Controller
     public function actionLogin()
     {
         $request = \Yii::$app->getRequest();
-        $password = $request->post('password');
-        $token = $request->post('token');
+        $token = $request->post($this->_token_param);
         if ($token) {
-            $checkBy = 'token';
+            $checkBy = 'accessToken';
             $member = Member::findIdentityByAccessToken($token);
         } else {
             $checkBy = 'username';
             $username = $request->post('username');
+            $password = $request->post('password');
             if (empty($username) || empty($password)) {
-                throw new InvalidArgumentException('无效的 username 或者 password 参数。');
+                throw new InvalidArgumentException('无效的 username 或 password 参数。');
             }
             $member = Member::findByUsername($username);
         }
 
-        if (!$member) {
-            throw new BadRequestHttpException($checkBy == 'token' ? '无效的 token' : '账号错误');
+        if ($member === null) {
+            throw new BadRequestHttpException($checkBy == 'accessToken' ? "无效的 $this->_token_param 值" : '账号错误');
         }
 
         if ($checkBy == 'username' && !\Yii::$app->getSecurity()->validatePassword($password, $member['password'])) {
             throw new BadRequestHttpException('密码错误');
         }
 
-        return [
-            'id' => $member->id,
-            'token' => $member->token,
-        ];
+        return $member;
     }
 
     /**
@@ -72,30 +76,34 @@ class PassportController extends Controller
      * @return array
      * @throws BadRequestHttpException
      * @throws \yii\db\Exception
-     * @throws \yii\web\UnauthorizedHttpException
+     * @throws \yii\base\Exception
      */
     public function actionRefreshToken()
     {
         $request = \Yii::$app->getRequest();
-        $token = $request->post('token');
-        if (empty($id) || empty($token)) {
-            throw new InvalidArgumentException('无效的 token 参数。');
+        $token = $request->post($this->_token_param);
+        if (empty($token)) {
+            throw new InvalidArgumentException("无效的 $this->_token_param 值。");
         }
-        $user = AdminUser::findIdentityByAccessToken($token);
-        if ($user === null) {
-            throw new BadRequestHttpException('token 无效。');
+        $member = Member::findIdentityByAccessToken($token);
+        if ($member === null) {
+            throw new BadRequestHttpException("用户验证失败。");
         }
 
-        if ($user::apiTokenIsValid($token)) {
-            $newToken = $user->generateToken();
-            \Yii::$app->getDb()->createCommand('{{%user}}', ['token' => $newToken], ['id' => $user->id])->execute();
+        $t = explode('_', $token);
+        $expiredTime = end($t);
+        $accessTokenExpire = isset(Yii::$app->params['member.accessTokenExpire']) ? Yii::$app->params['member.accessTokenExpire'] : 86400;
+        $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
+        if (is_int($expiredTime) && ($expiredTime + $accessTokenExpire) <= time()) {
+            $newToken = $member->generateAccessToken();
+            \Yii::$app->getDb()->createCommand()->update('{{%user}}', ['access_token' => $newToken], ['id' => $member->id])->execute();
 
             return [
-                'id' => $user->id,
+                'id' => $member->id,
                 'token' => $newToken,
             ];
         } else {
-            throw new BadRequestHttpException('登录失败。');
+            throw new BadRequestHttpException("$this->_token_param 已失效。");
         }
     }
 
