@@ -81,12 +81,12 @@ class WxappController extends BaseController
         $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$options['app_id']}&secret={$options['secret']}&js_code={$code}&grant_type=authorization_code";
         $response = (new Client())->get($url);
         if ($response->getStatusCode() != 200) {
-            throw new BadRequestHttpException("Access wechat api error: ({$response->getStatusCode()}).");
+            throw new BadRequestHttpException("Access wechat api error: {$response->getStatusCode()}");
         }
         $wechatResponseBody = $response->getBody();
         $wechatResponseBody = json_decode($wechatResponseBody, true);
         if (empty($wechatResponseBody) || isset($wechatResponseBody['errcode'])) {
-            throw new InvalidValueException("Access wechat api error: ({$wechatResponseBody['errmsg']}).");
+            throw new InvalidValueException("Access wechat api error: {$wechatResponseBody['errmsg']}");
         }
         $openid = $wechatResponseBody['openid'];
         if (empty($openid)) {
@@ -97,46 +97,51 @@ class WxappController extends BaseController
         $accessToken = 'wxapp.' . md5($openid . $wechatResponseBody['session_key']) . '.' . ($now + 24 * 3600);
         $db = \Yii::$app->getDb();
         $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
+        $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $wechatResponseBody["nickName"]);
         $maxId = $db->createCommand('SELECT MAX([[id]]) FROM {{%member}}')->queryScalar();
         $username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
+        $nickname || $nickname = $username;
         if ($memberId) {
             // 更新会员的相关信息
             $member = Member::findOne($memberId);
             $member->login_count += 1;
-            $isNewRecord = false;
+            $isNewMember = false;
         } else {
             // 添加新会员
             $member = new Member();
             $member->setPassword($username);
             $member->username = $username;
-            $member->nickname = $username;
+            $member->nickname = $nickname;
             $member->login_count = 1;
-            $isNewRecord = true;
+            $isNewMember = true;
         }
         $member->last_login_time = $now;
         $member->last_login_ip = ip2long(Yii::$app->getRequest()->getUserIP());
         $member->access_token = $accessToken;
         $transaction = $db->beginTransaction();
         try {
-            $transaction->commit();
             if ($member->validate() && $member->save()) {
-                if ($isNewRecord) {
-                    $wechatMember = [
-                        'openid' => $openid,
-                        'member_id' => $member->id,
-                        'nickname' => $username,
-                        'sex' => Constant::SEX_UNKNOWN,
-                        'country' => null,
-                        'province' => null,
-                        'city' => null,
-                        'language' => null,
-                        'headimgurl' => null,
-                        'subscribe' => Constant::BOOLEAN_FALSE,
-                        'subscribe_time' => null,
-                        'unionid' => isset($wechatResponseBody['union_id']) ? $wechatResponseBody['union_id'] : null,
-                    ];
+                $wechatMember = [
+                    'openid' => $openid,
+                    'nickname' => $nickname,
+                    'sex' => $wechatResponseBody['gender'],
+                    'country' => isset($wechatResponseBody['country']) ? $wechatResponseBody['country'] : null,
+                    'province' => isset($wechatResponseBody['province']) ? $wechatResponseBody['province'] : null,
+                    'city' => isset($wechatResponseBody['city']) ? $wechatResponseBody['city'] : null,
+                    'language' => isset($wechatResponseBody['language']) ? $wechatResponseBody['language'] : null,
+                    'headimgurl' => $wechatResponseBody['avatarUrl'],
+                    'unionid' => isset($wechatResponseBody['union_id']) ? $wechatResponseBody['union_id'] : null,
+                ];
+                if ($isNewMember) {
+                    $wechatMember['member_id'] = $member->id;
+                    $wechatMember['subscribe'] = Constant::BOOLEAN_FALSE;
+                    $wechatMember['subscribe_time'] = null;
                     $db->createCommand()->insert('{{%wechat_member}}', $wechatMember)->execute();
+                } else {
+                    $db->createCommand()->update('{{%wechat_member}}', $wechatMember, ['openid' => $openid])->execute();
                 }
+
+                $transaction->commit();
 
                 return [
                     'sessionKey' => $accessToken,
