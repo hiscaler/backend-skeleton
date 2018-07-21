@@ -12,7 +12,7 @@ use yii\web\BadRequestHttpException;
 /**
  * 用户认证处理
  *
- * @package backend\controllers
+ * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class PassportController extends BaseController

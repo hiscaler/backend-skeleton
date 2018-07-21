@@ -25,7 +25,6 @@ use yii\web\Response;
  *
  * @package app\modules\api\controllers
  * @see https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-login.html#wxchecksessionobject
- *
  * @author hiscaler <hiscaler@gmail.com>
  */
 class WxappController extends BaseController

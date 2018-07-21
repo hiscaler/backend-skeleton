@@ -18,6 +18,7 @@ use yii\web\BadRequestHttpException;
  * @see http://deepi.sogou.com/docs/fanyiDoc
  *
  * @package app\modules\api\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class TranslateController extends BaseController
 {
