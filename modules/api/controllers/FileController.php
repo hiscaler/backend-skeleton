@@ -3,13 +3,15 @@
 namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\BaseController;
+use RuntimeException;
+use stdClass;
 use yadjet\helpers\StringHelper;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\helpers\FileHelper;
-use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 
 /**
@@ -24,6 +26,21 @@ class FileController extends BaseController
 
     protected $type = 'file';
 
+    /**
+     * @throws InvalidConfigException
+     */
+    public function init()
+    {
+        parent::init();
+        if (!isset(Yii::$app->params['uploading'])) {
+            throw new InvalidConfigException('无效的上传配置。');
+        }
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
     protected function generateUniqueFilename()
     {
         return StringHelper::generateRandomString();
@@ -37,13 +54,10 @@ class FileController extends BaseController
      * @return array
      * @throws InvalidConfigException
      * @throws \yii\base\Exception
+     * @throws \Exception
      */
     public function actionUploading($type = 'image', $key = 'file')
     {
-        if (!isset(Yii::$app->params['uploading'])) {
-            throw new InvalidConfigException('无效的上传配置。');
-        }
-
         $config = Yii::$app->params['uploading'];
         $type = strtolower($type);
         if (!isset($config[$type])) {
@@ -150,70 +164,37 @@ class FileController extends BaseController
         }
     }
 
-    public function _actionUploading($key)
+    /**
+     * 删除文件
+     *
+     * @todo 需要判断文件所有者权限
+     * @param $url
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionDelete($url)
     {
-        $file = UploadedFile::getInstanceByName($key);
-        if ($file === null) {
-            throw new BadRequestHttpException('获取文件失败。');
-        }
-        $maxSize = 1024 * 1024 * 8; // 8MB
-
-        if ($file->size > $maxSize) {
-            $responseBody = [
-                'success' => false,
-                'error' => [
-                    'message' => '文件大小超过 ' . Yii::$app->getFormatter()->asShortSize($maxSize) . '，禁止上传。'
-                ]
-            ];
-        } else {
-            $imageSavePath = '/uploads/' . date('Ymd') . '/';
-            if (!is_dir(Yii::getAlias('@webroot' . $imageSavePath))) {
-                FileHelper::createDirectory(Yii::getAlias('@webroot' . $imageSavePath));
-            }
-            $extension = $file->getExtension();
-            $fileType = $file->type;
-            if (!$extension) {
-                $extension = 'jpeg';
-            }
-            $imgPath = $imageSavePath . 'tmp-' . StringHelper::generateRandomString() . '.' . $extension;
-            if (!$file->saveAs(\Yii::getAlias('@webroot') . $imgPath)) {
-                $imgPath = null;
-            }
-            if ($imgPath) {
-//                Image::thumbnail(Yii::getAlias('@webroot') . $imgPath, 300, 450)
-//                    ->save(str_replace(".{$extension}", "_thumb.{$extension}", Yii::getAlias('@webroot') . $imgPath), ['quality' => 60]);
-//                $db = Yii::$app->getDb();
-//                $columns = [
-//                    'type' => $type,
-//                    'dining_request_id' => $id,
-//                    'filename' => $file->getBaseName(),
-//                    'path' => $imgPath,
-//                    'description' => $file->getBaseName(),
-//                    'created_at' => time(),
-//                    'created_by' => Yii::$app->getUser()->getId()
-//                ];
-//                $db->createCommand()->insert('{{%dining_photo}}', $columns)->execute();
-                $filename = \Yii::getAlias('@webroot') . $imgPath;
-                $imgbinary = fread(fopen($filename, "r"), filesize($filename));
-                $photo = 'data:image/' . $fileType . ';base64,' . base64_encode($imgbinary);
-
-                return [
-                    'photoPath' => $imgPath,
-                    'photo' => $photo,
-                    'deleteUrl' => Url::toRoute(['delete-photo', 'id' => 12]),
-                    'uploadCompleted' => true,
-                ];
+        $url = parse_url($url);
+        $file = $url['path'];
+        $config = Yii::$app->params['uploading'];
+        $dir = isset($config['dir']) ? $config['dir'] : "uploads";
+        $path = Yii::getAlias("@webroot/$dir/" . trim($file, '\/'));
+        if (file_exists($path)) {
+            $success = @unlink($path);
+            if ($success) {
+                return new stdClass();
             } else {
-                throw new \Exception('文件保存失败。');
+                $error = error_get_last();
+                if ($error !== null) {
+                    $message = $error['message'];
+                } else {
+                    $message = '文件删除失败。';
+                }
+                throw new RuntimeException($message);
             }
+        } else {
+            throw new NotFoundHttpException("$url 文件不存在。");
         }
-
-        return $responseBody;
-
-//        return new Response([
-//            'format' => Response::FORMAT_JSON,
-//            'data' => $responseBody
-//        ]);
     }
 
 }
