@@ -15,6 +15,12 @@ use Yii;
 class ApiController extends \yii\rest\Controller
 {
 
+    /**
+     * @param $action
+     * @return bool
+     * @throws \yii\db\Exception
+     * @throws \yii\web\BadRequestHttpException
+     */
     public function beforeAction($action)
     {
         if (parent::beforeAction($action)) {
