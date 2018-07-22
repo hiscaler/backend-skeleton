@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\Option;
 use DateTime;
 use Yii;
 use yii\db\Query;
@@ -91,7 +92,7 @@ class DbController extends Controller
         $db = Yii::$app->getDb();
         $schema = $db->getSchema();
         $tablePrefix = $db->tablePrefix;
-        $tables = $schema->getTableNames();
+        $tables = Option::tables();
         $backupDir = date('YmdHis');
         $backupPath = Yii::getAlias('@app/backup/' . $backupDir);
         if (!file_exists($backupDir)) {
@@ -154,7 +155,7 @@ class DbController extends Controller
             $db = Yii::$app->getDb();
             $cmd = $db->createCommand();
             $tablePrefix = $db->tablePrefix;
-            $tables = $db->getSchema()->getTableNames();
+            $tables = Option::tables();
             $files = FileHelper::findFiles($path);
             $currentTable = null;
             $transaction = $db->beginTransaction();
