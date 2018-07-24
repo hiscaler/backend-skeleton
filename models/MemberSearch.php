@@ -37,6 +37,7 @@ class MemberSearch extends Member
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws \yii\db\Exception
      */
     public function search($params)
     {

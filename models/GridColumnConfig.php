@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\models\Yad;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -59,7 +58,9 @@ class GridColumnConfig extends ActiveRecord
      *
      * @todo 数据应该缓存起来
      * @param string $name
+     * @param null $visibleColumn
      * @return array
+     * @throws \yii\db\Exception
      */
     public static function getConfigs($name, $visibleColumn = null)
     {
@@ -79,7 +80,9 @@ class GridColumnConfig extends ActiveRecord
     /**
      * 获取设置为不可见的列
      *
+     * @param $name
      * @return array
+     * @throws \yii\db\Exception
      */
     public static function getInvisibleColumns($name)
     {

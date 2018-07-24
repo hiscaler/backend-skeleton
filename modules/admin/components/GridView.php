@@ -20,6 +20,10 @@ class GridView extends \yii\grid\GridView
      */
     public $name;
 
+    /**
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     protected function initColumns()
     {
         if (empty($this->columns)) {
@@ -52,6 +56,7 @@ class GridView extends \yii\grid\GridView
      * 返回所有不可见的项目
      *
      * @return array
+     * @throws \yii\db\Exception
      */
     private function invisibleColumns()
     {
@@ -66,6 +71,10 @@ class GridView extends \yii\grid\GridView
         return $columns;
     }
 
+    /**
+     * @return array
+     * @throws \yii\db\Exception
+     */
     private function getColumnConfigs()
     {
         return Yii::$app->getDb()->createCommand('SELECT [[name]], [[attribute]], [[css_class]], [[visible]] FROM {{%grid_column_config}} WHERE [[name]] = :name AND [[user_id]] = :userId', [
