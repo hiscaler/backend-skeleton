@@ -5,6 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\Constant;
 use app\models\GridColumnConfig;
 use Exception;
+use InvalidArgumentException;
 use Yii;
 use yii\base\InvalidCallException;
 use yii\data\ArrayDataProvider;
@@ -12,7 +13,6 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Inflector;
 use yii\web\BadRequestHttpException;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -54,7 +54,6 @@ class GridColumnConfigsController extends Controller
      * @param $name
      * @return mixed
      * @throws BadRequestHttpException
-     * @throws NotFoundHttpException
      * @throws \yii\db\Exception
      */
     public function actionIndex($id, $name)
@@ -69,22 +68,31 @@ class GridColumnConfigsController extends Controller
             throw new InvalidCallException($ex->getMessage());
         }
 
-        $columns = [];
+        $cache = Yii::$app->getCache();
+        $cacheKey = "cache_{$id}_columns";
         try {
-            $dataProvider = $request->post('models');
-            if ($dataProvider) {
-                $models = unserialize(base64_decode($dataProvider));
-                $model = reset($models);
-                if (is_array($model) || is_object($model)) {
-                    foreach ($model as $key => $value) {
-                        if ($value === null || is_scalar($value) || is_callable([$value, '__toString'])) {
-                            $columns[] = (string) $key;
-                        }
+            $columns = [];
+            $rawModels = $request->post('models');
+            if ($rawModels) {
+                $models = unserialize(base64_decode($rawModels));
+                $cache->set($cacheKey, $models, 0);
+            } else {
+                // 翻页的时候不会传递 models 参数过来，所以从缓存中获取
+                $models = $cache->get($cacheKey);
+                if ($models === false) {
+                    $models = [];
+                }
+            }
+            $models = reset($models);
+            if (is_array($models) || is_object($models)) {
+                foreach ($models as $key => $value) {
+                    if ($value === null || is_scalar($value) || is_callable([$value, '__toString'])) {
+                        $columns[] = (string) $key;
                     }
                 }
             }
         } catch (Exception $e) {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new InvalidArgumentException('`models` params is invalid.');
         }
         $invisibleColumns = GridColumnConfig::getInvisibleColumns($id);
         $models = [];

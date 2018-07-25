@@ -209,7 +209,7 @@ yadjet.actions = yadjet.actions || {
                     layer.open({
                         title: '表格栏位设定',
                         content: '<div id="yad-grid-columns-setting-render">' + response + '</div>',
-                        skin: 'layer-grid-view',
+                        skin: 'layer-fix',
                         yes: function () {
                             $.pjax.reload({container: '#' + gridId});
                         }
