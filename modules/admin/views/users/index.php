@@ -1,7 +1,6 @@
 <?php
 
 use app\modules\admin\components\MessageBox;
-use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
@@ -18,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
+    ['label' => Yii::t('app', 'Grid Column Config'), 'url' => ['grid-column-configs/index', 'name' => \app\models\User::class, 'id' => 'grid-view-users'], 'htmlOptions' => ['class' => 'grid-column-config', 'data-grid-id' => 'grid-view-users']],
     ['label' => Yii::t('app', 'Search'), 'url' => '#'],
 ];
 ?>
@@ -36,7 +36,8 @@ $this->params['menus'] = [
     Pjax::begin([
         'formSelector' => '#form-user-search',
     ]);
-    echo GridView::widget([
+    echo \app\modules\admin\components\GridView::widget([
+        'id' => 'grid-view-users',
         'dataProvider' => $dataProvider,
         'columns' => [
             [
@@ -106,8 +107,8 @@ $title = Yii::t('app', 'Please choice this user can manager categories');
 <script type="text/javascript">
     $(function () {
         jQuery(document).on('click', 'a.user-auth', function () {
-            var t = $(this);
-            var url = t.attr('href');
+            var t = $(this),
+                url = t.attr('href');
             $.ajax({
                 type: 'GET',
                 url: url,
