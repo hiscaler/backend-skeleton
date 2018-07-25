@@ -54,6 +54,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public $fileFields = 'avatar';
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function init()
     {
         $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'avatar');
