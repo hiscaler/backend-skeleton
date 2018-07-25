@@ -124,8 +124,9 @@ class GridColumnConfigsController extends Controller
      */
     public function actionToggle()
     {
-        $attribute = Yii::$app->getRequest()->post('id');
-        $name = Yii::$app->getRequest()->post('name');
+        $request = Yii::$app->getRequest();
+        $attribute = $request->post('id');
+        $name = $request->post('name');
         $userId = \Yii::$app->getUser()->getId();
         $db = Yii::$app->getDb();
         $value = $db->createCommand('SELECT [[visible]] FROM {{%grid_column_config}} WHERE [[user_id]] = :userId AND [[name]] = :name AND [[attribute]] = :attribute', [
