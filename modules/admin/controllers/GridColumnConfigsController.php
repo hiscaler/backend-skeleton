@@ -4,6 +4,7 @@ namespace app\modules\admin\controllers;
 
 use app\models\Constant;
 use app\models\GridColumnConfig;
+use Exception;
 use Yii;
 use yii\base\InvalidCallException;
 use yii\data\ArrayDataProvider;
@@ -49,28 +50,43 @@ class GridColumnConfigsController extends Controller
     /**
      * Lists all GridColumnConfig models.
      *
+     * @param $id
      * @param $name
      * @return mixed
-     * @throws NotFoundHttpException
      * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
      */
-    public function actionIndex($name)
+    public function actionIndex($id, $name)
     {
         $request = Yii::$app->getRequest();
         if (!$request->getIsAjax() && !$request->getIsPjax()) {
             throw new BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         }
         try {
-            $attributeLabels = Yii::createObject($name)->attributeLabels();
+            $attributeLabels = Yii::createObject(['class' => $name])->attributeLabels();
         } catch (\Exception $ex) {
             throw new InvalidCallException($ex->getMessage());
         }
 
-        if (!isset(Yii::$app->params['gridColumns'][$name])) {
+        $columns = [];
+        try {
+            $dataProvider = $request->post('models');
+            if ($dataProvider) {
+                $models = unserialize(base64_decode($dataProvider));
+                $model = reset($models);
+                if (is_array($model) || is_object($model)) {
+                    foreach ($model as $key => $value) {
+                        if ($value === null || is_scalar($value) || is_callable([$value, '__toString'])) {
+                            $columns[] = (string) $key;
+                        }
+                    }
+                }
+            }
+        } catch (Exception $e) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-        $columns = Yii::$app->params['gridColumns'][$name];
-        $invisibleColumns = GridColumnConfig::getInvisibleColumns($name);
+        $invisibleColumns = GridColumnConfig::getInvisibleColumns($id);
         $models = [];
         foreach ($columns as $value) {
             $models[] = [
@@ -89,7 +105,7 @@ class GridColumnConfigsController extends Controller
         ]);
 
         return $this->renderAjax('index', [
-            'name' => $name,
+            'gridId' => $id,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -119,7 +135,7 @@ class GridColumnConfigsController extends Controller
             $responseBody = [
                 'success' => true,
                 'data' => [
-                    'value' => $value
+                    'value' => $value ? true : false
                 ],
             ];
         } else {
@@ -135,7 +151,7 @@ class GridColumnConfigsController extends Controller
                 'success' => true,
                 'alias' => 'value',
                 'data' => [
-                    'value' => Constant::BOOLEAN_FALSE
+                    'value' => false
                 ],
             ];
         }

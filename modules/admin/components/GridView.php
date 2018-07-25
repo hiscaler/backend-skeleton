@@ -14,11 +14,13 @@ class GridView extends \yii\grid\GridView
 {
 
     /**
-     * 对应的表格名称
-     *
-     * @var string
+     * @throws \yii\base\InvalidConfigException
      */
-    public $name;
+    public function init()
+    {
+        parent::init();
+        $this->tableOptions += ['data-models' => base64_encode(serialize($this->dataProvider->getModels()))];
+    }
 
     /**
      * @throws \yii\base\InvalidConfigException
@@ -78,7 +80,7 @@ class GridView extends \yii\grid\GridView
     private function getColumnConfigs()
     {
         return Yii::$app->getDb()->createCommand('SELECT [[name]], [[attribute]], [[css_class]], [[visible]] FROM {{%grid_column_config}} WHERE [[name]] = :name AND [[user_id]] = :userId', [
-            ':name' => $this->name,
+            ':name' => $this->id,
             ':userId' => Yii::$app->getUser()->getId(),
         ])->queryAll();
     }

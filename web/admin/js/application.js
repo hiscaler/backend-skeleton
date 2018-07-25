@@ -131,9 +131,10 @@ yadjet.utils = yadjet.utils || {
     }
 };
 yadjet.actions = yadjet.actions || {
-    toggle: function (selector, url, callback) {
-        var dataExt = arguments[2] ? arguments[2] : {};
-        var trData = arguments[3] ? arguments[3] : [];
+    toggle: function (selector, url) {
+        var dataExt = arguments[2] ? arguments[2] : {},
+            trData = arguments[3] ? arguments[3] : [],
+            callback = arguments[4] ? arguments[4] : undefined;
         $(document).off(selector).on('click', selector, function (event) {
             event.stopImmediatePropagation();
             event.stopPropagation();
@@ -196,19 +197,21 @@ yadjet.actions = yadjet.actions || {
     },
     gridColumnConfig: function () {
         jQuery(document).on('click', '#menu-buttons li a.grid-column-config', function () {
-            var $this = $(this);
+            var $this = $(this),
+                gridId = $this.attr('data-grid-id');
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: $this.attr('href'),
+                data: {models: $('#' + gridId + ' > table').attr('data-models')},
                 beforeSend: function (xhr) {
                     $.fn.lock();
                 }, success: function (response) {
                     layer.open({
                         title: '表格栏位设定',
-                        content: '<div id="hiscaler">' + response + '</div>',
+                        content: '<div id="yad-grid-columns-setting-render">' + response + '</div>',
                         skin: 'layer-grid-view',
                         yes: function () {
-                            $.pjax.reload({container: '#' + $this.attr('data-reload-object')});
+                            $.pjax.reload({container: '#' + gridId});
                         }
                     });
                     $.fn.unlock();
