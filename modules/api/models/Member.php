@@ -319,6 +319,16 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         $this->access_token = null;
     }
 
+    /**
+     * 关联的微信会员资料
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getWechat()
+    {
+        return $this->hasOne(WechatMember::class, ['member_id' => 'id']);
+    }
+
     // Events
 
     /**
@@ -332,19 +342,16 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             if (empty($this->nickname)) {
                 $this->nickname = $this->username;
             }
+            $user = Yii::$app->getUser();
             if ($insert) {
                 $this->generateAuthKey();
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
-                if (Yii::$app->getUser()->getIsGuest()) {
-                    $this->created_by = $this->updated_by = 0;
-                } else {
-                    $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
-                }
+                $this->created_by = $this->updated_by = $user->getIsGuest() ? 0 : $user->getId();
                 $this->created_at = $this->updated_at = time();
             } else {
                 $this->updated_at = time();
-                if (!Yii::$app->getUser()->getIsGuest()) {
-                    $this->updated_by = Yii::$app->getUser()->getId();
+                if ($user->getIsGuest()) {
+                    $this->updated_by = $user->getId();
                 }
             }
 
@@ -352,6 +359,25 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         } else {
             return false;
         }
+    }
+
+    /**
+     * @throws \yii\db\Exception
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        $avatar = $this->avatar;
+        if ($avatar && !filter_var($avatar, FILTER_VALIDATE_URL)) {
+            $avatar = Yii::getAlias('@webroot/' . ltrim($avatar, '/'));
+            if (file_exists($avatar)) {
+                @unlink($avatar);
+            }
+        }
+        \Yii::$app->getDb()->createCommand()
+            ->delete('{{%wechat_member}}', [
+                'member_id' => $this->id
+            ])->execute();
     }
 
 }
