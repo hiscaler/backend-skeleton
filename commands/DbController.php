@@ -4,7 +4,6 @@ namespace app\commands;
 
 use app\models\Option;
 use Yii;
-use yii\console\Controller;
 use yii\helpers\FileHelper;
 
 /**
@@ -14,6 +13,11 @@ use yii\helpers\FileHelper;
  */
 class DbController extends Controller
 {
+
+    public $helpMessages =<<<EOT
+Usage: ./yii db/generate-dict
+EOT;
+
 
     /**
      * 生成数据表字典

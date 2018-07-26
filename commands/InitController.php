@@ -8,7 +8,6 @@ use app\models\Member;
 use app\models\User;
 use Yii;
 use yii\base\Security;
-use yii\console\Controller;
 use yii\helpers\Inflector;
 
 /**
@@ -17,12 +16,18 @@ use yii\helpers\Inflector;
 class InitController extends Controller
 {
 
+    protected $hintMessages = <<<EOT
+Usage: ./yii init
+EOT;
+
     private $_userId = 0;
 
     /**
      * 初始化默认管理用户
      *
      * @return int
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
      */
     private function _initAdminUser()
     {
@@ -64,8 +69,9 @@ class InitController extends Controller
      * 初始化配置资料
      *
      * @return int
+     * @throws \yii\db\Exception
      */
-    public function _initLookups()
+    public function _initLookupRecords()
     {
         echo "Begin..." . PHP_EOL;
         $db = Yii::$app->getDb();
@@ -243,11 +249,13 @@ class InitController extends Controller
     /**
      * yii init
      *
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
         $this->_initAdminUser();
-        $this->_initLookups();
+        $this->_initLookupRecords();
     }
 
 }
