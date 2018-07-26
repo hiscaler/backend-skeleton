@@ -15,6 +15,11 @@ use yii\helpers\ArrayHelper;
 class GlobalControlPanel extends Widget
 {
 
+    /**
+     * @return array
+     * @throws \Throwable
+     * @throws \yii\db\Exception
+     */
     public function getItems()
     {
         $user = \Yii::$app->getUser();
@@ -94,6 +99,7 @@ class GlobalControlPanel extends Widget
                 if (!empty($module['menus']) && ($moduleMenus = json_decode($module['menus'], true))) {
                     foreach ($moduleMenus as $key => $menu) {
                         if (isset($menu['url'][0])) {
+                            $active = false;
                             if (isset($menu['active'])) {
                                 $active = $moduleId == $module['alias'];
                                 if ($active) {
@@ -123,9 +129,21 @@ class GlobalControlPanel extends Widget
                                         }
                                     }
                                 }
-
-                                $moduleMenus[$key]['active'] = $active;
                             }
+
+                            if (!$active) {
+                                // /admin/moduleName/controllerId/actionId
+                                $active = false;
+                                $r = explode('/', $menu['url'][0]);
+                                // $r[2] is module name, $r[3] is controller id
+                                if (isset($r[3])) {
+                                    if ($r[2] == $module['alias'] && $r[3] == $controllerId) {
+                                        $active = true;
+                                    }
+                                }
+                            }
+
+                            $moduleMenus[$key]['active'] = $active;
                         }
                     }
                     $t['items'] = $moduleMenus;
@@ -170,6 +188,11 @@ class GlobalControlPanel extends Widget
         return $items;
     }
 
+    /**
+     * @return string
+     * @throws \Throwable
+     * @throws \yii\db\Exception
+     */
     public function run()
     {
         return $this->render('ControlPanel', [
