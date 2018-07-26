@@ -11,6 +11,11 @@ use yii\base\Widget;
 class UserLoginLogs extends Widget
 {
 
+    /**
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public function getItems()
     {
         $items = [];
@@ -24,6 +29,11 @@ class UserLoginLogs extends Widget
         return $items;
     }
 
+    /**
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public function run()
     {
         return $this->render('UserLoginLogs', [

@@ -1,5 +1,3 @@
-<?php
-
-echo yii\widgets\Menu::widget([
+<?= yii\widgets\Menu::widget([
     'items' => $items,
-]);
+]) ?>

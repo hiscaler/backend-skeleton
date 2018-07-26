@@ -14,9 +14,9 @@ $formatter = Yii::$app->getFormatter();
                 foreach ($item as $data):
                     ?>
                     <li class="item">
-                        <?= $formatter->asTime($data['login_at']) ?><em class="ip">[ <?= $data['login_ip'] ?> ]</em><em class="client-information"><?= $data['client_information'] ?></em>
+                        $formatter->asTime($data['login_at']) ?><em class="ip">[ <?= $data['login_ip'] ?> ]</em><em class="client-information"><?= $data['client_information'] ?></em>
                     </li>
-                    <?php
+                <?php
                 endforeach;
             endforeach;
             ?>

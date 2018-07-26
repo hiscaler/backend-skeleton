@@ -8,6 +8,10 @@ use yii\base\Widget;
 class Toolbar extends Widget
 {
 
+    /**
+     * @return array
+     * @throws \Throwable
+     */
     public function getItems()
     {
         $items = [];
@@ -29,6 +33,10 @@ class Toolbar extends Widget
         return $items;
     }
 
+    /**
+     * @return string
+     * @throws \Throwable
+     */
     public function run()
     {
         return $this->render('Toolbar', [
