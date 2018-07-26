@@ -32,6 +32,11 @@ trait ActiveRecordHelperTrait
     }
 
     // Events
+
+    /**
+     * @param $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {

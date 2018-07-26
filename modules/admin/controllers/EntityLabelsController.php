@@ -58,6 +58,7 @@ class EntityLabelsController extends Controller
      * @param string $modelName
      * @return mixed
      * @throws BadRequestHttpException
+     * @throws Exception
      */
     public function actionIndex($entityId, $modelName)
     {

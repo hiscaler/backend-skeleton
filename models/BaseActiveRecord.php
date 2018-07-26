@@ -94,6 +94,7 @@ class BaseActiveRecord extends ActiveRecord
         return $this->hasMany(Label::class, ['id' => 'label_id'])
             ->select(['id', 'name'])
             ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
+                /* @var $query yii\db\Query */
                 $query->where(['model_name' => static::class]);
             });
     }
@@ -108,6 +109,7 @@ class BaseActiveRecord extends ActiveRecord
         return $this->hasMany(Label::class, ['id' => 'label_id'])
             ->select(['id', 'name'])
             ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
+                /* @var $query yii\db\Query */
                 $query->where(['model_name' => static::class]);
             });
     }
@@ -158,7 +160,6 @@ class BaseActiveRecord extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'title' => Yii::t('app', 'Title'),
             'short_title' => Yii::t('app', 'Short Title'),
-            'id' => Yii::t('app', 'ID'),
             'tags' => Yii::t('app', 'Tag'),
             'alias' => Yii::t('app', 'Alias'),
             'ordering' => Yii::t('app', 'Ordering'),
@@ -188,6 +189,10 @@ class BaseActiveRecord extends ActiveRecord
     }
 
     // Events
+
+    /**
+     * @throws Exception
+     */
     public function afterFind()
     {
         parent::afterFind();
@@ -279,21 +284,23 @@ class BaseActiveRecord extends ActiveRecord
     }
 
     /**
-     * @throws Exception
+     * @throws \Throwable
      */
     public function afterDelete()
     {
         parent::afterDelete();
         // Delete label relation data and update label frequency value
-        $db = Yii::$app->getDb();
-        $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [
-            ':entityId' => $this->getPrimaryKey(),
-            ':modelName' => static::class
-        ])->queryAll();
-        if ($labels) {
-            $db->createCommand('DELETE FROM {{%entity_label}} WHERE [[id]] IN (' . implode(', ', ArrayHelper::getColumn($labels, 'id')) . ')')->execute();
-            Label::updateAll(['frequency' => -1], ['id' => ArrayHelper::getColumn($labels, 'label_id')]);
-        }
+        Yii::$app->getDb()->transaction(function ($db) {
+            /* @var $db \yii\db\Connection */
+            $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [
+                ':entityId' => $this->getPrimaryKey(),
+                ':modelName' => static::class
+            ])->queryAll();
+            if ($labels) {
+                $db->createCommand()->delete('{{%entity_label}}', ['id' => ArrayHelper::getColumn($labels, 'id')])->execute();
+                Label::updateAll(['frequency' => -1], ['id' => ArrayHelper::getColumn($labels, 'label_id')]);
+            }
+        });
     }
 
 }

@@ -482,20 +482,21 @@ class Category extends BaseActiveRecord
         if ($this->level != $this->_level) {
             $children = self::getChildrenIds($this->id);
             if ($children) {
-                $value = $this->level - $this->_level;
+                $level = $this->level - $this->_level;
                 $sql = 'UPDATE {{%category}} SET [[level]] = [[level]]';
-                if ($value) {
-                    $sql .= ' + :value';
+                if ($level) {
+                    $sql .= ' + :level';
                 } else {
-                    $sql .= ' - :value';
+                    $sql .= ' - :level';
                 }
                 $sql .= ' WHERE [[id]] IN (' . implode(',', $children) . ')';
-                $db->createCommand($sql, [':value' => abs($value)])->execute();
+                $db->createCommand($sql, [':level' => abs($level)])->execute();
             }
         }
     }
 
     /**
+     * @throws \Throwable
      * @throws \yii\db\Exception
      */
     public function afterDelete()
