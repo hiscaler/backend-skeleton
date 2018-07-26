@@ -179,6 +179,7 @@ class Label extends BaseActiveRecord
     }
 
     /**
+     * @throws \Throwable
      * @throws \yii\db\Exception
      */
     public function afterDelete()

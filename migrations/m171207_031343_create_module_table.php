@@ -9,6 +9,7 @@ use yii\db\Migration;
  */
 class m171207_031343_create_module_table extends Migration
 {
+
     /**
      * @inheritdoc
      */
