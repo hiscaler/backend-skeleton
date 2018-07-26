@@ -333,7 +333,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function removeAccessToken()
     {
-        $this->access_token = $this->access_token_expire_datetime = null;
+        $this->access_token = null;
     }
 
     public static function typeOptions()
@@ -418,7 +418,17 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function afterDelete()
     {
         parent::afterDelete();
-        \Yii::$app->getDb()->createCommand('DELETE FROM {{%wechat_member}} WHERE [[member_id]] = :memberId', [':memberId' => $this->id])->execute();
+        $avatar = $this->avatar;
+        if ($avatar && !filter_var($avatar, FILTER_VALIDATE_URL)) {
+            $avatar = Yii::getAlias('@webroot/' . ltrim($avatar, '/'));
+            if (file_exists($avatar)) {
+                @unlink($avatar);
+            }
+        }
+        \Yii::$app->getDb()->createCommand()
+            ->delete('{{%wechat_member}}', [
+                'member_id' => $this->id
+            ])->execute();
     }
 
 }
