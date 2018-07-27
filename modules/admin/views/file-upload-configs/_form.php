@@ -21,25 +21,25 @@ use yii\widgets\ActiveForm;
         <?=
         $form->field($model, 'min_size', [
             'template' => "{label}\n{input} KB\n{hint}\n{error}",
-        ])->textInput(['class' => 'g-text-number'])
+        ])->textInput(['class' => 'g-text-number', 'type' => 'number'])
         ?>
 
         <?=
         $form->field($model, 'max_size', [
             'template' => "{label}\n{input} KB\n{hint}\n{error}",
-        ])->textInput(['class' => 'g-text-number'])
+        ])->textInput(['class' => 'g-text-number', 'type' => 'number'])
         ?>
 
         <?=
         $form->field($model, 'thumb_width', [
             'template' => "{label}\n{input} px\n{hint}\n{error}",
-        ])->textInput(['class' => 'g-text-number'])
+        ])->textInput(['class' => 'g-text-number', 'type' => 'number'])
         ?>
 
         <?=
         $form->field($model, 'thumb_height', [
             'template' => "{label}\n{input} px\n{hint}\n{error}",
-        ])->textInput(['class' => 'g-text-number'])
+        ])->textInput(['class' => 'g-text-number', 'type' => 'number'])
         ?>
         <div class="form-group buttons">
             <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

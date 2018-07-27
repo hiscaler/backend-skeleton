@@ -7,6 +7,7 @@ use app\models\FileUploadConfigSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\validators\FileValidator;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -60,6 +61,8 @@ class FileUploadConfigsController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'maxFiles' => ini_get('max_file_uploads'),
+            'maxFileSize' => (new FileValidator())->getSizeLimit(),
         ]);
     }
 
@@ -91,6 +94,7 @@ class FileUploadConfigsController extends Controller
      * @rbacDescription 文件上传设置更新权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -112,6 +116,9 @@ class FileUploadConfigsController extends Controller
      * @rbacDescription 文件上传设置删除权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {

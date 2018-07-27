@@ -17,6 +17,13 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'Search'), 'url' => '#'],
 ];
 ?>
+<?= \app\modules\admin\components\MessageBox::widget([
+    'title' => '服务器文件上传设置',
+    'message' => [
+        "最大可同时上传文件总数量：$maxFiles 个",
+        "最大可同时上传文件总大小：" . Yii::$app->getFormatter()->asShortSize($maxFileSize),
+    ]
+]) ?>
 <div class="upload-config-index">
     <?= $this->render('_search', ['model' => $searchModel]); ?>
     <?php
