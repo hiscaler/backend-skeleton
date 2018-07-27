@@ -708,26 +708,29 @@ class Meta extends ActiveRecord
         $db = Yii::$app->getDb();
         $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
         if ($meta) {
-            $v = $db->createCommand('SELECT [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $meta['id'], ':objectId' => (int) $objectId])->queryScalar() ?: null;
+            $valueField = self::parseReturnKey($meta['return_value_type']);
+            $oldValue = $db->createCommand("SELECT [[$valueField]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId", [':metaId' => $meta['id'], ':objectId' => (int) $objectId])->queryScalar();
             // @todo 验证 objectId 是否有效
-            $valueKey = self::parseReturnKey($meta['return_value_type']);
-            if ($v === null) {
-                // insert
-                $db->createCommand()->insert('{{%meta_value}}', [
-                    'meta_id' => $meta['id'],
-                    'object_id' => $objectId,
-                    $valueKey => $value,
-                ])->execute();
+            if ($oldValue !== false) {
+                // If new value eq old value, then ignore it.
+                if ($value !== $oldValue) {
+                    $success = $db->createCommand()
+                        ->update('{{%meta_value}}', [$valueField => $value], [
+                            'meta_id' => $meta['id'],
+                            'object_id' => $objectId
+                        ])->execute() ? true : false;
+                } else {
+                    $success = true;
+                }
             } else {
-                // Update
-                $db->createCommand()->update('{{%meta_value}}', [
-                    $valueKey => $value,
-                ], [
-                    'meta_id' => $meta['id'],
-                    'object_id' => $objectId
-                ])->execute();
+                // insert
+                $success = $db->createCommand()
+                    ->insert('{{%meta_value}}', [
+                        'meta_id' => $meta['id'],
+                        'object_id' => $objectId,
+                        $valueField => $value,
+                    ])->execute() ? true : false;
             }
-            $success = true;
         }
 
         return $success;
@@ -739,13 +742,13 @@ class Meta extends ActiveRecord
      * @param $tableName
      * @param $objectId
      * @param $key
-     * @param $value
-     * @return int|null
+     * @param int $value
+     * @return bool
      * @throws \yii\db\Exception
      */
     public static function increaseValue($tableName, $objectId, $key, $value = 1)
     {
-        $result = null;
+        $success = false;
         $db = Yii::$app->getDb();
         $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
         if ($meta && in_array($meta['return_value_type'], [self::RETURN_VALUE_TYPE_INTEGER, self::RETURN_VALUE_TYPE_DECIMAL])) {
@@ -761,25 +764,28 @@ class Meta extends ActiveRecord
             }
             if ($oldValue === false) {
                 // Insert
-                $db->createCommand()->insert('{{%meta_value}}', [
+                $success = $db->createCommand()->insert('{{%meta_value}}', [
                     $valueKey => $value,
                     'meta_id' => $meta['id'],
                     'object_id' => $objectId
-                ])->execute();
+                ])->execute() ? true : false;
             } else {
                 $value = $oldValue + $value;
                 // Update
-                $db->createCommand()->update('{{%meta_value}}', [
-                    $valueKey => $value,
-                ], [
-                    'meta_id' => $meta['id'],
-                    'object_id' => $objectId
-                ])->execute();
-                $result = $value;
+                if ($value) {
+                    $success = $db->createCommand()->update('{{%meta_value}}', [
+                        $valueKey => $value,
+                    ], [
+                        'meta_id' => $meta['id'],
+                        'object_id' => $objectId
+                    ])->execute() ? true : false;
+                } else {
+                    $success = true;
+                }
             }
         }
 
-        return $result;
+        return $success;
     }
 
     /**
@@ -788,13 +794,13 @@ class Meta extends ActiveRecord
      * @param $tableName
      * @param $objectId
      * @param $key
-     * @param $value
-     * @return int|null
+     * @param int $value
+     * @return bool
      * @throws \yii\db\Exception
      */
     public static function decreaseValue($tableName, $objectId, $key, $value = 1)
     {
-        $result = null;
+        $success = false;
         $db = Yii::$app->getDb();
         $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
         if ($meta && in_array($meta['return_value_type'], [self::RETURN_VALUE_TYPE_INTEGER, self::RETURN_VALUE_TYPE_DECIMAL])) {
@@ -810,25 +816,28 @@ class Meta extends ActiveRecord
             }
             if ($oldValue === false) {
                 // Insert
-                $db->createCommand()->insert('{{%meta_value}}', [
+                $success = $db->createCommand()->insert('{{%meta_value}}', [
                     $valueKey => $value,
                     'meta_id' => $meta['id'],
                     'object_id' => $objectId
-                ])->execute();
+                ])->execute() ? true : false;
             } else {
                 $value = $oldValue - $value;
-                // Update
-                $db->createCommand()->update('{{%meta_value}}', [
-                    $valueKey => $value,
-                ], [
-                    'meta_id' => $meta['id'],
-                    'object_id' => $objectId
-                ])->execute();
-                $result = $value;
+                // If $value eq 0 will not update it.
+                if ($value) {
+                    $success = $db->createCommand()->update('{{%meta_value}}', [
+                        $valueKey => $value,
+                    ], [
+                        'meta_id' => $meta['id'],
+                        'object_id' => $objectId
+                    ])->execute() ? true : false;
+                } else {
+                    $success = true;
+                }
             }
         }
 
-        return $result;
+        return $success;
     }
 
     // Events
@@ -871,45 +880,62 @@ class Meta extends ActiveRecord
      * @param bool $insert
      * @param array $changedAttributes
      * @throws \yii\db\Exception
+     * @throws \Throwable
      */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $command = Yii::$app->getDb()->createCommand();
-        if (!$insert) {
-            $command->delete('{{%meta_validator}}', ['meta_id' => $this->id])->execute();
-        }
 
-        $batchInsertRows = [];
-        foreach (is_array($this->validatorsList) ? $this->validatorsList : [] as $key => $item) {
-            if (!isset($item['name'])) {
-                // 未选择
-                continue;
+        $db = Yii::$app->getDb();
+        $transaction = $db->beginTransaction();
+        try {
+            $command = $db->createCommand();
+            if (!$insert) {
+                $command->delete('{{%meta_validator}}', ['meta_id' => $this->id])->execute();
             }
-            $columns = [
-                'meta_id' => $this->id,
-                'name' => $key,
-                'options' => serialize(isset($item['options']) ? $item['options'] : [])
-            ];
-            $batchInsertRows[] = array_values($columns);
-        }
-        if ($batchInsertRows) {
-            $command->batchInsert('{{%meta_validator}}', array_keys($columns), $batchInsertRows)->execute();
+
+            $batchInsertRows = [];
+            foreach (is_array($this->validatorsList) ? $this->validatorsList : [] as $key => $item) {
+                if (!isset($item['name'])) {
+                    // 未选择
+                    continue;
+                }
+                $columns = [
+                    'meta_id' => $this->id,
+                    'name' => $key,
+                    'options' => serialize(isset($item['options']) ? $item['options'] : [])
+                ];
+                $batchInsertRows[] = array_values($columns);
+            }
+            if ($batchInsertRows) {
+                $command->batchInsert('{{%meta_validator}}', array_keys($batchInsertRows[0]), $batchInsertRows)->execute();
+            }
+
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
         }
     }
 
     /**
-     * @throws \yii\db\Exception
+     * @throws \Throwable
      */
     public function afterDelete()
     {
         parent::afterDelete();
         // 删除 meta 数据同时清理掉相关的验证规则以及保存的值
-        $cmd = Yii::$app->getDb()->createCommand();
-        $relationalTables = ['meta_validator', 'meta_value'];
-        foreach ($relationalTables as $table) {
-            $cmd->delete("{{%$table}}", ['meta_id' => $this->id])->execute();
-        }
+        \Yii::$app->getDb()->transaction(function ($db) {
+            /* @var $db \yii\db\Connection */
+            $cmd = $db->createCommand();
+            $relationalTables = ['meta_validator', 'meta_value'];
+            foreach ($relationalTables as $table) {
+                $cmd->delete("{{%$table}}", ['meta_id' => $this->id])->execute();
+            }
+        });
     }
 
 }
