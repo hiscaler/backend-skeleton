@@ -4,6 +4,7 @@ namespace app\modules\admin\controllers;
 
 use app\models\Option;
 use DateTime;
+use Exception;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -79,58 +80,69 @@ class DbController extends Controller
      * @rbacDescription 数据库备份权限
      *
      * @return string
-     * @throws \yii\base\Exception
-     * @throws \yii\base\NotSupportedException
-     * @throws \yii\db\Exception
+     * @throws \yii\base\ErrorException
      */
     public function actionBackup()
     {
-        ignore_user_abort(true);
-        ini_set('memory_limit', -1);
-        ini_set('max_execution_time', 0);
-        $pageSize = 100;
-        $db = Yii::$app->getDb();
-        $tablePrefix = $db->tablePrefix;
-        $tables = Option::tables();
         $backupDir = date('YmdHis');
         $backupPath = Yii::getAlias('@app/backup/' . $backupDir);
-        if (!file_exists($backupDir)) {
-            FileHelper::createDirectory($backupPath);
-        }
-
-        $processTablesCount = $processRowsCount = 0;
-        foreach ($tables as $table) {
-            $totalCount = $db->createCommand("SELECT COUNT(*) FROM $table")->queryScalar();
-            $processTablesCount += 1;
-            if (!$totalCount) {
-                continue;
+        try {
+            ignore_user_abort(true);
+            ini_set('memory_limit', -1);
+            ini_set('max_execution_time', 0);
+            if (!file_exists($backupDir)) {
+                FileHelper::createDirectory($backupPath);
             }
-            $totalPages = (int) (($totalCount + $pageSize - 1) / $pageSize);
-            for ($page = 1; $page <= $totalPages; $page++) {
-                $data = (new Query())
-                    ->from($table)
-                    ->offset(($page - 1) * $pageSize)
-                    ->limit($pageSize)
-                    ->all();
-                $processRowsCount += count($data);
-                $data = gzcompress(serialize([
-                    'table' => str_replace($tablePrefix, '', $table),
-                    'data' => $data,
-                ]), 9);
-                file_put_contents($backupPath . DIRECTORY_SEPARATOR . "$table-$page.bak", $data);
+            $pageSize = 500;
+            $db = Yii::$app->getDb();
+            $tablePrefix = $db->tablePrefix;
+            $tables = Option::tables();
+            $processTablesCount = $processRowsCount = 0;
+            foreach ($tables as $table) {
+                $totalCount = $db->createCommand("SELECT COUNT(*) FROM $table")->queryScalar();
+                $processTablesCount += 1;
+                if (!$totalCount) {
+                    continue;
+                }
+                $totalPages = (int) (($totalCount + $pageSize - 1) / $pageSize);
+                for ($page = 1; $page <= $totalPages; $page++) {
+                    $data = (new Query())
+                        ->from($table)
+                        ->offset(($page - 1) * $pageSize)
+                        ->limit($pageSize)
+                        ->all();
+                    $processRowsCount += count($data);
+                    $data = gzcompress(serialize([
+                        'table' => str_replace($tablePrefix, '', $table),
+                        'data' => $data,
+                    ]), 9);
+                    file_put_contents($backupPath . DIRECTORY_SEPARATOR . "$table-$page.bak", $data);
+                }
             }
-        }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => [
-                'success' => true,
+            return new Response([
+                'format' => Response::FORMAT_JSON,
                 'data' => [
-                    'processTablesCount' => $processTablesCount,
-                    'processRowsCount' => $processRowsCount,
+                    'success' => true,
+                    'data' => [
+                        'processTablesCount' => $processTablesCount,
+                        'processRowsCount' => $processRowsCount,
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+        } catch (Exception $e) {
+            FileHelper::removeDirectory($backupPath);
+
+            return new Response([
+                'format' => Response::FORMAT_JSON,
+                'data' => [
+                    'success' => false,
+                    'error' => [
+                        'message' => $e->getMessage(),
+                    ]
+                ]
+            ]);
+        }
     }
 
     /**
