@@ -40,7 +40,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'enabled')->checkbox([], false) ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'quantity')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'quantity')->textInput(['maxlength' => true, 'type' => 'number']) ?>
         </div>
         <div class="form-group buttons">
             <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

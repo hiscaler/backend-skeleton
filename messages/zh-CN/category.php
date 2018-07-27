@@ -9,5 +9,5 @@ return [
     'Parent ID' => '上级',
     'Icon' => '图标',
     'Description' => '描述',
-    'Quantity' => '数量',
+    'Quantity' => '关联数据数量',
 ];
