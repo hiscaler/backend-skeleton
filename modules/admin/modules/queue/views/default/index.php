@@ -99,26 +99,32 @@ $this->params['menus'] = [
     $(function () {
         // 批量删除
         $('.btn-batch-delete').on('click', function () {
-            var ids = $('#grid-view-queues').yiiGridView('getSelectedRows');
+            var ids = $('#grid-view-queues').yiiGridView('getSelectedRows'),
+                $this = $(this);
             if (ids.length) {
-                $.ajax({
-                    type: 'POST',
-                    url: $(this).attr('href'),
-                    data: {ids: ids.toString()},
-                    beforeSend: function (xhr) {
-                        $.fn.lock();
-                    }, success: function (response) {
-                        if (response.success) {
-                            window.location.reload(true);
-                        } else {
-                            layer.alert(response.error.message);
+                layer.confirm('确定删除勾选的数据?', {icon: 3, title: '提示'}, function (index) {
+                    $.ajax({
+                        type: 'POST',
+                        url: $this.attr('href'),
+                        data: {ids: ids.toString()},
+                        beforeSend: function (xhr) {
+                            $.fn.lock();
+                        }, success: function (response) {
+                            if (response.success) {
+                                window.location.reload(true);
+                            } else {
+                                layer.alert(response.error.message);
+                            }
+                            $.fn.unlock();
+                        }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText, {icon: 2});
+                            $.fn.unlock();
                         }
-                        $.fn.unlock();
-                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText, {icon: 2});
-                        $.fn.unlock();
-                    }
+                    });
+
+                    layer.close(index);
                 });
+
             } else {
                 layer.alert('请选择您要批量操作的数据。');
             }
