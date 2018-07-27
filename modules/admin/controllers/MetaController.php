@@ -69,6 +69,7 @@ class MetaController extends Controller
      * @rbacDescription 扩展属性数据查看权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -105,6 +106,7 @@ class MetaController extends Controller
      * @rbacDescription 扩展属性数据更新权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -126,6 +128,9 @@ class MetaController extends Controller
      * @rbacDescription 扩展属性数据删除权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -139,6 +144,9 @@ class MetaController extends Controller
      *
      * @rbacDescription 扩展属性数据激活、禁止操作权限
      * @return Response
+     * @throws \Throwable
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionToggle()
     {

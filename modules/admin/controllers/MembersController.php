@@ -53,6 +53,7 @@ class MembersController extends Controller
      *
      * @rbacDescription 会员列表数据查看权限
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -71,6 +72,7 @@ class MembersController extends Controller
      * @rbacDescription 会员详情数据查看权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -85,6 +87,9 @@ class MembersController extends Controller
      *
      * @rbacDescription 会员数据添加权限
      * @return mixed
+     * @throws \yii\base\ErrorException
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
      */
     public function actionCreate()
     {
@@ -117,6 +122,9 @@ class MembersController extends Controller
      * @rbacDescription 会员数据更新权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \yii\base\ErrorException
+     * @throws \yii\db\Exception
      */
     public function actionUpdate($id)
     {
@@ -144,6 +152,9 @@ class MembersController extends Controller
      * @rbacDescription 会员数据删除权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -159,6 +170,7 @@ class MembersController extends Controller
      * @param $id
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException
+     * @throws \yii\base\Exception
      */
     public function actionChangePassword($id)
     {

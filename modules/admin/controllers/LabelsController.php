@@ -68,6 +68,7 @@ class LabelsController extends Controller
      * If creation is successful, the browser will be redirected to the 'create' page.
      *
      * @rbacDescription 推送位添加权限
+     * @param int $ordering
      * @return mixed
      */
     public function actionCreate($ordering = 1)
@@ -93,6 +94,7 @@ class LabelsController extends Controller
      * @rbacDescription 推送位更新权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -114,6 +116,9 @@ class LabelsController extends Controller
      * @rbacDescription 推送位删除权限
      * @param integer $id
      * @return mixed
+     * @throws Exception
+     * @throws NotAcceptableHttpException
+     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {
@@ -142,6 +147,9 @@ class LabelsController extends Controller
      *
      * @rbacDescription 推送位激活、禁止操作权限
      * @return Response
+     * @throws Exception
+     * @throws \Throwable
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionToggle()
     {

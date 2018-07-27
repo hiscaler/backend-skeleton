@@ -55,11 +55,11 @@ class AccountController extends Controller
             Yii::$app->getSession()->setFlash('notice', Yii::t('app', 'User profile save successfully.'));
 
             $this->refresh();
-        } else {
-            return $this->render('index', [
-                'model' => $model,
-            ]);
         }
+
+        return $this->render('index', [
+            'model' => $model,
+        ]);
     }
 
     /**

@@ -53,6 +53,9 @@ class LookupsController extends Controller
      *
      * @rbacDescription 系统常规设定管理权限
      * @return mixed
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     * @throws \Exception
      */
     public function actionForm()
     {
@@ -178,6 +181,7 @@ class LookupsController extends Controller
      * @rbacDescription 系统常规设定数据更新权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -199,6 +203,10 @@ class LookupsController extends Controller
      * @rbacDescription 系统常规设定数据删除权限
      * @param integer $id
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {

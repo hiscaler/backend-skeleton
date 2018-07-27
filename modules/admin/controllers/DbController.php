@@ -90,7 +90,6 @@ class DbController extends Controller
         ini_set('max_execution_time', 0);
         $pageSize = 100;
         $db = Yii::$app->getDb();
-        $schema = $db->getSchema();
         $tablePrefix = $db->tablePrefix;
         $tables = Option::tables();
         $backupDir = date('YmdHis');
