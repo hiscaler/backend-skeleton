@@ -14,10 +14,9 @@ use yii\helpers\FileHelper;
 class DbController extends Controller
 {
 
-    public $helpMessages =<<<EOT
+    public $helpMessages = <<<EOT
 Usage: ./yii db/generate-dict
 EOT;
-
 
     /**
      * 生成数据表字典
@@ -29,6 +28,7 @@ EOT;
      */
     public function actionGenerateDict($path = null, $coreTables = true)
     {
+        $this->stdout("Begin ..." . PHP_EOL);
         if ($path) {
             $path = Yii::getAlias('@app') . DIRECTORY_SEPARATOR . trim($path, '\/');
         } else {
@@ -47,7 +47,7 @@ EOT;
         $tablePrefix = $db->tablePrefix;
         $tables = $coreTables ? Option::coreTables(true) : $schema->getTableNames();
         foreach ($tables as $table) {
-            echo "Generate $table table dict..." . PHP_EOL;
+            $this->stdout("Generate $table table dict..." . PHP_EOL);
             $tableSchema = $schema->getTableSchema($table, true);
             $tableRows = [];
             $i = 1;
@@ -94,7 +94,7 @@ EOT;
 
             file_put_contents($path . DIRECTORY_SEPARATOR . str_replace($tablePrefix, '', $table) . ".md", $doc);
         }
-        echo "Done.";
+        $this->stdout("Done.");
     }
 
 }

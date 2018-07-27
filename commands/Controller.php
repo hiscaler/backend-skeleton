@@ -23,7 +23,7 @@ class Controller extends \yii\console\Controller
     public function actionHelp()
     {
         if ($this->helpMessages) {
-            echo $this->helpMessages;
+            $this->stdout($this->helpMessages);
         } else {
             throw new Exception('Not implement it in `' . get_called_class() . '` class.');
         }

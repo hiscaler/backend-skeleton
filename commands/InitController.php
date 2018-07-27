@@ -8,6 +8,7 @@ use app\models\Member;
 use app\models\User;
 use Yii;
 use yii\base\Security;
+use yii\console\ExitCode;
 use yii\helpers\Inflector;
 
 /**
@@ -59,7 +60,7 @@ EOT;
             $this->_userId = $db->getLastInsertID();
         } else {
             $this->_userId = $userId;
-            echo "'{$username}' is exists." . PHP_EOL;
+            $this->stdout("'{$username}' is exists." . PHP_EOL);
         }
 
         return $this->_userId;
@@ -73,7 +74,7 @@ EOT;
      */
     public function _initLookupRecords()
     {
-        echo "Begin..." . PHP_EOL;
+        $this->stdout("Begin..." . PHP_EOL);
         $db = Yii::$app->getDb();
         $items = [
             Lookup::GROUP_CUSTOM => [
@@ -210,11 +211,11 @@ EOT;
                     ':key' => $key,
                 ])->queryScalar();
                 if ($exists) {
-                    echo "{$key} is exists, ignore it..." . PHP_EOL;
+                    $this->stdout("{$key} is exists, ignore it..." . PHP_EOL);
                     continue;
                 }
 
-                echo "Insert {$key} ..." . PHP_EOL;
+                $this->stdout("Insert {$key} ..." . PHP_EOL);
                 $index = strpos($key, '.');
                 if ($index !== false && in_array(substr($key, 0, $index), ['custom', 'seo', 'system'])) {
                     $label = substr($key, $index + 1);
@@ -241,9 +242,9 @@ EOT;
                 $cmd->insert('{{%lookup}}', $columns)->execute();
             }
         }
-        echo "Done..." . PHP_EOL;
+        $this->stdout("Done..." . PHP_EOL);
 
-        return 0;
+        return ExitCode::OK;
     }
 
     /**
