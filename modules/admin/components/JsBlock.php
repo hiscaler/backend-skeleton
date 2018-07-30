@@ -22,6 +22,8 @@ class JsBlock extends Block
     /**
      * Ends recording a block.
      * This method stops output buffering and saves the rendering result as a named block in the view.
+     *
+     * @throws Exception
      */
     public function run()
     {

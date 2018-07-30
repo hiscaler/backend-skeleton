@@ -175,6 +175,7 @@ select {
 }
 
 input[type="text"],
+input[type="number"],
 input[type="password"],
 .g-text {
     border: 1px solid #d5d5d5;
