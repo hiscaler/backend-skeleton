@@ -5,7 +5,7 @@ namespace app\modules\admin\components;
 use Yii;
 
 /**
- * Query Condition CacheClass, Use CCache class to set, get or remove query conditions.
+ * Query Condition Cache class, Use Cache class to set, get or remove query conditions.
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -65,7 +65,7 @@ class QueryConditionCache
      */
     private static function parseKey($key)
     {
-        return strtolower(!empty($key) ? "query.condition.{$key}" : $key);
+        return strtolower("cache.data.query.condition.{$key}." . \Yii::$app->getUser()->getId());
     }
 
 }
