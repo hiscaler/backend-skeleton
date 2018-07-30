@@ -42,30 +42,24 @@ class BaseController extends Controller
                     if ($ignoreUsers) {
                         $user = \Yii::$app->getUser();
                         if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
-                            $requireCheckAuth = false;
+                            return true;
                         }
                     }
-                }
 
-                if ($requireCheckAuth) {
-                    $defaultRoles = Yii::$app->getCache()->get('admin.rbac.default.roles');
-                    $defaultRoles || $defaultRoles = [];
-                    $defaultRoles = array_merge($defaultRoles, [
+                    $defaultRoles = [
                         'admin-default.login',
                         'admin-default.logout',
                         'admin-default.error',
                         'admin-default.captcha',
-                    ]);
+                    ];
                     $authManager->defaultRoles = $defaultRoles;
                     $key = str_replace('/', '-', $this->module->getUniqueId());
-                    if ($key) {
-                        $key .= '-';
-                    }
+                    $key && $key .= '-';
                     $key = $key . Inflector::camel2id(Yii::$app->controller->id) . '.' . Inflector::camel2id($action->id);
                     if (in_array($key, $defaultRoles) || Yii::$app->getUser()->can($key)) {
                         return true;
                     } else {
-                        throw new UnauthorizedHttpException('对不起，您没有操作该项目的权限。');
+                        throw new UnauthorizedHttpException('对不起，您没有操作该动作的权限。');
                     }
                 }
             }
