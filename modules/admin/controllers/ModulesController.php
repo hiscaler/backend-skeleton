@@ -279,7 +279,7 @@ class ModulesController extends Controller
     public function actionIndex()
     {
         $notInstalledModules = $this->_localModules;
-        $installedModules = Yii::$app->getDb()->createCommand('SELECT [[alias]], [[icon]] FROM {{%module}} ORDER BY [[updated_at]] DESC')->queryAll();
+        $installedModules = Yii::$app->getDb()->createCommand('SELECT [[name]], [[alias]], [[icon]], [[author]], [[version]], [[url]], [[description]] FROM {{%module}} ORDER BY [[updated_at]] DESC')->queryAll();
         if ($installedModules && !file_exists($this->_iconDestDirectory)) {
             FileHelper::createDirectory($this->_iconDestDirectory);
         }
