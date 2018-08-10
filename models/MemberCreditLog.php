@@ -5,10 +5,10 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "{{%user_credit_log}}".
+ * This is the model class for table "{{%member_credit_log}}".
  *
  * @property integer $id
- * @property integer $user_id
+ * @property integer $member_id
  * @property string $operation
  * @property string $related_key
  * @property integer $credits
@@ -22,8 +22,9 @@ class UserCreditLog extends \yii\db\ActiveRecord
     /**
      * 积分类型
      */
-    const OPERATION_USER_SIGNUP = 'user_signup'; // 用户注册
-    const OPERATION_REFERRAL_SIGNUP = 'referral_signup'; // 推荐注册
+    const OPERATION_MEMBER_REGISTER = 'member.register'; // 会员注册
+    const OPERATION_REFERRAL_REGISTER = 'referral.register'; // 推荐注册
+    const OPERATION_MEMBER_LOGIN = 'member.login'; // 会员登录
     const OPERATION_MANUAL = 'manual'; // 手动添加
 
     /**
@@ -32,7 +33,7 @@ class UserCreditLog extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%user_credit_log}}';
+        return '{{%member_credit_log}}';
     }
 
     /**
@@ -41,8 +42,8 @@ class UserCreditLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'operation', 'credits', 'created_at'], 'required'],
-            [['user_id', 'credits', 'created_at', 'created_by'], 'integer'],
+            [['member_id', 'operation', 'credits', 'created_at'], 'required'],
+            [['member_id', 'credits', 'created_at', 'created_by'], 'integer'],
             [['remark'], 'string'],
             [['operation'], 'string', 'max' => 20],
             [['related_key'], 'string', 'max' => 60],
@@ -56,7 +57,7 @@ class UserCreditLog extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('userCreditLog', 'ID'),
-            'user_id' => Yii::t('userCreditLog', 'User ID'),
+            'member_id' => Yii::t('userCreditLog', 'User ID'),
             'operation' => Yii::t('userCreditLog', 'Operation'),
             'operation_formatted' => Yii::t('userCreditLog', 'Operation'),
             'related_key' => Yii::t('userCreditLog', 'Related Key'),
@@ -75,9 +76,10 @@ class UserCreditLog extends \yii\db\ActiveRecord
     public static function operationOptions()
     {
         $default = [
-            self::OPERATION_USER_SIGNUP => Yii::t('userCreditLog', 'Operation User Signup'),
-            self::OPERATION_REFERRAL_SIGNUP => Yii::t('userCreditLog', 'Operation Referral Signup'),
-            self::OPERATION_MANUAL => Yii::t('userCreditLog', 'Operation Manual'),
+            self::OPERATION_MEMBER_REGISTER => Yii::t('memberCreditLog', 'Member Register'),
+            self::OPERATION_REFERRAL_REGISTER => Yii::t('memberCreditLog', 'Referral Register'),
+            self::OPERATION_MEMBER_LOGIN => Yii::t('memberCreditLog', 'Member Login'),
+            self::OPERATION_MANUAL => Yii::t('memberCreditLog', 'Manual'),
         ];
         // 自定义积分类型 @todo 从语言文件中获取相应的定义
         $custom = [];
@@ -95,7 +97,7 @@ class UserCreditLog extends \yii\db\ActiveRecord
     /**
      *  添加积分记录
      *
-     * @param integer $userId
+     * @param integer $memberId
      * @param string $operation
      * @param integer $credits
      * @param string $relatedKey
@@ -104,18 +106,18 @@ class UserCreditLog extends \yii\db\ActiveRecord
      * @return boolean
      * @throws \Exception
      */
-    public static function add($userId, $operation, $credits, $relatedKey = null, $remark = null, $posterId = null)
+    public static function add($memberId, $operation, $credits, $relatedKey = null, $remark = null, $posterId = null)
     {
-        $userId = abs((int) $userId);
+        $memberId = abs((int) $memberId);
         $credits = (int) $credits;
         $operation = trim($operation);
-        if (!$userId || $credits == 0 || !isset(self::operationOptions()[$operation])) {
+        if (!$memberId || $credits == 0 || !isset(self::operationOptions()[$operation])) {
             return false;
         }
 
         $db = Yii::$app->getDb();
-        $userExists = $db->createCommand('SELECT COUNT(*) FROM {{%user}} WHERE [[id]] = :id', [':id' => $userId])->queryScalar();
-        if ($userExists) {
+        $memberExists = $db->createCommand('SELECT COUNT(*) FROM {{%member}} WHERE [[id]] = :id', [':id' => $memberId])->queryScalar();
+        if ($memberExists) {
             $transaction = $db->beginTransaction();
             try {
                 $posterId = (int) $posterId;
@@ -124,7 +126,7 @@ class UserCreditLog extends \yii\db\ActiveRecord
                     $posterId = $user->getIsGuest() ? 0 : $user->getId();
                 }
                 $columns = [
-                    'user_id' => $userId,
+                    'member_id' => $memberId,
                     'operation' => $operation,
                     'credits' => $credits,
                     'related_key' => trim($relatedKey),
@@ -132,13 +134,12 @@ class UserCreditLog extends \yii\db\ActiveRecord
                     'created_at' => time(),
                     'created_by' => $posterId,
                 ];
-                $result = $db->createCommand()->insert('{{%user_credit_log}}', $columns)->execute() ? true : false;
+                $result = $db->createCommand()->insert('{{%member_credit_log}}', $columns)->execute() ? true : false;
                 if ($result) {
-                    $sql = "UPDATE {{%user}} SET [[credits_count]] = [[credits_count]]";
-                    $sql .= ($credits ? ' + ' : ' - ');
-                    $sql .= abs($credits) . ' WHERE [[id]] = :id';
-                    $db->createCommand($sql, [':id' => $userId])->execute();
-                    User::fixUserGroup($userId);
+                    $op = $credits ? ' + ' : ' - ';
+                    $credits = abs($credits);
+                    $db->createCommand("UPDATE {{%member}} SET [[total_credits]] = [[total_credits]] $op $credits, [[available_credits]] = [[available_credits]] $op $credits WHERE [[id]] = :id", [':id' => $memberId])->execute();
+                    Member::updateGroup($memberId);
                 }
                 $transaction->commit();
 
