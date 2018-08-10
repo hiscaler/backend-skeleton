@@ -11,6 +11,8 @@ use yii\web\IdentityInterface;
  *
  * @property integer $id
  * @property integer $type
+ * @property integer $category_id
+ * @property string $group
  * @property string $username
  * @property string $nickname
  * @property string $real_name
@@ -69,11 +71,11 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['type', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
-            [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email'], 'trim'],
+            [['group', 'username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email'], 'trim'],
             [['type'], 'default', 'value' => self::TYPE_MEMBER],
             [['total_credits', 'available_credits'], 'default', 'value' => 0],
             [['remark'], 'string'],
-            [['username', 'nickname', 'real_name'], 'string', 'max' => 20],
+            [['group', 'username', 'nickname', 'real_name'], 'string', 'max' => 20],
             [['avatar'], 'string', 'max' => 200],
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
@@ -97,6 +99,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             'id',
             'type',
+            'categoryId' => 'category_id',
+            'group',
             'username',
             'nickname',
             'realName' => 'real_name',
@@ -374,10 +378,15 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
                 @unlink($avatar);
             }
         }
-        \Yii::$app->getDb()->createCommand()
-            ->delete('{{%wechat_member}}', [
+
+        // 清理相关数据
+        $cmd = \Yii::$app->getDb()->createCommand();
+        $tables = ['member_credit_log', 'wechat_member'];
+        foreach ($tables as $table) {
+            $cmd->delete("{{%$table}}", [
                 'member_id' => $this->id
             ])->execute();
+        }
     }
 
 }
