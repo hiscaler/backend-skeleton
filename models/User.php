@@ -125,6 +125,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * @inheritdoc
+     * @throws NotSupportedException
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
@@ -246,6 +247,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * Generates "remember me" authentication key
+     *
+     * @throws \yii\base\Exception
      */
     public function generateAuthKey()
     {
@@ -254,6 +257,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * Generates new password reset token
+     *
+     * @throws \yii\base\Exception
      */
     public function generatePasswordResetToken()
     {
@@ -429,6 +434,11 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     * @throws \yii\base\Exception
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -498,8 +508,12 @@ class User extends ActiveRecord implements IdentityInterface
             $authManager->revokeAll($this->id);
         }
 
-        // 删除关联分类数据
-        \Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['user_id' => $this->id])->execute();
+        // 删除关联数据
+        $cmd = \Yii::$app->getDb()->createCommand();
+        $tables = ['user_auth_category', 'user_login_log'];
+        foreach ($tables as $table) {
+            $cmd->delete("{{%$table}}", ['user_id' => $this->id])->execute();
+        }
     }
 
 }
