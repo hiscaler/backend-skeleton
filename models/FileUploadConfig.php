@@ -223,7 +223,7 @@ class FileUploadConfig extends BaseActiveRecord
         foreach ($db->getSchema()->getTableSchemas() as $tableSchema) {
             $tableName = str_replace($tablePrefix, '', $tableSchema->name);
             // 排除核心表表中已知未含有上传字段的表
-            if (in_array($tableName, ['entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'meta', 'meta_validator', 'meta_value', 'migration', 'user_auth_category', 'user_credit_log', 'user_group', 'user_login_log', 'wechat_member'])) {
+            if (in_array($tableName, ['entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'meta', 'meta_validator', 'meta_value', 'migration', 'user_auth_category', 'member_credit_log', 'member_group', 'user_login_log', 'wechat_member'])) {
                 continue;
             }
             $modelName = Inflector::id2camel($tableName, '_');
