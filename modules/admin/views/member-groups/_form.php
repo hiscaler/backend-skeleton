@@ -4,20 +4,20 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\UserGroup */
+/* @var $model app\models\MemberGroup */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 <div class="form-outside">
     <div class="user-group-form form">
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'type')->dropDownList(app\models\UserGroup::typeOptions()) ?>
+        <?= $form->field($model, 'type')->dropDownList(app\models\MemberGroup::typeOptions()) ?>
 
         <?= $form->field($model, 'alias')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'icon_path')->fileInput() ?>
+        <?= $form->field($model, 'icon')->fileInput() ?>
 
         <?= $form->field($model, 'min_credits')->textInput() ?>
 

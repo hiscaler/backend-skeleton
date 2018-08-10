@@ -2,7 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\UserGroup;
+use app\models\MemberGroup;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
@@ -12,12 +12,12 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 用户分组管理
- * Class UserGroupsController
+ * Class MemberGroupsController
  *
  * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class UserGroupsController extends Controller
+class MemberGroupsController extends Controller
 {
 
     /**
@@ -53,11 +53,11 @@ class UserGroupsController extends Controller
     public function actionIndex()
     {
         $query = (new Query())
-            ->from('{{%user_group}}')
+            ->from('{{%member_group}}')
             ->orderBy(['min_credits' => SORT_ASC]);
 
         $userGroupDataProvider = new ActiveDataProvider([
-            'query' => $query->where(['type' => UserGroup::TYPE_USER_GROUP]),
+            'query' => $query->where(['type' => MemberGroup::TYPE_USER_GROUP]),
             'pagination' => [
                 'pageSize' => $query->count(),
             ],
@@ -65,7 +65,7 @@ class UserGroupsController extends Controller
 
         $systemGroupQuery = clone($query);
         $systemGroupDataProvider = new ActiveDataProvider([
-            'query' => $systemGroupQuery->where(['type' => UserGroup::TYPE_SYSTEM_GROUP]),
+            'query' => $systemGroupQuery->where(['type' => MemberGroup::TYPE_SYSTEM_GROUP]),
             'pagination' => [
                 'pageSize' => $systemGroupQuery->count(),
             ],
@@ -85,7 +85,7 @@ class UserGroupsController extends Controller
      */
     public function actionCreate()
     {
-        $model = new UserGroup();
+        $model = new MemberGroup();
         $model->loadDefaultValues();
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
@@ -140,12 +140,12 @@ class UserGroupsController extends Controller
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param integer $id
-     * @return UserGroup the loaded model
+     * @return MemberGroup the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = UserGroup::findOne($id)) !== null) {
+        if (($model = MemberGroup::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
