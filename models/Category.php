@@ -367,7 +367,7 @@ class Category extends BaseActiveRecord
      */
     public static function getIdBySign($sign)
     {
-        return \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $sign])->queryScalar();
+        return \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => trim($sign)])->queryScalar();
     }
 
     /**
