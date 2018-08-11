@@ -4,7 +4,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\UserGroupSearch */
+/* @var $searchModel app\models\MemberGroupSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'User Groups');
@@ -19,7 +19,7 @@ $this->params['menus'] = [
     <ul class="tabs-common">
         <?php
         $i = 1;
-        foreach (\app\models\UserGroup::typeOptions() as $key => $name):
+        foreach (\app\models\MemberGroup::typeOptions() as $key => $name):
             $cssClass = $i == 1 ? ' class="active"' : '';
             $i++;
             ?>

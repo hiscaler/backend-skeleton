@@ -12,6 +12,7 @@ use yii\web\IdentityInterface;
  * @property integer $id
  * @property integer $type
  * @property integer $category_id
+ * @property string $group
  * @property string $username
  * @property string $nickname
  * @property string $real_name
@@ -72,11 +73,11 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['type', 'category_id', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
-            [['username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email', 'remark'], 'trim'],
+            [['group', 'username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email', 'remark'], 'trim'],
             [['type'], 'default', 'value' => self::TYPE_MEMBER],
             [['category_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
-            [['username', 'real_name'], 'string', 'max' => 20],
+            [['group', 'username', 'real_name'], 'string', 'max' => 20],
             [['nickname'], 'string', 'max' => 60],
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
@@ -116,6 +117,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'id' => 'ID',
             'type' => '会员类型',
             'category_id' => '分类',
+            'group' => '分组',
             'username' => '帐号',
             'nickname' => '昵称',
             'real_name' => '姓名',
@@ -379,6 +381,35 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
+    /**
+     * 根据用户积分修正用户所在分组
+     *
+     * @param integer $memberId
+     * @return boolean
+     * @throws \yii\db\Exception
+     */
+    public static function updateGroup($memberId)
+    {
+        $db = Yii::$app->getDb();
+        $memberId = (int) $memberId;
+        $credits = $db->createCommand('SELECT [[available_credits]] FROM {{%member}} WHERE [[id]] = :id', [':id' => $memberId])->queryScalar();
+        if ($credits !== false) {
+            $success = false;
+            $groups = $db->createCommand('SELECT [[alias]], [[min_credits]], [[max_credits]] FROM {{%member_group}} WHERE [[max_credits]] >= :credits', [':credits' => $credits])->queryAll();
+            foreach ($groups as $group) {
+                if ($credits >= $group['min_credits'] && $credits <= $group['max_credits']) {
+                    $db->createCommand()->update('{{%member}}', ['group' => $group['alias']], ['id' => $memberId])->execute();
+                    $success = true;
+                    break;
+                }
+            }
+
+            return $success;
+        } else {
+            return false;
+        }
+    }
+
     // Events
 
     /**
@@ -425,10 +456,15 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
                 @unlink($avatar);
             }
         }
-        \Yii::$app->getDb()->createCommand()
-            ->delete('{{%wechat_member}}', [
+
+        // 清理相关数据
+        $cmd = \Yii::$app->getDb()->createCommand();
+        $tables = ['member_credit_log', 'wechat_member'];
+        foreach ($tables as $table) {
+            $cmd->delete("{{%$table}}", [
                 'member_id' => $this->id
             ])->execute();
+        }
     }
 
 }

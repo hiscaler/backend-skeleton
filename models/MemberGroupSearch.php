@@ -6,9 +6,9 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * UserGroupSearch represents the model behind the search form about `app\models\UserGroup`.
+ * MemberGroupSearch represents the model behind the search form about `app\models\MemberGroup`.
  */
-class UserGroupSearch extends UserGroup
+class MemberGroupSearch extends MemberGroup
 {
 
     /**
@@ -40,7 +40,7 @@ class UserGroupSearch extends UserGroup
      */
     public function search($params)
     {
-        $query = UserGroup::find();
+        $query = MemberGroup::find();
 
         // add conditions that should always apply here
 

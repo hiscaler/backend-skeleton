@@ -7,10 +7,11 @@ use yii\db\Query;
 use yii\helpers\Inflector;
 
 /**
- * This is the model class for table "{{%user_group}}".
+ * This is the model class for table "{{%member_group}}".
  *
  * @property integer $id
  * @property integer $type
+ * @property string $alias
  * @property string $name
  * @property string $icon_path
  * @property integer $min_credits
@@ -20,7 +21,7 @@ use yii\helpers\Inflector;
  * @property integer $updated_at
  * @property integer $updated_by
  */
-class UserGroup extends \yii\db\ActiveRecord
+class MemberGroup extends \yii\db\ActiveRecord
 {
 
     /**
@@ -34,7 +35,7 @@ class UserGroup extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%user_group}}';
+        return '{{%member_group}}';
     }
 
     /**
@@ -50,7 +51,7 @@ class UserGroup extends \yii\db\ActiveRecord
             [['name'], 'trim'],
             [['alias'], 'string', 'max' => 20],
             [['name'], 'string', 'max' => 30],
-            [['icon_path'], 'string', 'max' => 100],
+            [['icon'], 'string', 'max' => 100],
             [['max_credits'], 'valuesComparison'],
             ['alias', 'unique'],
         ];
@@ -75,16 +76,15 @@ class UserGroup extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'type' => Yii::t('userGroup', 'Type'),
-            'type_text' => Yii::t('userGroup', 'Type'),
-            'alias' => Yii::t('userGroup', 'Alias'),
-            'name' => Yii::t('userGroup', 'Name'),
-            'icon_path' => Yii::t('userGroup', 'Icon'),
-            'min_credits' => Yii::t('userGroup', 'Min Credits'),
-            'max_credits' => Yii::t('userGroup', 'Max Credits'),
+            'type' => Yii::t('memberGroup', 'Type'),
+            'type_text' => Yii::t('memberGroup', 'Type'),
+            'alias' => Yii::t('memberGroup', 'Alias'),
+            'name' => Yii::t('memberGroup', 'Name'),
+            'icon' => Yii::t('memberGroup', 'Icon'),
+            'min_credits' => Yii::t('memberGroup', 'Min Credits'),
+            'max_credits' => Yii::t('memberGroup', 'Max Credits'),
             'created_at' => Yii::t('app', 'Created At'),
-            'updated_at' => Yii::t('app', 'Updated At')
-            ,
+            'updated_at' => Yii::t('app', 'Updated At'),
         ];
     }
 
@@ -117,6 +117,11 @@ class UserGroup extends \yii\db\ActiveRecord
     }
 
     // Events
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {

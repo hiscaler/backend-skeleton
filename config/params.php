@@ -99,10 +99,10 @@ return [
                 'url' => ['file-upload-configs/index'],
                 'forceEmbed' => true,
             ],
-            'app-models-UserGroup' => [
-                'id' => 'user-group',
-                'label' => 'User Groups',
-                'url' => ['user-groups/index'],
+            'app-models-MemberGroup' => [
+                'id' => 'member-group',
+                'label' => 'Member Groups',
+                'url' => ['member-groups/index'],
                 'forceEmbed' => false,
             ],
             'app-models-Member' => [

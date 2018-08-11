@@ -1,6 +1,6 @@
 <?php
 /* @var $this yii\web\View */
-/* @var $model app\models\UserGroup */
+/* @var $model app\models\MemberGroup */
 
 $this->title = Yii::t('app', 'Create {modelClass}', [
     'modelClass' => Yii::t('model', 'User Group'),
