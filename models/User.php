@@ -498,8 +498,12 @@ class User extends ActiveRecord implements IdentityInterface
             $authManager->revokeAll($this->id);
         }
 
-        // 删除关联分类数据
-        \Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['user_id' => $this->id])->execute();
+        // 删除关联数据
+        $cmd = \Yii::$app->getDb()->createCommand();
+        $tables = ['user_auth_category', 'grid_column_config'];
+        foreach ($tables as $table) {
+            $cmd->delete("{{%$table}}", ['user_id' => $this->id])->execute();
+        }
     }
 
 }
