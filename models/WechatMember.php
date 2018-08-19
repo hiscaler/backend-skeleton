@@ -46,6 +46,7 @@ class WechatMember extends \yii\db\ActiveRecord
             [['headimgurl'], 'string', 'max' => 200],
             [['unionid'], 'string', 'max' => 29],
             [['openid'], 'unique'],
+            [['member_id'], 'unique'],
         ];
     }
 
@@ -70,4 +71,15 @@ class WechatMember extends \yii\db\ActiveRecord
             'unionid' => 'unionid',
         ];
     }
+
+    /**
+     * 所属会员
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMember()
+    {
+        return $this->hasOne(Member::class, ['id' => 'member_id']);
+    }
+
 }
