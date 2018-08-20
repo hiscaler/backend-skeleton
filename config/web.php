@@ -62,6 +62,7 @@ $config = [
                 'admin/<controller>/<id:\d+>' => 'admin/<controller>/view',
                 'admin/<controller>/update/<id:\d+>' => 'admin/<controller>/update',
                 'admin/<controller>/delete/<id:\d+>' => 'admin/<controller>/delete',
+                'admin/<controller>/<action>' => 'admin/<controller>/<action>',
                 'admin/<module>/<controller>' => 'admin/<module>/<controller>/index',
                 'admin/<module>/<controller>/<id:\d+>' => 'admin/<module>/<controller>/view',
                 'admin/<module>/<controller>/update/<id:\d+>' => 'admin/<module>/<controller>/update',
