@@ -95,12 +95,6 @@ class User extends ActiveRecord implements IdentityInterface
                 'extensions' => $this->_fileUploadConfig['extensions'],
                 'minSize' => $this->_fileUploadConfig['size']['min'],
                 'maxSize' => $this->_fileUploadConfig['size']['max'],
-                'tooSmall' => Yii::t('app', 'The file "{file}" is too small. Its size cannot be smaller than {limit}.', [
-                    'limit' => ApplicationHelper::friendlyFileSize($this->_fileUploadConfig['size']['min']),
-                ]),
-                'tooBig' => Yii::t('app', 'The file "{file}" is too big. Its size cannot exceed {limit}.', [
-                    'limit' => ApplicationHelper::friendlyFileSize($this->_fileUploadConfig['size']['max']),
-                ]),
             ],
         ];
     }
