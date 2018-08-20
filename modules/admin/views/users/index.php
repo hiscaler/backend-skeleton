@@ -122,8 +122,8 @@ $title = Yii::t('app', 'Please choice this user can manager categories');
                         skin: 'layer-fix',
                         area: ['400px', '600px'],
                         yes: function (index, layero) {
-                            var nodes = $.fn.zTree.getZTreeObj("__ztree__").getCheckedNodes(true);
-                            var ids = [];
+                            var nodes = $.fn.zTree.getZTreeObj("__ztree__").getCheckedNodes(true),
+                                ids = [];
                             for (var i = 0, l = nodes.length; i < l; i++) {
                                 ids.push(nodes[i].id);
                             }
