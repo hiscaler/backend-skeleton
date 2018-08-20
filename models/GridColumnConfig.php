@@ -32,6 +32,7 @@ class GridColumnConfig extends ActiveRecord
     public function rules()
     {
         return [
+            [['name', 'attribute', 'css_class'], 'trim'],
             [['name', 'attribute'], 'required'],
             [['user_id'], 'integer'],
             [['visible'], 'boolean', 'default' => Constant::BOOLEAN_TRUE],
