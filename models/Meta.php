@@ -805,7 +805,7 @@ class Meta extends ActiveRecord
         $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
         if ($meta && in_array($meta['return_value_type'], [self::RETURN_VALUE_TYPE_INTEGER, self::RETURN_VALUE_TYPE_DECIMAL])) {
             $valueKey = self::parseReturnKey($meta['return_value_type']);
-            $oldValue = $db->createCommand("SELECT [[$valueKey]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId", [':metaId' => $metaId, ':objectId' => (int) $objectId])->queryScalar();
+            $oldValue = $db->createCommand("SELECT [[$valueKey]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId", [':metaId' => $meta['id'], ':objectId' => (int) $objectId])->queryScalar();
             // @todo 验证 objectId 是否有效
             if ($meta['return_value_type'] == self::RETURN_VALUE_TYPE_INTEGER) {
                 $value = intval($value);
