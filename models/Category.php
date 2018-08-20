@@ -43,6 +43,10 @@ class Category extends BaseActiveRecord
      */
     const RETURN_TYPE_PUBLIC = 'public';
 
+    const PATH_TYPE_ID = 'id';
+    const PATH_TYPE_NAME = 'name';
+    const PATH_TYPE_ID_NAME = 'id-name';
+
     private $_fileUploadConfig;
 
     /**
@@ -389,6 +393,61 @@ class Category extends BaseActiveRecord
         krsort($name);
 
         return implode('/', $name);
+    }
+
+    /**
+     * 获取分类路径
+     *
+     * @param string $type
+     * @param string $sep
+     * @param int $start
+     * @return array|string
+     */
+    public function getPath($type = self::PATH_TYPE_NAME, $sep = '/', $start = 0)
+    {
+        $oldSep = ',';
+        switch ($type) {
+            case self::PATH_TYPE_ID:
+            case self::PATH_TYPE_NAME:
+                if ($type == self::PATH_TYPE_ID) {
+                    $path = $this->id_path;
+                } else {
+                    $path = $this->name_path;
+                }
+
+                $path = explode($oldSep, $path);
+                if ($start != 0) {
+                    if ($start > 0) {
+                        $offset = $start;
+                        $length = null;
+                    } else {
+                        $offset = 0;
+                        $length = count($path) - abs($start);
+                    }
+
+                    $path = array_slice($path, $offset, $length, true);
+                }
+                $path = implode($sep, $path);
+                break;
+
+            case self::PATH_TYPE_ID_NAME:
+                $idPath = $this->id_path;
+                $namePath = $this->name_path;
+                $path = array_combine(explode($oldSep, $idPath), explode($oldSep, $namePath));
+
+                if ($start > 0) {
+                    $path = array_slice($path, $start, null, true);
+                } elseif ($start < 0) {
+                    $path = array_slice($path, 0, count($path) - abs($start), true);
+                }
+                break;
+
+            default:
+                $path = null;
+                break;
+        }
+
+        return $path;
     }
 
     // 事件
