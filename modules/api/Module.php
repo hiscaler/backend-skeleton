@@ -55,7 +55,7 @@ class Module extends \yii\base\Module
         $response->format && $response->format = Response::FORMAT_JSON;
 
         // 载入已经安装的模块
-        foreach (\app\models\Module::getItems() as $alias => $name) {
+        foreach (\app\models\Module::map() as $alias => $name) {
             $this->setModule($alias, [
                 'class' => 'app\\modules\\api\\modules\\' . $alias . '\\Module',
             ]);

@@ -25,7 +25,7 @@ class Module extends \yii\base\Module
                 'basePath' => '@app/messages',
             ]
         ];
-        $modules = \app\models\Module::getItems();
+        $modules = \app\models\Module::map();
         foreach ($modules as $alias => $name) {
             $i18nTranslations["$alias*"] = [
                 'class' => '\yii\i18n\PhpMessageSource',

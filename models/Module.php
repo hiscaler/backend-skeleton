@@ -6,7 +6,7 @@ use Yii;
 use yii\db\Query;
 
 /**
- * This is the model class for table "www_module".
+ * This is the model class for table "{{%module}}".
  *
  * @property integer $id
  * @property string $alias
@@ -94,7 +94,7 @@ class Module extends \yii\db\ActiveRecord
      *
      * @return array
      */
-    public static function getItems()
+    public static function map()
     {
         return (new Query())
             ->select(['name'])
