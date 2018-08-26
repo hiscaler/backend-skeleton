@@ -13,7 +13,7 @@ use yii\helpers\Inflector;
  * @property integer $type
  * @property string $alias
  * @property string $name
- * @property string $icon_path
+ * @property string $icon
  * @property integer $min_credits
  * @property integer $max_credits
  * @property integer $created_at
