@@ -421,7 +421,9 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         if (parent::beforeSave($insert)) {
             if (empty($this->nickname)) {
-                $this->nickname = $this->username;
+                $nickname = $this->real_name;
+                empty($nickname) && $nickname = $this->username;
+                $this->nickname = $nickname;
             }
             if ($insert) {
                 $this->generateAuthKey();
