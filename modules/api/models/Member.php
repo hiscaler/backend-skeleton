@@ -88,6 +88,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['access_token'], 'string'],
             [['access_token'], 'unique'],
             [['password_reset_token'], 'unique'],
+            [['status'], 'default', 'value' => self::STATUS_PENDING],
         ];
     }
 
@@ -344,7 +345,9 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         if (parent::beforeSave($insert)) {
             if (empty($this->nickname)) {
-                $this->nickname = $this->username;
+                $nickname = $this->real_name;
+                empty($nickname) && $nickname = $this->username;
+                $this->nickname = $nickname;
             }
             $user = Yii::$app->getUser();
             if ($insert) {

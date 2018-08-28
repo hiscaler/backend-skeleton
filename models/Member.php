@@ -90,6 +90,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['access_token'], 'string'],
             [['access_token'], 'unique'],
             [['password_reset_token'], 'unique'],
+            [['status'], 'default', 'value' => self::STATUS_PENDING],
             ['avatar', 'file',
                 'extensions' => 'jpg,gif,png,jpeg',
                 'minSize' => 1024,
