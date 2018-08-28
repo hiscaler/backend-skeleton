@@ -124,6 +124,7 @@ EOT;
         $toCmd = $toDb->createCommand();
         $schema = $fromDb->getSchema();
         $tables = $schema->getTableNames();
+        $toDb->createCommand("SET FOREIGN_KEY_CHECKS = 0")->execute();
         foreach ($tables as $table) {
             $toCmd->truncateTable($table)->execute();
             $query = (new Query())
@@ -138,6 +139,7 @@ EOT;
             }
             Console::endProgress();
         }
+        $toDb->createCommand("SET FOREIGN_KEY_CHECKS = 1")->execute();
         $this->stdout("Done.");
     }
 
