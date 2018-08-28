@@ -3,7 +3,12 @@
 namespace app\commands;
 
 use app\models\Option;
+use Exception;
 use Yii;
+use yii\db\ColumnSchemaBuilder;
+use yii\db\Migration;
+use yii\db\Query;
+use yii\helpers\Console;
 use yii\helpers\FileHelper;
 
 /**
@@ -13,6 +18,8 @@ use yii\helpers\FileHelper;
  */
 class DbController extends Controller
 {
+
+    const PAGE_SIZE = 500;
 
     public $helpMessages = <<<EOT
 Usage: ./yii db/generate-dict
@@ -93,6 +100,43 @@ EOT;
             }
 
             file_put_contents($path . DIRECTORY_SEPARATOR . str_replace($tablePrefix, '', $table) . ".md", $doc);
+        }
+        $this->stdout("Done.");
+    }
+
+    /**
+     * 数据同步
+     *
+     * @throws \yii\base\NotSupportedException
+     * @throws \yii\db\Exception
+     * @throws \yii\console\Exception
+     */
+    public function actionSync()
+    {
+        $this->stdout("Begin Sync data..." . PHP_EOL);
+        try {
+            $fromDb = \Yii::$app->getDb();
+        } catch (\Exception $e) {
+            throw new \yii\console\Exception($e->getMessage());
+        }
+        /** @var $toDb yii\db\Connection */
+        $toDb = \Yii::$app->toDB;
+        $toCmd = $toDb->createCommand();
+        $schema = $fromDb->getSchema();
+        $tables = $schema->getTableNames();
+        foreach ($tables as $table) {
+            $toCmd->truncateTable($table)->execute();
+            $query = (new Query())
+                ->from($table);
+            $count = $query->count();
+            $totalPages = (int) (($count + self::PAGE_SIZE - 1) / self::PAGE_SIZE);
+            Console::startProgress(0, $totalPages, "$table ");
+            for ($page = 1; $page <= $totalPages; $page++) {
+                Console::updateProgress($page, $totalPages);
+                $items = $query->limit(self::PAGE_SIZE)->offset(($page - 1) * self::PAGE_SIZE)->all();
+                $toCmd->batchInsert($table, array_keys($items[0]), $items)->execute();
+            }
+            Console::endProgress();
         }
         $this->stdout("Done.");
     }
