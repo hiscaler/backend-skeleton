@@ -362,6 +362,10 @@ input {
     width: 320px;
 }
 
+.rbac-grid-view table.table tr.active {
+    background: #ECFBD4;
+}
+
 .rbac-grid-view table.table th.actions, .rbac-grid-view table.table td.actions {
     text-align: center;
     text-overflow: ellipsis;
@@ -397,7 +401,7 @@ input {
     width: 96%;
 }
 
-#rbac-pop-window {
+.rbac-pop-window {
     border: #E9E9E9 solid 1px;
     border-radius: 0 0 6px 6px;
 }

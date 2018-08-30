@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tr>
                 </tbody>
             </table>
-            <div id="rbac-pop-window" v-show="activeObject.userId">
+            <div class="rbac-pop-window" id="window-users" v-show="activeObject.userId">
                 <table class="table">
                     <thead>
                     <tr>
@@ -45,11 +45,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= Yii::t('rbac', 'Description') ?></th>
                         <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                         <th><?= Yii::t('rbac', 'Role Data') ?></th>
-                        <th class="actions last"></th>
+                        <th class="actions last"><button class="button-rbac" v-on:click="closeWindow()">X</button></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="item in userRoles">
+                    <tr v-bind:class="{active: item.active}" v-for="item in userRoles">
                         <td class="role-name">{{ item.name }}</td>
                         <td>{{ item.description }}</td>
                         <td>{{ item.rule_name }}</td>
@@ -107,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tr>
                 </tbody>
             </table>
-            <div id="rbac-permissions-by-role" v-show="activeObject.role">
+            <div id="window-roles" class="rbac-pop-window" v-show="activeObject.role">
                 <table class="table">
                     <thead>
                     <tr>
@@ -115,11 +115,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= Yii::t('rbac', 'Description') ?></th>
                         <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                         <th><?= Yii::t('rbac', 'Role Data') ?></th>
-                        <th class="actions last"></th>
+                        <th class="actions last"><button class="button-rbac" v-on:click="closeWindow()">X</button></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="item in rolePermissions">
+                    <tr v-bind:class="{active: item.active}" v-for="item in rolePermissions">
                         <td class="role-name">{{ item.name }}</td>
                         <td>{{ item.description }}</td>
                         <td>{{ item.rule_name }}</td>

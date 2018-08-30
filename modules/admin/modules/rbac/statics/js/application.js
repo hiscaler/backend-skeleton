@@ -91,9 +91,9 @@ var vm = new Vue({
                 .then(function (response) {
                     vm.user.roles = response.data;
                     vm.activeObject.userId = userId;
-                    var $tr = $('#rbac-users > table tr:eq(' + (index + 1) + ')');
-                    var offset = $tr.offset();
-                    $('#rbac-pop-window').css({
+                    var $tr = $('#rbac-users > table tr:eq(' + (index + 1) + ')'),
+                        offset = $tr.offset();
+                    $('#window-users').css({
                         position: 'absolute',
                         left: offset.left + 40,
                         top: offset.top + $tr.find('td').outerHeight()
@@ -160,6 +160,14 @@ var vm = new Vue({
                 .then(function (response) {
                     vm.activeObject.role = roleName;
                     vm.role.permissions = response.data;
+    
+                    var $tr = $('#window-roles > table tr:eq(' + (index + 1) + ')'),
+                        offset = $tr.offset();
+                    $('#rbac-permissions-by-role').css({
+                        position: 'absolute',
+                        left: offset.left + 40,
+                        top: offset.top + $tr.find('td').outerHeight()
+                    });
                 })
                 .catch(function (error) {
                 });
@@ -241,6 +249,11 @@ var vm = new Vue({
                 
                 layer.close(boxIndex);
             });
+        },
+        // 关闭弹窗
+        closeWindow: function () {
+            vm.activeObject.userId = 0;
+            vm.activeObject.role = undefined;
         }
     },
     computed: {
@@ -287,6 +300,7 @@ $(function () {
         $t.parent().addClass('active').siblings().removeClass('active');
         $('#rbac-app .panel').hide();
         $('#rbac-app #' + $t.attr('data-toggle')).show();
+        vm.closeWindow();
         
         return false;
     });

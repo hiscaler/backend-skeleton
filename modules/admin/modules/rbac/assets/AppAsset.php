@@ -10,7 +10,7 @@ class AppAsset extends AssetBundle
     public $sourcePath = '@app/modules/admin/modules/rbac/statics';
 
     public $css = [
-        'css/application.min.css',
+        'css/application.css',
     ];
 
     public $js = [
