@@ -161,9 +161,9 @@ var vm = new Vue({
                     vm.activeObject.role = roleName;
                     vm.role.permissions = response.data;
     
-                    var $tr = $('#window-roles > table tr:eq(' + (index + 1) + ')'),
+                    var $tr = $('#rbac-roles > table tr:eq(' + (index + 1) + ')'),
                         offset = $tr.offset();
-                    $('#rbac-permissions-by-role').css({
+                    $('#window-roles').css({
                         position: 'absolute',
                         left: offset.left + 40,
                         top: offset.top + $tr.find('td').outerHeight()

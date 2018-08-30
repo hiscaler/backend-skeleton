@@ -401,7 +401,21 @@ input {
     width: 96%;
 }
 
-.rbac-pop-window {
+.rbac-pop-window table {
     border: #E9E9E9 solid 1px;
     border-radius: 0 0 6px 6px;
+}
+
+/*向上箭头*/
+.up-arrow::after {
+    content: ' ';
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 4px 0 -8px 4px;
+    border-top: 1px solid #E9E9E9;
+    border-right: 1px solid #E9E9E9;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    background: #f5f5f5;
 }

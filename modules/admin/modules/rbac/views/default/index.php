@@ -38,6 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tbody>
             </table>
             <div class="rbac-pop-window" id="window-users" v-show="activeObject.userId">
+                <span class="up-arrow"></span>
                 <table class="table">
                     <thead>
                     <tr>
@@ -108,6 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tbody>
             </table>
             <div id="window-roles" class="rbac-pop-window" v-show="activeObject.role">
+                <span class="up-arrow"></span>
                 <table class="table">
                     <thead>
                     <tr>
