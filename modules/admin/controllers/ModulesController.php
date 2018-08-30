@@ -3,6 +3,7 @@
 namespace app\modules\admin\controllers;
 
 use app\models\Module;
+use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\console\controllers\MigrateController;
@@ -11,6 +12,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
+use yii\helpers\Url;
 use yii\web\Response;
 
 /**
@@ -313,6 +315,7 @@ class ModulesController extends Controller
      * @param $alias
      * @return Response
      * @throws \yii\db\Exception
+     * @throws \Throwable
      */
     public function actionInstall($alias)
     {
@@ -330,7 +333,7 @@ class ModulesController extends Controller
                 try {
                     $now = time();
                     $userId = Yii::$app->getUser()->getId();
-                    $db->createCommand()->insert('{{%module}}', [
+                    $column = [
                         'alias' => $alias,
                         'name' => $module['name'],
                         'author' => $module['author'],
@@ -343,11 +346,24 @@ class ModulesController extends Controller
                         'created_by' => $userId,
                         'updated_at' => $now,
                         'updated_by' => $userId,
-                    ])->execute();
+                    ];
+                    $db->createCommand()->insert('{{%module}}', $column)->execute();
 
                     $this->_migrate($alias, 'up');
 
                     $success = true;
+                    $item = ApplicationHelper::generateControlPanelModuleItem($column);
+                    if ($item) {
+                        $html = '<li class="clearfix"><a id="control-panel-module-' . $column['alias'] . '" href="' . Url::toRoute($item['url']) . '"></a>';
+                        $html .= \yii\widgets\Menu::widget([
+                            'items' => [$item],
+                            'itemOptions' => ['class' => 'clearfix'],
+                            'firstItemCssClass' => 'first',
+                            'lastItemCssClass' => 'last',
+                            'activateParents' => true,
+                        ]);
+                        $html .= '</li>';
+                    }
                 } catch (\Exception $ex) {
                     $errorMessage = $ex->getMessage();
                 }
@@ -357,6 +373,8 @@ class ModulesController extends Controller
         $responseBody = ['success' => $success];
         if (!$success) {
             $responseBody['error']['message'] = $errorMessage;
+        } elseif (isset($html)) {
+            $responseBody['data'] = $html;
         }
 
         return new Response([

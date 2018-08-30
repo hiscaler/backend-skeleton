@@ -134,6 +134,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             // 更新统计数据
                             $('#tab-installed span').html(parseInt($('#tab-installed span').html()) + 1);
                             $('#tab-not-installed span').html(parseInt($('#tab-not-installed span').html()) - 1);
+
+                            // 添加到控制面板
+                            if (response.data) {
+                                $('.shortcuts ul:first').append(response.data);
+                            }
                         } else {
                             if ($('#panel-notinstalled').find('ul').length === 0) {
                                 $('#panel-notinstalled .notice').remove();

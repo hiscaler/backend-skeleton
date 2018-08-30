@@ -3,6 +3,7 @@
 namespace app\modules\admin\widgets;
 
 use app\models\Module;
+use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\ArrayHelper;
@@ -31,18 +32,13 @@ class GlobalControlPanel extends Widget
                 $ignoreUsers = [];
             }
             if ($ignoreUsers) {
-                $user = \Yii::$app->getUser();
                 if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
                     $requireCheckAuth = false;
                 }
             }
         }
         $items = [];
-        $request = Yii::$app->getRequest();
-        $controller = Yii::$app->controller;
-        $controllerId = $controller->id;
-        $actionId = $controller->action->id;
-        $moduleId = $controller->module->id;
+        $controllerId = Yii::$app->controller->id;
         $builtinModules = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
 
         foreach ($builtinModules as $group => $ms) {
@@ -90,97 +86,7 @@ class GlobalControlPanel extends Widget
         $installedModules = Module::getInstalledModules();
         if ($installedModules) {
             foreach ($installedModules as $module) {
-                $t = [
-                    'label' => $module['name'],
-                    'url' => ['/admin/' . $module['alias'] . '/default/index'],
-                    'template' => '<a id="control-panel-module-' . $module['alias'] . '" href="{url}">{label}</a>',
-                    'active' => $moduleId == $module['alias'],
-                ];
-                if (!empty($module['menus']) && ($moduleMenus = json_decode($module['menus'], true))) {
-                    foreach ($moduleMenus as $key => $menu) {
-                        if (isset($menu['url'][0])) {
-                            $active = false;
-                            if (isset($menu['active'])) {
-                                $active = $moduleId == $module['alias'];
-                                if ($active) {
-                                    parse_str(trim($menu['active']), $conditions);
-                                    foreach ($conditions as $kk => $value) {
-                                        switch ($kk) {
-                                            case 'controllerId':
-                                                if ($controllerId != $value) {
-                                                    $active = false;
-                                                    break 2;
-                                                }
-                                                break;
-
-                                            case 'actionId':
-                                                if ($actionId != $value) {
-                                                    $active = false;
-                                                    break 2;
-                                                }
-                                                break;
-
-                                            default:
-                                                if ($value != $request->get($kk)) {
-                                                    $active = false;
-                                                    break 2;
-                                                }
-                                                break;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (!$active) {
-                                // /admin/moduleName/controllerId/actionId
-                                $active = false;
-                                $r = explode('/', $menu['url'][0]);
-                                // $r[2] is module name, $r[3] is controller id
-                                if (isset($r[3])) {
-                                    if ($r[2] == $module['alias'] && $r[3] == $controllerId) {
-                                        $active = true;
-                                    }
-                                }
-                            }
-
-                            $moduleMenus[$key]['active'] = $active;
-                        }
-                    }
-                    $t['items'] = $moduleMenus;
-                    $t['url'] = $moduleMenus[0]['url'];
-                }
-
-                if ($requireCheckAuth) {
-                    if (isset($t['items'])) {
-                        // 有子菜单
-                        $urls = [];
-                        foreach ($t['items'] as $key => $moduleMenu) {
-                            $urls[$key] = $moduleMenu['url'][0];
-                        }
-                        $hasChildrenMenu = true;
-                    } else {
-                        // 无子菜单
-                        $urls = [$t['url'][0]];
-                        $hasChildrenMenu = false;
-                    }
-                    foreach ($urls as $key => $url) {
-                        $urlArray = explode('/', trim($url, '/'));
-                        $permissionName = array_shift($urlArray) . '-' . array_shift($urlArray) . '-' . implode('.', $urlArray);
-                        if (!$user->can($permissionName)) {
-                            if ($hasChildrenMenu) {
-                                unset($t['items'][$key]);
-                            } else {
-                                $t = [];
-                            }
-                        } elseif (!isset($rootUrl)) {
-                            $rootUrl = $url;
-                        }
-                    }
-                    if (isset($rootUrl)) {
-                        $t['url'] = [$rootUrl];
-                    }
-                }
-
+                $t = ApplicationHelper::generateControlPanelModuleItem($module, $requireCheckAuth);
                 $t && $items[] = $t;
             }
         }
