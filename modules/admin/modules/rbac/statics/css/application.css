@@ -102,6 +102,13 @@ input {
     cursor: pointer;
 }
 
+.button-delete:hover {
+    border-color: #CCC;
+    background-color: #ff0000;
+    color: #FFF;
+    font-weight: bold;
+}
+
 .wrapper {
     margin-bottom: 10px;
 }

@@ -46,7 +46,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= Yii::t('rbac', 'Description') ?></th>
                         <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                         <th><?= Yii::t('rbac', 'Role Data') ?></th>
-                        <th class="actions last"><button class="button-rbac" v-on:click="closeWindow()">X</button></th>
+                        <th class="actions last">
+                            <button class="button-rbac button-delete" v-on:click="closeWindow()">X</button>
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -56,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td>{{ item.rule_name }}</td>
                         <td>{{ item.data }}</td>
                         <td class="btn-1">
-                            <button class="button-rbac" v-if="item.active" v-on:click="revoke(item.name, $index)">X</button>
+                            <button class="button-rbac button-delete" v-if="item.active" v-on:click="revoke(item.name, $index)">X</button>
                             <button class="button-rbac" v-else v-on:click="assign(item.name, $index)">+</button>
                         </td>
                     </tr>
@@ -103,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <button class="button-rbac" v-on:click="roleRemoveChildren(item.name)"><?= Yii::t('rbac', 'Remove Children') ?></button>
                         <button class="button-rbac" v-on:click="roleAddChildren($index, $event)"><?= Yii::t('rbac', 'Add Children') ?></button>
                         <button class="button-rbac" v-on:click="permissionsByRole(item.name, $index)"><?= Yii::t('rbac', 'Permissions') ?></button>
-                        <button class="button-rbac" v-on:click="roleDelete(item.name, $index, $event)">X</button>
+                        <button class="button-rbac button-delete" v-on:click="roleDelete(item.name, $index, $event)">X</button>
                     </td>
                 </tr>
                 </tbody>
@@ -117,7 +119,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= Yii::t('rbac', 'Description') ?></th>
                         <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                         <th><?= Yii::t('rbac', 'Role Data') ?></th>
-                        <th class="actions last"><button class="button-rbac" v-on:click="closeWindow()">X</button></th>
+                        <th class="actions last">
+                            <button class="button-rbac button-delete" v-on:click="closeWindow()">X</button>
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -127,7 +131,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td>{{ item.rule_name }}</td>
                         <td>{{ item.data }}</td>
                         <td class="btn-1">
-                            <button class="button-rbac" v-if="item.active" v-on:click="roleRemoveChild(item.name, $index, $event)">X</button>
+                            <button class="button-rbac button-delete" v-if="item.active" v-on:click="roleRemoveChild(item.name, $index, $event)">X</button>
                             <button class="button-rbac" v-else v-on:click="roleAddChild(item.name, $index, $event)">+</button>
                         </td>
                     </tr>
@@ -171,7 +175,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <td>{{ item.rule_name }}</td>
                     <td>{{ item.data }}</td>
                     <td class="btn-1">
-                        <button class="button-rbac" v-on:click="permissionDelete(item.name, $index, $event)">X</button>
+                        <button class="button-rbac button-delete" v-on:click="permissionDelete(item.name, $index, $event)">X</button>
                     </td>
                 </tr>
                 </tbody>
