@@ -25,7 +25,7 @@ class RolesController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'delete', 'permissions-by-role', 'add-child', 'add-children', 'remove-child', 'remove-children'],
+                        'actions' => ['index', 'save', 'delete', 'permissions-by-role', 'add-child', 'add-children', 'remove-child', 'remove-children'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -59,27 +59,29 @@ class RolesController extends Controller
     }
 
     /**
-     * 添加角色
+     * 添加更新角色
      *
-     * @rbacDescription 角色添加权限
+     * @rbacDescription 角色添加、更新权限
      * @return Response
      * @throws \Exception
      */
-    public function actionCreate()
+    public function actionSave()
     {
         $request = Yii::$app->getRequest();
         if ($request->getIsPost()) {
             $success = true;
             $errorMessage = null;
+            $insert = true;
             $name = trim($request->post('name'));
             if (empty($name)) {
                 $success = false;
-                $errorMessage = '名称不能为空。';
+                $errorMessage = '角色名称不能为空。';
             } else {
                 $role = $this->auth->getRole($name);
                 if ($role) {
                     $role->description = trim($request->post('description'));
                     $this->auth->update($name, $role);
+                    $insert = false;
                 } else {
                     $role = $this->auth->createRole($name);
                     $role->description = trim($request->post('description'));
@@ -92,8 +94,10 @@ class RolesController extends Controller
             if (!$success) {
                 $responseBody['error']['message'] = $errorMessage;
             } else {
-                $role = (array) $role;
-                $responseBody['data'] = $role;
+                $responseBody['data'] = [
+                    'role' => (array) $role,
+                    'insert' => $insert ? true : false,
+                ];
             }
 
             return new Response([

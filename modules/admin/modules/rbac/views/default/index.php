@@ -70,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <button class="button-rbac" @click="toggleFormVisible('role')">{{ formVisible.role ? '<?= Yii::t('rbac', 'Hide Form') ?>' : '<?= Yii::t('rbac', 'Show Form') ?>' }}</button>
                 </legend>
                 <div class="form-rbac" id="rbac-role-form" v-show="formVisible.role">
-                    <form action="<?= \yii\helpers\Url::toRoute(['roles/create']) ?>">
+                    <form action="<?= \yii\helpers\Url::toRoute(['roles/save']) ?>">
                         <div class="row">
                             <label><?= Yii::t('rbac', 'Role Name') ?>:</label><input type="text" class="rbac-input" id="name" name="name" value="" />
                         </div>
@@ -78,7 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <label><?= Yii::t('rbac', 'Description') ?>:</label><input type="text" class="rbac-input" id="description" name="description" value="" />
                         </div>
                         <div class="row last-row">
-                            <input class="button-rbac" id="rbac-sumbit-role" type="submit" value="<?= Yii::t('rbac', 'Save') ?>" />
+                            <input class="button-rbac" id="rbac-submit-role" type="submit" value="<?= Yii::t('rbac', 'Save') ?>" />
                         </div>
                     </form>
                 </div>
@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="item in roles" v-bind:class="{'selected': item.name == activeObject.role}">
+                <tr v-for="item in roles" v-bind:class="{'selected': item.name == activeObject.role}" v-on:click="roleUpdate($index)">
                     <td class="role-name">{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>{{ item.rule_name }}</td>
@@ -140,7 +140,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <legend>
                     <button class="button-rbac" @click="toggleFormVisible('permission')">{{ formVisible.permission ? '<?= Yii::t('rbac', 'Hide Form') ?>' : '<?= Yii::t('rbac', 'Show Form') ?>' }}</button>
                 </legend>
-                <div id="rbac-persmission-form" v-show="formVisible.permission">
+                <div id="rbac-permission-form" v-show="formVisible.permission">
                     <form class="form-rbac" action="<?= \yii\helpers\Url::toRoute(['permission/create']) ?>">
                         <div class="row">
                             <label><?= Yii::t('rbac', 'Permission Name') ?>:</label><input type="text" class="rbac-input" id="name" name="name" value="" />
@@ -149,7 +149,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <label><?= Yii::t('rbac', 'Permission Description') ?>:</label><input type="text" class="rbac-input" id="description" name="description" value="" />
                         </div>
                         <div class="row last-row">
-                            <input class="button-rbac" id="rbac-sumbit-permission" type="submit" value="<?= Yii::t('rbac', 'Save') ?>" />
+                            <input class="button-rbac" id="rbac-submit-permission" type="submit" value="<?= Yii::t('rbac', 'Save') ?>" />
                         </div>
                     </form>
                 </div>
@@ -213,7 +213,7 @@ $this->params['breadcrumbs'][] = $this->title;
             },
             roles: {
                 list: '<?= Url::toRoute(['roles/index']) ?>',
-                create: '<?= Url::toRoute(['roles/create']) ?>',
+                save: '<?= Url::toRoute(['roles/save']) ?>',
                 'delete': '<?= Url::toRoute(['roles/delete', 'name' => '_name']) ?>',
                 permissions: '<?= Url::toRoute(['roles/permissions-by-role', 'roleName' => '_roleName']) ?>',
                 addChild: '<?= Url::toRoute(['roles/add-child', 'roleName' => '_roleName', 'permissionName' => '_permissionName']) ?>',

@@ -18,7 +18,7 @@ yadjet.rbac.urls = yadjet.rbac.urls || {
     },
     roles: {
         list: undefined, // 角色列表
-        create: undefined, // 添加角色
+        save: undefined, // 添加、更新角色
         read: undefined, // 查看角色
         update: undefined, // 更新角色
         'delete': undefined, // 删除角色
@@ -128,6 +128,14 @@ var vm = new Vue({
                 .catch(function (error) {
                 });
         },
+        // 更新角色
+        roleUpdate: function (key) {
+            console.info(key);
+            var role = vm.roles[key];
+            $('#rbac-role-form input#name').val(role.name);
+            $('#rbac-role-form input#description').val(role.description);
+            vm.formVisible.role = true;
+        },
         // 删除角色
         roleDelete: function (roleName, index, event) {
             layer.confirm('确定删除该角色？', {icon: 3, title: '提示'}, function (boxIndex) {
@@ -160,7 +168,7 @@ var vm = new Vue({
                 .then(function (response) {
                     vm.activeObject.role = roleName;
                     vm.role.permissions = response.data;
-    
+                    
                     var $tr = $('#rbac-roles > table tr:eq(' + (index + 1) + ')'),
                         offset = $tr.offset();
                     $('#window-roles').css({
@@ -305,16 +313,26 @@ $(function () {
         return false;
     });
     
-    $('#rbac-sumbit-role').on('click', function () {
+    // 角色提交表单
+    $('#rbac-submit-role').on('click', function () {
         $.ajax({
             type: 'POST',
-            url: yadjet.rbac.urls.roles.create,
+            url: yadjet.rbac.urls.roles.save,
             data: $('#rbac-role-form form').serialize(),
             returnType: 'json',
             success: function (response) {
                 if (response.success) {
                     // vm.roles[response.data.name] = response.data;
-                    vm.roles.push(response.data);
+                    if (response.data.insert) {
+                        vm.roles.push(response.data.role);
+                    } else {
+                        for (var key in vm.roles) {
+                            if (vm.roles[key].name == response.data.role.name) {
+                                vm.roles.splice(key, 1, response.data.role);
+                                break;
+                            }
+                        }
+                    }
                 } else {
                     layer.alert(response.error.message);
                 }
@@ -326,11 +344,11 @@ $(function () {
         return false;
     });
     
-    $('#rbac-sumbit-permission').on('click', function () {
+    $('#rbac-submit-permission').on('click', function () {
         $.ajax({
             type: 'POST',
             url: yadjet.rbac.urls.permissions.create,
-            data: $('#rbac-persmission-form form').serialize(),
+            data: $('#rbac-permission-form form').serialize(),
             returnType: 'json',
             success: function (response) {
                 if (response.success) {
