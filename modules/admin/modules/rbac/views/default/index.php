@@ -55,8 +55,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td>{{ item.rule_name }}</td>
                         <td>{{ item.data }}</td>
                         <td class="btn-1">
-                            <button class="button-rbac" v-show="!item.active" v-on:click="assign(item.name, $index)">+</button>
-                            <button class="button-rbac" v-show="item.active" v-on:click="revoke(item.name, $index)">X</button>
+                            <button class="button-rbac" v-if="item.active" v-on:click="revoke(item.name, $index)">X</button>
+                            <button class="button-rbac" v-else v-on:click="assign(item.name, $index)">+</button>
                         </td>
                     </tr>
                     </tbody>
@@ -125,8 +125,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td>{{ item.rule_name }}</td>
                         <td>{{ item.data }}</td>
                         <td class="btn-1">
-                            <button class="button-rbac" v-show="!item.active" v-on:click="roleAddChild(item.name, $index, $event)">+</button>
-                            <button class="button-rbac" v-show="item.active" v-on:click="roleRemoveChild(item.name, $index, $event)">X</button>
+                            <button class="button-rbac" v-if="item.active" v-on:click="roleRemoveChild(item.name, $index, $event)">X</button>
+                            <button class="button-rbac" v-else v-on:click="roleAddChild(item.name, $index, $event)">+</button>
                         </td>
                     </tr>
                     </tbody>
