@@ -171,10 +171,6 @@ input {
     white-space: nowrap; /* for chrome */
 }
 
-.rbac-grid-view table.table th {
-    padding-left: 10px !important;
-}
-
 .rbac-grid-view table.table th.nowrap, .rbac-grid-view table.table td.nowrap {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -188,7 +184,7 @@ input {
 .rbac-grid-view table.table th {
     border-top: 1px #E9E9E9 solid;
     background: #F5F5F5 url(../images/grid-view-header-bg.gif) no-repeat right center;
-    padding: 5px 4px;
+    padding: 6px;
     color: #7d8389;
     text-align: left;
     text-overflow: ellipsis;
