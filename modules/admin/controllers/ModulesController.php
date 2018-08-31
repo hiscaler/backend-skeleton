@@ -287,8 +287,8 @@ class ModulesController extends Controller
         }
         foreach ($installedModules as $key => $module) {
             if (!isset($notInstalledModules[$module['alias']])) {
-                // 已经安装但是不存在模块程序的则丢弃
-                unset($installedModules[$key]);
+                // 已经安装但是不存在模块程序
+                $installedModules[$key]['error'] = Module::ERROR_NOT_FOUND_DIRECTORY;
                 continue;
             }
             $iconName = md5($module['alias'] . '-icon') . '.png';
@@ -297,9 +297,8 @@ class ModulesController extends Controller
                 $installedModules[$key]['icon'] = "/assets/t/$iconName";
             }
             $installedModules[$key]['error'] = isset($this->_localModules[$module['alias']]) ? Module::ERROR_NONE : Module::ERROR_NOT_FOUND_DIRECTORY;
-            if (isset($notInstalledModules[$module['alias']])) {
-                unset($notInstalledModules[$module['alias']]);
-            }
+            
+            unset($notInstalledModules[$module['alias']]);
         }
 
         return $this->render('index', [

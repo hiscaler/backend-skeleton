@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php foreach ($installedModules as $i => $module): ?>
                         <li id="module-<?= $module['alias'] ?>" class="widget-module">
                             <div class="hd">
-                                <em><?= $module['name'] ?></em>
+                                <em class="<?= $module['error'] ? 'error' : null ?>"><?= $module['name'] ?></em>
                                 <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
                                 <span class="buttons">
                                     <?= Html::a(Yii::t('module', 'Uninstall'), ['uninstall', 'alias' => $module['alias']], ['class' => 'uninstall', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['install', 'alias' => $module['alias']])]) ?>
