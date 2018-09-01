@@ -870,6 +870,10 @@ ul.list li em {
     line-height: 40px;
 }
 
+.widget-module .hd em.error {
+    color: #CCC;
+}
+
 .widget-module .hd span {
     display: inline-block;
 }
