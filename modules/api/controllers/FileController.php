@@ -24,6 +24,9 @@ use yii\web\UploadedFile;
 class FileController extends BaseController
 {
 
+    const TYPE_IMAGE = 'image';
+    const TYPE_FILE = 'file';
+
     protected $type = 'file';
 
     /**
@@ -49,26 +52,24 @@ class FileController extends BaseController
     /**
      * 文件上传
      *
-     * @param string $type
      * @param string $key
      * @return array
      * @throws InvalidConfigException
      * @throws \yii\base\Exception
      * @throws \Exception
      */
-    public function actionUploading($type = 'image', $key = 'file')
+    public function actionUploading($key = 'file')
     {
         $config = Yii::$app->params['uploading'];
-        $type = strtolower($type);
-        if (!isset($config[$type])) {
-            throw new InvalidConfigException("无效的 $type 上传配置。");
+        if (!isset($config[$this->type])) {
+            throw new InvalidConfigException("无效的 $this->type 上传配置。");
         }
 
         $request = Yii::$app->getRequest();
         $file = UploadedFile::getInstanceByName($key);
         $validator = null;
         if ($file) {
-            $validator = $type;
+            $validator = $this->type;
         } else {
             $file = $request->post($key);
             !$file && $file = $request->get($key);
@@ -88,9 +89,9 @@ class FileController extends BaseController
                 $model->addRule($key, $validator, [
                     'skipOnEmpty' => false,
                     'enableClientValidation' => false,
-                    'extensions' => $config[$type]['extensions'],
-                    'minSize' => isset($config[$type]['minSize']) ? $config[$type]['minSize'] : 1024,
-                    'maxSize' => isset($config[$type]['maxSize']) ? $config[$type]['maxSize'] : (1024 * 1024 * 200),
+                    'extensions' => $config[$this->type]['extensions'],
+                    'minSize' => isset($config[$this->type]['minSize']) ? $config[$this->type]['minSize'] : 1024,
+                    'maxSize' => isset($config[$this->type]['maxSize']) ? $config[$this->type]['maxSize'] : (1024 * 1024 * 200),
                 ]);
                 break;
 
@@ -112,19 +113,21 @@ class FileController extends BaseController
                 $t = explode(';', $file);
                 $mimeType = substr($t[0], 5);
                 $extensionName = FileHelper::getExtensionsByMimeType($mimeType);
-                if ($extensionName) {
-                    $extensionName = $extensionName[0];
-                } else {
-                    $extensionName = 'jpg';
-                }
+                $extensionName && $extensionName = $extensionName[0];
 
                 $fileSize = 0;
             } else {
                 $originalName = $file->name;
                 $extensionName = $file->getExtension();
+                if (empty($extensionName)) {
+                    $extensionName = FileHelper::getExtensionsByMimeType($file->type);
+                    $extensionName && $extensionName = $extensionName[0];
+                }
+
                 $fileSize = $file->size;
                 $mimeType = FileHelper::getMimeTypeByExtension($extensionName);
             }
+            empty($extensionName) && $extensionName = 'jpg';
             $filename = $this->generateUniqueFilename() . '.' . $extensionName;
             $absoluteSavePath = $absolutePath . DIRECTORY_SEPARATOR . $filename;
             if ($validator == 'string') {
@@ -136,18 +139,21 @@ class FileController extends BaseController
 
             if ($success) {
                 $path = "$path/$filename";
-                $imgBinary = fread(fopen($absoluteSavePath, "r"), filesize($absoluteSavePath));
-                $imageBase64 = 'data:image/' . $mimeType . ';base64,' . base64_encode($imgBinary);
-
-                return [
+                $res = [
                     'originalName' => $originalName,
                     'realName' => $filename,
                     'path' => $path,
                     'fullPath' => $request->getHostInfo() . $path,
-                    'base64' => $imageBase64,
                     'size' => $fileSize,
                     'mimeType' => $mimeType,
                 ];
+                if ($this->type == self::TYPE_IMAGE) {
+                    $imgBinary = fread(fopen($absoluteSavePath, "r"), filesize($absoluteSavePath));
+                    $imageBase64 = 'data:image/' . $mimeType . ';base64,' . base64_encode($imgBinary);
+                    $res['base64'] = $imageBase64;
+                }
+
+                return $res;
             } else {
                 Yii::$app->getResponse()->setStatusCode(400);
 
@@ -159,7 +165,7 @@ class FileController extends BaseController
             Yii::$app->getResponse()->setStatusCode(400);
 
             return [
-                'message' => $model->getFirstError('file')
+                'message' => $model->getFirstError($key)
             ];
         }
     }
