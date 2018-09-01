@@ -11,6 +11,22 @@ return [
     'fromMailAddress' => [
         'admin@example.com' => 'you name',
     ],
+    // 文件上传设置
+    'uploading' => [
+        'path' => 'uploads',
+        // 请参考 \yii\web\ImageValidator 类设置
+        'image' => [
+            'minSize' => 1024,
+            'maxSize' => 1024 * 1024 * 200,
+            'extensions' => 'png,gif,jpg,jpeg'
+        ],
+        // 请参考 \yii\web\FileValidator 类设置
+        'file' => [
+            'minSize' => 1024,
+            'maxSize' => 1024 * 1024 * 200,
+            'extensions' => 'zip,rar,pdf,doc,'
+        ]
+    ],
     // 权限认证设置
     'rbac' => [
         'debug' => false, // 是否调试模式(调试模式下不启用权限认证)
