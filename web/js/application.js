@@ -71,7 +71,7 @@ function uploadPhoto(vFD, DataURL, t, inputName) {
             if (console.log(this.responseText), t.parent().removeClass("load"), 200 == this.status) {
                 var response = $.parseJSON(this.responseText);
                 if (response.success) {
-                    t.parent().parent().find('.weui-uploader__files').append('<li class="weui-uploader__file" style="background-image:url(' + response.data.photoPath + ')"><a href="javascript:;" class="delete-photo" data-url="' + response.data.deleteUrl + '">X</a><input type="hidden" name="' + inputName + '" value="' + response.data.photo + '" /></li>');
+                    t.parent().parent().find('.weui-uploader__files').append('<li class="weui-uploader__file" style="background-image:url(' + response.data.path + ')"><a href="javascript:;" class="delete-photo" data-url="' + response.data.deleteUrl + '">X</a><input type="hidden" name="' + inputName + '" value="' + response.data.path + '" /></li>');
                     if (response.data.uploadCompleted) {
                         $('.buttons').show();
                     }
@@ -95,8 +95,7 @@ function getJpegBlob(o) {
     var a = $('<canvas width="' + e + '" height="' + t + '"></canvas>')[0],
         n = a.getContext("2d");
     n.drawImage(o, 0, 0, e, t);
-    var l = convertCanvasToBlob(a);
-    return l;
+    return convertCanvasToBlob(a);
 }
 
 function convertCanvasToBlob(o) {
