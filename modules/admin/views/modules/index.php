@@ -32,9 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
                                     <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
                                 </p>
-                                <p class="description">
+                                <div class="description">
                                     <?= $module['description'] ?>
-                                </p>
+                                </div>
                             </div>
                         </li>
                     <?php endforeach; ?>
@@ -62,9 +62,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
                                     <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
                                 </p>
-                                <p class="description">
+                                <div class="description">
                                     <?= $module['description'] ?>
-                                </p>
+                                </div>
                             </div>
                         </li>
                     <?php endforeach; ?>

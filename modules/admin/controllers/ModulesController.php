@@ -4,6 +4,7 @@ namespace app\modules\admin\controllers;
 
 use app\models\Module;
 use app\modules\admin\components\ApplicationHelper;
+use cebe\markdown\GithubMarkdown;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\console\controllers\MigrateController;
@@ -60,6 +61,7 @@ class ModulesController extends Controller
         if ($handle === false) {
             throw new InvalidArgumentException("Unable to open directory: {$baseDirectory}");
         }
+        $markdown = new GithubMarkdown();
         while (($dir = readdir($handle)) !== false) {
             if ($dir === '.' || $dir === '..' || $dir === 'admin' || $dir === 'api' || !file_exists($baseDirectory . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'Module.php')) {
                 continue;
@@ -87,9 +89,21 @@ class ModulesController extends Controller
                                 continue 2;
                             }
                         }
+                        // 读取 readme 文件（Markdown 书写格式）
+                        if ($readme = @file_get_contents($fullDirectory . DIRECTORY_SEPARATOR . 'readme.md')) {
+                            $m['description'] = $markdown->parse($readme);
+                        }
                         foreach ($configs as $key => $value) {
                             if (array_key_exists($key, $m)) {
                                 switch ($key) {
+                                    case 'description':
+                                        if ($m['description']) {
+                                            // 已经从 readme.md 文件中读取到内容，则忽略
+                                            continue;
+                                        }
+                                        $value = $markdown->parse((string) $value);
+                                        break;
+
                                     case 'menus':
                                         if (is_array($value)) {
                                             $links = [];
@@ -297,7 +311,7 @@ class ModulesController extends Controller
                 $installedModules[$key]['icon'] = "/assets/t/$iconName";
             }
             $installedModules[$key]['error'] = isset($this->_localModules[$module['alias']]) ? Module::ERROR_NONE : Module::ERROR_NOT_FOUND_DIRECTORY;
-            
+
             unset($notInstalledModules[$module['alias']]);
         }
 
