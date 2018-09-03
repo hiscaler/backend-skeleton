@@ -2,6 +2,5 @@
     "name": "队列管理",
     "author": "hiscaler",
     "version": "0.0.1",
-    "description": "基于 Yii2 的队列管理，使用前请使用 php composer.phar require --prefer-dist yiisoft/yii2-queue 安装队列扩展。暂只针对 \\yii\\queue\\db\\Queue 进行处理。",
     "url": "http://www.github.com/hiscaler"
 }
