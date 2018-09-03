@@ -47,7 +47,7 @@ class CategoriesController extends Controller
     }
 
     /**
-     * Lists all Category models.
+     * 分类数据列表
      *
      * @rbacDescription 查看分类列表权限
      * @return mixed
@@ -57,7 +57,7 @@ class CategoriesController extends Controller
         $models = (new Query())->from('{{%category}}')->orderBy(['ordering' => SORT_ASC])->all();
         if ($models) {
             $tree = ArrayHelper::toTree($models, 'id');
-            $models = ArrayHelper::treeToArray($tree[0]);
+            $models = ArrayHelper::treeToArray($tree);
         }
         $dataProvider = new ArrayDataProvider([
             'allModels' => $models,
