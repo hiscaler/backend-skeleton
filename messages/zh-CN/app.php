@@ -66,6 +66,7 @@ return array(
     'Grid Column Config' => '栏位设定',
     'Login' => '登录',
     'Logout' => '注销',
+    'Help' => '帮助手册',
     'Frontend Page' => '前台页面',
     'Choice' => '选择',
     'Common Labels List' => '公共推送位列表',
