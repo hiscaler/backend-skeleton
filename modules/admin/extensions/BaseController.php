@@ -29,6 +29,7 @@ class BaseController extends Controller
             $formatter->datetimeFormat = Lookup::getValue('system.datetime-format', 'php:Y-m-d H:i:s');
             $formatter->dateFormat = Lookup::getValue('system.date-format', 'php:Y-m-d');
             $formatter->timeFormat = Lookup::getValue('system.time-format', 'php:H:i:s');
+            $formatter->defaultTimeZone = $formatter->timeZone = Yii::$app->getTimeZone();
 
             $authManager = Yii::$app->getAuthManager();
             if ($authManager) {
