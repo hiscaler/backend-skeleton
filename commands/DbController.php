@@ -52,8 +52,11 @@ EOT;
         $db = \Yii::$app->getDb();
         $schema = $db->getSchema();
         $tablePrefix = $db->tablePrefix;
-        $tables = $coreTables ? Option::coreTables(true) : $schema->getTableNames();
+        $tables = $coreTables ? Option::coreTables(true) : $schema->getTableNames('', true);
         foreach ($tables as $table) {
+            if (str_replace($tablePrefix, '', $table) == 'migration') {
+                continue;
+            }
             $this->stdout("Generate $table table dict..." . PHP_EOL);
             $tableSchema = $schema->getTableSchema($table, true);
             $tableRows = [];
