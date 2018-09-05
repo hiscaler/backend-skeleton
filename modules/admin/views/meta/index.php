@@ -57,12 +57,14 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'meta-label'],
             ],
             [
-                'attribute' => 'input_type_text',
+                'attribute' => 'input_type',
+                'format' => 'metaInputType',
                 'contentOptions' => ['class' => 'meta-input-type center'],
             ],
             'input_candidate_value',
             [
-                'attribute' => 'return_value_type_text',
+                'attribute' => 'return_value_type',
+                'format' => 'metaReturnValueType',
                 'contentOptions' => ['class' => 'meta-return-value-type center'],
             ],
             [

@@ -126,21 +126,9 @@ class Meta extends ActiveRecord
     }
 
     /**
-     * 数据输入方式
-     *
-     * @return string|mixed
-     */
-    public function getInput_type_text()
-    {
-        $options = self::inputTypeOptions();
-
-        return isset($options[$this->input_type]) ? $options[$this->input_type] : null;
-    }
-
-    /**
      * 返回数据类型选项
      *
-     * @retrun array
+     * @return array
      */
     public static function returnValueTypeOptions()
     {
@@ -150,18 +138,6 @@ class Meta extends ActiveRecord
             self::RETURN_VALUE_TYPE_INTEGER => '数字（不带小数）',
             self::RETURN_VALUE_TYPE_DECIMAL => '数字（带小数）',
         ];
-    }
-
-    /**
-     * 返回数据类型
-     *
-     * @return string|mixed
-     */
-    public function getReturn_value_type_text()
-    {
-        $options = self::returnValueTypeOptions();
-
-        return isset($options[$this->return_value_type]) ? $options[$this->return_value_type] : null;
     }
 
     /**

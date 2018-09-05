@@ -132,22 +132,34 @@ class Formatter extends \yii\i18n\Formatter
         return $this->asModelName($value) . " [ $tableName ]";
     }
 
-    public function asMetaFormFieldType($value)
+    /**
+     * 数据输入方式
+     *
+     * @param $value
+     * @return string
+     */
+    public function asMetaInputType($value)
     {
         if ($value === null) {
             return $this->nullDisplay;
         }
-        $options = Meta::formFieldTypeOptions();
+        $options = Meta::inputTypeOptions();
 
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }
 
-    public function asMetaDbFieldType($value)
+    /**
+     * 返回数据类型
+     *
+     * @param $value
+     * @return string
+     */
+    public function asMetaReturnValueType($value)
     {
         if ($value === null) {
             return $this->nullDisplay;
         }
-        $options = Meta::dbFieldTypeOptions();
+        $options = Meta::returnValueTypeOptions();
 
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }

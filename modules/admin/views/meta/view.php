@@ -15,57 +15,57 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'Update'), 'url' => ['update', 'id' => $model->id]],
 ];
 ?>
-    <div id="mts-app">
-        <ul class="tabs-common">
-            <li class="active"><a href="javascript:;" data-toggle="tab-panel-basic">基本设定</a></li>
-            <li><a href="javascript:;" data-toggle="tab-panel-rules">验证规则</a></li>
-        </ul>
-        <div class="panels">
-            <div class="tab-panel" id="tab-panel-basic">
-                <div class="meta-view">
-                    <?=
-                    DetailView::widget([
-                        'model' => $model,
-                        'attributes' => [
-                            'id',
-                            'table_name:metaTableName',
-                            'key',
-                            'label',
-                            'description',
-                            'input_type_text',
-                            'return_value_type_text',
-                            'default_value',
-                            'enabled:boolean',
-                            'created_at:datetime',
-                            'updated_at:datetime',
-                            'deleted_at:datetime',
-                        ],
-                    ])
-                    ?>
-                </div>
+<div id="mts-app">
+    <ul class="tabs-common">
+        <li class="active"><a href="javascript:;" data-toggle="tab-panel-basic">基本设定</a></li>
+        <li><a href="javascript:;" data-toggle="tab-panel-rules">验证规则</a></li>
+    </ul>
+    <div class="panels">
+        <div class="tab-panel" id="tab-panel-basic">
+            <div class="meta-view">
+                <?=
+                DetailView::widget([
+                    'model' => $model,
+                    'attributes' => [
+                        'id',
+                        'table_name:metaTableName',
+                        'key',
+                        'label',
+                        'description',
+                        'input_type:metaInputType',
+                        'return_value_type:metaReturnValueType',
+                        'default_value',
+                        'enabled:boolean',
+                        'created_at:datetime',
+                        'updated_at:datetime',
+                        'deleted_at:datetime',
+                    ],
+                ])
+                ?>
             </div>
-            <div class="tab-panel clearfix" id="tab-panel-rules" style="display: none">
-                <div class="form">
-                    <fieldset class="model-rule" v-for="item in metaValidators" v-show="item.active">
-                        <legend>
-                            <input disabled="disabled" class="control-label" type="checkbox" id="meta-validator-name-{{ item.name }}" name="Meta[validatorsList][{{ item.name }}][name]" v-model="item.active" value="{{ item.name }}" />
-                            <label for="meta-validator-name-{{ item.name }}">{{ item.label }}</label>
-                        </legend>
-                        <div class="panel-body" v-if="!isEmptyObject(item.options)">
-                            <ul class="list-group">
-                                <li class="list-group-item" v-for="cfg in item.options">
-                                    <label for="">{{ item.messages[$key] }}</label>：{{cfg}}
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="notice" v-else>
-                            暂无其他特定规则
-                        </div>
-                    </fieldset>
-                </div>
+        </div>
+        <div class="tab-panel clearfix" id="tab-panel-rules" style="display: none">
+            <div class="form">
+                <fieldset class="model-rule" v-for="item in metaValidators" v-show="item.active">
+                    <legend>
+                        <input disabled="disabled" class="control-label" type="checkbox" id="meta-validator-name-{{ item.name }}" name="Meta[validatorsList][{{ item.name }}][name]" v-model="item.active" value="{{ item.name }}" />
+                        <label for="meta-validator-name-{{ item.name }}">{{ item.label }}</label>
+                    </legend>
+                    <div class="panel-body" v-if="!isEmptyObject(item.options)">
+                        <ul class="list-group">
+                            <li class="list-group-item" v-for="cfg in item.options">
+                                <label for="">{{ item.messages[$key] }}</label>：{{cfg}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="notice" v-else>
+                        暂无其他特定规则
+                    </div>
+                </fieldset>
             </div>
         </div>
     </div>
+</div>
 <?php \app\modules\admin\components\JsBlock::begin() ?>
     <script type="text/javascript">
         yadjet.urls = {
