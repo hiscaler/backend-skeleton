@@ -175,16 +175,6 @@ class Formatter extends \yii\i18n\Formatter
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }
 
-    public function asUserStatus($value)
-    {
-        if ($value === null) {
-            return $this->nullDisplay;
-        }
-        $options = User::statusOptions();
-
-        return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
-    }
-
     public function asUserRole($value)
     {
         if ($value === null) {

@@ -221,7 +221,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return Yii::$app->security->validatePassword($password, $this->password_hash);
+        return Yii::$app->getSecurity()->validatePassword($password, $this->password_hash);
     }
 
     /**
@@ -320,18 +320,6 @@ class User extends ActiveRecord implements IdentityInterface
             self::STATUS_ACTIVE => '激活',
             self::STATUS_LOCKED => '锁定',
         ];
-    }
-
-    /**
-     * 用户状态
-     *
-     * @return string|mixed
-     */
-    public function getStatus_text()
-    {
-        $options = self::statusOptions();
-
-        return isset($options[$this->status]) ? $options[$this->status] : null;
     }
 
     /**

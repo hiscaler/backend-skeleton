@@ -134,8 +134,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Deletes an existing User model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 删除用户
      *
      * @rbacDescription 系统用户删除权限
      * @param integer $id
@@ -148,14 +147,7 @@ class UsersController extends Controller
             throw new BadRequestHttpException("Can't remove itself.");
         }
 
-        $model = $this->findModel($id);
-        $userId = $model->id;
-        $db = Yii::$app->getDb();
-        $db->transaction(function ($db) use ($userId, $model) {
-            $model->delete();
-            /* @var $db \yii\db\Connection */
-            $db->createCommand()->delete('{{%user_auth_category}}', ['user_id' => $userId])->execute();
-        });
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
@@ -173,6 +165,7 @@ class UsersController extends Controller
     {
         $user = $this->findModel($id);
         $model = new ChangePasswordForm();
+        $model->username = $user->username;
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
             $user->setPassword($model->password);
@@ -184,7 +177,6 @@ class UsersController extends Controller
         }
 
         return $this->render('change-password', [
-            'user' => $user,
             'model' => $model,
         ]);
     }
