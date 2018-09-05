@@ -281,9 +281,9 @@ class UsersController extends Controller
     }
 
     /**
-     * 激活、禁止操作
+     * 激活、锁定操作
      *
-     * @rbacDescription 设置系统用户记录、禁止状态操作权限
+     * @rbacDescription 设置系统用户记录、锁定状态操作权限
      * @return Response
      * @throws \Throwable
      * @throws \yii\base\InvalidConfigException
@@ -291,33 +291,48 @@ class UsersController extends Controller
      */
     public function actionToggle()
     {
+        $success = false;
+        $errorMessage = null;
         $id = Yii::$app->getRequest()->post('id');
         $db = Yii::$app->getDb();
         $value = $db->createCommand('SELECT [[status]] FROM {{%user}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
         if ($value !== false) {
             $value = !$value;
-            $now = time();
-            $db->createCommand()->update('{{%user}}', ['status' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], '[[id]] = :id', [':id' => (int) $id])->execute();
-            $responseData = [
-                'success' => true,
-                'data' => [
+            $continue = true;
+            if ($value == User::STATUS_LOCKED) {
+                $c = $db->createCommand("SELECT COUNT(*) FROM {{%user}} WHERE [[status]] = :status", [':status' => User::STATUS_ACTIVE])->queryScalar();
+                if ($c == 1) {
+                    $continue = false;
+                    // @todo 应该保留有一个拥有最高权限的用户
+                    $errorMessage = '您至少应该保留一个可登录用户。';
+                }
+            }
+            if ($continue) {
+                $now = time();
+                $db->createCommand()->update('{{%user}}', ['status' => $value, 'updated_at' => $now, 'updated_by' => Yii::$app->getUser()->getId()], '[[id]] = :id', [':id' => (int) $id])->execute();
+                $success = true;
+                $body = [
                     'value' => $value,
                     'updatedAt' => Yii::$app->getFormatter()->asDate($now),
-                    'updatedBy' => Yii::$app->getUser()->getIdentity()->username,
-                ],
-            ];
+                    'updatedBy' => Yii::$app->getUser()->getIdentity()->getUsername(),
+                ];
+            }
         } else {
-            $responseData = [
-                'success' => false,
-                'error' => [
-                    'message' => '数据有误',
-                ],
-            ];
+            $errorMessage = '用户不存在。';
+        }
+
+        $responseBody = ['success' => $success];
+        if ($success) {
+            if (isset($body)) {
+                $responseBody['data'] = $body;
+            }
+        } else {
+            $responseBody['error']['message'] = $errorMessage;
         }
 
         return new Response([
             'format' => Response::FORMAT_JSON,
-            'data' => $responseData,
+            'data' => $responseBody,
         ]);
     }
 
