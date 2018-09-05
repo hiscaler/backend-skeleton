@@ -4,23 +4,23 @@ return [
     'adminEmail' => 'admin@example.com',
     'user.passwordResetTokenExpire' => 1800, // 密码重置有效时间
     'member.accessTokenExpire' => 86400, // 会员 Access Token 有效期（单位为秒，默认 24 小时）
-    'uninstall.module.after.droptable' => false,// 卸载模块后是否同步删除相关表
+    'uninstall.module.after.droptable' => false,// 卸载模块后是否同步删除模块相关表
     'api.db.cache.time' => 300, // 是否激活 API 数据库查询缓存，默认 5 分钟（以秒为单位），如果设置为 null 则表示不启用缓存，
-    'ignorePassword' => false, // 是否忽略密码（只验证用户名，调试的是否用）
-    'hideCaptcha' => true, // 是否隐藏验证码验证
+    'ignorePassword' => false, // 是否忽略密码（只验证用户名，调试的时候用）
+    'hideCaptcha' => true, // 用户登录的时候隐藏验证码验证
     'fromMailAddress' => [
         'admin@example.com' => 'you name',
     ],
     // 文件上传设置
     'uploading' => [
         'path' => 'uploads',
-        // 请参考 \yii\web\ImageValidator 类设置
+        // 请参考 \yii\web\ImageValidator 类属性进行设置
         'image' => [
             'minSize' => 1024,
             'maxSize' => 1024 * 1024 * 200,
             'extensions' => 'png,gif,jpg,jpeg'
         ],
-        // 请参考 \yii\web\FileValidator 类设置
+        // 请参考 \yii\web\FileValidator 类属性进行设置
         'file' => [
             'minSize' => 1024,
             'maxSize' => 1024 * 1024 * 200,
@@ -34,12 +34,12 @@ return [
         'userTable' => [
             'name' => '{{%user}}', // 查询的用户表
             'columns' => [
-                'id' => 'id', // 主键
+                'id' => 'id', // 用户的唯一主键
                 'username' => 'username', // 用户名
                 /**
                  * 扩展字段（数据库字段名称 => 显示名称）
                  *
-                 * [
+                 * 'extra' => [
                  *     'nickname' => '昵称',
                  *     'email' => '邮箱',
                  * ]
@@ -64,13 +64,13 @@ return [
     'wechat' => require(__DIR__ . '/wechat.php'),
     'modules' => [
         /**
-        'app-models-Article' => [
-            'id' => 'articles', // 控制器名称（唯一）
-            'label' => 'Articles', //  需要翻译的文本（app.php）
-            'url' => ['/articles/index'], // 访问 URL
-            'activeConditions' => [], // 激活条件，填写控制器 id
-            'forceEmbed' => true, // 是否强制显示在控制面板中
-        ],
+         *'app-models-Article' => [
+         *    'id' => 'articles', // 控制器名称（唯一）
+         *    'label' => 'Articles', //  需要翻译的文本（app.php）
+         *    'url' => ['/articles/index'], // 访问 URL
+         *    'activeConditions' => [], // 激活条件，填写控制器 id
+         *    'forceEmbed' => true, // 是否强制显示在控制面板中
+         * ],
          */
         'System Manage' => [
             'app-models-User' => [
