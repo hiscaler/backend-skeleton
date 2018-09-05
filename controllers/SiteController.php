@@ -65,7 +65,12 @@ class SiteController extends Controller
     /**
      * 用户注册
      *
+     * @param null $next
      * @return mixed
+     * @throws \yii\base\ErrorException
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionRegister($next = null)
     {
@@ -102,7 +107,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function ationLogin()
+    public function actionLogin()
     {
         $this->layout = 'base';
         if (!Yii::$app->getUser()->getIsGuest()) {
@@ -164,6 +169,7 @@ class SiteController extends Controller
      *
      * @param string $token
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionResetPassword($token)
     {
