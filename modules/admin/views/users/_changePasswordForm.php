@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
     <div class="form user-form">
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($user, 'username')->textInput(['maxlength' => true, 'disabled' => 'disabled']) ?>
+        <?= $form->field($model, 'username')->textInput(['maxlength' => true, 'disabled' => 'disabled']) ?>
 
         <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 

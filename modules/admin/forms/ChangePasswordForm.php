@@ -7,6 +7,7 @@ use yii\base\Model;
 class ChangePasswordForm extends Model
 {
 
+    public $username;
     public $password;
     public $confirmPassword;
 
@@ -27,6 +28,7 @@ class ChangePasswordForm extends Model
     public function attributeLabels()
     {
         return [
+            'username' => '用户名',
             'password' => '新密码',
             'confirmPassword' => '确认密码',
         ];
