@@ -16,7 +16,6 @@ else:
     <div class="user-create">
         <?=
         $this->render('_changePasswordForm', [
-            'user' => $user,
             'model' => $model,
         ]);
         ?>
