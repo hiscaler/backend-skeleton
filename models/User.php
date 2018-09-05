@@ -22,9 +22,6 @@ use yii\web\IdentityInterface;
  * @property string $password_reset_token
  * @property string $email
  * @property string $role
- * @property integer $credits_count
- * @property string $user_group
- * @property string $system_group
  * @property integer $register_ip
  * @property integer $login_count
  * @property integer $last_login_ip
@@ -77,14 +74,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['credits_count', 'register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             ['username', 'match', 'pattern' => '/^[a-z0-9]+[a-z0-9-]+[a-z0-9]$/'],
-            [['username', 'nickname', 'user_group', 'system_group'], 'string', 'max' => 20],
+            [['username', 'nickname'], 'string', 'max' => 20],
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 50],
-            [['credits_count'], 'default', 'value' => 0],
             [['username'], 'unique'],
             ['email', 'email'],
             [['password_reset_token'], 'unique'],
@@ -284,11 +280,6 @@ class User extends ActiveRecord implements IdentityInterface
             'email' => Yii::t('user', 'Email'),
             'role' => Yii::t('user', 'Role'),
             'enabled' => Yii::t('app', 'Enabled'),
-            'credits_count' => Yii::t('user', 'Credits Count'),
-            'user_group' => Yii::t('user', 'User Group'),
-            'user_group_text' => Yii::t('user', 'User Group'),
-            'system_group' => Yii::t('user', 'System Group'),
-            'system_group_text' => Yii::t('user', 'System Group'),
             'status' => Yii::t('user', 'Status'),
             'status_text' => Yii::t('user', 'Status'),
             'register_ip' => Yii::t('user', 'Register IP'),
@@ -344,30 +335,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * 用户分组
-     *
-     * @return string|mixed
-     */
-    public function getUser_group_text()
-    {
-        $options = UserGroup::userGroupOptions();
-
-        return isset($options[$this->user_group]) ? $options[$this->user_group] : null;
-    }
-
-    /**
-     * 系统分组
-     *
-     * @return string|mixed
-     */
-    public function getSystem_group_text()
-    {
-        $options = UserGroup::systemGroupOptions();
-
-        return isset($options[$this->system_group]) ? $options[$this->system_group] : null;
-    }
-
-    /**
      * 人员列表
      *
      * @param null $role
@@ -386,35 +353,6 @@ class User extends ActiveRecord implements IdentityInterface
             ->where($where)
             ->indexBy('id')
             ->column();
-    }
-
-    /**
-     * 根据用户积分修正用户所在分组
-     *
-     * @param integer $userId
-     * @return boolean
-     * @throws \yii\db\Exception
-     */
-    public static function fixUserGroup($userId)
-    {
-        $db = Yii::$app->getDb();
-        $userId = (int) $userId;
-        $credits = $db->createCommand('SELECT [[credits_count]] FROM {{%user}} WHERE [[id]] = :id', [':id' => $userId])->queryScalar();
-        if ($credits !== false) {
-            $result = false;
-            $groups = $db->createCommand('SELECT [[alias]], [[min_credits]], [[max_credits]] FROM {{%user_group}} WHERE [[max_credits]] >= :credits', [':credits' => $credits])->queryAll();
-            foreach ($groups as $group) {
-                if ($credits >= $group['min_credits'] && $credits <= $group['max_credits']) {
-                    $db->createCommand()->update('{{%user}}', ['user_group' => $group['alias']], ['id' => $userId])->execute();
-                    $result = true;
-                    break;
-                }
-            }
-
-            return $result;
-        } else {
-            return false;
-        }
     }
 
     // Events
