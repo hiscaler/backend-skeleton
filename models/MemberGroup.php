@@ -118,6 +118,16 @@ class MemberGroup extends \yii\db\ActiveRecord
 
     // Events
 
+    private $_alias = null;
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        if (!$this->getIsNewRecord()) {
+            $this->_alias = $this->alias;
+        }
+    }
+
     /**
      * @param bool $insert
      * @return bool
@@ -140,6 +150,28 @@ class MemberGroup extends \yii\db\ActiveRecord
         } else {
             return false;
         }
+    }
+
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @throws \yii\db\Exception
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if (!$insert && $this->alias != $this->_alias) {
+            \Yii::$app->getDb()->createCommand('UPDATE {{%member}} SET [[group]] = :new WHERE [[group]] = :old', [':new' => $this->alias, ':old' => $this->_alias])->execute();
+        }
+    }
+
+    /**
+     * @throws \yii\db\Exception
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        \Yii::$app->getDb()->createCommand('UPDATE {{%member}} SET [[group]] = NULL WHERE [[group]] = :group', [':group' => $this->alias])->execute();
     }
 
 }
