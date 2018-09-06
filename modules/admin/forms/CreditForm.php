@@ -29,8 +29,8 @@ class CreditForm extends Model
     public function attributeLabels()
     {
         return [
-            'credits' => Yii::t('userCreditLog', 'Credits'),
-            'remark' => Yii::t('userCreditLog', 'Remark'),
+            'credits' => Yii::t('memberCreditLog', 'Credits'),
+            'remark' => Yii::t('memberCreditLog', 'Remark'),
         ];
     }
 
