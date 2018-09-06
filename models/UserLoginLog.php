@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use yadjet\helpers\UtilHelper;
 use Yii;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
@@ -47,7 +46,7 @@ class UserLoginLog extends ActiveRecord
         return [
             'user_id' => Yii::t('user', 'Username'),
             'login_ip' => Yii::t('userLoginLog', 'Login IP'),
-            'client_information' => Yii::t('userLoginLog', 'Client Informations'),
+            'client_information' => Yii::t('userLoginLog', 'Client Information'),
             'login_at' => Yii::t('userLoginLog', 'Login At'),
         ];
     }
@@ -60,16 +59,6 @@ class UserLoginLog extends ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id'])->select(['id', 'username']);
-    }
-
-    public static function write()
-    {
-        Yii::$app->getDb()->createCommand()->insert('{{%user_login_log}}', [
-            'user_id' => Yii::$app->getUser()->getId(),
-            'login_ip' => ip2long(Yii::$app->getRequest()->getUserIP()) ?: 0,
-            'client_information' => UtilHelper::getBrowserName(),
-            'login_at' => time(),
-        ])->execute();
     }
 
 }

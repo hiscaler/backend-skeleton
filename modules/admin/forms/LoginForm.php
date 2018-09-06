@@ -63,24 +63,13 @@ class LoginForm extends Model
      * Logs in a user using the provided username and password.
      *
      * @return boolean whether the user is logged in successfully
-     * @throws \yii\db\Exception
      */
     public function login()
     {
         if ($this->validate()) {
             $user = $this->getUser();
-            if (Yii::$app->getUser()->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0)) {
-                // Record login information
-                Yii::$app->getDb()->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
-                    ':loginIp' => ip2long(Yii::$app->getRequest()->getUserIP()) ?: 0,
-                    ':loginTime' => time(),
-                    ':id' => Yii::$app->getUser()->getId()
-                ])->execute();
-                // Write user login log
-                UserLoginLog::write();
-            }
 
-            return true;
+            return Yii::$app->getUser()->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
         } else {
             return false;
         }

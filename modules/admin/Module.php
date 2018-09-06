@@ -39,7 +39,8 @@ class Module extends \yii\base\Module
                 'identityCookie' => ['name' => '_identity_admin', 'httpOnly' => true],
                 'idParam' => '__id_admin',
                 'enableAutoLogin' => true,
-                'loginUrl' => ['/admin/default/login']
+                'loginUrl' => ['/admin/default/login'],
+                'on afterLogin' => ['app\models\User', 'afterLogin'],
             ],
             'formatter' => [
                 'class' => 'app\modules\admin\extensions\Formatter',

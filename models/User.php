@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\modules\admin\components\ApplicationHelper;
 use yadjet\behaviors\FileUploadBehavior;
+use yadjet\helpers\UtilHelper;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
@@ -341,6 +342,31 @@ class User extends ActiveRecord implements IdentityInterface
             ->where($where)
             ->indexBy('id')
             ->column();
+    }
+
+    /**
+     * 用户登录善后处理
+     *
+     * @param $event
+     * @throws \yii\db\Exception
+     */
+    public static function afterLogin($event)
+    {
+        $ip = ip2long(Yii::$app->getRequest()->getUserIP()) ?: 0;
+        $now = time();
+        $userId = \Yii::$app->getUser()->getId();
+        $db = \Yii::$app->getDb();
+        $db->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
+            ':loginIp' => $ip,
+            ':loginTime' => $now,
+            ':id' => $userId
+        ])->execute();
+        $db->createCommand()->insert('{{%user_login_log}}', [
+            'user_id' => $userId,
+            'login_ip' => $ip,
+            'client_information' => UtilHelper::getBrowserName(),
+            'login_at' => $now,
+        ])->execute();
     }
 
     // Events
