@@ -40,7 +40,7 @@ trait ActiveRecordHelperTrait
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $userId = \Yii::$app->getUser()->getIsGuest() ? 0 : \Yii::$app->getUser()->getId();
+            $userId = \Yii::$app->getUser()->getId() ?: 0;
             if ($insert) {
                 $this->created_at = $this->updated_at = time();
                 $this->created_by = $this->updated_by = $userId;
