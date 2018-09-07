@@ -51,7 +51,7 @@ class Module extends \yii\db\ActiveRecord
             [['name'], 'string', 'max' => 30],
             [['version'], 'string', 'max' => 10],
             [['icon', 'url'], 'string', 'max' => 100],
-            [['description'], 'string', 'max' => 255],
+            [['description'], 'string'],
             [['menus'], 'string'],
             [['alias'], 'unique'],
         ];

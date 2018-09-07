@@ -23,7 +23,7 @@ class m171207_031343_create_module_table extends Migration
             'version' => $this->string(10)->notNull()->comment('版本'),
             'icon' => $this->string(100)->comment('图标'),
             'url' => $this->string(100)->comment('URL'),
-            'description' => $this->string()->comment('描述'),
+            'description' => $this->text()->comment('描述'),
             'menus' => $this->text()->comment('菜单配置'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'created_by' => $this->integer()->notNull()->comment('添加人'),
