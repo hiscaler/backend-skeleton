@@ -2,7 +2,6 @@
 
 namespace app\forms;
 
-
 /**
  * 个人资料表单
  */

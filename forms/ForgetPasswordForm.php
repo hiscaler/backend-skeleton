@@ -36,6 +36,8 @@ class ForgetPasswordForm extends Model
      *
      * @param string $attribute
      * @param array $params
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
      */
     public function validateRequest($attribute, $params)
     {
@@ -50,18 +52,20 @@ class ForgetPasswordForm extends Model
     /**
      * Finds user by [[username]]
      *
-     * @return User|null
+     * @return false|string
+     * @throws \yii\db\Exception
+     * @throws \yii\base\Exception
      */
     protected function getUser()
     {
         if ($this->_user === null) {
             $db = Yii::$app->getDb();
-            $userId = $db->createCommand('SELECT [[id]] FROM {{%user}} WHERE [[username]] = :username AND [[email]] = :email AND type = :type AND [[status]] = :status', [':username' => $this->username, ':email' => $this->email, ':type' => User::TYPE_MEMBER, ':status' => User::STATUS_ACTIVE])->queryScalar();
+            $userId = $db->createCommand('SELECT [[id]] FROM {{%user}} WHERE [[username]] = :username AND [[email]] = :email AND [[status]] = :status', [':username' => $this->username, ':email' => $this->email, ':status' => User::STATUS_ACTIVE])->queryScalar();
             if ($userId) {
                 $this->_user = $userId;
                 // Update password reset token
                 $this->token = Yii::$app->getSecurity()->generateRandomString() . '_' . time();
-                $db = $db->createCommand()->update('{{%user}}', ['password_reset_token' => $this->token], ['id' => $userId])->execute();
+                $db->createCommand()->update('{{%user}}', ['password_reset_token' => $this->token], ['id' => $userId])->execute();
             }
         }
 

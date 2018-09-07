@@ -8,7 +8,7 @@ use yii\helpers\Inflector;
 /**
  * 动态表单
  *
- * @author hiscaler<hiscaler@gmail.com>
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class DynamicForm extends DynamicModel
 {
