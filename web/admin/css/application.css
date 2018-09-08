@@ -923,7 +923,6 @@ ul.list li em {
 .widget-module .bd .misc {
     line-height: 30px;
     margin-left: 42px;
-    border-bottom: #e9e9e9 solid 1px;
     margin-bottom: 5px;
 }
 
@@ -932,7 +931,38 @@ ul.list li em {
 }
 
 .widget-module .bd .description {
-    padding-left: 42px;
+    border: #e9e9e9 solid 1px;
+    margin-left: 42px;
+    padding: 5px 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.widget-module .bd .description .inner {
+    max-height: 100px;
+    overflow: hidden;
+}
+
+.widget-module .bd .description span.more {
+    position: relative;
+    display: block;
+    width: 17px;
+    height: 17px;
+    right: -5px;
+    bottom: 15px;
+    float: right;
+    background-position: center center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.widget-module .bd .description span.more-open {
+    background-image: url("../images/more-open.png");
+}
+
+.widget-module .bd .description span.more-close {
+    background-image: url("../images/more-close.png");
 }
 
 .widget-module .bd .description p {

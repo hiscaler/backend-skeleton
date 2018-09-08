@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
                                 </p>
                                 <div class="description">
-                                    <?= $module['description'] ?>
+                                    <div class="inner"><?= $module['description'] ?></div>
+                                    <span class="more more-open">&nbsp;</span>
                                 </div>
                             </div>
                         </li>
@@ -186,6 +187,20 @@ $this->params['breadcrumbs'][] = $this->title;
             });
 
             return false;
+        });
+
+        // 显示更多按钮操作
+        $('.more').on('click', function () {
+           var $this = $(this);
+           if ($this.hasClass('more-open')) {
+               $this.removeClass('more-open').addClass('more-close');
+               $this.parent().find('.inner').css({'max-height': '100%'});
+           } else {
+               $this.removeClass('more-close').addClass('more-open');
+               $this.parent().find('.inner').css({'max-height': '100px'});
+           }
+
+           return false;
         });
     });
 </script>
