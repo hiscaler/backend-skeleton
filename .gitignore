@@ -1,6 +1,6 @@
 .idea/
 /vendor
-/messages/zh-CN/*.model.php
+/messages/*/*.model.php
 
 /spa/node_modules
 /spa/src/je/*/*.js
