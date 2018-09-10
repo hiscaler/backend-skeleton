@@ -53,57 +53,74 @@ EOT;
         $schema = $db->getSchema();
         $tablePrefix = $db->tablePrefix;
         $tables = $coreTables ? Option::coreTables(true) : $schema->getTableNames('', true);
-        foreach ($tables as $table) {
-            if (str_replace($tablePrefix, '', $table) == 'migration') {
-                continue;
-            }
-            $this->stdout("Generate $table table dict..." . PHP_EOL);
-            $tableSchema = $schema->getTableSchema($table, true);
-            $tableRows = [];
-            $i = 1;
-            foreach ($tableSchema->columns as $column) {
-                $tableRows[] = [
-                    $i,
-                    $column->name,
-                    $column->type,
-                    $column->size,
-                    $column->allowNull ? 'Y' : 'N',
-                    $column->defaultValue,
-                    $column->comment,
-                ];
-                $i += 1;
-            }
-            $doc = "**$table**" . PHP_EOL;
-            $doc .= "---" . PHP_EOL;
-            $columnWidths = [];
-            foreach ($tableRows as $row) {
-                foreach ($row as $key => $column) {
-                    $width = mb_strlen($column);
-                    if (isset($columnWidths[$key])) {
-                        if ($width > $columnWidths[$key]) {
+        try {
+            foreach ($tables as $table) {
+                if (str_replace($tablePrefix, '', $table) == 'migration') {
+                    continue;
+                }
+                $this->stdout("Generate $table table dict..." . PHP_EOL);
+                $tableSchema = $schema->getTableSchema($table, true);
+                $tableRows = [];
+                $i = 1;
+                foreach ($tableSchema->columns as $column) {
+                    $comment = $column->comment;
+                    if ($column->isPrimaryKey) {
+                        $c = '主键';
+                        if ($column->autoIncrement) {
+                            $c = "自增$c";
+                        }
+                        if ($comment) {
+                            $comment .= " [$c]";
+                        } else {
+                            $comment = $c;
+                        }
+                    }
+                    $tableRows[] = [
+                        $i,
+                        $column->name,
+                        $column->type,
+                        $column->size,
+                        $column->allowNull ? 'Y' : '',
+                        $column->defaultValue,
+                        $comment,
+                    ];
+                    $i += 1;
+                }
+                $doc = "**$table**" . PHP_EOL;
+                $doc .= "---" . PHP_EOL;
+                $columnWidths = [];
+                foreach ($tableRows as $row) {
+                    foreach ($row as $key => $column) {
+                        $width = mb_strlen($column);
+                        if (isset($columnWidths[$key])) {
+                            if ($width > $columnWidths[$key]) {
+                                $columnWidths[$key] = $width;
+                            }
+                        } else {
                             $columnWidths[$key] = $width;
                         }
-                    } else {
-                        $columnWidths[$key] = $width;
                     }
                 }
-            }
 
-            $tableRows = array_merge($tableHeader, $tableRows);
-            foreach ($tableRows as $i => $row) {
-                if ($i > 1) {
-                    foreach ($row as $key => $item) {
-                        if (mb_strlen($item) < $columnWidths[$key]) {
-                            $row[$key] = str_pad($item, $columnWidths[$key], ' ', $key == 0 ? STR_PAD_LEFT : STR_PAD_RIGHT);
+                $tableRows = array_merge($tableHeader, $tableRows);
+                foreach ($tableRows as $i => $row) {
+                    if ($i > 1) {
+                        foreach ($row as $key => $item) {
+                            if (mb_strlen($item) < $columnWidths[$key]) {
+                                $row[$key] = str_pad($item, $columnWidths[$key], ' ', $key == 0 ? STR_PAD_LEFT : STR_PAD_RIGHT);
+                            }
                         }
                     }
+
+                    $doc .= '| ' . implode(' | ', $row) . ' | ' . PHP_EOL;
                 }
 
-                $doc .= '| ' . implode(' | ', $row) . ' | ' . PHP_EOL;
+                file_put_contents($path . DIRECTORY_SEPARATOR . str_replace($tablePrefix, '', $table) . ".md", $doc);
             }
-
-            file_put_contents($path . DIRECTORY_SEPARATOR . str_replace($tablePrefix, '', $table) . ".md", $doc);
+        } catch (Exception $e) {
+            $this->stderr("ERROR: " . $e->getMessage());
         }
+
         $this->stdout("Done.");
     }
 
