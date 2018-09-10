@@ -144,7 +144,25 @@ EOT;
         $toCmd = $toDb->createCommand();
         $schema = $fromDb->getSchema();
         $tables = $schema->getTableNames();
-        $toDb->createCommand("SET FOREIGN_KEY_CHECKS = 0")->execute();
+        switch ($toDb->getDriverName()) {
+            case 'mysql':
+                $foreignKeySql = [
+                    'on' => 'SET FOREIGN_KEY_CHECKS = 1',
+                    'off' => 'SET FOREIGN_KEY_CHECKS = 0'
+                ];
+                break;
+
+            case 'sqlite':
+                $foreignKeySql = [
+                    'on' => 'PRAGMA foreign_keys = ON',
+                    'off' => 'PRAGMA foreign_keys = OFF'
+                ];
+                break;
+
+            default:
+                $foreignKeySql = null;
+        }
+        $foreignKeySql && $toDb->createCommand($foreignKeySql['off'])->execute(); // 临时取消外键约束
         foreach ($tables as $table) {
             $toCmd->truncateTable($table)->execute();
             $query = (new Query())
@@ -159,7 +177,7 @@ EOT;
             }
             Console::endProgress();
         }
-        $toDb->createCommand("SET FOREIGN_KEY_CHECKS = 1")->execute();
+        $foreignKeySql && $toDb->createCommand($foreignKeySql['on'])->execute();
         $this->stdout("Done.");
     }
 
