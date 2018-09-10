@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\widgets;
 
+use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\ArrayHelper;
@@ -14,18 +15,42 @@ use yii\helpers\ArrayHelper;
 class MainMenu extends Widget
 {
 
+    /**
+     * @return array
+     * @throws \Throwable
+     */
     public function getItems()
     {
         $controllerId = $this->view->context->id;
         $globalControllerIds = ['global'];
         $modules = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
         $firstControllerId = null;
+        $requireCheckAuth = ApplicationHelper::hasRequireCheckAuth();
+        if ($requireCheckAuth) {
+            $user = Yii::$app->getUser();
+        } else {
+            $user = null;
+        }
         foreach ($modules as $ms) {
             foreach ($ms as $item) {
+                if (!isset($item['forceEmbed']) || $item['forceEmbed'] == false) {
+                    continue;
+                }
+                $urlRoute = explode('/', $item['url'][0]);
+                if ($requireCheckAuth) {
+                    $urlArray = $urlRoute;
+                    if ($urlArray[0] == 'admin') {
+                        array_shift($urlArray);
+                    }
+                    if (!$user->can('admin-' . implode('.', $urlArray))) {
+                        continue;
+                    }
+                }
+
                 $urlControllerId = null;
-                foreach (explode('/', $item['url'][0]) as $d) {
-                    if (!empty($d)) {
-                        $urlControllerId = $d;
+                foreach ($urlRoute as $r) {
+                    if (!empty($r)) {
+                        $urlControllerId = $r;
                         break;
                     }
                 }
@@ -54,6 +79,10 @@ class MainMenu extends Widget
         return $items;
     }
 
+    /**
+     * @return string
+     * @throws \Throwable
+     */
     public function run()
     {
         return $this->render('MainMenu', [
