@@ -87,7 +87,6 @@ class AccountController extends Controller
         }
 
         return $this->render('change-password', [
-            'user' => $user,
             'model' => $model,
         ]);
     }
