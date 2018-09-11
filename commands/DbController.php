@@ -86,8 +86,8 @@ EOT;
                     ];
                     $i += 1;
                 }
-                $doc = "**$table**" . PHP_EOL;
-                $doc .= "---" . PHP_EOL;
+                $doc = $table . PHP_EOL;
+                $doc .= str_repeat("=", strlen($table)) . PHP_EOL;
                 $columnWidths = [];
                 foreach ($tableRows as $row) {
                     foreach ($row as $key => $column) {
