@@ -15,7 +15,7 @@ use yii\web\NotFoundHttpException;
  * @package app\modules\admin\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class HelpController extends Controller
+class HelpController extends \yii\web\Controller
 {
 
     private function getDocs()
