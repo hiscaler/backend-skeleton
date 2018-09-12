@@ -5,6 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\Module;
 use cebe\markdown\GithubMarkdown;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
 use yii\web\NotFoundHttpException;
 
@@ -22,7 +23,7 @@ class HelpController extends \yii\web\Controller
     {
         $docs = [];
         $markdown = new GithubMarkdown();
-        $appPath = Yii::getAlias('@app');
+        $appPath = FileHelper::normalizePath(Yii::getAlias('@app'), '/');
         $files = FileHelper::findFiles($appPath . '/docs');
         foreach (Module::map() as $alias => $name) {
             $path = $appPath . "/modules/api/modules/{$alias}/docs";
@@ -31,11 +32,16 @@ class HelpController extends \yii\web\Controller
             }
         }
         foreach ($files as $file) {
+            $file = FileHelper::normalizePath($file, '/');
             $content = file_get_contents($file);
             if ($content === false) {
                 continue;
             }
+
             $filename = basename($file, '.md');
+            if (strpos($file, $appPath . '/docs/db-dict/') === 0) {
+                $filename = 'db-dict.' . $filename;
+            }
             preg_match("/modules\/api\/modules\/(\w.*)\/docs/", $file, $matches);
             if ($matches) {
                 $filename = $matches[1] . ".$filename";
@@ -47,12 +53,28 @@ class HelpController extends \yii\web\Controller
             } else {
                 $title = $filename;
             }
+
             $navigation = [];
-            $docs[$filename] = [
-                'title' => $title,
-                'content' => $content,
-                'navigation' => $navigation
-            ];
+            if (strpos($filename, 'db-dict.') === 0) {
+                if (!isset($docs['db-dict'])) {
+                    $docs['db-dict'] = [
+                        'title' => '数据字典',
+                    ];
+                } else {
+                    $filename = substr($filename, 8);
+                    $docs['db-dict']['items'][$filename] = [
+                        'title' => $title,
+                        'content' => $content,
+                        'navigation' => $navigation
+                    ];
+                }
+            } else {
+                $docs[$filename] = [
+                    'title' => $title,
+                    'content' => $content,
+                    'navigation' => $navigation
+                ];
+            }
         }
 
         return $docs;
@@ -68,20 +90,35 @@ class HelpController extends \yii\web\Controller
     public function actionIndex($file = 'about')
     {
         $docs = $this->getDocs();
-        if (isset($docs[$file])) {
+        $fileKey = $file;
+        if (strpos($fileKey, '.')) {
+            list($d1, $d2) = explode('.', $fileKey);
+            $fileKey = "{$d1}.items.{$d2}";
+        }
+        if (ArrayHelper::getValue($docs, $fileKey)) {
             $this->layout = false;
             $sections = [];
             foreach ($docs as $key => $doc) {
-                $sections[] = [
+                $sections[$key] = [
                     'label' => $doc['title'],
                     'url' => ['help/index', 'file' => $key],
                     'active' => $file == $key,
                 ];
+                if (isset($doc['items']) && $doc['items']) {
+                    foreach ($doc['items'] as $k => $v) {
+                        $sections[$key]['items'][] = [
+                            'label' => $v['title'],
+                            'url' => ['help/index', 'file' => "$key.$k"],
+                            'active' => $file == "$key.$k",
+                        ];
+                    }
+                    $sections[$key]['url'] = $sections[$key]['items'][0]['url'];
+                }
             }
 
             return $this->render('index.php', [
                 'sections' => $sections,
-                'doc' => $docs[$file]
+                'doc' => ArrayHelper::getValue($docs, $fileKey)
             ]);
         }
 
