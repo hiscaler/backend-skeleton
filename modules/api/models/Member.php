@@ -3,6 +3,7 @@
 namespace app\modules\api\models;
 
 use app\models\Meta;
+use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\web\IdentityInterface;
 
@@ -88,7 +89,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['access_token'], 'string'],
             [['access_token'], 'unique'],
             [['password_reset_token'], 'unique'],
-            [['status'], 'default', 'value' => self::STATUS_PENDING],
+            [['status'], 'default', 'value' => ApplicationHelper::getConfigValue('member.register.status', self::STATUS_PENDING)],
         ];
     }
 
@@ -171,7 +172,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             $tokens = explode('.', $token);
             if (isset($tokens[2])) {
                 list (, , $expire) = $tokens;
-                $accessTokenExpire = isset(Yii::$app->params['member.accessTokenExpire']) ? Yii::$app->params['member.accessTokenExpire'] : 86400;
+                $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
                 $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
 
                 return ((int) $expire + $accessTokenExpire) > time() ? $member : null;
@@ -231,7 +232,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         }
 
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
-        $expire = Yii::$app->params['user . passwordResetTokenExpire'];
+        $expire = ApplicationHelper::getConfigValue('user.passwordResetTokenExpire');
 
         return $timestamp + $expire >= time();
     }

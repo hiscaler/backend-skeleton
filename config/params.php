@@ -4,6 +4,12 @@ return [
     'adminEmail' => 'admin@example.com',
     'user.passwordResetTokenExpire' => 1800, // 密码重置有效时间
     'member.accessTokenExpire' => 86400, // 会员 Access Token 有效期（单位为秒，默认 24 小时）
+    // 会员
+    'member' => [
+        'register' => [
+            'status' => 0, // 会员注册默认值（待审核）
+        ]
+    ],
     'uninstall.module.after.droptable' => false,// 卸载模块后是否同步删除模块相关表
     'api.db.cache.time' => 300, // 是否激活 API 数据库查询缓存，默认 5 分钟（以秒为单位），如果设置为 null 则表示不启用缓存，
     'ignorePassword' => false, // 是否忽略密码（只验证用户名，调试的时候用）

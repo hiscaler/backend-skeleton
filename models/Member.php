@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\modules\admin\components\ApplicationHelper;
 use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 use yii\web\IdentityInterface;
@@ -90,7 +91,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['access_token'], 'string'],
             [['access_token'], 'unique'],
             [['password_reset_token'], 'unique'],
-            [['status'], 'default', 'value' => self::STATUS_PENDING],
+            [['status'], 'default', 'value' => ApplicationHelper::getConfigValue('member.register.status', self::STATUS_PENDING)],
             ['avatar', 'file',
                 'extensions' => 'jpg,gif,png,jpeg',
                 'minSize' => 1024,
@@ -255,7 +256,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         }
 
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
-        $expire = Yii::$app->params['user . passwordResetTokenExpire'];
+        $expire = ApplicationHelper::getConfigValue('user.passwordResetTokenExpire');
 
         return $timestamp + $expire >= time();
     }
