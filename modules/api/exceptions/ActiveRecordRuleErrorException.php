@@ -3,9 +3,10 @@
 namespace app\modules\api\exceptions;
 
 /**
- * Class RuleErrorException
- * ActiveRecord 规则错误
+ * Class ActiveRecordRuleErrorException
+ *ActiveRecord 规则错误
  *
+ * @package app\modules\api\exceptions
  * @author hiscaler <hiscaler@gmail.com>
  */
 class ActiveRecordRuleErrorException extends UserException

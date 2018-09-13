@@ -17,9 +17,9 @@ class UtilsHelper
     /**
      * 只保留 $fields 提供的字段内容
      *
-     * @param array $selectColumns // 所有查询的字段名称
-     * @param array $fields // 请求查询的字段名称
-     * @param array $relatedFields // 请求查询的字段需要的附加字段（比如查询 shortTitle 需要 title 属性，根据 model 的 fields 设定）
+     * @param array $selectColumns 所有查询的字段名称
+     * @param string $fields 请求查询的字段名称
+     * @param array $relatedFields 请求查询的字段需要的附加字段（比如查询 shortTitle 需要 title 属性，根据 model 的 fields 设定）
      * @return array
      */
     public static function filterQuerySelectColumns($selectColumns, $fields, $relatedFields = [])
@@ -56,7 +56,8 @@ class UtilsHelper
     }
 
     /**
-     * 调整数组的键名称（created_at => createdAt）
+     * 调整数组的键名称
+     * created_at => createdAt
      *
      * @param array $rawData
      * @return array

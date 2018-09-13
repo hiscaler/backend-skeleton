@@ -5,7 +5,7 @@ namespace app\modules\api\exceptions;
 /**
  * Class UserException
  *
- * @package backend\exceptions
+ * @package app\modules\api\exceptions
  * @author hiscaler <hiscaler@gmail.com>
  */
 class UserException extends \yii\base\UserException
