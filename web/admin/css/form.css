@@ -19,17 +19,16 @@ Description: 表单样式
 
 .form-outside .form fieldset {
     border: #E9E9E9 solid 1px;
-    margin: 10px 20px;
+    margin: 10px 1%;
     border-radius: 5px;
 }
 
-.form-outside .form fieldset .form-group {
+.form-outside .form fieldset .last .form-group {
     background: none;
-    border-bottom: #E9E9E9 solid 1px;
 }
 
 .form-outside .form fieldset .form-group label.control-label {
-    width: 78px;
+    width: 110px;
 }
 
 .form-outside .form fieldset legend {
@@ -49,6 +48,10 @@ Description: 表单样式
     background: transparent url(../images/dot.gif) repeat-x left bottom;
 }
 
+.form-outside .form fieldset .last {
+    background: none;
+}
+
 .form .entry:after, .form .form-group:after {
     content: "\0020";
     display: block;
@@ -58,7 +61,8 @@ Description: 表单样式
     overflow: hidden;
 }
 
-.form .entry .form-group {
+.form .entry .form-group,
+.form .entry fieldset .form-group {
     width: 50%;
     clear: none;
     float: left;
