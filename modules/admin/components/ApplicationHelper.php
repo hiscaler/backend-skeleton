@@ -4,6 +4,12 @@ namespace app\modules\admin\components;
 
 use Yii;
 
+/**
+ * Class ApplicationHelper
+ *
+ * @package app\modules\admin\components
+ * @author hiscler <hiscaler@gmail.com>
+ */
 class ApplicationHelper
 {
 

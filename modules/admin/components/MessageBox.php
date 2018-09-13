@@ -8,6 +8,7 @@ use yii\base\Widget;
 /**
  * 消息盒子
  *
+ * @author hiscler <hiscaler@gmail.com>
  */
 class MessageBox extends Widget
 {
