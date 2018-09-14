@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 
+use app\modules\admin\components\ApplicationHelper;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Member;
 use Yii;
@@ -92,7 +93,7 @@ class PassportController extends BaseController
 
         $t = explode('_', $token);
         $expiredTime = end($t);
-        $accessTokenExpire = isset(Yii::$app->params['member.accessTokenExpire']) ? Yii::$app->params['member.accessTokenExpire'] : 86400;
+        $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
         $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
         if (is_int($expiredTime) && ($expiredTime + $accessTokenExpire) <= time()) {
             $newToken = $member->generateAccessToken();

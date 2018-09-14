@@ -3,7 +3,7 @@
 namespace app\modules\api\models;
 
 use app\models\Meta;
-use app\modules\admin\components\ApplicationHelper;
+use app\modules\api\components\ApplicationHelper;
 use Yii;
 use yii\web\IdentityInterface;
 
