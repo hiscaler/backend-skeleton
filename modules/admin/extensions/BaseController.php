@@ -3,6 +3,7 @@
 namespace app\modules\admin\extensions;
 
 use app\models\Lookup;
+use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\helpers\Inflector;
 use yii\web\Controller;
@@ -33,7 +34,7 @@ class BaseController extends Controller
 
             $authManager = Yii::$app->getAuthManager();
             if ($authManager) {
-                $rbacConfig = isset(Yii::$app->params['rbac']) ? Yii::$app->params['rbac'] : [];
+                $rbacConfig = ApplicationHelper::getConfigValue('rbac', []);
                 $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
                 if ($requireCheckAuth) {
                     $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];

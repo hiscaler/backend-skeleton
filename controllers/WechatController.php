@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Constant;
 use app\models\Member;
+use app\modules\api\components\ApplicationHelper;
 use EasyWeChat\Foundation\Application;
 use Yii;
 use yii\base\InvalidCallException;
@@ -11,6 +12,14 @@ use yii\base\InvalidCallException;
 class WechatController extends Controller
 {
 
+    /**
+     * @param null $redirectUrl
+     * @param int $redirect
+     * @throws \yii\base\Exception
+     * @throws \yii\base\ExitException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public function actionAuth($redirectUrl = null, $redirect = 1)
     {
         if ($redirectUrl) {
@@ -77,7 +86,7 @@ class WechatController extends Controller
                 if ($memberId) {
                     $member = Member::findByOpenid($openid);
                     $webUser->login($member, 3600 * 24 * 30);
-                    $accessTokenExpire = isset(Yii::$app->params['user.accessTokenExpire']) ? (int) Yii::$app->params['user.accessTokenExpire'] : 7200;
+                    $accessTokenExpire = ApplicationHelper::getConfigValue('user.accessTokenExpire', 7200);
                     $accessTokenExpire = $accessTokenExpire ?: 7200;
                     $accessToken = Yii::$app->getSecurity()->generateRandomString() . '.' . (time() + $accessTokenExpire);
                     // Update user access_token value

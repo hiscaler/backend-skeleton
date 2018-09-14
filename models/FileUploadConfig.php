@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\caching\DbDependency;
 use yii\helpers\ArrayHelper;
@@ -193,7 +194,7 @@ class FileUploadConfig extends BaseActiveRecord
     public static function validModelNames()
     {
         $names = [];
-        $contentModels = ArrayHelper::getValue(Yii::$app->params, 'contentModules', []);
+        $contentModels = ApplicationHelper::getConfigValue('contentModules', []);
         $rawData = Yii::$app->getDb()->createCommand('SELECT DISTINCT([[model_name]]) FROM ' . static::tableName())->queryColumn();
         foreach ($rawData as $name) {
             if (isset($contentModels[$name]['label'])) {

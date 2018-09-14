@@ -4,6 +4,7 @@ namespace app\modules\admin\forms;
 
 use app\models\User;
 use app\models\UserLoginLog;
+use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\base\Model;
 
@@ -33,7 +34,7 @@ class LoginForm extends Model
             ['password', 'validatePassword'],
         ];
 
-        if (isset(Yii::$app->params['hideCaptcha']) && !Yii::$app->params['hideCaptcha']) {
+        if (ApplicationHelper::getConfigValue('hideCaptcha') === false) {
             $rules[] = ['verifyCode', 'captcha', 'captchaAction' => '/admin/default/captcha'];
         }
 
@@ -52,7 +53,7 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user ||
-                (isset(Yii::$app->params['ignorePassword']) && Yii::$app->params['ignorePassword'] == false && !$user->validatePassword($this->password))
+                (ApplicationHelper::getConfigValue('ignorePassword') === false && !$user->validatePassword($this->password))
             ) {
                 $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
             }

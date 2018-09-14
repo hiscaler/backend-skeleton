@@ -24,7 +24,7 @@ class GlobalControlPanel extends Widget
     public function getItems()
     {
         $user = \Yii::$app->getUser();
-        $rbacConfig = isset(Yii::$app->params['rbac']) ? Yii::$app->params['rbac'] : [];
+        $rbacConfig = ApplicationHelper::getConfigValue('rbac', []);
         $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
         if ($requireCheckAuth) {
             $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
@@ -39,7 +39,7 @@ class GlobalControlPanel extends Widget
         }
         $items = [];
         $controllerId = Yii::$app->controller->id;
-        $builtinModules = ArrayHelper::getValue(Yii::$app->params, 'modules', []);
+        $builtinModules = ApplicationHelper::getConfigValue('modules', []);
 
         foreach ($builtinModules as $group => $ms) {
             $rawItems = [];

@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
             if ($t.hasClass('install')) {
                 _doInstallUninstall($t);
             } else {
-                var droptableMessage = '<?= (isset(Yii::$app->params['uninstall.module.after.droptable']) && Yii::$app->params['uninstall.module.after.droptable'] === true) ? '卸载后将同步删除模块相关数据表！！！' : '' ?>';
+                var droptableMessage = '<?= \app\modules\admin\components\ApplicationHelper::getConfigValue('uninstall.module.after.droptable') === true ? '卸载后将同步删除模块相关数据表！！！' : '' ?>';
                 layer.confirm('您是否确定卸载"' + $t.parent().parent().find('em').html() + '"模块？' + droptableMessage, {
                     btn: ['确定卸载', '取消'] //按钮
                 }, function (index) {

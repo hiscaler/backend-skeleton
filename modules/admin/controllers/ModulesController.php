@@ -412,7 +412,7 @@ class ModulesController extends Controller
         $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
         if ($moduleId) {
             try {
-                if (isset(Yii::$app->params['uninstall.module.after.droptable']) && Yii::$app->params['uninstall.module.after.droptable'] === true) {
+                if (ApplicationHelper::getConfigValue('uninstall.module.after.droptable') === true) {
                     $this->_migrate($alias, 'down');
                 }
                 $db->createCommand()->delete('{{%module}}', ['id' => $moduleId])->execute();
