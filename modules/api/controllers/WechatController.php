@@ -117,24 +117,24 @@ class WechatController extends BaseController
      * JsSdk 配置值
      *
      * @param null $url
-     * @param string $apis
+     * @param string $api
      * @param bool $debug
      * @param bool $beta
      * @return array|string
      */
-    public function actionJssdk($url = null, $apis = '', $debug = false, $beta = true)
+    public function actionJssdk($url = null, $api = '', $debug = false, $beta = true)
     {
-        $validApis = ['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'];
-        $apis = array_filter(explode(',', $apis), function ($api) use ($validApis) {
-            return $api && in_array($api, $validApis);
+        $validApi = ['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'];
+        $api = array_filter(explode(',', $api), function ($api) use ($validApi) {
+            return $api && in_array($api, $validApi);
         });
-        empty($apis) && $apis = ['checkJsApi'];
+        empty($api) && $api = ['checkJsApi'];
 
         $application = new Application(Yii::$app->params['wechat']);
         $js = $application->js;
         $url = $url ? urldecode($url) : Yii::$app->getRequest()->getHostInfo();
         $js->setUrl($url);
-        $config = $js->config($apis, $debug, $beta, false);
+        $config = $js->config($api, $debug, $beta, false);
 
         return $config;
     }
