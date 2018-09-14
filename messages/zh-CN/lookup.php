@@ -41,7 +41,7 @@ return [
     'Time Format' => '时间格式',
     'Datetime Format' => '日期时间格式',
     'User Role' => '会员角色',
-    'Member Signup Default Status' => '会员注册默认状态',
-    'Member Signup Default Credits' => '会员注册赠送积分',
-    'Member Signup Referral Credits' => '会员注册推荐赠送积分',
+    'Member Register Default Status' => '会员注册默认状态',
+    'Member Register Default Credits' => '会员注册赠送积分',
+    'Member Register Referral Credits' => '会员注册推荐赠送积分',
 ];

@@ -174,7 +174,7 @@ EOT;
                     'value' => 'php:Y-m-d H:i:s',
                 ],
                 // 会员注册默认状态
-                'system.member.signup.default.status' => [
+                'system.member.register.default.status' => [
                     'returnType' => Lookup::RETURN_TYPE_INTEGER,
                     'inputMethod' => Lookup::INPUT_METHOD_DROPDOWNLIST,
                     'inputValue' => implode(PHP_EOL, [
@@ -185,13 +185,13 @@ EOT;
                     'value' => Member::STATUS_ACTIVE,
                 ],
                 // 会员注册赠送积分
-                'system.member.signup.default.credits' => [
+                'system.member.register.default.credits' => [
                     'returnType' => Lookup::RETURN_TYPE_INTEGER,
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
                     'value' => 0,
                 ],
                 // 会员推荐注册赠送积分
-                'system.member.signup.referral.credits' => [
+                'system.member.register.referral.credits' => [
                     'returnType' => Lookup::RETURN_TYPE_INTEGER,
                     'inputMethod' => Lookup::INPUT_METHOD_TEXT,
                     'value' => 0,
