@@ -32,10 +32,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
                                     <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
                                 </p>
-                                <div class="description">
-                                    <div class="inner"><?= $module['description'] ?></div>
-                                    <span class="more more-open">&nbsp;</span>
-                                </div>
+                                <?php if ($module['description']): ?>
+                                    <div class="description">
+                                        <div class="inner"><?= $module['description'] ?></div>
+                                        <span class="more more-open">&nbsp;</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </li>
                     <?php endforeach; ?>
@@ -63,10 +65,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
                                     <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
                                 </p>
-                                <div class="description">
-                                    <div class="inner"><?= $module['description'] ?></div>
-                                    <span class="more more-open">&nbsp;</span>
-                                </div>
+                                <?php if ($module['description']): ?>
+                                    <div class="description">
+                                        <div class="inner"><?= $module['description'] ?></div>
+                                        <span class="more more-open">&nbsp;</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </li>
                     <?php endforeach; ?>
