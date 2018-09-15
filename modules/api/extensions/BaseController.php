@@ -72,12 +72,4 @@ class BaseController extends Controller
         ];
     }
 
-    protected function send($data)
-    {
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $data,
-        ]);
-    }
-
 }
