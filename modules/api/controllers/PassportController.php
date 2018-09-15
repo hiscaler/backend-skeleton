@@ -38,7 +38,7 @@ class PassportController extends BaseController
     }
 
     /**
-     * 用户名和密码登录认证
+     * 登录认证
      *
      * @return array
      * @throws BadRequestHttpException
