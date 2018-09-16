@@ -48,7 +48,7 @@ class WechatMember extends \yii\db\ActiveRecord
             'province',
             'city',
             'language',
-            'headimgurl',
+            'headImgUrl' => 'headimgurl',
             'subscribeTime' => 'subscribe_time',
             'unionid',
         ];
