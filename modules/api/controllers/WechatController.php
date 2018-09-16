@@ -134,9 +134,8 @@ class WechatController extends BaseController
         $js = $application->js;
         $url = $url ? urldecode($url) : Yii::$app->getRequest()->getHostInfo();
         $js->setUrl($url);
-        $config = $js->config($api, $debug, $beta, false);
 
-        return $config;
+        return $js->config($api, $debug, $beta, false);
     }
 
 }
