@@ -178,11 +178,11 @@ class ApplicationHelper
             $has = true;
         } elseif (strpos($key, '.') !== false) {
             $levels = explode('.', $key);
-            $c = count($levels) - 1;
+            $n = count($levels) - 1;
             foreach ($levels as $i => $level) {
                 if (array_key_exists($level, $params)) {
                     $params = $params[$level];
-                    if ($i == $c) {
+                    if ($i == $n) {
                         $has = true;
                     }
                 } else {
