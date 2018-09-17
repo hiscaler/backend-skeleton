@@ -75,4 +75,7 @@ if (class_exists('\yii\queue\db\Queue')) {
     ];
 }
 
+// Set `@webroot` alias in console mode
+Yii::setAlias('@webroot', \yii\helpers\FileHelper::normalizePath(__DIR__ . '/../web/', '/'));
+
 return $config;
