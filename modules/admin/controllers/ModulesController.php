@@ -408,12 +408,21 @@ class ModulesController extends Controller
     {
         $success = false;
         $errorMessage = null;
+        $alias = trim($alias);
         $db = Yii::$app->getDb();
-        $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => trim($alias)])->queryScalar();
+        $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => $alias])->queryScalar();
         if ($moduleId) {
             try {
                 if (ApplicationHelper::getConfigValue('uninstall.module.after.droptable') === true) {
                     $this->_migrate($alias, 'down');
+                    // 清理掉模块使用过程中产生的相关数据
+                    $files = FileHelper::findFiles("@app/modules/admin/modules/$alias/models");
+                    foreach ($files as $file) {
+                        $class = "app\\modules\\admin\\modules\\$alias\\" . basename($file, 'php');
+                        foreach (['entity_label', 'file_upload_config'] as $table) {
+                            $db->createCommand()->delete("{{%$table}}", ['model_name' => $class])->execute();
+                        }
+                    }
                 }
                 $db->createCommand()->delete('{{%module}}', ['id' => $moduleId])->execute();
                 $success = true;
