@@ -161,6 +161,11 @@ class Option
         return $models;
     }
 
+    /**
+     * 语种
+     *
+     * @return array
+     */
     public static function languages()
     {
         return [
