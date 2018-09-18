@@ -3,6 +3,7 @@
 namespace app\modules\api\modules\vote\models;
 
 use app\models\Category;
+use Yii;
 
 /**
  * This is the model class for table "{{%vote}}".
@@ -83,7 +84,7 @@ class Vote extends \yii\db\ActiveRecord
         if ($this->begin_datetime > $now && $this->end_datetime < $now) {
             $ip = Yii::$app->getRequest()->getUserIP();
             if ($this->interval_seconds) {
-                $lastPostDatetime = \Yii::$app->getDb()->createCommand('SELECT [[post_datetime]] FROM {{%vote_log}} WHERE [[vote_id]] = :voteId AND [[ip_address]] = :ip ORDER BY [[post_datetime]] DESC', [':voteId' => $this->id, ':ip' => $ip])->queryScalar();
+                $lastPostDatetime = Yii::$app->getDb()->createCommand('SELECT [[post_datetime]] FROM {{%vote_log}} WHERE [[vote_id]] = :voteId AND [[ip_address]] = :ip ORDER BY [[post_datetime]] DESC', [':voteId' => $this->id, ':ip' => $ip])->queryScalar();
                 if (!$lastPostDatetime || ($lastPostDatetime + $this->interval_seconds) < $now) {
                     $canVoting = true;
                 }

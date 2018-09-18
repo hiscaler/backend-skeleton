@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -93,11 +92,10 @@ $this->params['menus'] = [
         background-color: #e3e3e3;
         float: left;
         display: inline;
-        margin: 10px 0;
-        margin-right: 10px;
+        margin: 10px 10px 10px 0;
     }
 
-    .vote-friendly-result .precent {
+    .vote-friendly-result .percent {
         background-color: #0192ad;
         border-right: 1px solid #fff;
         height: 14px;

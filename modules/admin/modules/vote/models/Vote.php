@@ -94,8 +94,8 @@ class Vote extends \yii\db\ActiveRecord
             $totalCount += $option['votes_count'];
         }
         foreach ($options as $item) {
-            $precent = $totalCount ? $formatter->asPercent($item['votes_count'] / $totalCount, 2) : '0%';
-            $output .= '<li class="clearfix"><div class="option">' . $item['title'] . '</div><div class="bars"><div class="bar"><div class="precent" style="width: ' . $precent . '"></div></div><div class="data">' . $precent . '</div></div><div class="counter">' . $item['votes_count'] . '</div></li>';
+            $percent = $totalCount ? $formatter->asPercent($item['votes_count'] / $totalCount, 2) : '0%';
+            $output .= '<li class="clearfix"><div class="option">' . $item['title'] . '</div><div class="bars"><div class="bar"><div class="percent" style="width: ' . $percent . '"></div></div><div class="data">' . $percent . '</div></div><div class="counter">' . $item['votes_count'] . '</div></li>';
         }
 
         return $output . '</ul>';

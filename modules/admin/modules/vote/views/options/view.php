@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => '投票管理', 'url' => ['votes/index']];
-$this->params['breadcrumbs'][] = ['label' => "{$model->vote->title} 投票选项设置", 'url' => ['votes/index', 'voteId' => $vote['id']]];
+$this->params['breadcrumbs'][] = ['label' => "{$model->vote->title} 投票选项设置", 'url' => ['votes/index', 'voteId' => $model->vote_id]];
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [

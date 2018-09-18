@@ -52,7 +52,6 @@ class DefaultController extends BaseController
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -118,6 +117,8 @@ class DefaultController extends BaseController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {

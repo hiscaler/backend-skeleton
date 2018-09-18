@@ -43,10 +43,11 @@ class OptionsController extends Controller
     }
 
     /**
-     * Lists all VoteOption models.
+     * Lists all  VoteOption models.
      *
      * @param $voteId
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionIndex($voteId)
     {
@@ -79,7 +80,9 @@ class OptionsController extends Controller
      * Creates a new VoteOption model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
+     * @param $voteId
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionCreate($voteId)
     {
@@ -127,6 +130,8 @@ class OptionsController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
