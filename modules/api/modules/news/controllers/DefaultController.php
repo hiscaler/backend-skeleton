@@ -9,6 +9,7 @@ use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\Constant;
 use app\modules\api\modules\news\models\News;
 use app\modules\api\modules\news\models\NewsContent;
+use Exception;
 use GuzzleHttp\Client;
 use RuntimeException;
 use yadjet\helpers\StringHelper;
@@ -16,6 +17,9 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
 use yii\helpers\FileHelper;
+use yii\helpers\Inflector;
+use yii\web\HttpException;
+use yii\web\NotFoundHttpException;
 
 /**
  * /api/news/default
@@ -331,6 +335,8 @@ class DefaultController extends BaseController
      *
      * @param integer $id
      * @return array
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
      */
     public function actionUpdateClicksCount($id)
     {
@@ -373,7 +379,7 @@ class DefaultController extends BaseController
                     $file = \yii\web\UploadedFile::getInstanceByName('picture_path');
                     if ($file instanceof \yii\web\UploadedFile && $file->error != UPLOAD_ERR_NO_FILE) {
                         $model->is_picture_news = Constant::BOOLEAN_TRUE;
-                        $fileUrl = '/uploads/' . date('Ymd') . '/' . \yadjet\helpers\StringHelper::generateRandomString() . '.' . $file->getExtension();
+                        $fileUrl = '/uploads/' . date('Ymd') . '/' . StringHelper::generateRandomString() . '.' . $file->getExtension();
                         $path = Yii::getAlias('@app/web') . $fileUrl;
                         $model->picture_path = $fileUrl;
                         @mkdir(pathinfo($path, PATHINFO_DIRNAME), 0777, true);
@@ -429,15 +435,15 @@ class DefaultController extends BaseController
                                         break;
 
                                     case 'image/gif':
-                                        $ext == 'gif';
+                                        $ext = 'gif';
                                         break;
 
                                     case 'image/png':
-                                        $ext == 'png';
+                                        $ext = 'png';
                                         break;
 
                                     case 'image/vnd.wap.wbmp':
-                                        $ext == 'wbmp';
+                                        $ext = 'wbmp';
                                         break;
 
                                     default:
