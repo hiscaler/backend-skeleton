@@ -91,9 +91,13 @@ class HelpController extends \yii\web\Controller
     {
         $docs = $this->getDocs();
         $fileKey = $file;
-        if (strpos($fileKey, '.')) {
+        if (strpos($fileKey, '.') !== false) {
             list($d1, $d2) = explode('.', $fileKey);
-            $fileKey = "{$d1}.items.{$d2}";
+            if ($d1 == 'db-dict') {
+                $fileKey = "{$d1}.items.{$d2}";
+            } else {
+                $fileKey = "$d1.$d2";
+            }
         }
         if (ArrayHelper::getValue($docs, $fileKey)) {
             $this->layout = false;
