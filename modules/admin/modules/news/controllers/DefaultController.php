@@ -9,6 +9,7 @@ use app\modules\admin\forms\DynamicForm;
 use app\modules\admin\modules\news\models\News;
 use app\modules\admin\modules\news\models\NewsContent;
 use app\modules\admin\modules\news\models\NewsSearch;
+use Exception;
 use Yii;
 use yii\base\Model;
 use yii\filters\AccessControl;
@@ -51,10 +52,11 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Lists all News models.
+     * 资讯数据列表
      *
      * @rbacDescription 资讯数据列表查看权限
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -69,7 +71,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Displays a single News model.
+     * 资讯详情查看
      *
      * @rbacDescription 资讯详情查看权限
      * @param integer $id
@@ -84,11 +86,13 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Creates a new News model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 添加资讯
      *
      * @rbacDescription 资讯添加权限
      * @return mixed
+     * @throws HttpException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionCreate()
     {
@@ -123,13 +127,15 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Updates an existing News model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 更新资讯
      *
      * @rbacDescription 资讯更新权限
      * @param integer $id
      * @return mixed
+     * @throws HttpException
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \yii\base\ErrorException
+     * @throws \yii\db\Exception
      */
     public function actionUpdate($id)
     {
@@ -161,13 +167,14 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Deletes an existing News model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 删除资讯
      *
      * @rbacDescription 资讯删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -177,10 +184,13 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Toggle enabled
+     * 资讯激活状态修改
      *
      * @rbacDescription 资讯激活状态修改权限
      * @return Response
+     * @throws \Throwable
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionToggle()
     {
@@ -215,10 +225,13 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Toggle enabled comment function
+     * 资讯评论激活状态修改
      *
      * @rbacDescription 资讯评论激活状态修改权限
      * @return Response
+     * @throws \Throwable
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionToggleComment()
     {
