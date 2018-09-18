@@ -83,6 +83,8 @@ class DefaultController extends BaseController
      *
      * @rbacDescription 单文章添加权限
      * @return mixed
+     * @throws \yii\base\ErrorException
+     * @throws \yii\db\Exception
      */
     public function actionCreate()
     {
@@ -112,6 +114,8 @@ class DefaultController extends BaseController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \yii\base\ErrorException
+     * @throws \yii\db\Exception
      */
     public function actionUpdate($id)
     {
@@ -140,6 +144,8 @@ class DefaultController extends BaseController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {

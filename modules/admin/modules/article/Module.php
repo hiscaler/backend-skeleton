@@ -20,4 +20,5 @@ class Module extends \yii\base\Module
     {
         parent::init();
     }
+    
 }
