@@ -39,6 +39,10 @@ class DefaultController extends BaseController
         return $actions;
     }
 
+    /**
+     * @return array
+     * @throws \yii\db\Exception
+     */
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -103,8 +107,8 @@ class DefaultController extends BaseController
         ];
         $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.short_title', 't.author', 't.source', 't.keywords', 't.description', 't.is_picture_news', 't.picture_path', 't.enabled_comment', 'comments_count', 't.published_at', 't.created_at', 't.updated_at', 'u.nickname AS editor'], $fields, ['short_title' => 't.title']);
         $query = (new \yii\db\ActiveQuery(News::class))
-            ->select($selectColumns)
-            ->from('{{%news}} t');
+            ->alias('t')
+            ->select($selectColumns);
         if (in_array('c.name AS category_name', $selectColumns)) {
             $query->leftJoin('{{%category}} c', '[[t.category_id]] = [[c.id]]');
         }
@@ -194,7 +198,7 @@ class DefaultController extends BaseController
                         case 4: // 2015（返回2015年的文章）
                         case 6: // 201501（返回2015年1月份的文章）
                         case 8: // 20150101（返回2015年1月1日的文章）
-                            $dateRange = $this->parseDate($date);
+                            $dateRange = UtilsHelper::parseDate($date);
                             if ($dateRange) {
                                 $condition = ['AND', $condition, ['BETWEEN', 't.published_at', $dateRange[0], $dateRange[1]]];
                             }
@@ -204,7 +208,7 @@ class DefaultController extends BaseController
                         case 7: // -201501（返回2015年1月份之前的文章）, +201501（返回2015年1月份之后的文章）
                         case 9: // -20150101（返回2015年1月1日之前的文章）, +20150101（返回2015年1月1日之后的文章）
                             if (in_array($date[0], ['-', '+'])) {
-                                $dateRange = $this->parseDate(substr($date, -($len - 1)));
+                                $dateRange = UtilsHelper::parseDate(substr($date, -($len - 1)));
                                 if ($dateRange) {
                                     $condition = ['AND', $condition, [$date[0] === '-' ? '<' : '>', 't.published_at', $dateRange[0]]];
                                 }
@@ -238,7 +242,7 @@ class DefaultController extends BaseController
                 }
             }
             foreach ($rejectList as $key => $value) {
-                $values = $this->cleanIntegerNumbers($value);
+                $values = UtilsHelper::cleanIntegerNumbers($value);
                 $count = count($values);
                 if ($count) {
                     if ($count == 1) {
@@ -268,7 +272,7 @@ class DefaultController extends BaseController
 
         $query->orderBy($orderByColumns ?: ['t.published_at' => SORT_DESC]);
         if ($this->debug) {
-            Yii::trace($query->createCommand()->getRawSql(), 'api.sql');
+            Yii::debug($query->createCommand()->getRawSql(), 'API DEBUG');
         }
 
         return $query;
@@ -341,15 +345,11 @@ class DefaultController extends BaseController
     public function actionUpdateClicksCount($id)
     {
         $db = Yii::$app->getDb();
-        $data = $db->createCommand('SELECT [[id]], [[hits_count]], [[rank_day]], [[rank_day_hits_count]], [[rank_week]], [[rank_week_hits_count]] FROM {{%news}} WHERE [[id]] = :id', [
+        $data = $db->createCommand('SELECT [[id]], [[clicks_count]] FROM {{%news}} WHERE [[id]] = :id', [
             ':id' => (int) $id,
         ])->queryOne();
         if ($data) {
-            $sql = 'UPDATE {{%news}} SET [[clicks_count]] = [[clicks_count]] + 1';
-            $bindValues = [];
-            $sql .= ' WHERE [[id]] = :id';
-            $bindValues[':id'] = $data['id'];
-            $db->createCommand($sql, $bindValues)->execute();
+            $db->createCommand('UPDATE {{%news}} SET [[clicks_count]] = [[clicks_count]] + 1 WHERE [[id]] = :id', [':id' => $data['id']])->execute();
 
             return [
                 'id' => $data['id'],
@@ -505,8 +505,8 @@ class DefaultController extends BaseController
     public function actionView($id)
     {
         $model = News::find()
-            ->from('{{%news}} t')
-            ->select(['t.id', 't.title', 't.short_title', 't.keywords', 't.description', 't.category_id', 'c.name AS category_name', 't.created_at', 't.updated_at', 't.enabled_comment', 't.comments_count', 't.author', 't.source', 't.published_at', 'u.nickname AS editor', 't.is_picture_news', 't.picture_path'])
+            ->alias('t')
+            ->select(['t.id', 't.title', 't.short_title', 't.keywords', 't.description', 't.category_id', 'c.name AS category_name', 't.created_at', 't.updated_at', 't.clicks_count', 't.enabled_comment', 't.comments_count', 't.author', 't.source', 't.published_at', 'u.nickname AS editor', 't.is_picture_news', 't.picture_path'])
             ->leftJoin('{{%category}} c', '[[t.category_id]] = [[c.id]]')
             ->leftJoin('{{%user}} u', '[[t.updated_by]] = [[u.id]]')
             ->where('[[t.id]] = :id AND [[t.enabled]] = :enabled', [
