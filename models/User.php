@@ -57,8 +57,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'avatar');
         parent::init();
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'avatar');
     }
 
     /**

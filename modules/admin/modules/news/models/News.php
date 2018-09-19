@@ -51,8 +51,8 @@ class News extends BaseActiveRecord
      */
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
         parent::init();
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
     }
 
     /**
