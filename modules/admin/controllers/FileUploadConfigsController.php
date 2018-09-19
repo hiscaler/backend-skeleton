@@ -43,11 +43,6 @@ class FileUploadConfigsController extends Controller
     }
 
     /**
-     * Lists all FileUploadConfig models.
-     *
-     * @return mixed
-     */
-    /**
      * 文件上传设置数据列表
      *
      * @rbacDescription 文件上传设置数据列表查看权限
@@ -67,8 +62,7 @@ class FileUploadConfigsController extends Controller
     }
 
     /**
-     * Creates a new FileUploadConfig model.
-     * If creation is successful, the browser will be redirected to the 'index' page.
+     * 添加文件上传设置
      *
      * @rbacDescription 文件上传设置添加权限
      * @return mixed
@@ -88,8 +82,7 @@ class FileUploadConfigsController extends Controller
     }
 
     /**
-     * Updates an existing FileUploadConfig model.
-     * If update is successful, the browser will be redirected to the 'index' page.
+     * 更新文件上传设置
      *
      * @rbacDescription 文件上传设置更新权限
      * @param integer $id
@@ -110,8 +103,7 @@ class FileUploadConfigsController extends Controller
     }
 
     /**
-     * Deletes an existing FileUploadConfig model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 删除文件上传设置
      *
      * @rbacDescription 文件上传设置删除权限
      * @param integer $id
@@ -147,5 +139,4 @@ class FileUploadConfigsController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }
