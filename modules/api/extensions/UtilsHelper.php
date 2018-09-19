@@ -151,4 +151,43 @@ class UtilsHelper
         }
     }
 
+    /**
+     * 格式化日期，获得日期的开始和结束时间戳
+     *
+     * @param string $date
+     * @return array|mixed
+     */
+    public static function parseDate($date)
+    {
+        switch (strlen($date)) {
+            case 4: // year
+                $result = [
+                    mktime(0, 0, 0, 1, 1, $date),
+                    mktime(0, 0, 0, 12, 31, $date)
+                ];
+                break;
+
+            case 6: // year + month
+                $t = str_split($date, 4);
+                $beginTime = mktime(0, 0, 0, $t[1], 1, $t[0]);
+                $result = [$beginTime, mktime(23, 59, 59, $t[1], date("t", $beginTime), $t[0])];
+                break;
+
+            case 8: // year + month + day
+                $year = substr($date, 0, 4);
+                $month = substr($date, 4, 2);
+                $day = substr($date, 6, 2);
+                $result = [
+                    mktime(0, 0, 0, $month, $day, $year),
+                    mktime(23, 59, 59, $month, $day, $year)
+                ];
+                break;
+
+            default:
+                $result = null;
+        }
+
+        return $result;
+    }
+
 }
