@@ -5,7 +5,6 @@ namespace app\modules\api\controllers;
 use app\modules\admin\components\ApplicationHelper;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Member;
-use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
