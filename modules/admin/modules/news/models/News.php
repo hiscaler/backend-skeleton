@@ -36,8 +36,19 @@ use yii\web\UploadedFile;
 class News extends BaseActiveRecord
 {
 
+    /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'picture_path';
+
+    /**
+     * @var array 文件上传设置
+     */
     public $_fileUploadConfig;
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function init()
     {
         $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
@@ -114,15 +125,17 @@ class News extends BaseActiveRecord
             'published_at' => '发布时间',
             'created_at' => '添加时间',
             'created_by' => '添加人',
+            'creater.nickname' => '添加人',
             'updated_at' => '更新时间',
             'updated_by' => '更新人',
+            'updater.nickname' => '更新人',
         ];
     }
 
     /**
      * 保存资讯正文内容
      *
-     * @param ActiveReocrd $newsContent
+     * @param NewsContent $newsContent
      * @return boolean
      */
     public function saveContent($newsContent)
@@ -164,6 +177,10 @@ class News extends BaseActiveRecord
     // Events
     private $_newsContent;
 
+    /**
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public function afterFind()
     {
         parent::afterFind();

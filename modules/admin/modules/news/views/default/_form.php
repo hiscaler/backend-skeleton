@@ -62,7 +62,28 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'source_url')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="entry">
-                <?= $form->field($model, 'picture_path')->fileInput() ?>
+                <?php
+                $imagePreview = null;
+                $imagePath = $model->picture_path;
+                if ($imagePath) {
+                    if ($model->_fileUploadConfig['thumb']['generate']) {
+                        $linkOptions = [
+                            'width' => $model->_fileUploadConfig['thumb']['width'],
+                            'height' => $model->_fileUploadConfig['thumb']['height']
+                        ];
+                    } else {
+                        $linkOptions = [];
+                    }
+                    $imagePath = Yii::$app->getRequest()->getBaseUrl() . $imagePath;
+                    $imagePreview = Html::a(Html::img($imagePath, $linkOptions), $imagePath, ['target' => '_blank']);
+                    $imagePreview .= Html::a('x', ['remove-image', 'id' => $model->id], ['class' => 'btn-remove']);
+                    $imagePreview = Html::tag('div', $imagePreview, ['class' => 'image-preview']);
+                }
+
+                echo $form->field($model, 'picture_path', [
+                    'template' => "{label}\n{input}{$imagePreview}\n{hint}\n{error}"
+                ])->fileInput();
+                ?>
                 <?= \yadjet\datePicker\my97\DatePicker::widget([
                     'form' => $form,
                     'model' => $model,

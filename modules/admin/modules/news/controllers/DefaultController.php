@@ -3,6 +3,7 @@
 namespace app\modules\admin\modules\news\controllers;
 
 use app\models\Category;
+use app\models\Constant;
 use app\models\Meta;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\forms\DynamicForm;
@@ -36,7 +37,7 @@ class DefaultController extends BaseController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'toggle', 'toggle-comment'],
+                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'toggle', 'toggle-comment', 'remove-image'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -46,6 +47,7 @@ class DefaultController extends BaseController
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                    'remove-image' => ['POST'],
                 ],
             ],
         ];
@@ -242,7 +244,7 @@ class DefaultController extends BaseController
             $value = !$value;
             $now = time();
             $db->createCommand()->update('{{%news}}', ['enabled_comment' => $value, 'updated_by' => Yii::$app->getUser()->getId(), 'updated_at' => $now], 'id = :id', [':id' => (int) $id])->execute();
-            $responseData = [
+            $responseBody = [
                 'success' => true,
                 'data' => [
                     'value' => $value,
@@ -251,7 +253,7 @@ class DefaultController extends BaseController
                 ],
             ];
         } else {
-            $responseData = [
+            $responseBody = [
                 'success' => false,
                 'error' => [
                     'message' => '数据有误',
@@ -261,7 +263,45 @@ class DefaultController extends BaseController
 
         return new Response([
             'format' => Response::FORMAT_JSON,
-            'data' => $responseData,
+            'data' => $responseBody,
+        ]);
+    }
+
+    /**
+     * 删除资讯图片
+     *
+     * @rbacDescription 资讯图片删除权限
+     * @param integer $id
+     * @return Response
+     * @throws \yii\db\Exception
+     */
+    public function actionRemoveImage($id)
+    {
+        $db = Yii::$app->getDb();
+        $imageSavePath = $db->createCommand('SELECT [[picture_path]] FROM {{%news}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
+        if (!empty($imageSavePath)) {
+            $db->createCommand()->update('{{%news}}', [
+                'picture_path' => null,
+                'is_picture_news' => Constant::BOOLEAN_FALSE,
+                'updated_by' => Yii::$app->getUser()->getId(),
+                'updated_at' => time()
+            ], ['id' => (int) $id])->execute();
+
+            $responseBody = [
+                'success' => true
+            ];
+        } else {
+            $responseBody = [
+                'success' => false,
+                'error' => [
+                    'message' => '数据不存在。'
+                ],
+            ];
+        }
+
+        return new Response([
+            'format' => Response::FORMAT_JSON,
+            'data' => $responseBody,
         ]);
     }
 
