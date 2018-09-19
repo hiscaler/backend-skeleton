@@ -18,7 +18,9 @@ class AppAsset extends AssetBundle
 {
 
     public $basePath = '@webroot';
+
     public $baseUrl = '@web/admin';
+
     public $css = [
         'css/application.css',
         'css/common.css',
@@ -26,6 +28,7 @@ class AppAsset extends AssetBundle
         'css/form.css',
         'layer/skin/layer.css',
     ];
+
     public $js = [
         'js/doT.min.js',
         'layer/layer.js',
@@ -35,6 +38,7 @@ class AppAsset extends AssetBundle
         'js/application.js',
         'js/underscore-min.js',
     ];
+
     public $depends = [
         'yii\web\YiiAsset',
     ];
