@@ -34,8 +34,14 @@ use yadjet\behaviors\ImageUploadBehavior;
 class News extends BaseActiveRecord
 {
 
+    /**
+     * @var array 文件上传设置
+     */
     public $_fileUploadConfig;
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function init()
     {
         $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
@@ -153,7 +159,7 @@ class News extends BaseActiveRecord
     /**
      * 保存资讯正文内容
      *
-     * @param ActiveReocrd $newsContent
+     * @param NewsContent $newsContent
      * @return boolean
      */
     public function saveContent($newsContent)

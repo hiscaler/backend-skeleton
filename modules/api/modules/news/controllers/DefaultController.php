@@ -427,6 +427,14 @@ class DefaultController extends BaseController
                             $client = new Client();
                             $response = $client->get($image);
                             $headers = $response->getHeaders();
+
+                            // http://www.example.com/images/image/124/12460449.jpg?t=1537200428#a 此类情况需要处理
+                            if (strpos($image, '?') !== false) {
+                                $t = parse_url($image);
+                                if (isset($t['query']) || isset($t['fragment'])) {
+                                    $image = "{$t['scheme']}://{$t['host']}{$t['path']}";
+                                }
+                            }
                             $ext = pathinfo($image, PATHINFO_EXTENSION);
                             if (empty($ext) && isset($headers['Content-Type'][0])) {
                                 switch ($headers['Content-Type'][0]) {

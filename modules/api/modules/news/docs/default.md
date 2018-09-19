@@ -54,6 +54,7 @@
 | source | string | 是 | null | 来源 |
 | source_url | string | 是 | null | 来源 URL |
 | picture_path | file | 否 | null | 图片 |
+| content | string | 是 | null | 正文内容 |
 | published_at | datetime | 是 |  | 发布时间（示例：2018-01-01 12:13:14） |
 
 ## GET api/news/default/view?id=:id
