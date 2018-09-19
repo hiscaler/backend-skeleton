@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
  * Class ApplicationHelper
  *
  * @package app\modules\admin\components
- * @author hiscler <hiscaler@gmail.com>
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class ApplicationHelper
 {
