@@ -33,12 +33,20 @@ use yii\widgets\ActiveForm;
         <?=
         $form->field($model, 'thumb_width', [
             'template' => "{label}\n{input} px\n{hint}\n{error}",
+            'options' => [
+                'class' => 'form-group',
+                'style' => $model->type == FileUploadConfig::TYPE_IMAGE ? '' : 'display: none;',
+            ]
         ])->textInput(['class' => 'g-text-number', 'type' => 'number'])
         ?>
 
         <?=
         $form->field($model, 'thumb_height', [
             'template' => "{label}\n{input} px\n{hint}\n{error}",
+            'options' => [
+                'class' => 'form-group',
+                'style' => $model->type == FileUploadConfig::TYPE_IMAGE ? '' : 'display: none;',
+            ]
         ])->textInput(['class' => 'g-text-number', 'type' => 'number'])
         ?>
         <div class="form-group buttons">
@@ -51,11 +59,18 @@ use yii\widgets\ActiveForm;
 <script type="text/javascript">
     $(function () {
         $('#fileuploadconfig-type').change(function () {
-            var type = $(this).val();
+            var type = $(this).val(),
+                fileType = <?= FileUploadConfig::TYPE_FILE ?>,
+                imageType = <?= FileUploadConfig::TYPE_IMAGE ?>;
+            if (type == fileType) {
+                $('#fileuploadconfig-thumb_width, #fileuploadconfig-thumb_height').parent().hide();
+            } else {
+                $('#fileuploadconfig-thumb_width, #fileuploadconfig-thumb_height').parent().show();
+            }
             if (!$('#fileuploadconfig-extensions').val()) {
-                if (type == 0) {
+                if (type == fileType) {
                     $('#fileuploadconfig-extensions').val('zip,doc,docx,xls,xlsx,pdf');
-                } else if (type == 1) {
+                } else if (type == imageType) {
                     $('#fileuploadconfig-extensions').val('jpg,jpeg,png,gif');
                 }
             }

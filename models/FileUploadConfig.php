@@ -5,7 +5,6 @@ namespace app\models;
 use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\caching\DbDependency;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
 /**
