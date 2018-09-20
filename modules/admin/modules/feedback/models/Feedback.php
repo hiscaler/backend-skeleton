@@ -3,7 +3,6 @@
 namespace app\modules\admin\modules\feedback\models;
 
 use app\models\BaseActiveRecord;
-use Yii;
 
 /**
  * This is the model class for table "{{%feedback}}".

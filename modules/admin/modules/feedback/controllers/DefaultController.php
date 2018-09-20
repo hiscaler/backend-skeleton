@@ -45,7 +45,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * Lists all Feedback models.
+     * 留言反馈消息列表
      *
      * @rbacDescription 留言反馈消息列表查看权限
      * @return mixed
@@ -64,7 +64,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * Displays a single Feedback model.
+     * 留言反馈消息详情
      *
      * @rbacDescription 留言反馈消息详情查看权限
      * @param integer $id
@@ -79,13 +79,14 @@ class DefaultController extends Controller
     }
 
     /**
-     * Deletes an existing Feedback model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 留言反馈删除
      *
      * @rbacDescription 留言反馈删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
