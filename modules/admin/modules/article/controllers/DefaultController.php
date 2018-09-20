@@ -46,7 +46,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * 显示所有单文章
+     * 单文章列表
      *
      * @rbacDescription 单文章列表查看权限
      * @return mixed
@@ -78,8 +78,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Creates a new Article model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 单文章添加
      *
      * @rbacDescription 单文章添加权限
      * @return mixed
@@ -107,8 +106,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Updates an existing Article model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 单文章更新
      *
      * @rbacDescription 单文章更新权限
      * @param integer $id
@@ -137,8 +135,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Deletes an existing Article model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 单文章删除
      *
      * @rbacDescription 单文章删除权限
      * @param integer $id

@@ -65,4 +65,5 @@ class ArticleSearch extends Article
 
         return $dataProvider;
     }
+
 }
