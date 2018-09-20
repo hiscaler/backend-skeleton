@@ -29,12 +29,20 @@ use Yii;
 class ClassicCase extends BaseActiveRecord
 {
 
+    /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'picture_path';
+
     public $_fileUploadConfig;
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
         parent::init();
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
     }
 
     /**
@@ -103,6 +111,10 @@ class ClassicCase extends BaseActiveRecord
         ];
     }
 
+    /**
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public function afterFind()
     {
         parent::afterFind();

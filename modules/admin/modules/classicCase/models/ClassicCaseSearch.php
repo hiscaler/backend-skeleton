@@ -68,4 +68,5 @@ class ClassicCaseSearch extends ClassicCase
 
         return $dataProvider;
     }
+
 }

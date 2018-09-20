@@ -6,10 +6,12 @@ use app\models\Category;
 use app\models\Meta;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\forms\DynamicForm;
+use Exception;
 use Yii;
 use app\modules\admin\modules\classicCase\models\ClassicCase;
 use app\modules\admin\modules\classicCase\models\ClassicCaseSearch;
 use yii\filters\AccessControl;
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -48,10 +50,11 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Lists all ClassicCase models.
+     * 案例列表
      *
      * @rbacDescription 案例列表查看权限
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -66,7 +69,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Displays a single ClassicCase model.
+     * 案例详情
      *
      * @rbacDescription 案例详情查看权限
      * @param integer $id
@@ -81,11 +84,13 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Creates a new ClassicCase model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 案例添加
      *
      * @rbacDescription 案例添加权限
      * @return mixed
+     * @throws HttpException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionCreate()
     {
@@ -117,13 +122,14 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Updates an existing ClassicCase model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 案例更新
      *
      * @rbacDescription 案例更新权限
      * @param integer $id
      * @return mixed
+     * @throws HttpException
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \yii\db\Exception
      */
     public function actionUpdate($id)
     {
@@ -152,13 +158,14 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Deletes an existing ClassicCase model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 案例删除
      *
      * @rbacDescription 案例删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -168,10 +175,13 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Toggle enabled
+     * 案例激活状态修改
      *
      * @rbacDescription 案例激活状态修改权限
      * @return Response
+     * @throws \Throwable
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionToggle()
     {
@@ -182,7 +192,7 @@ class DefaultController extends BaseController
             $value = !$value;
             $now = time();
             $db->createCommand()->update('{{%classic_case}}', ['enabled' => $value, 'updated_by' => Yii::$app->getUser()->getId(), 'updated_at' => $now], '[[id]] = :id', [':id' => (int) $id])->execute();
-            $responseData = [
+            $responseBody = [
                 'success' => true,
                 'data' => [
                     'value' => $value,
@@ -191,7 +201,7 @@ class DefaultController extends BaseController
                 ],
             ];
         } else {
-            $responseData = [
+            $responseBody = [
                 'success' => false,
                 'error' => [
                     'message' => '数据有误',
@@ -201,7 +211,7 @@ class DefaultController extends BaseController
 
         return new Response([
             'format' => Response::FORMAT_JSON,
-            'data' => $responseData,
+            'data' => $responseBody,
         ]);
     }
 
