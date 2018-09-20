@@ -14,7 +14,6 @@ use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -34,7 +33,7 @@ class EntityLabelsController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'entities', 'set', 'delete', 'toggle'],
+                        'actions' => ['index', 'entities', 'set'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -43,8 +42,6 @@ class EntityLabelsController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'delete' => ['post'],
-                    'toggle' => ['post'],
                     'set' => ['post'],
                 ],
             ],
@@ -52,7 +49,9 @@ class EntityLabelsController extends Controller
     }
 
     /**
-     * 查看实体记录自定义属性
+     * 查看数据推送位
+     *
+     * @rbacDescription 查看数据推送位权限
      *
      * @param integer $entityId
      * @param string $modelName
@@ -108,57 +107,9 @@ class EntityLabelsController extends Controller
     }
 
     /**
-     * Deletes an existing Label model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 添加或者删除数据推送位
      *
-     * @param integer $id
-     * @return mixed
-     * @throws Exception
-     */
-    public function actionDelete($id)
-    {
-        Yii::$app->getDb()->createCommand()->delete('{{%entity_label}}', ['id' => (int) $id])->execute();
-
-        return $this->redirect(Yii::$app->getRequest()->referrer);
-    }
-
-    /**
-     * 激活禁止操作
-     *
-     * @return Response
-     * @throws Exception
-     */
-    public function actionToggle()
-    {
-        $id = Yii::$app->getRequest()->post('id');
-        $db = Yii::$app->getDb();
-        $value = $db->createCommand('SELECT [[enabled]] FROM {{%entity_label}} WHERE [[id]] = :id', [':id' => (int) $id])->queryScalar();
-        if ($value !== null) {
-            $value = !$value;
-            $db->createCommand()->update('{{%entity_label}}', ['enabled' => $value], '[[id]] = :id', [':id' => (int) $id])->execute();
-            $responseData = [
-                'success' => true,
-                'data' => [
-                    'value' => $value
-                ],
-            ];
-        } else {
-            $responseData = [
-                'success' => false,
-                'error' => [
-                    'message' => '数据有误',
-                ],
-            ];
-        }
-
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $responseData,
-        ]);
-    }
-
-    /**
-     * 添加或者删除实体数据自定义属性
+     * @rbacDescription 添加或者删除数据推送位权限
      *
      * @return Response
      * @throws Exception
@@ -170,10 +121,10 @@ class EntityLabelsController extends Controller
         $modelName = trim($request->post('modelName'));
         $labelId = (int) $request->post('labelId');
         if (!$entityId || empty($modelName) || !$labelId) {
-            $responseData = [
+            $responseBody = [
                 'success' => false,
                 'error' => [
-                    'message' => '提交参数有误'
+                    'message' => '提交参数有误。'
                 ]
             ];
         } else {
@@ -181,7 +132,7 @@ class EntityLabelsController extends Controller
             $db = Yii::$app->getDb();
             $entityEnabled = $db->createCommand('SELECT [[enabled]] FROM {{%label}} WHERE [[id]] = :id', [':id' => $labelId])->queryScalar();
             if ($entityEnabled === false) {
-                $responseData = [
+                $responseBody = [
                     'success' => false,
                     'error' => [
                         'message' => '该推送位不存在。'
@@ -200,7 +151,7 @@ class EntityLabelsController extends Controller
                         $db->createCommand()->delete('{{%entity_label}}', '[[id]] = :id', [':id' => $id])->execute();
                         // Update attribute frequency count
                         $db->createCommand('UPDATE {{%label}} SET [[frequency]] = [[frequency]] - 1 WHERE [[id]] = :id', [':id' => $labelId])->execute();
-                        $responseData = [
+                        $responseBody = [
                             'success' => true,
                             'data' => [
                                 'value' => Constant::BOOLEAN_FALSE
@@ -223,7 +174,7 @@ class EntityLabelsController extends Controller
                         ])->execute();
                         // Update attribute frequency count
                         $db->createCommand('UPDATE {{%label}} SET [[frequency]] = [[frequency]] + 1 WHERE [[id]] = :id')->bindValue(':id', $labelId, PDO::PARAM_INT)->execute();
-                        $responseData = [
+                        $responseBody = [
                             'success' => true,
                             'data' => [
                                 'value' => Constant::BOOLEAN_TRUE
@@ -233,10 +184,10 @@ class EntityLabelsController extends Controller
                     $transaction->commit();
                 } catch (Exception $e) {
                     $transaction->rollback();
-                    $responseData = [
+                    $responseBody = [
                         'success' => false,
                         'error' => [
-                            'message' => $e
+                            'message' => $e->getMessage()
                         ],
                     ];
                 }
@@ -245,7 +196,7 @@ class EntityLabelsController extends Controller
 
         return new Response([
             'format' => Response::FORMAT_JSON,
-            'data' => $responseData,
+            'data' => $responseBody,
         ]);
     }
 
@@ -309,25 +260,6 @@ class EntityLabelsController extends Controller
             'labels' => $labels,
             'dataProvider' => $dataProvider
         ]);
-    }
-
-    /**
-     * Finds the Label model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param integer $id
-     * @return array|false the loaded model
-     * @throws Exception
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        $model = Yii::$app->getDb()->createCommand('SELECT * FROM {{%entity_label}} WHERE [[id]] = :id')->bindValue(':id', (int) $id, PDO::PARAM_INT)->queryOne();
-        if ($model !== false) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
     }
 
 }

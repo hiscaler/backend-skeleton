@@ -41,7 +41,6 @@ EOT;
         <?php
         Pjax::begin([
             'linkSelector' => '#attribute-entity-attributes',
-            'linkSelector' => '#ww0 a',
             'enablePushState' => false,
             'options' => [
                 'id' => 'ww0',
