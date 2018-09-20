@@ -42,8 +42,9 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Lists all Vote models.
+     * 投票数据列表
      *
+     * @rbacDescription 投票数据列表查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -57,8 +58,9 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Displays a single Vote model.
+     * 投票数据详情
      *
+     * @rbacDescription 投票数据详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -71,9 +73,9 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Creates a new Vote model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 投票数据添加
      *
+     * @rbacDescription 投票数据添加权限
      * @return mixed
      */
     public function actionCreate()
@@ -90,9 +92,9 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Updates an existing Vote model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 投票数据更新
      *
+     * @rbacDescription 投票数据更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -111,9 +113,9 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Deletes an existing Vote model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 投票数据删除
      *
+     * @rbacDescription 投票数据删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found

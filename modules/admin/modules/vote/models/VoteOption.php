@@ -3,7 +3,6 @@
 namespace app\modules\admin\modules\vote\models;
 
 use yadjet\behaviors\ImageUploadBehavior;
-use Yii;
 
 /**
  * This is the model class for table "{{%vote_option}}".

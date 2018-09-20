@@ -79,4 +79,5 @@ class VoteSearch extends Vote
 
         return $dataProvider;
     }
+
 }

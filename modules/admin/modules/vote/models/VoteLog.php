@@ -51,4 +51,5 @@ class VoteLog extends \yii\db\ActiveRecord
             'member_id' => '会员',
         ];
     }
+
 }

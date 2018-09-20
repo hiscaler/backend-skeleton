@@ -12,7 +12,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * OptionsController implements the CRUD actions for VoteOption model.
+ * 投票选项管理
+ *
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class OptionsController extends Controller
 {
@@ -43,8 +45,9 @@ class OptionsController extends Controller
     }
 
     /**
-     * Lists all  VoteOption models.
+     * 投票选项列表
      *
+     * @rbacDescription 投票选项列表查看权限
      * @param $voteId
      * @return mixed
      * @throws NotFoundHttpException
@@ -63,8 +66,9 @@ class OptionsController extends Controller
     }
 
     /**
-     * Displays a single VoteOption model.
+     * 投票选项详情
      *
+     * @rbacDescription 投票选项详情查看权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -77,9 +81,9 @@ class OptionsController extends Controller
     }
 
     /**
-     * Creates a new VoteOption model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 投票选项添加
      *
+     * @rbacDescription 投票选项添加权限
      * @param $voteId
      * @return mixed
      * @throws NotFoundHttpException
@@ -103,9 +107,9 @@ class OptionsController extends Controller
     }
 
     /**
-     * Updates an existing VoteOption model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 投票选项更新
      *
+     * @rbacDescription 投票选项更新权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -124,9 +128,9 @@ class OptionsController extends Controller
     }
 
     /**
-     * Deletes an existing VoteOption model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 投票选项删除
      *
+     * @rbacDescription 投票选项删除权限
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -157,6 +161,11 @@ class OptionsController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
+    /**
+     * @param $id
+     * @return Vote|null
+     * @throws NotFoundHttpException
+     */
     protected function findVoteModel($id)
     {
         if (($model = Vote::findOne($id)) !== null) {
