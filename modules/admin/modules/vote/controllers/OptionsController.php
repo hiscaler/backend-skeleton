@@ -14,6 +14,7 @@ use yii\filters\VerbFilter;
 /**
  * 投票选项管理
  *
+ * @package app\modules\admin\modules\vote\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class OptionsController extends Controller

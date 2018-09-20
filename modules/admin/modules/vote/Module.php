@@ -3,7 +3,7 @@
 namespace app\modules\admin\modules\vote;
 
 /**
- * `article` module definition class
+ * `vote` module definition class
  */
 class Module extends \yii\base\Module
 {

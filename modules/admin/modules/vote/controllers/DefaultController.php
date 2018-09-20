@@ -11,7 +11,10 @@ use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 
 /**
- * VotesController implements the CRUD actions for Vote model.
+ * 投票数据管理
+ *
+ * @package app\modules\admin\modules\vote\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends BaseController
 {
