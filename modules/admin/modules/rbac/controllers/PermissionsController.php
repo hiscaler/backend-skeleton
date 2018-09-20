@@ -52,6 +52,7 @@ class PermissionsController extends Controller
      *
      * @rbacDescription 添加权限
      * @return Response
+     * @throws Exception
      */
     public function actionCreate()
     {

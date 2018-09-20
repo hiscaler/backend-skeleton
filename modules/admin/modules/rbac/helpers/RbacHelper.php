@@ -46,7 +46,7 @@ trait RbacHelper
         if ($this instanceof \yii\web\Controller) {
             $options = property_exists($this->module, 'options') ? $this->module->options : [];
 
-            $defaultModuleOptions = ApplicationHelper::getConfigValue('rbac', $this->defaultModuleOptions];
+            $defaultModuleOptions = ApplicationHelper::getConfigValue('rbac', $this->defaultModuleOptions);
             if ($defaultModuleOptions) {
                 $options = \yii\helpers\ArrayHelper::merge($defaultModuleOptions, $options);
             }

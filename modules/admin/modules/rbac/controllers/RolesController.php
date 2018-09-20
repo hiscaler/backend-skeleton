@@ -123,11 +123,11 @@ class RolesController extends Controller
                 'success' => true,
                 'data' => $role,
             ];
-        } catch (Exception $exc) {
+        } catch (\Exception $e) {
             $responseBody = [
                 'success' => false,
                 'error' => [
-                    'message' => $exc->getMessage(),
+                    'message' => $e->getMessage(),
                 ]
             ];
         }
@@ -172,10 +172,10 @@ class RolesController extends Controller
             $responseBody = [
                 'success' => true,
             ];
-        } catch (Exception $exc) {
+        } catch (Exception $e) {
             $responseBody = [
                 'success' => false,
-                'error' => ['message' => $exc->getMessage()],
+                'error' => ['message' => $e->getMessage()],
             ];
         }
 
@@ -212,11 +212,11 @@ class RolesController extends Controller
                     ]
                 ];
             }
-        } catch (Exception $exc) {
+        } catch (Exception $e) {
             $responseBody = [
                 'success' => false,
                 'error' => [
-                    'message' => $exc->getMessage(),
+                    'message' => $e->getMessage(),
                 ]
             ];
         }
@@ -240,11 +240,11 @@ class RolesController extends Controller
         try {
             $this->auth->removeChild($this->auth->getRole($roleName), $this->auth->getPermission($permissionName));
             $responseBody = ['success' => true];
-        } catch (Exception $exc) {
+        } catch (\Exception $e) {
             $responseBody = [
                 'success' => false,
                 'error' => [
-                    'message' => $exc->getMessage(),
+                    'message' => $e->getMessage(),
                 ]
             ];
         }
@@ -273,11 +273,11 @@ class RolesController extends Controller
             if (!$result) {
                 $responseBody['error']['message'] = 'Unknown Error.';
             }
-        } catch (\Exception $exc) {
+        } catch (\Exception $e) {
             $responseBody = [
                 'success' => false,
                 'error' => [
-                    'message' => $exc->getMessage(),
+                    'message' => $e->getMessage(),
                 ]
             ];
         }

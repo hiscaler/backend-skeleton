@@ -42,6 +42,9 @@ class DefaultController extends BaseController
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function init()
     {
         parent::init();
