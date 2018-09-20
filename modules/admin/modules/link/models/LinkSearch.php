@@ -73,4 +73,5 @@ class LinkSearch extends Link
 
         return $dataProvider;
     }
+    
 }

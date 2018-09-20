@@ -31,6 +31,11 @@ class Link extends BaseActiveRecord
 {
 
     /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'logo';
+
+    /**
      * 友情链接类型
      */
     const TYPE_TEXT = 0;
@@ -45,10 +50,13 @@ class Link extends BaseActiveRecord
     private $_oldType;
     public $_fileUploadConfig;
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'logo');
         parent::init();
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'logo');
     }
 
     /**
