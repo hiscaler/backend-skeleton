@@ -4,8 +4,6 @@ namespace app\modules\admin\modules\slide\models;
 
 use app\models\BaseActiveRecord;
 use app\models\FileUploadConfig;
-use app\models\Lookup;
-use app\modules\admin\components\ApplicationHelper;
 use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 
@@ -28,12 +26,23 @@ use Yii;
 class Slide extends BaseActiveRecord
 {
 
+    /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'picture_path';
+
+    /**
+     * @var array 文件上传设置
+     */
     public $_fileUploadConfig;
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function init()
     {
-        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
         parent::init();
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
     }
 
     /**

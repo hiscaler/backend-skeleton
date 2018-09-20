@@ -3,7 +3,7 @@
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Slide */
+/* @var $model app\modules\admin\modules\slide\models\Slide */
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('slide', 'Slides'), 'url' => ['index']];

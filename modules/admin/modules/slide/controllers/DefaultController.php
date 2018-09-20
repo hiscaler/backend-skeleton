@@ -3,16 +3,13 @@
 namespace app\modules\admin\modules\slide\controllers;
 
 use app\models\Category;
-use app\models\User;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\slide\models\Slide;
 use app\modules\admin\modules\slide\models\SlideSearch;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -50,10 +47,11 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Lists all Slide models.
+     * 幻灯片列表
      *
      * @rbacDescription 幻灯片列表数据查看权限
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -68,11 +66,12 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Displays a single Slide model.
+     * 幻灯片详情
      *
      * @rbacDescription 幻灯片详情查看权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -82,8 +81,7 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Creates a new Slide model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 幻灯片添加
      *
      * @rbacDescription 幻灯片添加权限
      * @return mixed
@@ -103,12 +101,12 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Updates an existing Slide model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 幻灯片更新
      *
      * @rbacDescription 幻灯片更新权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -124,12 +122,14 @@ class DefaultController extends BaseController
     }
 
     /**
-     * Deletes an existing Slide model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 幻灯片删除
      *
      * @rbacDescription 幻灯片删除权限
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -139,10 +139,11 @@ class DefaultController extends BaseController
     }
 
     /**
-     * 切换是否激活开关
+     * 幻灯片激活状态修改
      *
      * @rbacDescription 幻灯片激活状态修改权限
      * @return Response
+     * @throws \Throwable
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\db\Exception
      */
