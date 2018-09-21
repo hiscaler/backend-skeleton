@@ -84,6 +84,7 @@ class DefaultController extends BaseController
      * 解析查询条件
      *
      * @param string $fields
+     * @param string $title
      * @param string $category
      * @param string $children
      * @param string $label
@@ -99,7 +100,7 @@ class DefaultController extends BaseController
      * @return Query
      * @throws \yii\db\Exception
      */
-    private function parserQuery($fields = null, $category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $offset = null, $limit = null)
+    private function parserQuery($fields = null, $title = null, $category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $offset = null, $limit = null)
     {
         // Basic condition
         $condition = [
@@ -117,6 +118,11 @@ class DefaultController extends BaseController
         }
 
         $query->offset($offset)->limit($limit);
+
+        // 根据标题搜索
+        if ($title) {
+            $condition = ['AND', $condition, ['LIKE', 't.title', $title]];
+        }
 
         // Picture news
         $picture = UtilsHelper::cleanString($picture);
@@ -281,6 +287,7 @@ class DefaultController extends BaseController
     /**
      * 资讯列表（带翻页）
      *
+     * @param string $title
      * @param string $category
      * @param string $children
      * @param string $label
@@ -296,10 +303,10 @@ class DefaultController extends BaseController
      * @return ActiveDataProvider
      * @throws \yii\db\Exception
      */
-    public function actionIndex($category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $page = 1, $pageSize = 20)
+    public function actionIndex($title = null, $category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $page = 1, $pageSize = 20)
     {
         return new ActiveDataProvider([
-            'query' => $this->parserQuery(Yii::$app->getRequest()->get('fields'), $category, $children, $label, $picture, $date, $author, $keywords, $reject, $combinationMethod, $orderBy, null, null),
+            'query' => $this->parserQuery(Yii::$app->getRequest()->get('fields'), $title, $category, $children, $label, $picture, $date, $author, $keywords, $reject, $combinationMethod, $orderBy, null, null),
             'pagination' => [
                 'page' => (int) $page - 1,
                 'pageSize' => (int) $pageSize ?: 20
@@ -311,6 +318,7 @@ class DefaultController extends BaseController
      * 资讯列表（不带翻页）
      *
      * @param string $fields
+     * @param string $title
      * @param string $category
      * @param string $children
      * @param string $label
@@ -326,10 +334,10 @@ class DefaultController extends BaseController
      * @return ActiveDataProvider
      * @throws \yii\db\Exception
      */
-    public function actionList($fields = null, $category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $offset = 0, $limit = 10)
+    public function actionList($fields = null, $title = null, $category = null, $children = 'n', $label = null, $picture = null, $date = null, $author = null, $keywords = null, $reject = null, $combinationMethod = 'and', $orderBy = null, $offset = 0, $limit = 10)
     {
         return new ActiveDataProvider([
-            'query' => $this->parserQuery($fields, $category, $children, $label, $picture, $date, $author, $keywords, $reject, $combinationMethod, $orderBy, $offset, $limit),
+            'query' => $this->parserQuery($fields, $title, $category, $children, $label, $picture, $date, $author, $keywords, $reject, $combinationMethod, $orderBy, $offset, $limit),
             'pagination' => false
         ]);
     }
