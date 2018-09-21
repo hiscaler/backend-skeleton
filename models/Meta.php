@@ -35,6 +35,8 @@ class Meta extends ActiveRecord
 
     public $validatorsList;
 
+    const SCENARIO_DELETE = 'DELETE';
+
     /**
      * 数据输入方式
      */
@@ -59,6 +61,13 @@ class Meta extends ActiveRecord
     public static function tableName()
     {
         return '{{%meta}}';
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
     }
 
     /**
@@ -904,14 +913,10 @@ class Meta extends ActiveRecord
     {
         parent::afterDelete();
         // 删除 meta 数据同时清理掉相关的验证规则以及保存的值
-        \Yii::$app->getDb()->transaction(function ($db) {
-            /* @var $db \yii\db\Connection */
-            $cmd = $db->createCommand();
-            $relationalTables = ['meta_validator', 'meta_value'];
-            foreach ($relationalTables as $table) {
-                $cmd->delete("{{%$table}}", ['meta_id' => $this->id])->execute();
-            }
-        });
+        $cmd = \Yii::$app->getDb()->createCommand();
+        foreach (['meta_validator', 'meta_value'] as $table) {
+            $cmd->delete("{{%$table}}", ['meta_id' => $this->id])->execute();
+        }
     }
 
 }
