@@ -35,6 +35,11 @@ class Category extends BaseActiveRecord
 {
 
     /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'icon';
+
+    /**
      * 仅分配给个人的
      */
     const RETURN_TYPE_PRIVATE = 'private';
@@ -64,6 +69,13 @@ class Category extends BaseActiveRecord
     public static function tableName()
     {
         return '{{%category}}';
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
     }
 
     /**
