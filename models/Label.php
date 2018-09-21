@@ -31,6 +31,13 @@ class Label extends BaseActiveRecord
         return '{{%label}}';
     }
 
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
+    }
+
     /**
      * @inheritdoc
      */

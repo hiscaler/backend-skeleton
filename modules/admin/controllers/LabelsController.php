@@ -9,7 +9,6 @@ use Yii;
 use yii\db\Exception;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\NotAcceptableHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -47,9 +46,9 @@ class LabelsController extends Controller
     }
 
     /**
-     * Lists all Label models.
+     * 推送位数据列表
      *
-     * @rbacDescription 推送位数据查看权限
+     * @rbacDescription 推送位数据列表查看权限
      * @return mixed
      */
     public function actionIndex()
@@ -64,8 +63,7 @@ class LabelsController extends Controller
     }
 
     /**
-     * Creates a new Label model.
-     * If creation is successful, the browser will be redirected to the 'create' page.
+     * 推送位添加
      *
      * @rbacDescription 推送位添加权限
      * @param int $ordering
@@ -88,8 +86,7 @@ class LabelsController extends Controller
     }
 
     /**
-     * Updates an existing Label model.
-     * If update is successful, the browser will be redirected to the 'index' page.
+     * 推送位更新
      *
      * @rbacDescription 推送位更新权限
      * @param integer $id
@@ -110,40 +107,26 @@ class LabelsController extends Controller
     }
 
     /**
-     * Deletes an existing Label model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 推送位删除
      *
      * @rbacDescription 推送位删除权限
      * @param integer $id
      * @return mixed
-     * @throws Exception
-     * @throws NotAcceptableHttpException
      * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if ($model->frequency) {
-            throw new NotAcceptableHttpException('有数据使用该推送位，禁止删除。');
-        } else {
-            $db = Yii::$app->getDb();
-            $transaction = $db->beginTransaction();
-            try {
-                $cmd = $db->createCommand();
-                $cmd->delete('{{%label}}', ['id' => $id])->execute();
-                $cmd->delete('{{%entity_label}}', ['label_id' => $id])->execute();
-                $transaction->commit();
-            } catch (Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
+        $model->setScenario($model::SCENARIO_DELETE);
+        $model->delete();
 
-            return $this->redirect(['index']);
-        }
+        return $this->redirect(['index']);
     }
 
     /**
-     * 激活、禁止操作
+     * 推送位激活、禁止操作
      *
      * @rbacDescription 推送位激活、禁止操作权限
      * @return Response

@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\LabelSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-<div class="form-outside form-search form-layout-column" style="display: none">
+<div class="form-outside form-search form-layout-column">
     <div class="attribute-search form">
         <?php
         $form = ActiveForm::begin([
