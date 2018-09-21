@@ -42,6 +42,8 @@ use yii\web\IdentityInterface;
 class Member extends \yii\db\ActiveRecord implements IdentityInterface
 {
 
+    const SCENARIO_DELETE = 'DELETE';
+
     const TYPE_MEMBER = 0;
     const TYPE_OTHER = 1;
 
@@ -64,6 +66,13 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public static function tableName()
     {
         return '{{%member}}';
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
     }
 
     /**
