@@ -246,17 +246,14 @@ class FileUploadConfig extends BaseActiveRecord
             }
             try {
                 $object = Yii::createObject($modelNamespace);
-                if ($object->hasProperty('fileFields', true, false)) {
-                    $fileFields = $object->fileFields;
-                    if ($fileFields) {
-                        if (!is_array($fileFields)) {
-                            $fileFields = [(string) $fileFields];
-                        }
-                        $attributeLabels = $object->attributeLabels();
-                        foreach ($tableSchema->columns as $name => $column) {
-                            if ($column->type === 'string' && in_array($name, $fileFields)) {
-                                $options[$modelNamespace . ':' . $name] = '「' . Yii::t($isCoreTable ? 'model' : "$moduleName", Inflector::camel2words($modelName)) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
-                            }
+                if ($object->hasProperty('fileFields', true, false) && ($fileFields = $object->fileFields)) {
+                    if (!is_array($fileFields)) {
+                        $fileFields = [(string) $fileFields];
+                    }
+                    $attributeLabels = $object->attributeLabels();
+                    foreach ($tableSchema->columns as $name => $column) {
+                        if ($column->type === 'string' && in_array($name, $fileFields)) {
+                            $options[$modelNamespace . ':' . $name] = '「' . Yii::t($isCoreTable ? 'model' : "$moduleName", Inflector::camel2words($modelName)) . '」' . (isset($attributeLabels[$name]) ? $attributeLabels[$name] : $name) . " ($name)";
                         }
                     }
                 }
