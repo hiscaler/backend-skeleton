@@ -39,6 +39,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     use ActiveRecordHelperTrait;
 
+    const SCENARIO_DELETE = 'DELETE';
+
     /**
      * 用户状态
      */
@@ -67,6 +69,13 @@ class User extends ActiveRecord implements IdentityInterface
     public static function tableName()
     {
         return '{{%user}}';
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
     }
 
     /**
