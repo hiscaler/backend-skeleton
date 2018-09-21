@@ -130,7 +130,9 @@ class MemberGroupsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->setScenario($model::SCENARIO_DELETE);
+        $model->delete();
 
         return $this->redirect(['index']);
     }
