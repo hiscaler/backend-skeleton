@@ -20,6 +20,8 @@ use yii\web\HttpException;
 class BaseActiveRecord extends ActiveRecord
 {
 
+    const SCENARIO_DELETE = 'DELETE';
+
     /**
      * 默认排序值
      */
