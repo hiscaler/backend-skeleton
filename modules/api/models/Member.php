@@ -39,7 +39,7 @@ use yii\web\IdentityInterface;
  * @property integer $updated_at
  * @property integer $updated_by
  */
-class Member extends \yii\db\ActiveRecord implements IdentityInterface
+class Member extends BaseActiveRecord implements IdentityInterface
 {
 
     /**
@@ -62,6 +62,13 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public static function tableName()
     {
         return '{{%member}}';
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
     }
 
     /**
@@ -385,8 +392,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
 
         // 清理相关数据
         $cmd = \Yii::$app->getDb()->createCommand();
-        $tables = ['member_credit_log', 'wechat_member'];
-        foreach ($tables as $table) {
+        foreach (['member_credit_log', 'wechat_member'] as $table) {
             $cmd->delete("{{%$table}}", [
                 'member_id' => $this->id
             ])->execute();
