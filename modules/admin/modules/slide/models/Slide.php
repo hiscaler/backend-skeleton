@@ -122,11 +122,4 @@ class Slide extends BaseActiveRecord
         ];
     }
 
-    public function getUrl_open_target_text()
-    {
-        $options = self::urlOpenTargetOptions();
-
-        return isset($options[$this->url_open_target]) ? $options[$this->url_open_target] : null;
-    }
-
 }

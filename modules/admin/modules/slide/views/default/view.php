@@ -28,7 +28,7 @@ $this->params['menus'] = [
             ],
             'title',
             'url:url',
-            'url_open_target_text',
+            'url_open_target:urlOpenTarget',
             [
                 'attribute' => 'picture_path',
                 'format' => 'raw',

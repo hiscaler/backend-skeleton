@@ -3,7 +3,10 @@
 namespace app\modules\admin\modules\slide;
 
 /**
- * slide module definition class
+ * `slide` module definition class
+ *
+ * @package app\modules\admin\modules\slide
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class Module extends \yii\base\Module
 {
@@ -25,4 +28,5 @@ class Module extends \yii\base\Module
             ],
         ]);
     }
+    
 }

@@ -57,7 +57,8 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'url'],
             ],
             [
-                'attribute' => 'url_open_target_text',
+                'attribute' => 'url_open_target',
+                'format' => 'urlOpenTarget',
                 'contentOptions' => ['class' => 'url-open-target center'],
             ],
             [
@@ -74,7 +75,6 @@ $this->params['menus'] = [
     ?>
     <?php Pjax::end(); ?>
 </div>
-
 <?php \app\modules\admin\components\JsBlock::begin() ?>
     <script type="text/javascript">
         yadjet.actions.toggle("table td.boolean-handler img", "<?= \yii\helpers\Url::toRoute('toggle') ?>");
