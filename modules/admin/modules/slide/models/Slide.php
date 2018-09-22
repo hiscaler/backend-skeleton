@@ -114,12 +114,29 @@ class Slide extends BaseActiveRecord
         ];
     }
 
+    /**
+     * 链接地址打开方式选项
+     *
+     * @return array
+     */
     public static function urlOpenTargetOptions()
     {
         return [
             self::URL_OPEN_TARGET_BLANK => '新窗口',
             self::URL_OPEN_TARGET_SLFE => '当前窗口',
         ];
+    }
+
+    // Events
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        if ($this->picture_path) {
+            $absPath = Yii::getAlias('@webroot') . $this->picture_path;
+            if (file_exists($absPath)) {
+                @unlink($absPath);
+            }
+        }
     }
 
 }
