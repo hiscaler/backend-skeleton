@@ -105,6 +105,7 @@ class DefaultController extends BaseController
     /**
      * 批量删除
      *
+     * @rbacDescription 批量删除队列数据权限
      * @return Response
      * @throws \yii\db\Exception
      */
