@@ -147,7 +147,9 @@ class DefaultController extends BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->setScenario($model::SCENARIO_DELETE);
+        $model->delete();
 
         return $this->redirect(['index']);
     }
@@ -209,4 +211,5 @@ class DefaultController extends BaseController
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

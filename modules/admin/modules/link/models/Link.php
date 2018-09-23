@@ -67,6 +67,13 @@ class Link extends BaseActiveRecord
         return '{{%link}}';
     }
 
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -181,6 +188,17 @@ class Link extends BaseActiveRecord
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        if ($this->type == self::TYPE_PICTURE) {
+            $absLogo = Yii::getAlias('@webroot') . $this->logo;
+            if (file_exists($absLogo)) {
+                @unlink($absLogo);
+            }
         }
     }
 
