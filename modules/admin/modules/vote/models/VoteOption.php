@@ -3,6 +3,7 @@
 namespace app\modules\admin\modules\vote\models;
 
 use yadjet\behaviors\ImageUploadBehavior;
+use Yii;
 
 /**
  * This is the model class for table "{{%vote_option}}".
@@ -82,6 +83,18 @@ class VoteOption extends \yii\db\ActiveRecord
     public function getVote()
     {
         return $this->hasOne(Vote::class, ['id' => 'vote_id']);
+    }
+
+    // Events
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        if ($this->photo) {
+            $absPath = Yii::getAlias('@webroot') . $this->photo;
+            if (file_exists($absPath)) {
+                @unlink($absPath);
+            }
+        }
     }
 
 }

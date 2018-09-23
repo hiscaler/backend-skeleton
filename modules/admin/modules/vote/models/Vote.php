@@ -30,12 +30,21 @@ use Yii;
 class Vote extends \yii\db\ActiveRecord
 {
 
+    const SCENARIO_DELETE = 'DELETE';
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return '{{%vote}}';
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
     }
 
     /**
@@ -147,6 +156,15 @@ class Vote extends \yii\db\ActiveRecord
         } else {
             return false;
         }
+    }
+
+    /**
+     * @throws \yii\db\Exception
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        \Yii::$app->getDb()->createCommand()->delete('{{%vote_option}}', ['vote_id' => $this->id])->execute();
     }
 
 }
