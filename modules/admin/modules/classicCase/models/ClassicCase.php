@@ -53,6 +53,13 @@ class ClassicCase extends BaseActiveRecord
         return '{{%classic_case}}';
     }
 
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DELETE => self::OP_DELETE,
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -120,6 +127,18 @@ class ClassicCase extends BaseActiveRecord
         parent::afterFind();
         if (!$this->isNewRecord) {
             $this->published_at = Yii::$app->getFormatter()->asDatetime($this->published_at);
+        }
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        $picturePath = $this->picture_path;
+        if ($picturePath) {
+            $absPath = Yii::getAlias('@webroot') . $picturePath;
+            if (file_exists($absPath)) {
+                @unlink($absPath);
+            }
         }
     }
 
