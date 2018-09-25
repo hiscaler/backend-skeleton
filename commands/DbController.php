@@ -5,8 +5,6 @@ namespace app\commands;
 use app\models\Option;
 use Exception;
 use Yii;
-use yii\db\ColumnSchemaBuilder;
-use yii\db\Migration;
 use yii\db\Query;
 use yii\helpers\Console;
 use yii\helpers\FileHelper;
