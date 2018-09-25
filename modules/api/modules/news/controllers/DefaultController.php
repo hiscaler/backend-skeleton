@@ -420,67 +420,72 @@ class DefaultController extends BaseController
                 if (!file_exists($savePath)) {
                     FileHelper::createDirectory($savePath);
                 }
-                $replaceParis = [];
+
                 $content = $newsContent['content'];
                 $images = Yad::getTextImages($content);
-                foreach ($images as $image) {
-                    if (file_exists($webRoot . $image)) {
-                        continue;
-                    }
-                    if (strncasecmp($image, '//', 2) !== 0 && strncasecmp($image, 'http', 4) !== 0 && strncasecmp($image, 'https', 5) !== 0) {
-                        $image = $url . '/' . ltrim($image, ' / ');
-                    }
-                    if (strncasecmp($image, '//', 2) === 0 || strncasecmp($image, 'http', 4) === 0 || strncasecmp($image, 'https', 5) === 0) {
-                        try {
-                            $client = new Client();
-                            $response = $client->get($image);
-                            $headers = $response->getHeaders();
+                if ($images) {
+                    $replaceParis = [];
+                    $client = new Client();
+                    foreach ($images as $image) {
+                        $oriImage = $image;
+                        if (file_exists($webRoot . '/' . ltrim($image, '/'))) {
+                            continue;
+                        }
+                        if (strncasecmp($image, '//', 2) !== 0 && strncasecmp($image, 'http', 4) !== 0 && strncasecmp($image, 'https', 5) !== 0) {
+                            $image = $url . '/' . ltrim($image, ' / ');
+                        }
+                        if (strncasecmp($image, '//', 2) === 0 || strncasecmp($image, 'http', 4) === 0 || strncasecmp($image, 'https', 5) === 0) {
+                            try {
+                                $response = $client->get($image);
+                                $headers = $response->getHeaders();
 
-                            // http://www.example.com/images/image/124/12460449.jpg?t=1537200428#a 此类情况需要处理
-                            if (strpos($image, '?') !== false) {
-                                $t = parse_url($image);
-                                if (isset($t['query']) || isset($t['fragment'])) {
-                                    $image = "{$t['scheme']}://{$t['host']}{$t['path']}";
+                                // http://www.example.com/images/image/124/12460449.jpg?t=1537200428#a 此类情况需要处理
+                                if (strpos($image, '?') !== false) {
+                                    $t = parse_url($image);
+                                    if (isset($t['query']) || isset($t['fragment'])) {
+                                        $image = "{$t['scheme']}://{$t['host']}{$t['path']}";
+                                    }
                                 }
-                            }
-                            $ext = pathinfo($image, PATHINFO_EXTENSION);
-                            if (empty($ext) && isset($headers['Content-Type'][0])) {
-                                switch ($headers['Content-Type'][0]) {
-                                    case 'image/jpeg':
-                                        $ext = 'jpg';
-                                        break;
+                                $ext = pathinfo($image, PATHINFO_EXTENSION);
+                                if (empty($ext) && isset($headers['Content-Type'][0])) {
+                                    switch ($headers['Content-Type'][0]) {
+                                        case 'image/jpeg':
+                                            $ext = 'jpg';
+                                            break;
 
-                                    case 'image/gif':
-                                        $ext = 'gif';
-                                        break;
+                                        case 'image/gif':
+                                            $ext = 'gif';
+                                            break;
 
-                                    case 'image/png':
-                                        $ext = 'png';
-                                        break;
+                                        case 'image/png':
+                                            $ext = 'png';
+                                            break;
 
-                                    case 'image/vnd.wap.wbmp':
-                                        $ext = 'wbmp';
-                                        break;
+                                        case 'image/vnd.wap.wbmp':
+                                            $ext = 'wbmp';
+                                            break;
 
-                                    default:
-                                        $ext = 'jpg';
-                                        break;
+                                        default:
+                                            $ext = 'jpg';
+                                            break;
+                                    }
                                 }
+                                empty($ext) && $ext = 'jpg';
+                                $filename = StringHelper::generateRandomString() . ".$ext";
+                                if ($response->getStatusCode() == 200) {
+                                    $img = $response->getBody();
+                                    file_put_contents($savePath . DIRECTORY_SEPARATOR . $filename, $img);
+                                    $replaceParis[$oriImage] = "/uploads/$directory/$filename";
+                                }
+                            } catch (RuntimeException $e) {
                             }
-                            empty($ext) && $ext = 'jpg';
-                            $filename = StringHelper::generateRandomString() . ".$ext";
-                            if ($response->getStatusCode() == 200) {
-                                $img = $response->getBody();
-                                file_put_contents($savePath . DIRECTORY_SEPARATOR . $filename, $img);
-                                $replaceParis[$image] = "/uploads/$directory/$filename";
-                            }
-                        } catch (RuntimeException $e) {
                         }
                     }
+                    if ($replaceParis) {
+                        $newsContent->content = strtr($content, $replaceParis);
+                    }
                 }
-                if ($replaceParis) {
-                    $newsContent->content = strtr($content, $replaceParis);
-                }
+
                 $db = Yii::$app->getDb();
                 $transaction = $db->beginTransaction();
                 try {
