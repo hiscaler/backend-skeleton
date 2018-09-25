@@ -136,7 +136,6 @@ class DefaultController extends BaseController
      * @return mixed
      * @throws HttpException
      * @throws NotFoundHttpException if the model cannot be found
-     * @throws \yii\base\ErrorException
      * @throws \yii\db\Exception
      */
     public function actionUpdate($id)
