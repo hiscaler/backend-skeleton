@@ -78,7 +78,7 @@ class LookupsController extends Controller
                     }
 
                     $file->saveAs(Yii::getAlias('@webroot') . $value);
-                    $originalValue && @unlink(Yii::getAlias('@webroot') . $originalValue);
+                    $originalValue && FileHelper::unlink(Yii::getAlias('@webroot') . $originalValue);
                 }
 
                 if (substr($key, 0, 1) != '_') {

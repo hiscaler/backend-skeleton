@@ -184,10 +184,9 @@ class FileController extends BaseController
         $file = $url['path'];
         $config = Yii::$app->params['uploading'];
         $dir = isset($config['dir']) ? $config['dir'] : "uploads";
-        $path = Yii::getAlias("@webroot/$dir/" . trim($file, '\/'));
+        $path = Yii::getAlias("@webroot/$dir/" . ltrim($file, '\/'));
         if (file_exists($path)) {
-            $success = @unlink($path);
-            if ($success) {
+            if (FileHelper::unlink($path)) {
                 return new stdClass();
             } else {
                 $error = error_get_last();

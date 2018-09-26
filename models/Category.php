@@ -7,6 +7,7 @@ use yadjet\helpers\ArrayHelper;
 use yadjet\helpers\TreeFormatHelper;
 use Yii;
 use yii\caching\DbDependency;
+use yii\helpers\FileHelper;
 use yii\helpers\Inflector;
 
 /**
@@ -575,8 +576,8 @@ class Category extends BaseActiveRecord
         parent::afterDelete();
         \Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['category_id' => $this->id])->execute();
         if ($icon = $this->icon) {
-            $icon = Yii::getAlias('@web' . $icon);
-            file_exists($icon) && unlink($icon);
+            $icon = Yii::getAlias('@webroot' . $icon);
+            file_exists($icon) && FileHelper::unlink($icon);
         }
     }
 

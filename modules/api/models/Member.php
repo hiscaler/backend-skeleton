@@ -5,6 +5,7 @@ namespace app\modules\api\models;
 use app\models\Meta;
 use app\modules\api\components\ApplicationHelper;
 use Yii;
+use yii\helpers\FileHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -385,9 +386,7 @@ class Member extends BaseActiveRecord implements IdentityInterface
         $avatar = $this->avatar;
         if ($avatar && !filter_var($avatar, FILTER_VALIDATE_URL)) {
             $avatar = Yii::getAlias('@webroot/' . ltrim($avatar, '/'));
-            if (file_exists($avatar)) {
-                @unlink($avatar);
-            }
+            file_exists($avatar) && FileHelper::unlink($avatar);
         }
 
         // 清理相关数据

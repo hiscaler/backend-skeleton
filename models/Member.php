@@ -5,6 +5,7 @@ namespace app\models;
 use app\modules\admin\components\ApplicationHelper;
 use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
+use yii\helpers\FileHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -465,9 +466,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         $avatar = $this->avatar;
         if ($avatar && !filter_var($avatar, FILTER_VALIDATE_URL)) {
             $avatar = Yii::getAlias('@webroot/' . ltrim($avatar, '/'));
-            if (file_exists($avatar)) {
-                @unlink($avatar);
-            }
+            file_exists($avatar) && FileHelper::unlink($avatar);
         }
 
         // 清理相关数据

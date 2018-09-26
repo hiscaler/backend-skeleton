@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\caching\DbDependency;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "{{%lookup}}".
@@ -282,7 +283,7 @@ class Lookup extends BaseActiveRecord
         parent::afterDelete();
         if ($this->input_method == self::INPUT_METHOD_FILE && $file = unserialize($this->value)) {
             $file = Yii::getAlias('@webroot') . '/' . trim($file, '/');
-            file_exists($file) && unlink($file);
+            file_exists($file) && FileHelper::unlink($file);
         }
     }
 
