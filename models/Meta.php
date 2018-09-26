@@ -885,12 +885,11 @@ class Meta extends ActiveRecord
                     // 未选择
                     continue;
                 }
-                $columns = [
+                $batchInsertRows[] = [
                     'meta_id' => $this->id,
                     'name' => $key,
                     'options' => serialize(isset($item['options']) ? $item['options'] : [])
                 ];
-                $batchInsertRows[] = array_values($columns);
             }
             if ($batchInsertRows) {
                 $command->batchInsert('{{%meta_validator}}', array_keys($batchInsertRows[0]), $batchInsertRows)->execute();
@@ -913,7 +912,16 @@ class Meta extends ActiveRecord
     {
         parent::afterDelete();
         // 删除 meta 数据同时清理掉相关的验证规则以及保存的值
-        $cmd = \Yii::$app->getDb()->createCommand();
+        $db = \Yii::$app->getDb();
+
+        if ($this->input_type == self::INPUT_TYPE_FILE) {
+            $files = $db->createCommand('SELECT [[string_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :id', [':id' => $this->id])->queryColumn();
+            $path = Yii::getAlias('@webroot');
+            foreach ($files as $file) {
+                file_exists($path . $file) && FileHelper::unlink($path . $file);
+            }
+        }
+        $cmd = $db->createCommand();
         foreach (['meta_validator', 'meta_value'] as $table) {
             $cmd->delete("{{%$table}}", ['meta_id' => $this->id])->execute();
         }
