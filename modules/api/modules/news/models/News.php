@@ -71,6 +71,7 @@ class News extends BaseActiveRecord
             ['published_at', 'datetime', 'format' => 'php:Y-m-d H:i:s', 'timestampAttribute' => 'published_at'],
             [['enabled', 'enabled_comment'], 'boolean'],
             [['title', 'short_title'], 'string', 'max' => 160],
+            [['title'], 'unique'],
             [['keywords'], 'string', 'max' => 60],
             [['author'], 'string', 'max' => 20],
             [['source'], 'string', 'max' => 30],
