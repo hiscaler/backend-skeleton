@@ -8,6 +8,7 @@ use app\models\Meta;
 use app\modules\admin\forms\ChangePasswordForm;
 use app\modules\admin\forms\CreateMemberForm;
 use app\modules\admin\forms\DynamicForm;
+use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -49,21 +50,43 @@ class MembersController extends Controller
     }
 
     /**
-     * Lists all Member models.
+     * 会员列表数据
      *
      * @rbacDescription 会员列表数据查看权限
+     * @param string $view
      * @return mixed
      * @throws \yii\db\Exception
      */
-    public function actionIndex()
+    public function actionIndex($view = 'index')
     {
-        $searchModel = new MemberSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $view = strtolower($view);
+        if (!in_array($view, ['index', 'tree'])) {
+            $view = 'index';
+        }
+        if ($view == 'index') {
+            $searchModel = new MemberSearch();
+            $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            $members = [];
+            $rawMembers = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[parent_id]], [[username]], [[real_name]] FROM {{%member}} ORDER BY [[parent_id]] ASC')->queryAll();
+            foreach ($rawMembers as $member) {
+                $members[] = [
+                    'id' => $member['id'],
+                    'parent_id' => $member['parent_id'],
+                    'name' => $member['username'] . " [ {$member['real_name']} ]",
+                ];
+            }
+            $members = ArrayHelper::toTree($members, 'id');
+
+            return $this->render('tree', [
+                'members' => $members,
+            ]);
+        }
     }
 
     /**

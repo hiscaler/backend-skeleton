@@ -15,6 +15,7 @@ use yii\web\IdentityInterface;
  * @property integer $type
  * @property integer $category_id
  * @property string $group
+ * @property integer $parent_id
  * @property string $username
  * @property string $nickname
  * @property string $real_name
@@ -82,11 +83,11 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['type', 'category_id', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'category_id', 'parent_id', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             [['group', 'username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email', 'remark'], 'trim'],
             [['type'], 'default', 'value' => self::TYPE_MEMBER],
-            [['category_id'], 'default', 'value' => 0],
+            [['category_id', 'parent_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
             [['group', 'username', 'real_name'], 'string', 'max' => 20],
             [['nickname'], 'string', 'max' => 60],
@@ -130,6 +131,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'type' => '会员类型',
             'category_id' => '分类',
             'group' => '分组',
+            'parent_id' => '上级',
+            'parent.username' => '上级',
             'username' => '帐号',
             'nickname' => '昵称',
             'real_name' => '姓名',
@@ -371,6 +374,33 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             self::STATUS_LOCKED => '锁定',
             self::STATUS_DELETED => '删除',
         ];
+    }
+
+    /**
+     * 会员列表
+     *
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public static function map()
+    {
+        $members = [];
+        $rawMembers = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[username]] FROM {{%member}}')->queryAll();
+        foreach ($rawMembers as $member) {
+            $members[$member['id']] = $member['username'];
+        }
+
+        return $members;
+    }
+
+    /**
+     * 上级
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParent()
+    {
+        return $this->hasOne(Member::class, ['id' => 'parent_id']);
     }
 
     /**

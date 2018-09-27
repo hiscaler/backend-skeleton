@@ -33,6 +33,7 @@ $wechatModel = $model->wechat;
                     'attributes' => [
                         'id',
                         'type:memberType',
+                        'parent.username',
                         'username',
                         'nickname',
                         'real_name',

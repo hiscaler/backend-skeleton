@@ -19,6 +19,11 @@ use yii\widgets\ActiveForm;
         <div class="tab-panel" id="tab-panel-basic">
             <?= $form->field($model, 'type')->dropDownList(\app\models\Member::typeOptions()) ?>
             <?php
+            if ($model->getIsNewRecord()) {
+                echo $form->field($model, 'parent_id')->dropDownList(\app\models\Member::map(), ['prompt' => '']);
+            }
+            ?>
+            <?php
             $options = ['maxlength' => true];
             !$model->getIsNewRecord() && $options['disabled'] = 'disabled';
             echo $form->field($model, 'username')->textInput($options);
