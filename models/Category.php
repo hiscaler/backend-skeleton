@@ -209,11 +209,10 @@ class Category extends BaseActiveRecord
         if ($categories = self::getChildren($parentId)) {
             // 数据过滤
             if ($returnType == self::RETURN_TYPE_PRIVATE || $enabled !== null) {
+                $privateCategoryIds = [];
                 if ($returnType == self::RETURN_TYPE_PRIVATE) {
                     $user = Yii::$app->getUser();
-                    if ($user->getIsGuest()) {
-                        $privateCategoryIds = [];
-                    } else {
+                    if (!$user->getIsGuest()) {
                         $privateCategoryIds = $db->createCommand('SELECT [[category_id]] FROM {{%user_auth_category}} WHERE [[user_id]] = :userId', [':userId' => $user->getId()])->queryColumn();
                     }
 
@@ -232,7 +231,7 @@ class Category extends BaseActiveRecord
             }
 
             if ($categories) {
-                $categories = TreeFormatHelper::dumpArrayTree(\yadjet\helpers\ArrayHelper::toTree($categories, 'id', 'parent'));
+                $categories = TreeFormatHelper::dumpArrayTree(ArrayHelper::toTree($categories, 'id', 'parent'));
                 foreach ($categories as $category) {
                     $tree[$category['id']] = $category['levelstr'] . ($shortName ? $category['shortName'] : $category['name']);
                 }
@@ -298,6 +297,7 @@ class Category extends BaseActiveRecord
      * @param $items
      * @param $parent
      * @param $level
+     * @param bool $getAll
      * @return array
      */
     private static function _getChildren($items, $parent, $level, $getAll = false)
