@@ -179,7 +179,7 @@ class Meta extends ActiveRecord
                 ])
                 ->all();
             foreach ($rawValues as $item) {
-                $key = "{$item['meta_id']}.{$item['object_id']}";
+                $key = $item['meta_id'] . $item['object_id'];
                 switch ($rawData[$item['meta_id']]['return_value_type']) {
                     case self::RETURN_VALUE_TYPE_STRING:
                         $value = $item['string_value'];
