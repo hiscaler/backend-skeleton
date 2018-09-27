@@ -67,7 +67,7 @@ class MembersController extends Controller
     }
 
     /**
-     * Displays a single Member model.
+     * 会员详情
      *
      * @rbacDescription 会员详情数据查看权限
      * @param integer $id
@@ -82,8 +82,7 @@ class MembersController extends Controller
     }
 
     /**
-     * Creates a new Member model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 会员数据添加
      *
      * @rbacDescription 会员数据添加权限
      * @return mixed
@@ -116,8 +115,7 @@ class MembersController extends Controller
     }
 
     /**
-     * Updates an existing Member model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 会员数据更新
      *
      * @rbacDescription 会员数据更新权限
      * @param integer $id
@@ -146,8 +144,7 @@ class MembersController extends Controller
     }
 
     /**
-     * Deletes an existing Member model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 会员数据删除
      *
      * @rbacDescription 会员数据删除权限
      * @param integer $id
@@ -210,4 +207,5 @@ class MembersController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }
