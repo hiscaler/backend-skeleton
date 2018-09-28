@@ -120,4 +120,5 @@ class Module extends \yii\db\ActiveRecord
             return false;
         }
     }
+
 }
