@@ -259,10 +259,15 @@ class Lookup extends BaseActiveRecord
     }
 
     // Events
+    private $_file;
+
     public function afterFind()
     {
         parent::afterFind();
         if (!$this->isNewRecord) {
+            if ($this->input_method == self::INPUT_METHOD_FILE) {
+                $this->_file = $this->value;
+            }
             $this->value = unserialize($this->value);
         }
     }
@@ -275,6 +280,16 @@ class Lookup extends BaseActiveRecord
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        // 上传文件清理
+        if ($this->_file && $this->_file != $this->value) {
+            $file = Yii::getAlias('@webroot') . '/' . trim(unserialize($this->_file), '/');
+            file_exists($file) && FileHelper::unlink($file);
         }
     }
 
