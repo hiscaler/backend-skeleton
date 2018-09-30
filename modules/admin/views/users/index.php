@@ -18,7 +18,6 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
     ['label' => Yii::t('app', 'Grid Column Config'), 'url' => ['grid-column-configs/index', 'name' => \app\models\User::class, 'id' => 'grid-view-users'], 'htmlOptions' => ['class' => 'grid-column-config', 'data-grid-id' => 'grid-view-users']],
-    ['label' => Yii::t('app', 'Search'), 'url' => '#'],
 ];
 ?>
 <div class="user-index">
