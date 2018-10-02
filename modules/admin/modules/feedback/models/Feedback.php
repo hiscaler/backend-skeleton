@@ -73,4 +73,24 @@ class Feedback extends BaseActiveRecord
         ];
     }
 
+    // Events
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $user = \Yii::$app->getUser();
+            $userId = $user->getIsGuest() ? 0 : $user->getId();
+            if ($insert) {
+                $this->created_by = $this->updated_by = $userId;
+                $this->created_at = $this->updated_at = time();
+            } else {
+                $this->updated_by = $userId;
+                $this->updated_at = time();
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
