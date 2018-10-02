@@ -3,6 +3,7 @@
 namespace app\modules\admin\modules\feedback\controllers;
 
 use app\models\Category;
+use app\modules\admin\modules\feedback\forms\ReplyForm;
 use Yii;
 use app\modules\admin\modules\feedback\models\Feedback;
 use app\modules\admin\modules\feedback\models\FeedbackSearch;
@@ -29,7 +30,7 @@ class DefaultController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'delete'],
+                        'actions' => ['index', 'view', 'reply', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -75,6 +76,32 @@ class DefaultController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * 回复反馈消息
+     *
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionReply($id)
+    {
+        $feedback = $this->findModel($id);
+        $model = new ReplyForm();
+
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
+            $feedback->response_message = $model->message;
+            $feedback->response_datetime = time();
+            $feedback->save(false);
+
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('reply', [
+            'feedback' => $feedback,
+            'model' => $model,
         ]);
     }
 

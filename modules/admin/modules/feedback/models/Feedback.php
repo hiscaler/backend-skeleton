@@ -3,6 +3,9 @@
 namespace app\modules\admin\modules\feedback\models;
 
 use app\models\BaseActiveRecord;
+use yadjet\behaviors\ImageUploadBehavior;
+use Yii;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "{{%feedback}}".
@@ -14,7 +17,11 @@ use app\models\BaseActiveRecord;
  * @property string $tel 电话号码
  * @property string $mobile_phone 手机号码
  * @property string $email 邮箱
+ * @property int $ip IP 地址
+ * @property string $picture 图片
  * @property string $message 内容
+ * @property string $response_message 回复内容
+ * @property int $response_datetime 回复时间
  * @property int $created_at 添加时间
  * @property int $created_by 添加人
  * @property int $updated_at 更新时间
@@ -37,16 +44,32 @@ class Feedback extends BaseActiveRecord
     public function rules()
     {
         return [
-            [['category_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['category_id', 'ip', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['message'], 'required'],
             ['category_id', 'default', 'value' => 0],
-            [['title', 'tel', 'mobile_phone', 'email'], 'trim'],
+            [['title', 'tel', 'mobile_phone', 'email', 'message', 'response_message'], 'trim'],
             ['email', 'email'],
-            [['message'], 'string'],
+            [['message', 'response_message'], 'string'],
             [['title'], 'string', 'max' => 100],
             [['username', 'tel'], 'string', 'max' => 20],
             [['mobile_phone'], 'string', 'max' => 11],
             [['email'], 'string', 'max' => 60],
+            ['enabled', 'boolean'],
+            ['picture', 'file',
+                'extensions' => 'jpg,gif,png,jpeg',
+                'minSize' => 1024,
+                'maxSize' => 1024 * 200,
+            ],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ImageUploadBehavior::class,
+                'attribute' => 'picture'
+            ],
         ];
     }
 
@@ -63,7 +86,12 @@ class Feedback extends BaseActiveRecord
             'tel' => '电话号码',
             'mobile_phone' => '手机号码',
             'email' => '邮箱',
+            'ip' => 'IP 地址',
+            'picture' => '图片',
             'message' => '内容',
+            'response_message' => '回复内容',
+            'response_datetime' => '回复时间',
+            'enabled' => '激活',
             'created_at' => '添加时间',
             'created_by' => '提交人',
             'creater.nickname' => '提交人',
@@ -80,6 +108,7 @@ class Feedback extends BaseActiveRecord
             $user = \Yii::$app->getUser();
             $userId = $user->getIsGuest() ? 0 : $user->getId();
             if ($insert) {
+                $this->ip = ip2long(Yii::$app->getRequest()->getUserIP());
                 $this->created_by = $this->updated_by = $userId;
                 $this->created_at = $this->updated_at = time();
             } else {
@@ -90,6 +119,19 @@ class Feedback extends BaseActiveRecord
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        $picture = $this->picture;
+        if ($picture) {
+            $picture = Yii::getAlias('@webroot/' . ltrim($picture, '/'));
+            file_exists($picture) && FileHelper::unlink($picture);
         }
     }
 

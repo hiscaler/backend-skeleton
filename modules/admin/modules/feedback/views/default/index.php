@@ -49,26 +49,24 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'email'],
             ],
             [
+                'attribute' => 'enabled',
+                'format' => 'boolean',
+                'contentOptions' => ['class' => 'boolean'],
+            ],
+            [
                 'attribute' => 'created_at',
                 'format' => 'date',
                 'contentOptions' => ['class' => 'date']
             ],
             [
-                'attribute' => 'updated_by',
-                'value' => function ($model) {
-                    return $model['updater']['nickname'];
-                },
-                'contentOptions' => ['class' => 'username']
-            ],
-            [
-                'attribute' => 'updated_at',
-                'format' => 'date',
-                'contentOptions' => ['class' => 'date']
-            ],
-            [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {delete}',
-                'headerOptions' => ['class' => 'buttons-2 last'],
+                'template' => '{view} {reply} {delete}',
+                'buttons' => [
+                    'reply' => function ($url, $model, $key) {
+                        return \yii\helpers\Html::a('<span class="glyphicon glyphicon-add-child"></span>', ['reply', 'id' => $model['id']], ['data-pjax' => 0, 'title' => '回复']);
+                    }
+                ],
+                'headerOptions' => array('class' => 'buttons-3 last'),
             ],
         ],
     ]); ?>
