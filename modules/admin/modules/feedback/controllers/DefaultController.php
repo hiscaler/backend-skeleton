@@ -82,6 +82,8 @@ class DefaultController extends Controller
     /**
      * 回复反馈消息
      *
+     * @rbacDescription 回复反馈消息权限
+     *
      * @param $id
      * @return string
      * @throws NotFoundHttpException
