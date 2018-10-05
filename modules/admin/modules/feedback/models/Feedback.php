@@ -3,6 +3,7 @@
 namespace app\modules\admin\modules\feedback\models;
 
 use app\models\BaseActiveRecord;
+use app\models\FileUploadConfig;
 use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 use yii\helpers\FileHelper;
@@ -31,6 +32,25 @@ class Feedback extends BaseActiveRecord
 {
 
     /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'picture';
+
+    /**
+     * @var array 文件上传设置
+     */
+    public $_fileUploadConfig;
+
+    /**
+     * @throws \yii\db\Exception
+     */
+    public function init()
+    {
+        parent::init();
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
+    }
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -55,10 +75,10 @@ class Feedback extends BaseActiveRecord
             [['mobile_phone'], 'string', 'max' => 11],
             [['email'], 'string', 'max' => 60],
             ['enabled', 'boolean'],
-            ['picture', 'file',
-                'extensions' => 'jpg,gif,png,jpeg',
-                'minSize' => 1024,
-                'maxSize' => 1024 * 200,
+            ['picture', 'image',
+                'extensions' => $this->_fileUploadConfig['extensions'],
+                'minSize' => $this->_fileUploadConfig['size']['min'],
+                'maxSize' => $this->_fileUploadConfig['size']['max'],
             ],
         ];
     }
