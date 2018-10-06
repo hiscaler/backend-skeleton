@@ -27,10 +27,11 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'username') ?>
         </div>
-        <?php // echo $form->field($model, 'mobile_phone') ?>
+        <div class="entry">
+            <?= $form->field($model, 'mobile_phone') ?>
 
-        <?php // echo $form->field($model, 'email') ?>
-
+            <?= $form->field($model, 'email') ?>
+        </div>
         <?php // echo $form->field($model, 'message') ?>
 
         <?php // echo $form->field($model, 'created_at') ?>
