@@ -23,6 +23,7 @@ use yii\helpers\FileHelper;
  * @property string $message 内容
  * @property string $response_message 回复内容
  * @property int $response_datetime 回复时间
+ * @property int $enabled 激活
  * @property int $created_at 添加时间
  * @property int $created_by 添加人
  * @property int $updated_at 更新时间
