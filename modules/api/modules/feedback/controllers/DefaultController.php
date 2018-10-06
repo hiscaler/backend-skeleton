@@ -35,7 +35,7 @@ class DefaultController extends Controller
     private function parseQuery($fields = null, $category = null, $offset = null, $limit = null)
     {
         $where = [];
-        $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.username', 't.tel', 't.mobile_phone', 't.email', 't.created_at', 't.created_by', 't.updated_at', 't.updated_by'], $fields, ['category_name' => 't.category_id']);
+        $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.username', 't.tel', 't.mobile_phone', 't.email', 't.ip', 't.picture', 't.message', 't.response_message', 't.response_datetime', 't.enabled', 't.created_at', 't.created_by', 't.updated_at', 't.updated_by'], $fields, ['category_name' => 't.category_id']);
         $query = (new ActiveQuery(Feedback::class))
             ->alias('t')
             ->select($selectColumns);
@@ -44,7 +44,7 @@ class DefaultController extends Controller
             $query->leftJoin('{{%category}} c', 't.category_id = c.id');
         }
 
-        // 提交处理
+        // 分类查询
         if ($category) {
             $where['t.category_id'] = (int) $category;
         }
