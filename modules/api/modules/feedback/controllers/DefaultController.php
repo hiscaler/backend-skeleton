@@ -147,6 +147,11 @@ class DefaultController extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * @return Feedback|null
+     * @throws NotFoundHttpException
+     */
     public function findModel($id)
     {
         $model = Feedback::findOne($id);
