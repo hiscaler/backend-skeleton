@@ -77,6 +77,9 @@ $config = [
                 ],
             ],
         ],
+        'formatter' => [
+            'class' => 'app\extensions\Formatter',
+        ],
         'assetManager' => [
             'appendTimestamp' => true,
             'bundles' => [
