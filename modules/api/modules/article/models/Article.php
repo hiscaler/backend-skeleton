@@ -3,7 +3,6 @@
 namespace app\modules\api\modules\article\models;
 
 use app\modules\api\extensions\UtilsHelper;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%article}}".
@@ -19,16 +18,8 @@ use yii\db\ActiveRecord;
  * @property int $updated_at 更新时间
  * @property int $updated_by 更新人
  */
-class Article extends ActiveRecord
+class Article extends \app\modules\admin\modules\article\models\Article
 {
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%article}}';
-    }
 
     public function fields()
     {
