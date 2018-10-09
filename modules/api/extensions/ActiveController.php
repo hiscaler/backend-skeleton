@@ -2,6 +2,8 @@
 
 namespace app\modules\api\extensions;
 
+use app\modules\api\components\ApplicationHelper;
+use Yii;
 use yii\filters\ContentNegotiator;
 use yii\filters\Cors;
 use yii\web\Response;
@@ -37,6 +39,9 @@ class ActiveController extends \yii\rest\ActiveController
         'collectionEnvelope' => 'items',
     ];
 
+    /**
+     * @throws \yii\base\InvalidConfigException
+     */
     public function init()
     {
         parent::init();
