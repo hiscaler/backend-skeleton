@@ -348,6 +348,14 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
 
+    /**
+     * @throws \yii\base\Exception
+     */
+    public function generateAccessToken()
+    {
+        $this->access_token = Yii::$app->getSecurity()->generateRandomString();
+    }
+
     public function removeAccessToken()
     {
         $this->access_token = null;
@@ -469,6 +477,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             }
             if ($insert) {
                 $this->generateAuthKey();
+                $this->generateAccessToken();
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
                 if (Yii::$app->getUser()->isGuest) {
                     $this->created_by = $this->updated_by = 0;
