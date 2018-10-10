@@ -22,6 +22,8 @@
 > ```
 >
 > 在客户端，我们总可以判断返回数据中的 success 来作为数据是否成功返回的依据。以便进行下一步的操作。
+>
+> 需要认证的接口控制器请继承于 app\modules\api\extensions\AuthController 控制器。
 
 ## GET /api/category
 ### 说明
@@ -120,5 +122,37 @@ https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-login.html#wxchecksessionobjec
 ```json
 {
     "valid": [true|false]
+}
+```
+
+## GET /api/passport/login
+### 说明
+会员登录，登录成功后其他需要认证的请求 url 带上 accessToken 参数
+### 参数说明
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|---|:---:|:---:|:---:|---|
+| username | string | 是 | null | 用户名 |
+| password | string | 是 | null | 密码 |
+### 返回值
+```json
+{
+    "id": 1,
+    "username": 'username',
+    "accessToken": 'accessToken',
+    ...
+}
+```
+
+## GET /api/passport/logout
+### 说明
+注销登录
+
+### 参数说明
+无
+
+### 返回值
+```json
+{
+    "data": [true|false]
 }
 ```
