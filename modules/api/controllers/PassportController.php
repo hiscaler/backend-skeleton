@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 use app\modules\admin\components\ApplicationHelper;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Member;
+use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
@@ -105,6 +106,16 @@ class PassportController extends BaseController
         } else {
             throw new BadRequestHttpException("$this->_token_param 已失效。");
         }
+    }
+
+    /**
+     * 注销
+     *
+     * @return bool
+     */
+    public function actionLogout()
+    {
+        return Yii::$app->getUser()->logout();
     }
 
 }
