@@ -27,7 +27,7 @@ $this->params['menus'] = [
         <?php endforeach; ?>
     </ul>
     <div class="panels">
-        <div id="panel-user-group-<?= \app\models\UserGroup::TYPE_USER_GROUP ?>" class="tab-panel">
+        <div id="panel-user-group-<?= \app\models\MemberGroup::TYPE_USER_GROUP ?>" class="tab-panel">
             <?=
             GridView::widget([
                 'dataProvider' => $userGroupDataProvider,
@@ -38,21 +38,21 @@ $this->params['menus'] = [
                     ],
                     [
                         'attribute' => 'alias',
-                        'header' => Yii::t('userGroup', 'Alias'),
+                        'header' => Yii::t('memberGroup', 'Alias'),
                         'contentOptions' => ['class' => 'alias'],
                     ],
                     [
                         'attribute' => 'name',
-                        'header' => Yii::t('userGroup', 'Name'),
+                        'header' => Yii::t('memberGroup', 'Name'),
                     ],
                     [
                         'attribute' => 'min_credits',
-                        'header' => Yii::t('userGroup', 'Min Credits'),
+                        'header' => Yii::t('memberGroup', 'Min Credits'),
                         'contentOptions' => ['class' => 'number'],
                     ],
                     [
                         'attribute' => 'max_credits',
-                        'header' => Yii::t('userGroup', 'Max Credits'),
+                        'header' => Yii::t('memberGroup', 'Max Credits'),
                         'contentOptions' => ['class' => 'number'],
                     ],
                     [
@@ -76,7 +76,7 @@ $this->params['menus'] = [
             ]);
             ?>
         </div>
-        <div id="panel-user-group-<?= \app\models\UserGroup::TYPE_SYSTEM_GROUP ?>" class="tab-panel" style="display: none">
+        <div id="panel-user-group-<?= \app\models\MemberGroup::TYPE_SYSTEM_GROUP ?>" class="tab-panel" style="display: none">
             <?=
             GridView::widget([
                 'dataProvider' => $systemGroupDataProvider,
