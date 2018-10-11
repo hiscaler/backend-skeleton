@@ -175,21 +175,33 @@ class Member extends BaseActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        $member = static::findOne(['access_token' => $token]);
+        /**
+         * Token 格式
+         * 1. token值
+         * 2. token值.有效的时间戳
+         * 3. 类型.token值.有效的时间戳
+         */
+        $member = static::findOne(['access_token' => $token, 'status' => self::STATUS_ACTIVE]);
         if ($member) {
-            $tokens = explode('.', $token);
-            if (isset($tokens[2])) {
-                list (, , $expire) = $tokens;
+            if (stripos($token, '.') === false) {
+                return $member; // 1. token值
+            } else {
+                $tokens = explode('.', $token);
+                if (isset($tokens[2])) {
+                    // 3. 类型.token值.有效的时间戳
+                    list (, , $expire) = $tokens;
+                } else {
+                    // 2. token值.有效的时间戳
+                    list (, $expire) = $tokens;
+                }
                 $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
                 $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
 
                 return ((int) $expire + $accessTokenExpire) > time() ? $member : null;
-            } else {
-                return null;
             }
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
