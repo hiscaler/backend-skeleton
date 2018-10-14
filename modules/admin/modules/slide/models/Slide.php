@@ -71,6 +71,7 @@ class Slide extends BaseActiveRecord
             [['title'], 'string', 'max' => 60],
             [['url'], 'string', 'max' => 100],
             [['url_open_target'], 'string', 'max' => 6],
+            [['url_open_target'], 'default', 'value' => self::URL_OPEN_TARGET_BLANK],
             [['url'], 'url', 'defaultScheme' => 'http'],
             ['category_id', 'default', 'value' => 0],
             ['picture_path', 'image',
