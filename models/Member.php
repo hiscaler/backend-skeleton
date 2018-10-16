@@ -212,11 +212,15 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      * Finds user by username
      *
      * @param string $username
+     * @param null $type
      * @return static|null
      */
     public static function findByUsername($username, $type = null)
     {
         $condition = ['username' => $username, 'status' => self::STATUS_ACTIVE];
+        if ($type !== null) {
+            $condition['type'] = (int) $type;
+        }
 
         return static::findOne($condition);
     }
@@ -471,7 +475,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $user = \Yii::$app->getUser();
         if (!$user->getIsGuest()) {
-            \Yii::$app->getDb()->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
+            \Yii::$app->getDb()->createCommand('UPDATE {{%member}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
                 ':loginIp' => Yii::$app->getRequest()->getUserIP(),
                 ':loginTime' => time(),
                 ':id' => $user->getId()
