@@ -11,7 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property integer $user_id
- * @property integer $login_ip
+ * @property string $login_ip
  * @property string $client_information
  * @property integer $login_at
  */
@@ -33,7 +33,8 @@ class UserLoginLog extends ActiveRecord
     {
         return [
             [['user_id', 'login_ip', 'client_information', 'login_at'], 'required'],
-            [['user_id', 'login_at', 'login_ip'], 'integer'],
+            [['user_id', 'login_at'], 'integer'],
+            [['login_ip'], 'string', 'max' => 39],
             [['client_information'], 'string', 'max' => 255]
         ];
     }

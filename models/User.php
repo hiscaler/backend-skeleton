@@ -23,9 +23,9 @@ use yii\web\IdentityInterface;
  * @property string $password_reset_token
  * @property string $email
  * @property string $role
- * @property integer $register_ip
+ * @property string $register_ip
  * @property integer $login_count
- * @property integer $last_login_ip
+ * @property string $last_login_ip
  * @property integer $last_login_time
  * @property integer $status
  * @property integer $created_at
@@ -84,10 +84,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['register_ip', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
             ['username', 'match', 'pattern' => '/^[a-z0-9]+[a-z0-9-]+[a-z0-9]$/'],
             [['username', 'nickname'], 'string', 'max' => 20],
+            [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
             [['auth_key'], 'string', 'max' => 32],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 50],
@@ -361,7 +362,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function afterLogin($event)
     {
-        $ip = ip2long(Yii::$app->getRequest()->getUserIP()) ?: 0;
+        $ip = Yii::$app->getRequest()->getUserIP();
         $now = time();
         $userId = \Yii::$app->getUser()->getId();
         $db = \Yii::$app->getDb();

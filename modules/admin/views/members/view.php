@@ -49,18 +49,13 @@ $wechatModel = $model->wechat;
                         [
                             'attribute' => 'register_ip',
                             'value' => function ($model) {
-                                return long2ip($model['register_ip']);
+                                return $model['register_ip'];
                             },
                         ],
                         'total_credits',
                         'available_credits',
                         'login_count',
-                        [
-                            'attribute' => 'last_login_ip',
-                            'value' => function ($model) {
-                                return long2ip($model['last_login_ip']);
-                            },
-                        ],
+                        'last_login_ip',
                         'last_login_time:datetime',
                         'status:memberStatus',
                         'remark:ntext',

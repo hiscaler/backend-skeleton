@@ -116,7 +116,7 @@ class WxappController extends BaseController
             $isNewMember = true;
         }
         $member->last_login_time = $now;
-        $member->last_login_ip = ip2long(Yii::$app->getRequest()->getUserIP());
+        $member->last_login_ip = Yii::$app->getRequest()->getUserIP();
         $member->access_token = $accessToken;
         $transaction = $db->beginTransaction();
         try {
