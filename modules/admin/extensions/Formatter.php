@@ -50,15 +50,6 @@ class Formatter extends \yii\i18n\Formatter
         return empty($value) ? $this->nullDisplay : Html::img(Yii::$app->getRequest()->getBaseUrl() . $value, $options);
     }
 
-    public function asLong2ip($value)
-    {
-        if (empty($value)) {
-            return $this->nullDisplay;
-        } else {
-            return long2ip($value);
-        }
-    }
-
     /**
      * 性别
      *

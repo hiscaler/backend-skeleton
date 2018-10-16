@@ -27,11 +27,11 @@ use yii\web\IdentityInterface;
  * @property string $tel
  * @property string $mobile_phone
  * @property string $address
- * @property integer $register_ip
+ * @property string $register_ip
  * @property integer $total_credits
  * @property integer $available_credits
  * @property integer $login_count
- * @property integer $last_login_ip
+ * @property string $last_login_ip
  * @property integer $last_login_time
  * @property integer $status
  * @property string $remark
@@ -78,8 +78,9 @@ class Member extends BaseActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['type', 'register_ip', 'total_credits', 'available_credits', 'login_count', 'last_login_ip', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'total_credits', 'available_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['username'], 'required'],
+            [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
             [['group', 'username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email'], 'trim'],
             [['type'], 'default', 'value' => self::TYPE_MEMBER],
             [['total_credits', 'available_credits'], 'default', 'value' => 0],

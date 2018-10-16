@@ -366,16 +366,16 @@ class User extends ActiveRecord implements IdentityInterface
         $now = time();
         $userId = \Yii::$app->getUser()->getId();
         $db = \Yii::$app->getDb();
-        $db->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
-            ':loginIp' => $ip,
-            ':loginTime' => $now,
-            ':id' => $userId
-        ])->execute();
         $db->createCommand()->insert('{{%user_login_log}}', [
             'user_id' => $userId,
             'login_ip' => $ip,
             'client_information' => UtilHelper::getBrowserName(),
             'login_at' => $now,
+        ])->execute();
+        $db->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
+            ':loginIp' => $ip,
+            ':loginTime' => $now,
+            ':id' => $userId
         ])->execute();
     }
 
