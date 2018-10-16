@@ -67,7 +67,7 @@ class PassportController extends BaseController
             throw new BadRequestHttpException($loginBy == self::LOGIN_BY_ACCESS_TOKEN ? "无效的 $this->_token_param 值" : '账号错误');
         }
 
-        if ($loginBy == self::LOGIN_BY_USERNAME && isset($password) && !\Yii::$app->getSecurity()->validatePassword($password, $member['password_hash'])) {
+        if ($loginBy == self::LOGIN_BY_USERNAME && isset($password) && !$member->validatePassword($password)) {
             throw new BadRequestHttpException('密码错误');
         }
 
