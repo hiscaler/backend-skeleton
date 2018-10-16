@@ -19,6 +19,9 @@ use yii\web\BadRequestHttpException;
 class PassportController extends BaseController
 {
 
+    const LOGIN_BY_USERNAME = 'username';
+    const LOGIN_BY_ACCESS_TOKEN = 'accessToken';
+
     /**
      * @var string token 参数名称
      */
@@ -48,10 +51,10 @@ class PassportController extends BaseController
         $request = \Yii::$app->getRequest();
         $token = $request->post($this->_token_param);
         if ($token) {
-            $checkBy = 'accessToken';
+            $loginBy = self::LOGIN_BY_ACCESS_TOKEN;
             $member = Member::findIdentityByAccessToken($token);
         } else {
-            $checkBy = 'username';
+            $loginBy = self::LOGIN_BY_USERNAME;
             $username = $request->post('username');
             $password = $request->post('password');
             if (empty($username) || empty($password)) {
@@ -61,10 +64,10 @@ class PassportController extends BaseController
         }
 
         if ($member === null) {
-            throw new BadRequestHttpException($checkBy == 'accessToken' ? "无效的 $this->_token_param 值" : '账号错误');
+            throw new BadRequestHttpException($loginBy == self::LOGIN_BY_ACCESS_TOKEN ? "无效的 $this->_token_param 值" : '账号错误');
         }
 
-        if ($checkBy == 'username' && !\Yii::$app->getSecurity()->validatePassword($password, $member['password'])) {
+        if ($loginBy == self::LOGIN_BY_USERNAME && isset($password) && !\Yii::$app->getSecurity()->validatePassword($password, $member['password_hash'])) {
             throw new BadRequestHttpException('密码错误');
         }
 

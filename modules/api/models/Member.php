@@ -143,6 +143,7 @@ class Member extends BaseActiveRecord implements IdentityInterface
             'loginCount' => 'login_count',
             'lastLoginIp' => 'last_login_ip',
             'lastLoginTime' => 'last_login_time',
+            'accessToken' => 'access_token',
             'status' => 'status',
             'remark' => 'remark',
             'createdAt' => 'created_at',
