@@ -112,11 +112,10 @@ class ApplicationHelper
 
                     if (!$active) {
                         // /admin/moduleName/controllerId/actionId
-                        $active = false;
                         $r = explode('/', $menu['url'][0]);
-                        // $r[2] is module name, $r[3] is controller id
-                        if (isset($r[3])) {
-                            if ($r[2] == $module['alias'] && $r[3] == $controllerId) {
+                        // $r[2] is module name, $r[3] is controller id, $r[4] is action id
+                        if (isset($r[3], $r[4])) {
+                            if ($r[2] == $module['alias'] && $r[3] == $controllerId && $r[4] == $actionId) {
                                 $active = true;
                             }
                         }
