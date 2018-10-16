@@ -18,7 +18,11 @@ class AccessTokenAuth extends AuthMethod
     public $tokenParam = 'accessToken';
 
     /**
-     * @inheritdoc
+     * @param \yii\web\User $user
+     * @param \yii\web\Request $request
+     * @param \yii\web\Response $response
+     * @return null|\yii\web\IdentityInterface
+     * @throws \yii\web\UnauthorizedHttpException
      */
     public function authenticate($user, $request, $response)
     {
@@ -29,7 +33,6 @@ class AccessTokenAuth extends AuthMethod
             $accessToken = $headers->has($tokenKey) ? $headers->get($tokenKey) : null;
         }
         if (is_string($accessToken)) {
-            /* @var $user \yii\web\User */
             $identity = $user->loginByAccessToken($accessToken, get_class($this));
             if ($identity !== null) {
                 return $identity;
