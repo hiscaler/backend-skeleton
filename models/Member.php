@@ -461,6 +461,24 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * 会员登录善后处理
+     *
+     * @param $event
+     * @throws \yii\db\Exception
+     */
+    public static function afterLogin($event)
+    {
+        $user = \Yii::$app->getUser();
+        if (!$user->getIsGuest()) {
+            \Yii::$app->getDb()->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
+                ':loginIp' => Yii::$app->getRequest()->getUserIP(),
+                ':loginTime' => time(),
+                ':id' => $user->getId()
+            ])->execute();
+        }
+    }
+
     // Events
 
     /**
