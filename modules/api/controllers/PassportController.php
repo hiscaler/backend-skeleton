@@ -87,6 +87,13 @@ class PassportController extends BaseController
         $request = \Yii::$app->getRequest();
         $token = $request->post($this->_token_param);
         if (empty($token)) {
+            $token = $request->get($this->_token_param);
+        }
+        if (empty($token)) {
+            $headers = \Yii::$app->getRequest()->getHeaders();
+            $token = $headers->has($this->_token_param) ? $headers->get($this->_token_param) : null;
+        }
+        if (empty($token)) {
             throw new InvalidArgumentException("无效的 $this->_token_param 值。");
         }
         $member = Member::findIdentityByAccessToken($token);
@@ -94,17 +101,33 @@ class PassportController extends BaseController
             throw new BadRequestHttpException("用户验证失败。");
         }
 
-        $t = explode('_', $token);
-        $expiredTime = end($t);
-        $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
-        $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
-        if (is_int($expiredTime) && ($expiredTime + $accessTokenExpire) <= time()) {
-            $newToken = $member->generateAccessToken();
-            \Yii::$app->getDb()->createCommand()->update('{{%user}}', ['access_token' => $newToken], ['id' => $member->id])->execute();
+        // 验证 token 是否有效
+        if (stripos($token, '.') === false) {
+            // 1. token值
+            $tokenIsValid = true;
+        } else {
+            $tokens = explode('.', $token);
+            if (isset($tokens[2])) {
+                // 3. 类型.token值.有效的时间戳
+                list (, , $expire) = $tokens;
+            } else {
+                // 2. token值.有效的时间戳
+                list (, $expire) = $tokens;
+            }
+            $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
+            $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
+
+            $tokenIsValid = ((int) $expire + $accessTokenExpire) > time() ? true : false;
+        }
+
+        if ($tokenIsValid) {
+            $member->generateAccessToken();
+            $newToken = $member->access_token;
+            \Yii::$app->getDb()->createCommand()->update('{{%member}}', ['access_token' => $newToken], ['id' => $member->id])->execute();
 
             return [
                 'id' => $member->id,
-                'token' => $newToken,
+                'accessToken' => $newToken,
             ];
         } else {
             throw new BadRequestHttpException("$this->_token_param 已失效。");
