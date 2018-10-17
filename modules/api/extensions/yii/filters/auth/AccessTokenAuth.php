@@ -26,8 +26,7 @@ class AccessTokenAuth extends AuthMethod
      */
     public function authenticate($user, $request, $response)
     {
-        $accessToken = $request->get($this->tokenParam);
-        empty($accessToken) && $accessToken = $request->post($this->tokenParam);
+        $accessToken = $request->getQueryParam($this->tokenParam);
         if (empty($accessToken)) {
             $headers = \Yii::$app->getRequest()->getHeaders();
             $accessToken = $headers->has($this->tokenParam) ? $headers->get($this->tokenParam) : null;
