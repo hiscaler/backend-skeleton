@@ -4,7 +4,9 @@ namespace app\modules\api\controllers;
 
 use app\modules\admin\components\ApplicationHelper;
 use app\modules\api\extensions\BaseController;
+use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\models\Member;
+use stdClass;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\VerbFilter;
@@ -35,6 +37,7 @@ class PassportController extends BaseController
                 'actions' => [
                     'login' => ['post'],
                     'refresh-token' => ['post'],
+                    'change-password' => ['post'],
                 ],
             ],
         ];
@@ -131,6 +134,45 @@ class PassportController extends BaseController
             ];
         } else {
             throw new BadRequestHttpException("$this->_token_param 已失效。");
+        }
+    }
+
+    /**
+     * 修改密码
+     *
+     * @return array|stdClass
+     * @throws BadRequestHttpException
+     * @throws \yii\base\Exception
+     */
+    public function actionChangePassword()
+    {
+        $request = \Yii::$app->getRequest();
+        $token = $request->get($this->_token_param);
+        if ($token) {
+            $member = Member::findIdentityByAccessToken($token);
+            if ($member) {
+                $password = $request->post('password');
+                $payload = [
+                    'oldPassword' => $request->post('oldPassword'),
+                    'password' => $password,
+                    'confirmPassword' => $request->post('confirmPassword'),
+                ];
+                $model = new ChangeMyPasswordForm();
+                if ($model->load($payload, '') && $model->validate()) {
+                    $member->setPassword($password);
+                    $member->save(false);
+
+                    return new stdClass();
+                } else {
+                    Yii::$app->getResponse()->setStatusCode(400);
+
+                    return $model->getErrors();
+                }
+            } else {
+                throw new BadRequestHttpException("用户验证失败。");
+            }
+        } else {
+            throw new InvalidArgumentException("无效的 $this->_token_param 参数。");
         }
     }
 
