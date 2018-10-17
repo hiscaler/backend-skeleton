@@ -5,12 +5,14 @@ namespace app\modules\api\controllers;
 use app\modules\admin\components\ApplicationHelper;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\forms\ChangeMyPasswordForm;
+use app\modules\api\forms\MemberRegisterForm;
 use app\modules\api\models\Member;
-use stdClass;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
+use yii\web\ServerErrorHttpException;
 
 /**
  * 用户认证处理
@@ -35,12 +37,37 @@ class PassportController extends BaseController
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
+                    'register' => ['post'],
                     'login' => ['post'],
                     'refresh-token' => ['post'],
                     'change-password' => ['post'],
                 ],
             ],
         ];
+    }
+
+    /**
+     * 会员注册
+     *
+     * @return MemberRegisterForm
+     * @throws ServerErrorHttpException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function actionRegister()
+    {
+        $model = new MemberRegisterForm();
+        $model->loadDefaultValues();
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+        if ($model->save()) {
+            $response = Yii::$app->getResponse();
+            $response->setStatusCode(201);
+            $id = implode(',', array_values($model->getPrimaryKey(true)));
+            $response->getHeaders()->set('Location', Url::toRoute(['member/view', 'id' => $id], true));
+        } elseif (!$model->hasErrors()) {
+            throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
+        }
+
+        return $model;
     }
 
     /**
@@ -52,7 +79,7 @@ class PassportController extends BaseController
     public function actionLogin()
     {
         $request = \Yii::$app->getRequest();
-        $token = $request->post($this->_token_param);
+        $token = $request->getQueryParam($this->_token_param);
         if ($token) {
             $loginBy = self::LOGIN_BY_ACCESS_TOKEN;
             $member = Member::findIdentityByAccessToken($token);
@@ -88,10 +115,7 @@ class PassportController extends BaseController
     public function actionRefreshToken()
     {
         $request = \Yii::$app->getRequest();
-        $token = $request->post($this->_token_param);
-        if (empty($token)) {
-            $token = $request->get($this->_token_param);
-        }
+        $token = $request->getQueryParam($this->_token_param);
         if (empty($token)) {
             $headers = \Yii::$app->getRequest()->getHeaders();
             $token = $headers->has($this->_token_param) ? $headers->get($this->_token_param) : null;
@@ -140,7 +164,7 @@ class PassportController extends BaseController
     /**
      * 修改密码
      *
-     * @return array|stdClass
+     * @return ChangeMyPasswordForm
      * @throws BadRequestHttpException
      * @throws \yii\base\Exception
      */
@@ -158,15 +182,12 @@ class PassportController extends BaseController
                     'confirmPassword' => $request->post('confirmPassword'),
                 ];
                 $model = new ChangeMyPasswordForm();
-                if ($model->load($payload, '') && $model->validate()) {
-                    $member->setPassword($password);
-                    $member->save(false);
-
-                    return new stdClass();
+                $model->load($payload, '');
+                $member->setPassword($password);
+                if ($member->save(false) === false && !$model->hasErrors()) {
+                    throw new ServerErrorHttpException('Failed to update the object for unknown reason.');
                 } else {
-                    Yii::$app->getResponse()->setStatusCode(400);
-
-                    return $model->getErrors();
+                    return $model;
                 }
             } else {
                 throw new BadRequestHttpException("用户验证失败。");
