@@ -39,6 +39,7 @@ class m171206_153109_create_member_table extends Migration
             'available_credits' => $this->integer()->notNull()->defaultValue(0)->comment('可用积分'),
             'last_login_ip' => $this->string(39)->defaultValue(null)->comment('最后登录 IP'),
             'last_login_time' => $this->integer()->defaultValue(null)->comment('最后登录时间'),
+            'expired_datetime' => $this->integer()->defaultValue(null)->comment('有效期'),
             'status' => $this->smallInteger()->notNull()->defaultValue(0)->comment('状态'),
             'remark' => $this->text()->comment('备注'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),

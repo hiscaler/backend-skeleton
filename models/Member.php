@@ -34,6 +34,7 @@ use yii\web\IdentityInterface;
  * @property integer $login_count
  * @property string $last_login_ip
  * @property integer $last_login_time
+ * @property integer $expired_datetime
  * @property integer $status
  * @property string $remark
  * @property integer $created_at
@@ -84,6 +85,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['type', 'category_id', 'parent_id', 'total_credits', 'available_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             [['username'], 'required'],
             [['group', 'username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email', 'remark'], 'trim'],
             [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
@@ -151,6 +153,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'login_count' => '登录次数',
             'last_login_ip' => '最后登录 IP',
             'last_login_time' => '最后登录时间',
+            'expired_datetime' => '有效期',
             'status' => '状态',
             'remark' => '备注',
             'created_at' => '注册时间',
@@ -165,7 +168,16 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        $member = static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        if ($member &&
+            $member->expired_datetime &&
+            ApplicationHelper::getConfigValue('member.login.expiredAfter') != 'continue' &&
+            $member->expired_datetime <= time()
+        ) {
+            $member = null;
+        }
+
+        return $member;
     }
 
     /**
@@ -173,39 +185,47 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
+        $member = null;
         if ($type == 'app\modules\api\extensions\yii\filters\auth\AccessTokenAuth') {
-            $tokens = explode('.', $token);
-            if (count($tokens) == 3) {
-                $tokenType = strtolower($tokens[0]);
-                $tokenValue = $tokens[1];
-                $tokenExpireDate = $tokens[2];
-            } elseif (count($tokens) == 2) {
-                $tokenValue = $tokens[0];
-                $tokenExpireDate = $tokens[1];
-            } else {
-                $tokenType = $tokenExpireDate = null;
-                $tokenValue = $token;
+            /**
+             * Token 格式
+             * 1. token值
+             * 2. token值.有效的时间戳
+             * 3. 类型.token值.有效的时间戳
+             */
+            $member = static::findOne(['access_token' => $token, 'status' => self::STATUS_ACTIVE]);
+            if ($member && stripos($token, '.') !== false) {
+                $tokens = explode('.', $token);
+                if (isset($tokens[2])) {
+                    // 3. 类型.token值.有效的时间戳
+                    list (, , $expire) = $tokens;
+                } else {
+                    // 2. token值.有效的时间戳
+                    list (, $expire) = $tokens;
+                }
+                $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
+                $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
+
+                if (((int) $expire + $accessTokenExpire) <= time()) {
+                    $member = null;
+                }
             }
-            switch ($tokenType) {
-                case 'wxapp':
-                    break;
-
-                case 'wechat':
-                    break;
-
-                default:
-                    break;
-            }
-
-            return static::findOne(['access_token' => $tokenValue]);
         } else {
-            $user = static::findOne(['access_token' => $token]);
-            if ($user) {
-                return (int) substr($token, strrpos($token, '.') + 1) > time() ? $user : null;
-            } else {
-                return null;
+            $member = static::findOne(['access_token' => $token]);
+            if ($member && (int) substr($token, strrpos($token, '.') + 1) < time()) {
+                $member = null;
             }
         }
+
+        if ($member &&
+            $member->expired_datetime &&
+            ApplicationHelper::getConfigValue('member.login.expiredAfter') != 'continue' &&
+            $member->expired_datetime <= time()
+        ) {
+            $member = null;
+        }
+
+        return $member;
     }
 
     /**
@@ -222,7 +242,17 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             $condition['type'] = (int) $type;
         }
 
-        return static::findOne($condition);
+        $member = static::findOne($condition);
+
+        if ($member &&
+            $member->expired_datetime &&
+            ApplicationHelper::getConfigValue('member.login.expiredAfter') != 'continue' &&
+            $member->expired_datetime <= time()
+        ) {
+            $member = null;
+        }
+
+        return $member;
     }
 
     /**
@@ -502,6 +532,10 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->generateAuthKey();
                 $this->generateAccessToken();
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
+                $expiryMinutes = (int) ApplicationHelper::getConfigValue('member.register.expiryMinutes');
+                if ($expiryMinutes) {
+                    $this->expired_datetime = time() + $expiryMinutes * 60;
+                }
                 if (Yii::$app->getUser()->isGuest) {
                     $this->created_by = $this->updated_by = 0;
                 } else {

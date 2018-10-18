@@ -96,6 +96,11 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'datetime'],
             ],
             [
+                'attribute' => 'expired_datetime',
+                'format' => 'datetime',
+                'contentOptions' => ['class' => 'datetime'],
+            ],
+            [
                 'attribute' => 'status',
                 'format' => 'memberStatus',
                 'contentOptions' => ['class' => 'data-status'],

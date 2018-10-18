@@ -8,7 +8,15 @@ return [
     'member' => [
         'register' => [
             'status' => 0, // 会员注册默认值（待审核）
-        ]
+            'expiryMinutes' => 10, // 有效截止时间（单位为：分钟），如果为 0 表示无限制
+        ],
+        'login' => [
+            /**
+             * 会员到期后如何处理，continue 表示可以继续登录操作，其他字符串则表示禁止登录
+             * 此配置主要用于某些情况下会员到期，是可以继续登录系统的，只是系统中的相关操作会做进一步的限制。
+             */
+            'expiredAfter' => 'continue',
+        ],
     ],
     'uninstall.module.after.droptable' => false,// 卸载模块后是否同步删除模块相关表
     'api.db.cache.time' => 300, // 是否激活 API 数据库查询缓存，默认 5 分钟（以秒为单位），如果设置为 null 则表示不启用缓存，

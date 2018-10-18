@@ -16,6 +16,7 @@ use yii\widgets\ActiveForm;
     </ul>
     <div class="panels form">
         <?php $form = ActiveForm::begin(); ?>
+        <?= $form->errorSummary($model) ?>
         <div class="tab-panel" id="tab-panel-basic">
             <?= $form->field($model, 'type')->dropDownList(\app\models\Member::typeOptions()) ?>
             <?php
@@ -51,6 +52,13 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'tel')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'mobile_phone')->textInput(['maxlength' => true]) ?>
+
+            <?= \yadjet\datePicker\my97\DatePicker::widget([
+                'form' => $form,
+                'model' => $model,
+                'attribute' => 'expired_datetime',
+                'pickerType' => 'datetime',
+            ]) ?>
 
             <?= $form->field($model, 'status')->dropDownList(\app\models\Member::statusOptions()) ?>
 

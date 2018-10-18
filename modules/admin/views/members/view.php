@@ -58,6 +58,7 @@ $wechatModel = $model->wechat;
                         'last_login_ip',
                         'last_login_time:datetime',
                         'status:memberStatus',
+                        'expired_datetime:datetime',
                         'remark:ntext',
                         'created_at:datetime',
                         'updated_at:datetime',

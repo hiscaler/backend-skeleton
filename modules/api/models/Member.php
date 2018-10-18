@@ -75,6 +75,8 @@ class Member extends \app\models\Member
 
     /**
      * @inheritdoc
+     *
+     * @todo 需要处理过期时间
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {

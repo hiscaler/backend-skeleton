@@ -5,6 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\Member;
 use app\models\MemberSearch;
 use app\models\Meta;
+use app\modules\admin\components\ApplicationHelper;
 use app\modules\admin\forms\ChangePasswordForm;
 use app\modules\admin\forms\CreateMemberForm;
 use app\modules\admin\forms\DynamicForm;
@@ -12,6 +13,7 @@ use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -118,6 +120,10 @@ class MembersController extends Controller
         $model = new CreateMemberForm();
         $model->status = Member::STATUS_ACTIVE;
         $model->loadDefaultValues();
+        $expiryMinutes = ApplicationHelper::getConfigValue('member.register.expiryMinutes');
+        if ((int) $expiryMinutes) {
+            $model->expired_datetime = Yii::$app->getFormatter()->asDatetime(time() + $expiryMinutes * 60);
+        }
 
         $dynamicModel = new DynamicForm(Meta::getItems($model));
 
