@@ -256,14 +256,13 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Finds user by openid
+     * Finds user by wechat openid
      *
      * @param $openid
-     * @param null $type
      * @return static|null
      * @throws \yii\db\Exception
      */
-    public static function findByOpenid($openid, $type = null)
+    public static function findByWechatOpenid($openid)
     {
         $memberId = \Yii::$app->getDb()->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
         if ($memberId) {
