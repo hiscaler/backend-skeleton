@@ -532,9 +532,11 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->generateAuthKey();
                 $this->generateAccessToken();
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
-                $expiryMinutes = (int) ApplicationHelper::getConfigValue('member.register.expiryMinutes');
-                if ($expiryMinutes) {
-                    $this->expired_datetime = time() + $expiryMinutes * 60;
+                if (!$this->expired_datetime) {
+                    $expiryMinutes = (int) ApplicationHelper::getConfigValue('member.register.expiryMinutes');
+                    if ($expiryMinutes) {
+                        $this->expired_datetime = time() + $expiryMinutes * 60;
+                    }
                 }
                 if (Yii::$app->getUser()->isGuest) {
                     $this->created_by = $this->updated_by = 0;
