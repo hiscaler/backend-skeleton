@@ -84,7 +84,7 @@ class WechatController extends Controller
                     }
                 }
                 if ($memberId) {
-                    $member = Member::findByWechatOpenid($openid);
+                    $member = Member::findByWechatOpenId($openid);
                     $webUser->login($member, 3600 * 24 * 30);
                     $accessTokenExpire = ApplicationHelper::getConfigValue('user.accessTokenExpire', 7200);
                     $accessTokenExpire = $accessTokenExpire ?: 7200;
