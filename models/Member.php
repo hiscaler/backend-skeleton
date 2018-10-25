@@ -273,6 +273,23 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Finds user by wechat unionid
+     *
+     * @param $unionid
+     * @return static|null
+     * @throws \yii\db\Exception
+     */
+    public static function findByWechatUnionId($unionid)
+    {
+        $memberId = \Yii::$app->getDb()->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[unionid]] = :unionid', [':unionid' => $unionid])->queryScalar();
+        if ($memberId) {
+            return static::findIdentity($memberId);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Finds user by password reset token
      *
      * @param string $token password reset token
