@@ -73,8 +73,10 @@ class PassportController extends BaseController
     /**
      * 登录认证
      *
-     * @return array
+     * @return \yii\web\IdentityInterface|\yii\web\User
      * @throws BadRequestHttpException
+     * @throws \yii\db\Exception
+     * @throws \Throwable
      */
     public function actionLogin()
     {
@@ -101,7 +103,10 @@ class PassportController extends BaseController
             throw new BadRequestHttpException('密码错误');
         }
 
-        return $member;
+        Yii::$app->getUser()->login($member, 0);
+        Member::afterLogin(null);
+
+        return \Yii::$app->getUser()->getIdentity();
     }
 
     /**
