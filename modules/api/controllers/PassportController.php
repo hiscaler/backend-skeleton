@@ -126,7 +126,7 @@ class PassportController extends BaseController
             $token = $headers->has($this->_token_param) ? $headers->get($this->_token_param) : null;
         }
         if (empty($token)) {
-            throw new InvalidArgumentException("无效的 $this->_token_param 值。");
+            throw new BadRequestHttpException("无效的 $this->_token_param 值。");
         }
         $member = Member::findIdentityByAccessToken($token);
         if ($member === null) {
