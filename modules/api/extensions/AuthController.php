@@ -5,6 +5,12 @@ namespace app\modules\api\extensions;
 use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use yii\filters\auth\QueryParamAuth;
 
+/**
+ * Class AuthController
+ *
+ * @package app\modules\api\extensions
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class AuthController extends BaseController
 {
 
