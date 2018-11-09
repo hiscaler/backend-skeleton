@@ -3,7 +3,6 @@
 namespace app\modules\api\modules\news\controllers;
 
 use app\models\Category;
-use app\models\Yad;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\Constant;
@@ -12,6 +11,7 @@ use app\modules\api\modules\news\models\NewsContent;
 use Exception;
 use GuzzleHttp\Client;
 use RuntimeException;
+use yadjet\helpers\ImageHelper;
 use yadjet\helpers\StringHelper;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -422,7 +422,7 @@ class DefaultController extends BaseController
                 }
 
                 $content = $newsContent['content'];
-                $images = Yad::getTextImages($content);
+                $images = ImageHelper::parseImages($content);
                 if ($images) {
                     $replaceParis = [];
                     $client = new Client();
@@ -446,32 +446,7 @@ class DefaultController extends BaseController
                                         $image = "{$t['scheme']}://{$t['host']}{$t['path']}";
                                     }
                                 }
-                                $ext = pathinfo($image, PATHINFO_EXTENSION);
-                                if (empty($ext) && isset($headers['Content-Type'][0])) {
-                                    switch ($headers['Content-Type'][0]) {
-                                        case 'image/jpeg':
-                                            $ext = 'jpg';
-                                            break;
-
-                                        case 'image/gif':
-                                            $ext = 'gif';
-                                            break;
-
-                                        case 'image/png':
-                                            $ext = 'png';
-                                            break;
-
-                                        case 'image/vnd.wap.wbmp':
-                                            $ext = 'wbmp';
-                                            break;
-
-                                        default:
-                                            $ext = 'jpg';
-                                            break;
-                                    }
-                                }
-                                empty($ext) && $ext = 'jpg';
-                                $filename = StringHelper::generateRandomString() . ".$ext";
+                                $filename = StringHelper::generateRandomString() . '.' . ImageHelper::getExtension($image);
                                 if ($response->getStatusCode() == 200) {
                                     $img = $response->getBody();
                                     file_put_contents($savePath . DIRECTORY_SEPARATOR . $filename, $img);
