@@ -18,6 +18,7 @@ class Member extends \app\models\Member
             'type',
             'categoryId' => 'category_id',
             'group',
+            'parentId' => 'parent_id',
             'username',
             'nickname',
             'realName' => 'real_name',
