@@ -14,6 +14,12 @@ use yii\web\BadRequestHttpException;
 class DefaultController extends AuthController
 {
 
+    /**
+     * @return array
+     * @throws BadRequestHttpException
+     * @throws \Throwable
+     * @throws \yii\db\Exception
+     */
     public function actionSign()
     {
         $db = \Yii::$app->getDb();
