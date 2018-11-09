@@ -258,6 +258,36 @@ class Lookup extends BaseActiveRecord
         return isset($values[$key]) ? $values[$key] : $defaultValue;
     }
 
+    /**
+     * 一次性获取多个设置值
+     *
+     * $keys 可以为键值对形式，k 为需要查询的设置值，v 则表示默认值，如果为索引数组，则 v 表示查询的设置值，比如：
+     * ['name' => 'Default name', 'age' => 18] 这表示查询 name, age 的值，不存在的情况下使用默认值（name = Default name, age = 18）返回
+     *
+     * [name, age] 同样表示查询 name, age 的值，不存在的情况下使用默认值（null）返回
+     *
+     * @param $keys
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public static function getValues($keys)
+    {
+        $values = [];
+        $rawData = self::getRawData();
+        foreach ($keys as $k => $v) {
+            if (ctype_digit((string) $k)) {
+                $k = $v;
+                $v = null;
+            }
+            if (isset($rawData[$k])) {
+                $v = $rawData[$k];
+            }
+            $values[$k] = $v;
+        }
+
+        return $values;
+    }
+
     // Events
     private $_file;
 
