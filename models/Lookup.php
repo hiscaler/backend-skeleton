@@ -202,7 +202,7 @@ class Lookup extends BaseActiveRecord
                                 $value = [];
                                 foreach (explode(PHP_EOL, $data['input_value']) as $key) {
                                     $v = explode(':', $key);
-                                    if (count($v) == 2 && $v[0] != '' && $v[1] != '') {
+                                    if (isset($v[1]) && $v[0] != '' && $v[1] != '') {
                                         $value[$v[0]] = $v[1];
                                     }
                                 }
