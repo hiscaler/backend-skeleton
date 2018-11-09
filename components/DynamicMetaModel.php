@@ -10,6 +10,13 @@ use yii\helpers\ArrayHelper;
 class DynamicMetaModel
 {
 
+    /**
+     * @param $metas
+     * @param bool $isNewRecord
+     * @return DynamicModel
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public static function make($metas, $isNewRecord = true)
     {
         if (is_array($metas)) {
