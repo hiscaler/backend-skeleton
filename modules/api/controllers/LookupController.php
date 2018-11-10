@@ -26,4 +26,28 @@ class LookupController extends BaseController
     {
         return Lookup::getValue($key, $defaultValue);
     }
+
+    /**
+     * 获取多个常规设定值
+     * a:1,b:2,c 会转换为：['a' => 1, 'b' => 2, c]
+     *
+     * @param $keys
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public function actionValues($keys)
+    {
+        $params = [];
+        foreach (explode(',', $keys) as $value) {
+            if (stripos($value, ':', $value) === false) {
+                $params[] = $value;
+            } else {
+                list($key, $value) = explode(':', $value);
+                $params[$key] = $value;
+            }
+        }
+
+        return Lookup::getValues($params);
+    }
+
 }
