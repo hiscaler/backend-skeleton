@@ -13,21 +13,21 @@ class MenuButtons extends Widget
 {
 
     public $outerTag = 'ul';
-    public $outerHtmlOptions = array('class' => 'tasks');
+    public $outerHtmlOptions = ['class' => 'tasks'];
     public $innerTag = 'li';
-    public $items = array();
+    public $items = [];
 
     public function run()
     {
-        echo Html::beginTag('div', array('id' => 'menu-buttons'));
+        echo Html::beginTag('div', ['id' => 'menu-buttons']);
         echo Html::beginTag($this->outerTag, $this->outerHtmlOptions);
         $max = count($this->items) - 1;
         foreach ($this->items as $i => $item) {
             if (isset($item['visible']) && $item['visible'] === false) {
                 continue;
             }
-            $linkHtmlOptions = (isset($item['htmlOptions'])) ? $item['htmlOptions'] : array();
-            $innerHtmlOptions = array();
+            $linkHtmlOptions = (isset($item['htmlOptions'])) ? $item['htmlOptions'] : [];
+            $innerHtmlOptions = [];
             if ($max == 0) {
                 $innerHtmlOptions['class'] = 'first-last';
             } else {
