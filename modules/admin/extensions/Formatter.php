@@ -30,12 +30,12 @@ class Formatter extends \yii\i18n\Formatter
         }
 
         $imageUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/';
-        $booleanFormat = [
+        $icons = [
             $imageUrl . 'yes.png',
             $imageUrl . 'no.png'
         ];
 
-        return Html::img($value ? $booleanFormat[0] : $booleanFormat[1]);
+        return Html::img($value ? $icons[0] : $icons[1]);
     }
 
     /**
