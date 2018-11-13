@@ -5,6 +5,8 @@ namespace app\modules\admin\controllers;
 use app\models\User;
 use app\modules\admin\forms\ChangeMyPasswordForm;
 use Yii;
+use yii\data\Pagination;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
@@ -17,6 +19,8 @@ use yii\web\NotFoundHttpException;
  */
 class AccountController extends Controller
 {
+
+    const PAGE_SIZE = 12;
 
     public $layout = 'account';
 
@@ -99,19 +103,32 @@ class AccountController extends Controller
      *
      * @return string
      * @throws \yii\base\InvalidConfigException
-     * @throws \yii\db\Exception
      */
     public function actionLoginLogs()
     {
-        $loginLogs = [];
+        $items = [];
         $formatter = Yii::$app->getFormatter();
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.login_ip]], [[t.client_information]], [[t.login_at]] FROM {{%user_login_log}} t WHERE [[t.user_id]] = :userId ORDER BY [[t.login_at]] DESC', [':userId' => Yii::$app->getUser()->getId()])->queryAll();
+        $query = (new Query())
+            ->from('{{%user_login_log}}')
+            ->where(['user_id' => \Yii::$app->getUser()->getId()]);
+
+        $countQuery = clone $query;
+        $pagination = new Pagination([
+            'totalCount' => $countQuery->count(),
+            'pageSize' => self::PAGE_SIZE,
+        ]);
+        $rawData = $query
+            ->select(['login_ip', 'client_information', 'login_at'])
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
         foreach ($rawData as $data) {
-            $loginLogs[$formatter->asDate($data['login_at'])][] = $data;
+            $items[$formatter->asDate($data['login_at'])][] = $data;
         }
 
         return $this->render('login-logs', [
-            'loginLogs' => $loginLogs
+            'items' => $items,
+            'pagination' => $pagination,
         ]);
     }
 

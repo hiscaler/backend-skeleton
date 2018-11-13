@@ -10,17 +10,20 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Login Logs');
     <div class="bd">
         <ul class="time-lines">
             <?php
-            foreach ($loginLogs as $key => $logs):
+            foreach ($items as $key => $logs):
                 echo Html::tag('li', $key, ['class' => 'day']);
                 foreach ($logs as $log):
                     ?>
                     <li class="item">
                         <?= $formatter->asTime($log['login_at']) ?><em class="ip">[ <?= $log['login_ip'] ?> ]</em><em class="client-information"><?= $log['client_information'] ?></em>
                     </li>
-                    <?php
+                <?php
                 endforeach;
             endforeach;
             ?>
         </ul>
     </div>
 </div>
+<?= \yii\widgets\LinkPager::widget([
+    'pagination' => $pagination,
+]) ?>
