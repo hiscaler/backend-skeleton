@@ -62,13 +62,13 @@ $this->params['menus'] = [
             ],
             'email:email',
             [
-                'attribute' => 'login_count',
-                'contentOptions' => ['class' => 'number'],
-            ],
-            [
                 'attribute' => 'created_at',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime'],
+            ],
+            [
+                'attribute' => 'login_count',
+                'contentOptions' => ['class' => 'number'],
             ],
             [
                 'attribute' => 'last_login_time',
