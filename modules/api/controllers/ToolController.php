@@ -7,7 +7,6 @@ use BadFunctionCallException;
 use stdClass;
 use Yii;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
 
 /**
  * 实用工具
@@ -40,21 +39,22 @@ class ToolController extends BaseController
      * 查看日志文件
      *
      * @param string $name
-     * @return Response
+     * @return void
      * @throws NotFoundHttpException
      */
     public function actionLogView($name = 'app')
     {
         $filename = Yii::getAlias("@runtime/logs/$name.log");
         if (file_exists($filename)) {
-            $content = file_get_contents($filename);
-            if ($content !== false) {
-                return new Response([
-                    'format' => Response::FORMAT_RAW,
-                    'data' => $content,
-                ]);
-            } else {
-                throw new BadFunctionCallException("读取日志文件出错。");
+            $handle = @fopen($filename, "r");
+            if ($handle) {
+                while (($buffer = fgets($handle)) !== false) {
+                    echo "$buffer </br>";
+                }
+                if (!feof($handle)) {
+                    throw new BadFunctionCallException('Unexpected fail.');
+                }
+                fclose($handle);
             }
         } else {
             throw new NotFoundHttpException("Not Found $name log file.");
