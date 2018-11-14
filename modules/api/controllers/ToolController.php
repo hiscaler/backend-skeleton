@@ -6,6 +6,7 @@ use app\modules\api\extensions\BaseController;
 use BadFunctionCallException;
 use stdClass;
 use Yii;
+use yii\helpers\FileHelper;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -17,6 +18,34 @@ use yii\web\NotFoundHttpException;
  */
 class ToolController extends BaseController
 {
+
+    /**
+     * 清理 runtime 目录
+     *
+     * @param null $dir
+     * @return stdClass
+     * @throws \yii\base\ErrorException
+     */
+    public function actionFlushRuntime($dir = null)
+    {
+        $dirPrefix = Yii::getAlias('@runtime');
+        if (!$dir) {
+            $dirs = FileHelper::findDirectories($dirPrefix, ['recursive' => false]);
+        } else {
+            $dirs = [];
+            foreach ($dir as $d) {
+                if (file_exists("$dirPrefix/$d")) {
+                    $dirs[] = "$dirPrefix/$d";
+                }
+            }
+        }
+
+        foreach ($dirs as $dir) {
+            FileHelper::removeDirectory($dir);
+        }
+
+        return new stdClass();
+    }
 
     /**
      * 清理缓存
