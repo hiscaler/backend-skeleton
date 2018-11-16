@@ -14,7 +14,7 @@ if ($session->hasFlash('notice')) {
 if ($histories):
     $this->params['menus'] = [
         ['label' => '备份数据库', 'url' => ['backup'], 'htmlOptions' => ['class' => 'btn-db-backup']],
-        ['label' => '清理所有备份', 'url' => ['clean'], 'htmlOptions' => ['data-method' => 'POST', 'data-confirm' => '是否确认清理掉所有备份？']],
+        ['label' => '清理所有备份', 'url' => ['clean'], 'htmlOptions' => ['class' => 'btn-db-clean']],
     ];
     ?>
     <div class="grid-view">
@@ -50,6 +50,39 @@ if ($histories):
 <?php \app\modules\admin\components\JsBlock::begin() ?>
     <script type="text/javascript">
         $(function () {
+            $('.btn-db-clean').click(function () {
+                var $this = $(this);
+                layer.confirm('是否确认清理掉所有备份？', {icon: 3, title: '提示'}, function (index) {
+                    $.ajax({
+                        type: 'POST',
+                        url: $this.attr('href'),
+                        beforeSend: function (xhr) {
+                            $.fn.lock();
+                        }, success: function (response, textStatus, errorThrown) {
+                            if (textStatus === 'success') {
+                                layer.msg('数据库备份清理成功。', {
+                                    icon: 1,
+                                    time: 6000,
+                                    btn: ['关闭']
+                                }, function () {
+                                    window.document.location.href = '<?= \yii\helpers\Url::toRoute(['index']) ?>';
+                                });
+                            } else {
+                                layer.alert('未知原因。');
+                            }
+                            $.fn.unlock();
+                        }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert(XMLHttpRequest.responseText);
+                            $.fn.unlock();
+                        }
+                    });
+
+                    layer.close(index);
+                });
+
+                return false;
+            });
+
             $('.btn-db-backup').click(function () {
                 $.ajax({
                     type: 'POST',

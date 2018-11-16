@@ -6,6 +6,7 @@ use app\models\Option;
 use DateTime;
 use Exception;
 use Yii;
+use yii\base\ErrorException;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -250,13 +251,17 @@ class DbController extends Controller
         ini_set('max_execution_time', 0);
         $path = Yii::getAlias("@app/backup");
         if (file_exists($path)) {
-            foreach (FileHelper::findDirectories($path) as $dir) {
-                FileHelper::removeDirectory($dir);
+            try {
+                foreach (FileHelper::findDirectories($path) as $dir) {
+                    FileHelper::removeDirectory($dir);
+                }
+                Yii::$app->getResponse()->setStatusCode(200);
+            } catch (\Exception $e) {
+                throw new ErrorException($e->getMessage());
             }
         } else {
             throw new NotFoundHttpException("$path 备份目录不存在。");
         }
-        $this->redirect(['index']);
     }
 
 }
