@@ -8,7 +8,7 @@ use app\models\FileUploadConfig;
 /* @var $model app\models\FileUploadConfigSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-<div class="form-outside form-search form-layout-column" style="display: none">
+<div class="form-outside form-search form-layout-column">
     <div class="file-upload-config-search form">
         <?php
         $form = ActiveForm::begin([
@@ -18,9 +18,9 @@ use app\models\FileUploadConfig;
         ]);
         ?>
         <div class="entry">
-            <?= $form->field($model, 'type')->dropDownList(FileUploadConfig::typeOptions(), ['prompt' => '']) ?>
-
             <?= $form->field($model, 'model_name')->dropDownList(FileUploadConfig::validModelNames(), ['prompt' => '']) ?>
+
+            <?= $form->field($model, 'type')->dropDownList(FileUploadConfig::typeOptions(), ['prompt' => '']) ?>
         </div>
         <div class="form-group buttons">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

@@ -14,15 +14,18 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'File Upload Configs');
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
-    ['label' => Yii::t('app', 'Search'), 'url' => '#'],
 ];
+
+$formatter = Yii::$app->getFormatter();
+$maxFileSizeBit = $formatter->asDecimal($maxFileSize);
 ?>
 <?= \app\modules\admin\components\MessageBox::widget([
     'title' => '服务器文件上传设置',
     'message' => [
-        "最大可同时上传文件总数量：$maxFiles 个",
-        "最大可同时上传文件总大小：" . Yii::$app->getFormatter()->asShortSize($maxFileSize),
-    ]
+        "最多可同时上传文件总数量：$maxFiles 个；",
+        "最大可同时上传文件总大小：" . Yii::$app->getFormatter()->asShortSize($maxFileSize) . '。',
+    ],
+    'showCloseButton' => false,
 ]) ?>
 <div class="upload-config-index">
     <?= $this->render('_search', ['model' => $searchModel]); ?>
@@ -58,15 +61,23 @@ $this->params['menus'] = [
             'extensions',
             [
                 'attribute' => 'size',
-                'value' => function ($model) {
-                    return $model['min_size'] / 1024 . 'KB ~ ' . $model['max_size'] / 1024 . 'KB';
+                'format' => 'raw',
+                'value' => function ($model) use ($formatter, $maxFileSizeBit) {
+                    $v = $formatter->asShortSize($model['min_size']) . ' ~ ';
+                    if ($formatter->asDecimal($model['max_size']) > $maxFileSizeBit) {
+                        $v .= '<font color="red">' . $formatter->asShortSize($model['max_size']) . '</font>';
+                    } else {
+                        $v .= $formatter->asShortSize($model['max_size']);
+                    }
+
+                    return $v;
                 },
                 'contentOptions' => ['class' => 'file-upload-config-size center']
             ],
             [
                 'attribute' => 'thumb',
                 'value' => function ($model) {
-                    return ($model['thumb_width'] && $model['thumb_height']) ? $model['thumb_width'] . ' x ' . $model['thumb_height'] : '';
+                    return ($model['thumb_width'] && $model['thumb_height']) ? "W:{$model['thumb_width']}  H:{$model['thumb_height']}" : '';
                 },
                 'contentOptions' => ['class' => 'file-upload-config-thumb center']
             ],
