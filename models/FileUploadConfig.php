@@ -35,6 +35,9 @@ class FileUploadConfig extends BaseActiveRecord
     const TYPE_FILE = 0;
     const TYPE_IMAGE = 1;
 
+    const DEFAULT_MIN_SIZE = 1; // 1 Bit
+    const DEFAULT_MAX_SIZE = 204800; // 200KiB
+
     /**
      * @inheritdoc
      */
@@ -55,8 +58,8 @@ class FileUploadConfig extends BaseActiveRecord
             ['attribute', 'match', 'pattern' => '/^[a-zA-Z0-9_]+$/'],
             [['model_name', 'attribute'], 'unique', 'targetAttribute' => ['model_name', 'attribute']],
             [['type', 'min_size', 'max_size', 'thumb_width', 'thumb_height', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
-            ['min_size', 'default', 'value' => 100],
-            ['max_size', 'default', 'value' => 200],
+            ['min_size', 'default', 'value' => self::DEFAULT_MIN_SIZE],
+            ['max_size', 'default', 'value' => self::DEFAULT_MAX_SIZE],
             ['max_size', 'checkMaxSize'],
             [['model_name', 'attribute', 'extensions'], 'string', 'max' => 255],
             ['model_attribute', 'safe'],
@@ -110,8 +113,8 @@ class FileUploadConfig extends BaseActiveRecord
         return [
             'extensions' => null,
             'size' => [
-                'min' => 1,
-                'max' => 204800, // 200 KB
+                'min' => self::DEFAULT_MIN_SIZE,
+                'max' => self::DEFAULT_MAX_SIZE,
             ],
             'thumb' => [
                 'generate' => false,
