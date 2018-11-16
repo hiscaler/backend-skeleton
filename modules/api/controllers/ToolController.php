@@ -29,9 +29,15 @@ class ToolController extends BaseController
      */
     public function actionFlushRuntime($dir = null)
     {
+        ignore_user_abort(true);
+        ini_set('max_execution_time', 60);
         $dirPrefix = Yii::getAlias('@runtime');
         if (!$dir) {
-            $dirs = FileHelper::findDirectories($dirPrefix, ['recursive' => false]);
+            $dirs = [];
+            $rootDirs = FileHelper::findDirectories($dirPrefix, ['recursive' => false]);
+            foreach ($rootDirs as $d) {
+                $dirs = array_merge($dirs, FileHelper::findDirectories($d) ?: [$d]);
+            }
         } else {
             $dirs = [];
             foreach ($dir as $d) {
