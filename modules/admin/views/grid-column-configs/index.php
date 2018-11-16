@@ -29,10 +29,10 @@ use yii\widgets\Pjax;
                 'attribute' => 'attribute',
                 'label' => Yii::t('gridColumnConfig', 'Attribute'),
             ],
-            [
-                'attribute' => 'css_class',
-                'label' => Yii::t('gridColumnConfig', 'CSS Class'),
-            ],
+//            [
+//                'attribute' => 'css_class',
+//                'label' => Yii::t('gridColumnConfig', 'CSS Class'),
+//            ],
             [
                 'attribute' => 'visible',
                 'format' => 'boolean',

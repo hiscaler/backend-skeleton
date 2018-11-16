@@ -97,6 +97,9 @@ class GridColumnConfigsController extends Controller
         $invisibleColumns = GridColumnConfig::getInvisibleColumns($id);
         $models = [];
         foreach ($columns as $value) {
+            if ($value == 'id') {
+                continue;
+            }
             $models[] = [
                 'id' => $value,
                 'attribute' => isset($attributeLabels[$value]) ? $attributeLabels[$value] : Inflector::camel2words(Inflector::camelize($value)),
