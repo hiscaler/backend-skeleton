@@ -24,4 +24,5 @@ class DefaultController extends Controller
             'value' => 'world.',
         ];
     }
+
 }
