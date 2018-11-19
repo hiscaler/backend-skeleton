@@ -169,14 +169,23 @@ class Label extends BaseActiveRecord
     }
 
     // Events
-    public function beforeSave($insert)
+
+    /**
+     * @param $insert
+     * @return bool
+     */
+    public function beforeValidate()
     {
-        if (parent::beforeSave($insert)) {
-            if ($insert) {
+        if (parent::beforeValidate()) {
+            if ($this->getIsNewRecord()) {
                 $this->frequency = 0;
             }
             if (empty($this->alias) && !empty($this->name)) {
-                $this->alias = Inflector::slug($this->name);
+                $alias = [];
+                foreach (explode('-', Inflector::slug($this->name)) as $slug) {
+                    $alias[] = $slug[0];
+                }
+                $this->alias = implode('', $alias);
             }
 
             return true;
