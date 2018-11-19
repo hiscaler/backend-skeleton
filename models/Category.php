@@ -206,7 +206,7 @@ class Category extends BaseActiveRecord
         } else {
             $parentId = 0;
         }
-        if ($categories = self::getChildren($parentId)) {
+        if ($categories = self::getChildren($parentId, 0, true)) {
             // 数据过滤
             if ($returnType == self::RETURN_TYPE_PRIVATE || $enabled !== null) {
                 $privateCategoryIds = [];
@@ -313,7 +313,7 @@ class Category extends BaseActiveRecord
                 $children[] = $item;
                 if (!$level) {
                     unset($items[$i]);
-                    $children = array_merge($children, self::_getChildren($items, $item['id'], $level));
+                    $children = array_merge($children, self::_getChildren($items, $item['id'], $level, $getAll));
                 } else {
                     if ($currentParent != $item['parent']) {
                         $currentParent = $item['parent'];
@@ -322,7 +322,7 @@ class Category extends BaseActiveRecord
                     if ($currentLevel < $level) {
                         unset($items[$i]);
                         $currentLevel = 0;
-                        $children = array_merge($children, self::_getChildren($items, $item['id'], $level));
+                        $children = array_merge($children, self::_getChildren($items, $item['id'], $level, $getAll));
                     }
                 }
             }
@@ -479,19 +479,20 @@ class Category extends BaseActiveRecord
     }
 
     /**
-     * @param $insert
      * @return bool
      * @throws \yii\db\Exception
      */
-    public function beforeSave($insert)
+    public function beforeValidate()
     {
-        if (parent::beforeSave($insert)) {
-            empty($this->sign) && $this->sign = null;
+        if (parent::beforeValidate()) {
             if (empty($this->alias) && !empty($this->name)) {
-                $this->alias = Inflector::slug($this->name);
+                $alias = [];
+                foreach (explode('-', Inflector::slug($this->name)) as $slug) {
+                    $alias[] = $slug[0];
+                }
+                $this->alias = implode('', $alias);
             }
             $level = 0;
-            empty($this->short_name) && $this->short_name = $this->name;
             if ($this->parent_id) {
                 $parent = Yii::$app->getDb()->createCommand('SELECT [[level]], [[alias]] FROM {{%category}} WHERE [[id]] = :id', [':id' => $this->parent_id])->queryOne();
                 if (strpos($this->alias, '/') === false) {
@@ -500,6 +501,22 @@ class Category extends BaseActiveRecord
                 $level = $parent['level'] + 1;
             }
             $this->level = $level;
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            empty($this->sign) && $this->sign = null;
+            empty($this->short_name) && $this->short_name = $this->name;
 
             return true;
         } else {
@@ -543,11 +560,10 @@ class Category extends BaseActiveRecord
                     $idPath[] = $parent['id'];
                     $namePath[] = $parent['name'];
                 }
-                $columns = [
-                    'id_path' => implode(',', $idPath),
-                    'name_path' => implode(',', $namePath),
-                ];
-                $cmd->update('{{%category}}', $columns, ['id' => $childId])->execute();
+                $cmd->update('{{%category}}', [
+                    'id_path' => implode(Constant::DELIMITER, $idPath),
+                    'name_path' => implode(Constant::DELIMITER, $namePath),
+                ], ['id' => $childId])->execute();
             }
         }
 
