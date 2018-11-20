@@ -75,7 +75,6 @@ class DefaultController extends Controller
      *
      * @rbacIgnore true
      * @return string|\yii\web\Response
-     * @throws \yii\db\Exception
      */
     public function actionLogin()
     {
