@@ -34,6 +34,7 @@ use yii\web\IdentityInterface;
  * @property integer $login_count
  * @property string $last_login_ip
  * @property integer $last_login_time
+ * @property string $last_login_session
  * @property integer $expired_datetime
  * @property integer $status
  * @property string $remark
@@ -105,6 +106,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['access_token'], 'string'],
             [['access_token'], 'unique'],
             [['password_reset_token'], 'unique'],
+            [['last_login_session'], 'string', 'max' => 128],
             [['status'], 'default', 'value' => ApplicationHelper::getConfigValue('member.register.status', self::STATUS_PENDING)],
             ['avatar', 'image',
                 'extensions' => 'jpg,gif,png,jpeg',
@@ -521,9 +523,10 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $user = \Yii::$app->getUser();
         if (!$user->getIsGuest()) {
-            \Yii::$app->getDb()->createCommand('UPDATE {{%member}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
+            \Yii::$app->getDb()->createCommand('UPDATE {{%member}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime, [[last_login_session]] = :lastLoginSession WHERE [[id]] = :id', [
                 ':loginIp' => Yii::$app->getRequest()->getUserIP(),
                 ':loginTime' => time(),
+                ':lastLoginSession' => session_id(),
                 ':id' => $user->getId()
             ])->execute();
         }
