@@ -27,6 +27,7 @@ use yii\web\IdentityInterface;
  * @property integer $login_count
  * @property string $last_login_ip
  * @property integer $last_login_time
+ * @property string $last_login_session
  * @property integer $status
  * @property integer $created_at
  * @property integer $created_by
@@ -97,6 +98,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['password_reset_token'], 'unique'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['role', 'string', 'min' => 1, 'max' => 64],
+            ['last_login_session', 'string', 'max' => 128],
             ['status', 'in', 'range' => array_keys(self::statusOptions())],
             ['avatar', 'file',
                 'extensions' => $this->_fileUploadConfig['extensions'],
@@ -372,9 +374,10 @@ class User extends ActiveRecord implements IdentityInterface
             'client_information' => UtilHelper::getBrowserName(),
             'login_at' => $now,
         ])->execute();
-        $db->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime WHERE [[id]] = :id', [
+        $db->createCommand('UPDATE {{%user}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime, [[last_login_session]] = :lastLoginSession WHERE [[id]] = :id', [
             ':loginIp' => $ip,
             ':loginTime' => $now,
+            ':lastLoginSession' => session_id(),
             ':id' => $userId
         ])->execute();
     }
