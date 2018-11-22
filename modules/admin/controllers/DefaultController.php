@@ -3,6 +3,7 @@
 namespace app\modules\admin\controllers;
 
 use app\modules\admin\forms\LoginForm;
+use yadjet\http\Http;
 use Yii;
 use yii\filters\AccessControl;
 
@@ -67,7 +68,27 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $gitComments = [];
+        $http = new Http('https://api.github.com');
+        $http->httpHeaders = ['User-Agent: hiscaler'];
+        $rawGitComments = $http->get('/repos/hiscaler/backend-skeleton/commits');
+
+        if ($rawGitComments !== false || is_array($rawGitComments)) {
+            foreach ($rawGitComments as $comment) {
+                if (stripos($comment['commit']['message'], '...') !== false) {
+                    continue;
+                }
+                $gitComments[] = [
+                    'author' => $comment['commit']['author']['name'],
+                    'date' => $comment['commit']['author']['date'],
+                    'message' => $comment['commit']['message']
+                ];
+            }
+        }
+
+        return $this->render('index', [
+            'gitComments' => $gitComments,
+        ]);
     }
 
     /**
