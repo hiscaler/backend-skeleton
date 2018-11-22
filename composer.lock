@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d32ee4f4a026cd797bbd163326a8126",
+    "content-hash": "7840419a2f3f17863924ef9e1d5c16ff",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -1569,12 +1569,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hiscaler/helpers.git",
-                "reference": "f5bb1bb3eab018328f9df48bc6cd891c19238eb0"
+                "reference": "8be8529892fe84f965f0145bafaf0e0518e3fa6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hiscaler/helpers/zipball/f5bb1bb3eab018328f9df48bc6cd891c19238eb0",
-                "reference": "f5bb1bb3eab018328f9df48bc6cd891c19238eb0",
+                "url": "https://api.github.com/repos/hiscaler/helpers/zipball/8be8529892fe84f965f0145bafaf0e0518e3fa6e",
+                "reference": "8be8529892fe84f965f0145bafaf0e0518e3fa6e",
                 "shasum": ""
             },
             "require": {
@@ -1601,7 +1601,48 @@
                 }
             ],
             "description": "PHP Helper Class",
-            "time": "2018-11-05T06:34:46+00:00"
+            "time": "2018-11-19T02:19:02+00:00"
+        },
+        {
+            "name": "yadjet/http",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hiscaler/http.git",
+                "reference": "1dc93439c15dcdf7b2a7e06775db7a6b347e00e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hiscaler/http/zipball/1dc93439c15dcdf7b2a7e06775db7a6b347e00e9",
+                "reference": "1dc93439c15dcdf7b2a7e06775db7a6b347e00e9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.0"
+            },
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "yadjet\\http\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "hiscaler",
+                    "email": "hiscaler@gmail.com"
+                }
+            ],
+            "description": "Http",
+            "keywords": [
+                "curl",
+                "http"
+            ],
+            "time": "2016-10-22T07:31:15+00:00"
         },
         {
             "name": "yadjet/yii2-date-picker",
@@ -2401,7 +2442,8 @@
         "yadjet/helpers": 20,
         "yadjet/yii2-date-picker": 20,
         "yadjet/yii2-ueditor": 20,
-        "yadjet/yii2-ztree": 20
+        "yadjet/yii2-ztree": 20,
+        "yadjet/http": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
