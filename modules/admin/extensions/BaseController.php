@@ -24,6 +24,11 @@ class BaseController extends Controller
     public function beforeAction($action)
     {
         if (parent::beforeAction($action)) {
+            $user = \Yii::$app->getUser();
+            if (!$user->getIsGuest() && ApplicationHelper::getConfigValue('disableRepeatingLogin', false) && $user->getIdentity()->last_login_session != session_id()) {
+                \Yii::$app->getUser()->logout();
+                $this->goHome();
+            }
             Yii::$app->timeZone = Lookup::getValue('system.timezone', 'PRC');
             Yii::$app->language = Lookup::getValue('system.language', 'zh-CN');
             $formatter = Yii::$app->getFormatter();
@@ -42,7 +47,6 @@ class BaseController extends Controller
                         $ignoreUsers = [];
                     }
                     if ($ignoreUsers) {
-                        $user = \Yii::$app->getUser();
                         if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
                             return true;
                         }
@@ -58,7 +62,7 @@ class BaseController extends Controller
                     $key = str_replace('/', '-', $this->module->getUniqueId());
                     $key && $key .= '-';
                     $key = $key . Inflector::camel2id(Yii::$app->controller->id) . '.' . Inflector::camel2id($action->id);
-                    if (in_array($key, $defaultRoles) || Yii::$app->getUser()->can($key)) {
+                    if (in_array($key, $defaultRoles) || $user->can($key)) {
                         return true;
                     } else {
                         throw new UnauthorizedHttpException('对不起，您没有操作该动作的权限。');

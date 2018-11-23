@@ -30,6 +30,7 @@ class m151106_155959_create_user_table extends Migration
             'login_count' => $this->integer()->notNull()->defaultValue(0)->comment('登录次数'),
             'last_login_ip' => $this->string(39)->defaultValue(null)->comment('最后登录 IP'),
             'last_login_time' => $this->integer()->defaultValue(null)->comment('最后登录时间'),
+            'last_login_session' => $this->string(128)->comment('最后登录 session 值'),
             'status' => $this->smallInteger()->notNull()->defaultValue(1)->comment('状态'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'created_by' => $this->integer()->notNull()->comment('添加人'),
