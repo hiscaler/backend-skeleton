@@ -61,14 +61,19 @@ class Article extends BaseActiveRecord
     }
 
     // Events
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            if (empty($this->alias)) {
-                $alias = Inflector::slug($this->title);
-                $alias = trim(substr($alias, 0, 60), '-');
 
-                $this->alias = $alias;
+    /**
+     * @return bool
+     */
+    public function beforeValidate()
+    {
+        if (parent::beforeValidate()) {
+            if (empty($this->alias)) {
+                $alias = [];
+                foreach (explode('-', Inflector::slug($this->title)) as $slug) {
+                    $alias[] = $slug[0];
+                }
+                $this->alias = implode('', $alias);
             }
 
             return true;
@@ -76,4 +81,5 @@ class Article extends BaseActiveRecord
             return false;
         }
     }
+
 }
