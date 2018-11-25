@@ -7,6 +7,8 @@ use yii\web\Response;
 
 /**
  * api module definition class
+ *
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class Module extends \yii\base\Module
 {
