@@ -259,7 +259,7 @@ class BaseActiveRecord extends ActiveRecord
             // Insert data
             if ($insertLabels) {
                 $rows = [];
-                $userId = Yii::$app->getUser()->getId();
+                $userId = Yii::$app->getUser()->getId() ?: 0;
                 $now = time();
                 foreach ($insertLabels as $labelId) {
                     $rows[] = [$this->getPrimaryKey(), static::class, $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
