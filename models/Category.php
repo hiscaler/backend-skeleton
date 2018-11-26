@@ -157,13 +157,13 @@ class Category extends BaseActiveRecord
     /**
      * 获取未整理的分类数据
      *
-     * @param bool $tree
+     * @param bool $toTree
      * @return array
      * @throws \yii\db\Exception
      */
-    private static function rawData($tree = true)
+    private static function rawData($toTree = true)
     {
-        $cacheKey = 'app.models.category.rawData.' . (int) $tree;
+        $cacheKey = 'app.models.category.rawData.' . (int) $toTree;
         $cache = Yii::$app->getCache();
         $items = $cache->get($cacheKey);
         if ($items === false) {
@@ -173,7 +173,7 @@ class Category extends BaseActiveRecord
                 $items[$key]['enabled'] = $item['enabled'] ? true : false;
                 $item['icon'] && $items[$key]['icon'] = $url . $item['icon'];
             }
-            $tree && $items = ArrayHelper::toTree($items, 'id', 'parent');
+            $toTree && $items = ArrayHelper::toTree($items, 'id', 'parent');
 
             $cache->set($cacheKey, $items, 0, new DbDependency([
                 'sql' => 'SELECT MAX([[updated_at]]) FROM {{%category}}'
