@@ -39,12 +39,25 @@ class Option
      */
     public static function ordering($start = 0, $max = 60)
     {
-        $options = [];
-        for ($i = $start; $i <= $max; $i++) {
-            $options[$i] = $i;
+        return self::numbers($start, $max, 1);
+    }
+
+    /**
+     * 数字列表数据
+     *
+     * @param int $min
+     * @param int $max
+     * @param int $step
+     * @return array
+     */
+    public static function numbers($min = 0, $max = 60, $step = 1)
+    {
+        $numbers = [];
+        for ($i = $min; $i <= $max; $i += $step) {
+            $numbers[$i] = $i;
         }
 
-        return $options;
+        return $numbers;
     }
 
     public static function weekDays()
