@@ -68,8 +68,8 @@ class Label extends BaseActiveRecord
     /**
      * 获取自定义属性列表
      *
-     * @param boolean $all // 是否查询出所有数据
-     * @param boolean $group // 是否分组
+     * @param boolean $all 是否查询出所有数据
+     * @param boolean $group 是否分组
      * @return array
      * @throws \yii\db\Exception
      */
@@ -83,12 +83,15 @@ class Label extends BaseActiveRecord
             $params[':enabled'] = Constant::BOOLEAN_TRUE;
         }
         $sql .= ' ORDER BY [[alias]] ASC, [[ordering]] ASC';
-        $rawData = Yii::$app->getDb()->createCommand($sql)->bindValues($params)->queryAll();
-        $groupPrefix = null;
+        $rawData = Yii::$app->getDb()->createCommand($sql, $params)->queryAll();
         foreach ($rawData as $data) {
             if ($group) {
-                $index = strpos($data['alias'], '.');
-                $groupPrefix = $index !== false ? substr($data['alias'], 0, $index) : '*';
+                if (($index = strpos($data['alias'], '.')) !== false) {
+                    $groupPrefix = substr($data['alias'], 0, $index);
+                } else {
+                    $groupPrefix = '*';
+                }
+
                 $items[$groupPrefix][$data['id']] = "{$data['alias']}: {$data['name']}";
             } else {
                 $items[$data['id']] = "{$data['alias']}: {$data['name']}";
@@ -171,7 +174,6 @@ class Label extends BaseActiveRecord
     // Events
 
     /**
-     * @param $insert
      * @return bool
      */
     public function beforeValidate()
