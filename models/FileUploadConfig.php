@@ -222,7 +222,7 @@ class FileUploadConfig extends BaseActiveRecord
         $options = [];
         $db = Yii::$app->getDb();
         $tablePrefix = $db->tablePrefix;
-        $coreTables = Option::coreTables();
+        $coreTables = Option::coreTables(false);
         foreach ($db->getSchema()->getTableSchemas() as $tableSchema) {
             $tableName = str_replace($tablePrefix, '', $tableSchema->name);
             // 排除核心表表中已知未含有上传字段的表

@@ -8,6 +8,7 @@ use Yii;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
@@ -253,35 +254,43 @@ class BaseActiveRecord extends ActiveRecord
             }
         }
 
-        $db = Yii::$app->getDb();
-        $transaction = $db->beginTransaction();
-        try {
-            // Insert data
-            if ($insertLabels) {
-                $rows = [];
-                $userId = Yii::$app->getUser()->getId();
-                $now = time();
-                foreach ($insertLabels as $labelId) {
-                    $rows[] = [$this->getPrimaryKey(), static::class, $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
+        if ($insertLabels || $deleteLabels) {
+            $db = Yii::$app->getDb();
+            $cmd = $db->createCommand();
+            $transaction = $db->beginTransaction();
+            try {
+                $primaryKeyValue = $this->getPrimaryKey();
+                // Insert data
+                if ($insertLabels) {
+                    $rows = [];
+                    $userId = Yii::$app->getUser()->getId() ?: 0;
+                    $now = time();
+                    foreach ($insertLabels as $labelId) {
+                        $rows[] = [$primaryKeyValue, static::class, $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
+                    }
+                    if ($rows) {
+                        $cmd->batchInsert('{{%entity_label}}', ['entity_id', 'model_name', 'label_id', 'enabled', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], $rows)->execute();
+                        $cmd->update('{{%label}}', [
+                            'frequency' => new Expression('frequency + 1')
+                        ], ['id' => $insertLabels])->execute();
+                    }
                 }
-                if ($rows) {
-                    $db->createCommand()->batchInsert('{{%entity_label}}', ['entity_id', 'model_name', 'label_id', 'enabled', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], $rows)->execute();
-                    $db->createCommand("UPDATE {{%label}} SET [[frequency]] = [[frequency]] + 1 WHERE [[id]] IN (" . implode(', ', ArrayHelper::getColumn($rows, 2)) . ")")->execute();
+                // Delete data
+                if ($deleteLabels) {
+                    $cmd->delete('{{%entity_label}}', [
+                        'entity_id' => $primaryKeyValue,
+                        'model_name' => static::class,
+                        'label_id' => $deleteLabels
+                    ])->execute();
+                    $cmd->update('{{%label}}', [
+                        'frequency' => new Expression('frequency - 1')
+                    ], ['id' => $deleteLabels])->execute();
                 }
+                $transaction->commit();
+            } catch (Exception $e) {
+                $transaction->rollback();
+                throw new HttpException('500', $e->getMessage());
             }
-            // Delete data
-            if ($deleteLabels) {
-                $db->createCommand()->delete('{{%entity_label}}', [
-                    'entity_id' => $this->getPrimaryKey(),
-                    'model_name' => static::class,
-                    'label_id' => $deleteLabels
-                ])->execute();
-                $db->createCommand("UPDATE {{%label}} SET [[frequency]] = [[frequency]] - 1 WHERE [[id]] IN (" . implode(', ', $deleteLabels) . ")")->execute();
-            }
-            $transaction->commit();
-        } catch (Exception $e) {
-            $transaction->rollback();
-            throw new HttpException('500', $e->getMessage());
         }
     }
 

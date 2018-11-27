@@ -5,6 +5,12 @@ namespace app\models;
 use Yii;
 use yii\helpers\Inflector;
 
+/**
+ * Class Option
+ *
+ * @package app\models
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class Option
 {
 
@@ -39,12 +45,25 @@ class Option
      */
     public static function ordering($start = 0, $max = 60)
     {
-        $options = [];
-        for ($i = $start; $i <= $max; $i++) {
-            $options[$i] = $i;
+        return self::numbers($start, $max, 1);
+    }
+
+    /**
+     * 数字列表数据
+     *
+     * @param int $min
+     * @param int $max
+     * @param int $step
+     * @return array
+     */
+    public static function numbers($min = 0, $max = 60, $step = 1)
+    {
+        $numbers = [];
+        for ($i = $min; $i <= $max; $i += $step) {
+            $numbers[$i] = $i;
         }
 
-        return $options;
+        return $numbers;
     }
 
     public static function weekDays()
@@ -88,7 +107,7 @@ class Option
      * @param bool $withPrefix 是否带表前缀
      * @return array
      */
-    public static function coreTables($withPrefix = false)
+    public static function coreTables($withPrefix = true)
     {
         $tables = ['category', 'entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'member', 'meta', 'meta_validator', 'meta_value', 'migration', 'module', 'user', 'user_auth_category', 'member_credit_log', 'member_group', 'user_login_log', 'wechat_member'];
         if ($withPrefix && $tablePrefix = \Yii::$app->getDb()->tablePrefix) {
@@ -103,12 +122,20 @@ class Option
     /**
      * 获取所有表名称
      *
+     * @param bool $withPrefix 是否带表前缀
      * @return string[]
      * @throws \yii\base\NotSupportedException
      */
-    public static function tables()
+    public static function tables($withPrefix = true)
     {
-        return Yii::$app->getDb()->getSchema()->getTableNames('', true);
+        $tables = Yii::$app->getDb()->getSchema()->getTableNames('', true);
+        if ($withPrefix && $tablePrefix = \Yii::$app->getDb()->tablePrefix) {
+            foreach ($tables as &$table) {
+                $table = str_replace($tablePrefix, '', $table);
+            }
+        }
+
+        return $tables;
     }
 
     /**
@@ -121,11 +148,9 @@ class Option
     public static function models($namespace = false)
     {
         $models = [];
-        $tablePrefix = \Yii::$app->getDb()->tablePrefix;
-        $coreTables = self::coreTables();
+        $coreTables = self::coreTables(false);
         $path = Yii::getAlias('@app');
-        foreach (self::tables() as $table) {
-            $table = str_replace($tablePrefix, '', $table);
+        foreach (self::tables(false) as $table) {
             if ($table == 'migration') {
                 continue;
             }
@@ -137,12 +162,10 @@ class Option
                     $models[$table] = Yii::t('model', Inflector::camel2words($modelName));
                 }
             } else {
-                $index = stripos($table, '_');
-                if ($index === false) {
+                if (stripos($table, '_') === false) {
                     $moduleName = $modelName = $table;
                 } else {
-                    $moduleName = substr($table, 0, $index);
-                    $modelName = substr($table, $index + 1);
+                    list($moduleName, $modelName) = explode('_', $table);
                 }
                 $moduleName = strtolower($moduleName);
                 $modelName = Inflector::id2camel($modelName, '_');
