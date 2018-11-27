@@ -186,20 +186,22 @@ class Category extends BaseActiveRecord
     /**
      * 获取分类展示树
      *
-     * @param null|string $sign
+     * @param null|string $signOrId
      * @param string $returnType
      * @param null $enabled
      * @param bool $shortName
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function tree($sign = null, $returnType = self::RETURN_TYPE_PUBLIC, $enabled = null, $shortName = true)
+    public static function tree($signOrId = null, $returnType = self::RETURN_TYPE_PUBLIC, $enabled = null, $shortName = true)
     {
         $tree = [];
-        $sign = trim($sign);
+        $signOrId = trim($signOrId);
         $db = \Yii::$app->getDb();
-        if ($sign) {
-            $parentId = $db->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $sign])->queryScalar();
+        if (is_numeric($signOrId)) {
+            $parentId = (int) $signOrId;
+        } elseif (is_string($signOrId) && $signOrId) {
+            $parentId = $db->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
             if (!$parentId) {
                 return [];
             }
