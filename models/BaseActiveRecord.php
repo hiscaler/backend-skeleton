@@ -308,8 +308,16 @@ class BaseActiveRecord extends ActiveRecord
                 ':modelName' => static::class
             ])->queryAll();
             if ($labels) {
-                $db->createCommand()->delete('{{%entity_label}}', ['id' => ArrayHelper::getColumn($labels, 'id')])->execute();
-                Label::updateAll(['frequency' => -1], ['id' => ArrayHelper::getColumn($labels, 'label_id')]);
+                $ids = $labelIds = [];
+                foreach ($labels as $label) {
+                    $ids[] = $label['id'];
+                    $labelIds[] = $label['label_id'];
+                }
+                $cmd = $db->createCommand();
+                $cmd->delete('{{%entity_label}}', ['id' => $ids])->execute();
+                $cmd->update('{{%label}}', [
+                    'frequency' => new Expression('frequency - 1')
+                ], ['id' => $labelIds])->execute();
             }
         });
     }
