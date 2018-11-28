@@ -9,6 +9,12 @@ use yii\helpers\Inflector;
 use yii\web\Controller;
 use yii\web\UnauthorizedHttpException;
 
+/**
+ * Class BaseController
+ *
+ * @package app\modules\admin\extensions
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class BaseController extends Controller
 {
 
