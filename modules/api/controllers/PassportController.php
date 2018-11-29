@@ -4,11 +4,13 @@ namespace app\modules\api\controllers;
 
 use app\modules\admin\components\ApplicationHelper;
 use app\modules\api\extensions\BaseController;
+use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\forms\MemberRegisterForm;
 use app\modules\api\models\Member;
 use Yii;
 use yii\base\InvalidArgumentException;
+use yii\filters\auth\QueryParamAuth;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
@@ -33,7 +35,7 @@ class PassportController extends BaseController
 
     public function behaviors()
     {
-        return array_merge(parent::behaviors(), [
+        $behaviors = array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -44,6 +46,27 @@ class PassportController extends BaseController
                 ],
             ],
         ]);
+
+        if (in_array($this->action->id, ['refresh-token', 'change-password', 'logout'])) {
+            $token = \Yii::$app->getRequest()->get('accessToken');
+            if (empty($token)) {
+                $headers = \Yii::$app->getRequest()->getHeaders();
+                $token = $headers->has('accessToken') ? $headers->get('accessToken') : null;
+            }
+            if (!empty($token)) {
+                $class = AccessTokenAuth::class;
+            } else {
+                $class = QueryParamAuth::class;
+            }
+
+            $behaviors = array_merge($behaviors, [
+                'authenticator' => [
+                    'class' => $class,
+                ]
+            ]);
+        }
+
+        return $behaviors;
     }
 
     /**
