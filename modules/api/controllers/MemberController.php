@@ -2,7 +2,7 @@
 
 namespace app\modules\api\controllers;
 
-use app\modules\api\extensions\BaseController;
+use app\modules\api\extensions\AuthController;
 use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\Member;
 use Yii;
@@ -17,7 +17,7 @@ use yii\web\NotFoundHttpException;
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class MemberController extends BaseController
+class MemberController extends AuthController
 {
 
     public function actionIndex($username = null, $fields = null, $page = 1, $pageSize = 20)
@@ -42,7 +42,7 @@ class MemberController extends BaseController
         // Order By
         $orderByColumns = [];
         if (!empty($orderBy)) {
-            $orderByColumnLimit = ['id', 'usernames', 'categoryId', 'createdAt', 'updatedAt']; // Supported order by column names
+            $orderByColumnLimit = ['id', 'username', 'categoryId', 'createdAt', 'updatedAt']; // Supported order by column names
             foreach (explode(',', trim($orderBy)) as $string) {
                 if (!empty($string)) {
                     $string = explode('.', $string);
