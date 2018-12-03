@@ -5,6 +5,12 @@ namespace app\modules\api\models;
 use app\models\Meta;
 use Yii;
 
+/**
+ * Class Member
+ *
+ * @package app\modules\api\models
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class Member extends \app\models\Member
 {
 
