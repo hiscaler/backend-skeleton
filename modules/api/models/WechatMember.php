@@ -3,32 +3,13 @@
 namespace app\modules\api\models;
 
 /**
- * This is the model class for table "{{%wechat_member}}".
+ * Class WechatMember
  *
- * @property integer $id
- * @property integer $member_id
- * @property integer $subscribe
- * @property string $openid
- * @property string $nickname
- * @property integer $sex
- * @property string $country
- * @property string $province
- * @property string $city
- * @property string $language
- * @property string $headimgurl
- * @property integer $subscribe_time
- * @property string $unionid
+ * @package app\modules\api\models
+ * @author hiscaler <hiscaler@gmail.com>
  */
-class WechatMember extends \yii\db\ActiveRecord
+class WechatMember extends \app\models\WechatMember
 {
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%wechat_member}}';
-    }
 
     /**
      * @inheritdoc
@@ -39,7 +20,7 @@ class WechatMember extends \yii\db\ActiveRecord
             'id',
             'memberId' => 'member_id',
             'subscribe' => function () {
-                return boolval($this->subscribe);
+                return $this->subscribe ? true : false;
             },
             'openid',
             'nickname',
