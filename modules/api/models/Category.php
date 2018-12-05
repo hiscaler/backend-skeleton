@@ -2,8 +2,6 @@
 
 namespace app\modules\api\models;
 
-use yii\BaseYii;
-
 /**
  * Class Category
  *
