@@ -20,10 +20,22 @@ use yii\web\NotFoundHttpException;
 class MemberController extends AuthController
 {
 
-    public function actionIndex($username = null, $fields = null, $page = 1, $pageSize = 20)
+    /**
+     * 会员列表
+     *
+     * @param null $fields
+     * @param null $username
+     * @param int $page
+     * @param int $pageSize
+     * @return ActiveDataProvider
+     */
+    public function actionIndex($fields = null, $username = null, $page = 1, $pageSize = 20)
     {
         // Basic condition
         $condition = [];
+        if ($username) {
+            $condition = ['AND', $condition, ['t.username' => $username]];
+        }
         $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.type', 't.category_id', 'c.name AS category_name', 't.group', 't.username', 't.nickname', 't.real_name', 't.avatar', 't.access_token', 't.email', 't.tel', 't.mobile_phone', 't.address', 't.status', 't.remark', 't.created_at', 't.updated_at', 'u.nickname AS editor'], $fields, []);
         $query = (new \yii\db\ActiveQuery(Member::class))
             ->alias('t')
