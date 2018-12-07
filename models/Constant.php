@@ -41,4 +41,9 @@ class Constant
      */
     const SEX_FEMALE = 2;
 
+    /**
+     * 数据分隔符
+     */
+    const DELIMITER = ',';
+
 }
