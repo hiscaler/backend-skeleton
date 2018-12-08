@@ -23,6 +23,7 @@ class AppAsset extends AssetBundle
 
     public $css = [
         'css/application.css',
+        'css/custom.css',
         'css/common.css',
         'css/widget-grid-view.css',
         'css/form.css',
