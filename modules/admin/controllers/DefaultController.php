@@ -73,7 +73,7 @@ class DefaultController extends Controller
         $http->httpHeaders = ['User-Agent: hiscaler'];
         $rawGitComments = $http->get('/repos/hiscaler/backend-skeleton/commits');
 
-        if ($rawGitComments !== false || is_array($rawGitComments)) {
+        if ($rawGitComments !== false && is_array($rawGitComments)) {
             foreach ($rawGitComments as $comment) {
                 if (stripos($comment['commit']['message'], '...') !== false) {
                     continue;
