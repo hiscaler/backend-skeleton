@@ -9,7 +9,6 @@ use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\db\Expression;
-use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 /**
