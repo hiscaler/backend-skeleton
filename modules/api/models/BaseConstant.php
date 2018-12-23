@@ -3,12 +3,12 @@
 namespace app\modules\api\models;
 
 /**
- * Class Constant
+ * Class BaseConstant
  *
  * @package app\modules\api\models
  * @author hiscaler <hiscaler@gmail.com>
  */
-class Constant extends BaseConstant
+class BaseConstant extends \app\models\Constant
 {
 
 }
