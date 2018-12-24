@@ -3,12 +3,12 @@
 namespace app\modules\api\models;
 
 /**
- * Class User
+ * Class BaseOption
  *
  * @package app\modules\api\models
  * @author hiscaler <hiscaler@gmail.com>
  */
-class User extends BaseUser
+class BaseOption extends \app\models\Option
 {
 
 }

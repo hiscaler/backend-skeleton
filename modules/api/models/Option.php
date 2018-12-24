@@ -8,7 +8,7 @@ namespace app\modules\api\models;
  * @package app\modules\api\models
  * @author hiscaler <hiscaler@gmail.com>
  */
-class Option extends \app\models\Option
+class Option extends BaseOption
 {
 
 }
