@@ -63,6 +63,7 @@ class WechatController extends BaseController
                 $maxId = $db->createCommand('SELECT MAX[[id]] FROM {{%member}}')->queryScalar();
                 $member->username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
                 $member->nickname = $nickname ?: $member->username;
+                $member->real_name = $member->nickname;
                 $member->setPassword($member->username);
                 $member->avatar = $user->headimgurl;
                 $member->status = Member::STATUS_ACTIVE;
