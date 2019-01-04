@@ -6,6 +6,7 @@ use app\modules\admin\components\ApplicationHelper;
 use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 use yii\helpers\FileHelper;
+use yii\helpers\StringHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -15,6 +16,7 @@ use yii\web\IdentityInterface;
  * @property integer $type
  * @property integer $category_id
  * @property string $group
+ * @property string $invitation_code
  * @property integer $parent_id
  * @property string $username
  * @property string $nickname
@@ -88,7 +90,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['type', 'category_id', 'parent_id', 'total_credits', 'available_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             [['username'], 'required'],
-            [['group', 'username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email', 'remark'], 'trim'],
+            [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'tel', 'mobile_phone', 'address', 'email', 'remark'], 'trim'],
             [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
             [['type'], 'default', 'value' => self::TYPE_MEMBER],
             [['category_id', 'parent_id'], 'default', 'value' => 0],
@@ -136,6 +138,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'type' => '会员类型',
             'category_id' => '分类',
             'group' => '分组',
+            'invitation_code' => '邀请码',
             'parent_id' => '上级',
             'parent.username' => '上级',
             'username' => '帐号',
@@ -538,6 +541,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
      * @param bool $insert
      * @return bool
      * @throws \yii\base\Exception
+     * @throws \Exception
      */
     public function beforeSave($insert)
     {
@@ -550,6 +554,8 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             if ($insert) {
                 $this->generateAuthKey();
                 $this->generateAccessToken();
+                // @todo 需要检测唯一性
+                $this->invitation_code = \yadjet\helpers\StringHelper::generateRandomString(16);
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
                 if (!$this->expired_datetime) {
                     $expiryMinutes = (int) ApplicationHelper::getConfigValue('member.register.expiryMinutes');
