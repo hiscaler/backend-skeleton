@@ -47,8 +47,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
 
     const SCENARIO_DELETE = 'DELETE';
 
-    const TYPE_SELLER = 0;
-    const TYPE_BUYER = 1;
+    const TYPE_ADMINISTRATOR = 1;
 
     /**
      * 用户状态
@@ -89,7 +88,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             [['username'], 'required'],
             [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
             [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
-            [['type'], 'default', 'value' => self::TYPE_SELLER],
+            [['type'], 'default', 'value' => self::TYPE_ADMINISTRATOR],
+            [['type'], 'in', 'range' => array_keys(static::typeOptions())],
             [['category_id', 'parent_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
             [['group', 'username', 'real_name'], 'string', 'max' => 20],
@@ -405,16 +405,23 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         $this->access_token = Yii::$app->getSecurity()->generateRandomString();
     }
 
+    /**
+     * 移除 access_token 值
+     */
     public function removeAccessToken()
     {
         $this->access_token = null;
     }
 
+    /**
+     * 会员类型选项
+     *
+     * @return array
+     */
     public static function typeOptions()
     {
         return [
-            self::TYPE_SELLER => '卖家',
-            self::TYPE_BUYER => '买家',
+            self::TYPE_ADMINISTRATOR => '管理员',
         ];
     }
 
