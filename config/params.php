@@ -39,7 +39,7 @@ return [
         'file' => [
             'minSize' => 1024,
             'maxSize' => 1024 * 1024 * 200,
-            'extensions' => 'zip,rar,pdf,doc,'
+            'extensions' => 'zip,rar,pdf,doc,docx,xls,xlsx,ppt,pptx,wps,7z,txt'
         ]
     ],
     // 权限认证设置
