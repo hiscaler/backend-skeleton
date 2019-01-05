@@ -69,12 +69,6 @@ return [
         'disabledScanModules' => ['gii', 'debug', 'api'], // 禁止扫描的模块
         'selfish' => true, // 是否只显示当前应用的相关数据
     ],
-    // 翻译设置
-    'translate' => [
-        'class' => 'sogou',
-        'pid' => '',
-        'secretKey' => ''
-    ],
     // 微信公众号设置
     'wechat' => require(__DIR__ . '/wechat.php'),
     'modules' => [
