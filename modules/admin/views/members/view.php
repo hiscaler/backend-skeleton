@@ -16,10 +16,14 @@ $this->params['menus'] = [
 ];
 
 $wechatModel = $model->wechat;
+$profile = $model->profile;
 ?>
 <div>
     <ul class="tabs-common">
         <li class="active"><a href="javascript:;" data-toggle="tab-panel-basic">基本资料</a></li>
+        <?php if ($profile): ?>
+            <li><a href="javascript:;" data-toggle="tab-panel-profile">扩展资料</a></li>
+        <?php endif; ?>
         <?php if ($wechatModel): ?>
             <li><a href="javascript:;" data-toggle="tab-panel-wehcat">微信资料</a></li>
         <?php endif; ?>
@@ -42,9 +46,7 @@ $wechatModel = $model->wechat;
                             'contentOptions' => ['class' => 'avatar']
                         ],
                         'email:email',
-                        'tel',
                         'mobile_phone',
-                        'address',
                         [
                             'attribute' => 'register_ip',
                             'value' => function ($model) {
@@ -65,6 +67,18 @@ $wechatModel = $model->wechat;
                 ]) ?>
             </div>
         </div>
+        <?php if ($profile): ?>
+            <div class="tab-panel" id="tab-panel-profile" style="display: none;">
+                <?= DetailView::widget([
+                    'model' => $wechatModel,
+                    'attributes' => [
+                        'tel',
+                        'address',
+                        'zip_code',
+                    ],
+                ]) ?>
+            </div>
+        <?php endif; ?>
         <?php if ($wechatModel): ?>
             <div class="tab-panel" id="tab-panel-wehcat" style="display: none;">
                 <?= DetailView::widget([

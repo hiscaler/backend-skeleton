@@ -48,9 +48,7 @@ class BaseMember extends \app\models\Member
                 return $avatar;
             },
             'email',
-            'tel',
             'mobilePhone' => 'mobile_phone',
-            'address',
             'registerIp' => 'register_ip',
             'totalCredits' => 'total_credits',
             'availableCredits' => 'available_credits',
@@ -78,6 +76,11 @@ class BaseMember extends \app\models\Member
                 return $items;
             }
         ];
+    }
+
+    public function extraFields()
+    {
+        return ['wechat', 'profile'];
     }
 
 }

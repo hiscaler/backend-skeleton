@@ -37,6 +37,7 @@ class BaseUser extends \app\models\User
 
                 return $avatar;
             },
+            'accessToken' => 'access_token',
             'email',
             'role',
             'registerIp' => 'register_ip',

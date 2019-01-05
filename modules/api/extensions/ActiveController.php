@@ -3,7 +3,9 @@
 namespace app\modules\api\extensions;
 
 use app\modules\api\components\ApplicationHelper;
+use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use Yii;
+use yii\filters\auth\QueryParamAuth;
 use yii\filters\ContentNegotiator;
 use yii\filters\Cors;
 use yii\web\Response;
@@ -50,9 +52,12 @@ class ActiveController extends \yii\rest\ActiveController
         $this->debug = strtolower(trim(Yii::$app->getRequest()->get('debug'))) == 'y';
     }
 
+    /**
+     * @return array
+     */
     public function behaviors()
     {
-        return [
+        $behaviors = [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::class,
                 'formats' => [
@@ -72,6 +77,25 @@ class ActiveController extends \yii\rest\ActiveController
                 ],
             ],
         ];
+
+        $token = \Yii::$app->getRequest()->get('accessToken');
+        if (empty($token)) {
+            $headers = \Yii::$app->getRequest()->getHeaders();
+            $token = $headers->has('accessToken') ? $headers->get('accessToken') : null;
+        }
+        if (!empty($token)) {
+            $class = AccessTokenAuth::class;
+        } else {
+            $class = QueryParamAuth::class;
+        }
+
+        $behaviors = array_merge($behaviors, [
+            'authenticator' => [
+                'class' => $class,
+            ]
+        ]);
+
+        return $behaviors;
     }
 
 }

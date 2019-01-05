@@ -69,10 +69,6 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             ],
             'email:email',
             [
-                'attribute' => 'tel',
-                'contentOptions' => ['class' => 'tel'],
-            ],
-            [
                 'attribute' => 'mobile_phone',
                 'contentOptions' => ['class' => 'mobile-phone'],
             ],
