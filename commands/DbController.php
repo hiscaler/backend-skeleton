@@ -26,6 +26,9 @@ EOT;
     /**
      * 生成数据表字典
      *
+     * 使用：
+     * yii db/generate-dict "" 1
+     *
      * @param null $path 保存路径
      * @param bool $coreTables 是否只生成核心表数据词典
      * @throws \yii\base\Exception
