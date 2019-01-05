@@ -9,15 +9,16 @@ www_user
 |  5 | auth_key             | string   | 32  |   |   | 认证 key     | 
 |  6 | password_hash        | string   | 255 |   |   | 密码         | 
 |  7 | password_reset_token | string   | 255 | Y |   | 密码重置 token | 
-|  8 | email                | string   | 50  | Y |   | 邮箱         | 
-|  9 | role                 | string   | 64  | Y |   | 角色         | 
-| 10 | register_ip          | string   | 39  |   |   | 注册 IP      | 
-| 11 | login_count          | integer  | 11  |   | 0 | 登录次数   | 
-| 12 | last_login_ip        | string   | 39  | Y |   | 最后登录 IP | 
-| 13 | last_login_time      | integer  | 11  | Y |   | 最后登录时间 | 
-| 14 | last_login_session   | string   | 128 | Y |   | 最后登录 session 值 | 
-| 15 | status               | smallint | 6   |   | 1 | 状态         | 
-| 16 | created_at           | integer  | 11  |   |   | 添加时间   | 
-| 17 | created_by           | integer  | 11  |   |   | 添加人      | 
-| 18 | updated_at           | integer  | 11  |   |   | 更新时间   | 
-| 19 | updated_by           | integer  | 11  |   |   | 更新人      | 
+|  8 | access_token         | string   | 255 |   |   | 访问 Token   | 
+|  9 | email                | string   | 50  | Y |   | 邮箱         | 
+| 10 | role                 | string   | 64  | Y |   | 角色         | 
+| 11 | register_ip          | string   | 39  |   |   | 注册 IP      | 
+| 12 | login_count          | integer  | 11  |   | 0 | 登录次数   | 
+| 13 | last_login_ip        | string   | 39  | Y |   | 最后登录 IP | 
+| 14 | last_login_time      | integer  | 11  | Y |   | 最后登录时间 | 
+| 15 | last_login_session   | string   | 128 | Y |   | 最后登录 session 值 | 
+| 16 | status               | smallint | 6   |   | 1 | 状态         | 
+| 17 | created_at           | integer  | 11  |   |   | 添加时间   | 
+| 18 | created_by           | integer  | 11  |   |   | 添加人      | 
+| 19 | updated_at           | integer  | 11  |   |   | 更新时间   | 
+| 20 | updated_by           | integer  | 11  |   |   | 更新人      | 
