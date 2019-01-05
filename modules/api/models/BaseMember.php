@@ -22,6 +22,11 @@ class BaseMember extends \app\models\Member
         return [
             'id',
             'type',
+            'typeFormatted' => function ($model) {
+                $options = static::typeOptions();
+
+                return isset($options[$model->type]) ? $options[$model->type] : null;
+            },
             'categoryId' => 'category_id',
             'group',
             'invitationCode' => 'invitation_code',
