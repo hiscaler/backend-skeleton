@@ -24,6 +24,7 @@ class m151106_155959_create_user_table extends Migration
             'auth_key' => $this->string(32)->notNull()->comment('认证 key'),
             'password_hash' => $this->string()->notNull()->comment('密码'),
             'password_reset_token' => $this->string()->unique()->comment('密码重置 token'),
+            'access_token' => $this->string()->unique()->comment('访问 token'),
             'email' => $this->string(50)->comment('邮箱'),
             'role' => $this->string(64)->comment('角色'),
             'register_ip' => $this->string(39)->notNull()->comment('注册 IP'),
