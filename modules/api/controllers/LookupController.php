@@ -2,8 +2,10 @@
 
 namespace app\modules\api\controllers;
 
-use app\models\Lookup;
-use app\modules\api\extensions\BaseController;
+use app\modules\api\extensions\ActiveController;
+use app\modules\api\models\Lookup;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 
 /**
  * Class LookupController
@@ -11,8 +13,45 @@ use app\modules\api\extensions\BaseController;
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class LookupController extends BaseController
+class LookupController extends ActiveController
 {
+
+    public $modelClass = Lookup::class;
+
+    public function behaviors()
+    {
+        $behaviors = array_merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'create' => ['POST'],
+                    'update' => ['PUT', 'PATCH'],
+                    'delete' => ['POST'],
+                    '*' => ['GET'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'value', 'values'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['value', 'values'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                ],
+                'denyCallback' => function ($rule, $action) {
+                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this endpoint');
+                }
+            ],
+        ]);
+
+        return $behaviors;
+    }
 
     /**
      * 获取常规设定值

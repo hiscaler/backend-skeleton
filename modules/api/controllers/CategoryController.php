@@ -2,12 +2,12 @@
 
 namespace app\modules\api\controllers;
 
-use app\models\Category;
-use app\modules\api\extensions\BaseController;
+use app\modules\api\extensions\ActiveController;
+use app\modules\api\models\Category;
 use yadjet\helpers\ArrayHelper;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\NotFoundHttpException;
 
 /**
  * Class CategoryController
@@ -15,8 +15,18 @@ use yii\web\NotFoundHttpException;
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class CategoryController extends BaseController
+class CategoryController extends ActiveController
 {
+
+    public $modelClass = Category::class;
+
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['index']);
+
+        return $actions;
+    }
 
     /**
      * @return array
@@ -30,7 +40,7 @@ class CategoryController extends BaseController
         }
         $timestamp = $cmd->queryScalar();
 
-        return array_merge(parent::behaviors(), [
+        $behaviors = array_merge(parent::behaviors(), [
             [
                 'class' => 'yii\filters\HttpCache',
                 'lastModified' => function () use ($timestamp) {
@@ -43,10 +53,33 @@ class CategoryController extends BaseController
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'create' => ['post'],
+                    'create' => ['POST'],
+                    'update' => ['PUT', 'PATCH'],
+                    'delete' => ['DELETE'],
+                    '*' => ['GET'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update', 'view', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index', 'view'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                ],
+                'denyCallback' => function ($rule, $action) {
+                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this endpoint');
+                }
+            ],
         ]);
+
+        return $behaviors;
     }
 
     /**
@@ -72,66 +105,6 @@ class CategoryController extends BaseController
         !$flat && $items = ArrayHelper::toTree($items, 'id', 'parent');
 
         return $items;
-    }
-
-    /**
-     * 添加分类
-     *
-     * @return Category|array
-     */
-    public function actionCreate()
-    {
-        $model = new Category();
-        $model->loadDefaultValues();
-        $model->load(Yii::$app->getRequest()->post(), '');
-        if ($model->validate()) {
-            $model->save(false);
-
-            return $model;
-        } else {
-            Yii::$app->getResponse()->setStatusCode(400);
-
-            return $model->getFirstErrors();
-        }
-    }
-
-    /**
-     * 更新分类
-     *
-     * @param $id
-     * @return Category|array
-     * @throws NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-        $model->load(Yii::$app->getRequest()->post(), '');
-        if ($model->validate()) {
-            $model->save(false);
-
-            return $model;
-        } else {
-            Yii::$app->getResponse()->setStatusCode(400);
-
-            return $model->getFirstErrors();
-        }
-    }
-
-    /**
-     * Finds the Category model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param integer $id
-     * @return Category the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Category::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
     }
 
 }

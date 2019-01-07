@@ -78,22 +78,27 @@ class ActiveController extends \yii\rest\ActiveController
             ],
         ];
 
-        $token = \Yii::$app->getRequest()->get('accessToken');
+        $request = \Yii::$app->getRequest();
+        $token = $request->get('accessToken');
         if (empty($token)) {
-            $headers = \Yii::$app->getRequest()->getHeaders();
+            $headers = $request->getHeaders();
             $token = $headers->has('accessToken') ? $headers->get('accessToken') : null;
         }
         if (!empty($token)) {
             $class = AccessTokenAuth::class;
-        } else {
+        } elseif ($request->get('access-token')) {
             $class = QueryParamAuth::class;
+        } else {
+            $class = null;
         }
 
-        $behaviors = array_merge($behaviors, [
-            'authenticator' => [
-                'class' => $class,
-            ]
-        ]);
+        if ($class != null) {
+            $behaviors = array_merge($behaviors, [
+                'authenticator' => [
+                    'class' => $class,
+                ]
+            ]);
+        }
 
         return $behaviors;
     }

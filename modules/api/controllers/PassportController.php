@@ -3,14 +3,13 @@
 namespace app\modules\api\controllers;
 
 use app\modules\admin\components\ApplicationHelper;
-use app\modules\api\extensions\BaseController;
-use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
+use app\modules\api\extensions\ActiveController;
 use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\forms\MemberRegisterForm;
 use app\modules\api\models\Member;
 use Yii;
 use yii\base\InvalidArgumentException;
-use yii\filters\auth\QueryParamAuth;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
@@ -22,11 +21,18 @@ use yii\web\ServerErrorHttpException;
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class PassportController extends BaseController
+class PassportController extends ActiveController
 {
 
     const LOGIN_BY_USERNAME = 'username';
     const LOGIN_BY_ACCESS_TOKEN = 'accessToken';
+
+    public $modelClass = Member::class;
+
+    public function actions()
+    {
+        return [];
+    }
 
     /**
      * @var string token 参数名称
@@ -39,32 +45,32 @@ class PassportController extends BaseController
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'register' => ['post'],
-                    'login' => ['post'],
-                    'refresh-token' => ['post'],
-                    'change-password' => ['post'],
+                    'register' => ['POST'],
+                    'login' => ['POST'],
+                    'refresh-token' => ['POST'],
+                    'change-password' => ['POST'],
+                    '*' => ['GET'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['change-password', 'refresh-token', 'logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['register', 'login'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                ],
+                'denyCallback' => function ($rule, $action) {
+                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this endpoint');
+                }
+            ],
         ]);
-
-        if (in_array($this->action->id, ['refresh-token', 'change-password', 'logout'])) {
-            $token = \Yii::$app->getRequest()->get('accessToken');
-            if (empty($token)) {
-                $headers = \Yii::$app->getRequest()->getHeaders();
-                $token = $headers->has('accessToken') ? $headers->get('accessToken') : null;
-            }
-            if (!empty($token)) {
-                $class = AccessTokenAuth::class;
-            } else {
-                $class = QueryParamAuth::class;
-            }
-
-            $behaviors = array_merge($behaviors, [
-                'authenticator' => [
-                    'class' => $class,
-                ]
-            ]);
-        }
 
         return $behaviors;
     }
