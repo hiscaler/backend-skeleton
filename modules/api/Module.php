@@ -34,6 +34,13 @@ class Module extends \yii\base\Module
             ],
             'response' => [
                 'class' => 'yii\web\Response',
+                'formatters' => [
+                    Response::FORMAT_JSON => [
+                        'class' => 'yii\web\JsonResponseFormatter',
+                        'encodeOptions' => JSON_NUMERIC_CHECK + JSON_UNESCAPED_UNICODE,
+                        'prettyPrint' => YII_DEBUG,
+                    ],
+                ],
                 'on beforeSend' => function ($event) {
                     $response = $event->sender;
                     if ($response->data !== null && $response->isSuccessful) {
