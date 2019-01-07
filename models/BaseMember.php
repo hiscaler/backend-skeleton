@@ -414,6 +414,19 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * 保存会员相关属性
+     *
+     * @param MemberProfile $profile
+     * @return boolean
+     */
+    public function saveProfile($profile)
+    {
+        $profile->member_id = $this->id;
+
+        return $profile->save();
+    }
+
+    /**
      * 会员类型选项
      *
      * @return array
