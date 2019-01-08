@@ -43,7 +43,7 @@ class BaseController extends Controller
     public function init()
     {
         parent::init();
-        $dbCacheTime = ApplicationHelper::getConfigValue('api.db.cache.time');
+        $dbCacheTime = ApplicationHelper::getConfigValue('api.dbCacheDuration');
         $this->dbCacheTime = $dbCacheTime === null ? null : (int) $dbCacheTime;
         $this->debug = strtolower(trim(Yii::$app->getRequest()->get('debug'))) == 'y';
     }
