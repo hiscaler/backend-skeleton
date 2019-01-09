@@ -4,6 +4,8 @@ namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\models\MemberCreditLog;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 
 /**
  * Class MemberCreditLogController
@@ -22,6 +24,31 @@ class MemberCreditLogController extends ActiveController
         unset($actions['update'], $actions['delete']);
 
         return $actions;
+    }
+
+    public function behaviors()
+    {
+        $behaviors = array_merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'create' => ['POST'],
+                    '*' => ['GET'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'view', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ]);
+
+        return $behaviors;
     }
 
 }
