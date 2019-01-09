@@ -11,7 +11,6 @@ use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\ServerErrorHttpException;
 
@@ -81,17 +80,19 @@ class PassportController extends ActiveController
      * @return MemberRegisterForm
      * @throws ServerErrorHttpException
      * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\Exception
      */
     public function actionRegister()
     {
         $model = new MemberRegisterForm();
         $model->loadDefaultValues();
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-        if ($model->save()) {
-            $response = Yii::$app->getResponse();
-            $response->setStatusCode(201);
-            $id = implode(',', array_values($model->getPrimaryKey(true)));
-            $response->getHeaders()->set('Location', Url::toRoute(['member/view', 'id' => $id], true));
+        if ($model->validate()) {
+            $model->setPassword($model->password);
+            $model->save();
+            Yii::$app->getResponse()->setStatusCode(201);
+            Yii::$app->getUser()->login($model, 0);
+            Member::afterLogin(null);
         } elseif (!$model->hasErrors()) {
             throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
         }
