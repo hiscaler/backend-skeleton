@@ -85,7 +85,7 @@ class BaseMember extends \app\models\Member
 
     public function extraFields()
     {
-        return ['wechat', 'profile'];
+        return ['wechat', 'profile', 'creditLogs'];
     }
 
 }
