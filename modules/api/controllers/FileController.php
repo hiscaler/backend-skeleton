@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 use app\modules\api\extensions\BaseController;
 use RuntimeException;
 use stdClass;
+use yadjet\helpers\ImageHelper;
 use yadjet\helpers\StringHelper;
 use Yii;
 use yii\base\DynamicModel;
@@ -53,12 +54,14 @@ class FileController extends BaseController
      * 文件上传
      *
      * @param string $key
-     * @return array
+     * @param bool $single
+     * @return array|mixed|DynamicModel
+     * @throws BadRequestHttpException
      * @throws InvalidConfigException
      * @throws \yii\base\Exception
      * @throws \Exception
      */
-    public function actionUploading($key = 'file')
+    public function actionUploading($key = 'file', $single = true)
     {
         $config = Yii::$app->params['uploading'];
         if (!isset($config[$this->type])) {
@@ -66,44 +69,62 @@ class FileController extends BaseController
         }
 
         $request = Yii::$app->getRequest();
-        $file = UploadedFile::getInstanceByName($key);
+        $files = UploadedFile::getInstancesByName($key);
         $validator = null;
-        if ($file) {
+        if ($files) {
             $validator = $this->type;
         } else {
-            $file = $request->post($key);
-            !$file && $file = $request->get($key);
-            if ($file) {
+            $files = $request->post($key);
+            !$files && $files = $request->get($key);
+            if ($files) {
                 $validator = 'string';
             }
+            if ($files && !is_array($files)) {
+                $files = [$files];
+            }
         }
-        if (empty($file)) {
-            throw new BadRequestHttpException("key 参数值无效。");
-        }
-
-        $model = new DynamicModel([$key]);
-        $model->$key = $file;
-        switch ($validator) {
-            case 'file':
-            case 'image':
-                $model->addRule($key, $validator, [
-                    'skipOnEmpty' => false,
-                    'enableClientValidation' => false,
-                    'extensions' => $config[$this->type]['extensions'],
-                    'minSize' => isset($config[$this->type]['minSize']) ? $config[$this->type]['minSize'] : 1024,
-                    'maxSize' => isset($config[$this->type]['maxSize']) ? $config[$this->type]['maxSize'] : (1024 * 1024 * 200),
-                ]);
-                break;
-
-            default:
-                // Is base64 format
-                $model->addRule($key, $validator, ['min' => 1]);
-                break;
+        if (empty($files)) {
+            throw new BadRequestHttpException("未检测到 $key 参数数据。");
         }
 
-        if ($model->validate()) {
+        $models = [];
+        foreach ($files as $i => $file) {
+            $attr = $key . '_' . $i;
+            $model = new DynamicModel([$attr]);
+            $model->$attr = $file;
+            switch ($validator) {
+                case 'file':
+                case 'image':
+                    $model->addRule($attr, $validator, [
+                        'skipOnEmpty' => false,
+                        'enableClientValidation' => false,
+                        'extensions' => $config[$this->type]['extensions'],
+                        'minSize' => isset($config[$this->type]['minSize']) ? $config[$this->type]['minSize'] : 1024,
+                        'maxSize' => isset($config[$this->type]['maxSize']) ? $config[$this->type]['maxSize'] : (1024 * 1024 * 200),
+                    ]);
+                    break;
+
+                default:
+                    // Is base64 format image
+                    $model->addRule($attr, function ($attribute, $params) use ($model, $file) {
+                        if (substr($file, 0, 5) != 'data:' || @imagecreatefromstring(ImageHelper::base64Decode($file)) === false) {
+                            $model->addError($attribute, '无效的 Base64 图片文件。');
+                        }
+                    });
+                    break;
+            }
+            if (!$model->validate()) {
+                return $model;
+            }
+            $models[] = $model;
+        }
+
+        $successRes = [];
+        foreach ($models as $i => $model) {
+            /* @var $model DynamicModel */
             /* @var $file \yii\web\UploadedFile */
-            $file = $model->$key;
+            $attr = $key . '_' . $i;
+            $file = $model->$attr;
             $path = $request->getBaseUrl() . '/' . trim($config['path'], '/') . '/' . date('Ymd');
             $absolutePath = FileHelper::normalizePath(Yii::getAlias('@webroot') . $path);
             !file_exists($absolutePath) && FileHelper::createDirectory($absolutePath);
@@ -153,20 +174,23 @@ class FileController extends BaseController
                     $res['base64'] = $imageBase64;
                 }
 
-                return $res;
+                $successRes[$attr] = $res;
             } else {
-                Yii::$app->getResponse()->setStatusCode(400);
+                if ($successRes) {
+                    foreach ($successRes as $r) {
+                        FileHelper::unlink(Yii::getAlias('@webroot') . $r['path']);
+                    }
+                }
+                $model->addError($attr, '文件上传失败。');
 
-                return [
-                    'message' => '文件上传失败。'
-                ];
+                return $model;
             }
-        } else {
-            Yii::$app->getResponse()->setStatusCode(400);
+        }
 
-            return [
-                'message' => $model->getFirstError($key)
-            ];
+        if ($single) {
+            return current($successRes);
+        } else {
+            return $successRes;
         }
     }
 
