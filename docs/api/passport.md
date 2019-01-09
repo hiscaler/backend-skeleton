@@ -1,7 +1,8 @@
 用户认证
 =======
+
 ## 注册
-GET /api/passport/register
+POST /api/passport/register
 
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
@@ -13,7 +14,7 @@ GET /api/passport/register
 | mobile_phone | string | 是 | null | 手机号码 |
 
 ## 登录
-GET /api/passport/login
+POST /api/passport/login
 
 ### 说明
 会员登录，登录成功后其他需要认证的请求 url 带上 accessToken 参数
@@ -27,8 +28,8 @@ GET /api/passport/login
 ```json
 {
     "id": 1,
-    "username": 'username',
-    "accessToken": 'accessToken',
+    "username": "username",
+    "accessToken": "accessToken",
     ...
 }
 ```
