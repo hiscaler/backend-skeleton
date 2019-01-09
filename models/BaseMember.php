@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\modules\admin\components\ApplicationHelper;
 use yadjet\behaviors\ImageUploadBehavior;
+use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
 use yii\helpers\FileHelper;
 use yii\web\IdentityInterface;
@@ -100,6 +101,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             [['email'], 'string', 'max' => 50],
             [['email'], 'email'],
             [['mobile_phone'], 'string', 'max' => 35],
+            ['mobile_phone', MobilePhoneNumberValidator::class],
             [['username'], 'unique'],
             [['access_token'], 'string'],
             [['access_token'], 'unique'],
