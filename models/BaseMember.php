@@ -87,6 +87,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             [['username'], 'required'],
             [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
+            ['invitation_code', 'string', 'max' => 16],
             [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
             [['type'], 'default', 'value' => self::TYPE_ADMINISTRATOR],
             [['type'], 'in', 'range' => array_keys(static::typeOptions())],
