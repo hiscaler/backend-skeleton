@@ -2,7 +2,7 @@
 
 namespace app\modules\api\forms;
 
-use app\models\Member;
+use app\modules\api\models\Member;
 
 /**
  * 会员注册
