@@ -67,8 +67,12 @@ class HelpController extends \yii\web\Controller
 
     public function actionIndex($type = 'guide', $file = null)
     {
+        $dir = $type;
         if (!in_array($type, ['api', 'dict'])) {
             $type = 'dict';
+        }
+        if ($type == 'dict') {
+            $dir = 'db-dict';
         }
         $sections = [];
         $docs = $this->getDocs($type);
@@ -79,7 +83,11 @@ class HelpController extends \yii\web\Controller
         if (isset($docs[$file])) {
             $article = $docs[$file]['content'];
         } else {
-            $content = file_get_contents(Yii::getAlias('@app/docs/readme.md'));
+            $readmeFile = Yii::getAlias('@app/docs/' . $dir . '/readme.md');
+            if (!file_exists($readmeFile)) {
+                $readmeFile = Yii::getAlias('@app/docs/readme.md');
+            }
+            $content = file_get_contents($readmeFile);
             $article = (new GithubMarkdown())->parse($content);
         }
 

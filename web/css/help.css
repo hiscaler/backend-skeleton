@@ -540,6 +540,7 @@ body {
 
 .sidebar-link.current, .toc-link.current {
     color: #0e83cd;
+    background-color: #f5f5f5;
 }
 
 .sidebar-link:hover, .toc-link:hover {
