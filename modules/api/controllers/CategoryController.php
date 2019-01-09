@@ -63,19 +63,16 @@ class CategoryController extends ActiveController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view', 'delete'],
+                        'actions' => ['create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
                         'actions' => ['index', 'view'],
                         'allow' => true,
-                        'roles' => ['?'],
+                        'roles' => ['?', '@'],
                     ],
                 ],
-                'denyCallback' => function ($rule, $action) {
-                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this endpoint');
-                }
             ],
         ]);
 

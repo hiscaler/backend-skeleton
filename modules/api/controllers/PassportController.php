@@ -55,19 +55,16 @@ class PassportController extends ActiveController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['change-password', 'refresh-token', 'logout'],
+                        'actions' => ['change-password', 'refresh-token'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['register', 'login'],
+                        'actions' => ['register', 'login', 'logout'],
                         'allow' => true,
-                        'roles' => ['?'],
+                        'roles' => ['?', '@'],
                     ],
                 ],
-                'denyCallback' => function ($rule, $action) {
-                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this endpoint');
-                }
             ],
         ]);
 

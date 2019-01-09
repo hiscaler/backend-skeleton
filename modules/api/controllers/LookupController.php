@@ -41,12 +41,9 @@ class LookupController extends ActiveController
                     [
                         'actions' => ['value', 'values'],
                         'allow' => true,
-                        'roles' => ['?'],
+                        'roles' => ['?', '@'],
                     ],
                 ],
-                'denyCallback' => function ($rule, $action) {
-                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this endpoint');
-                }
             ],
         ]);
 

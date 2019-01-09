@@ -52,9 +52,6 @@ class AccountController extends ActiveController
                         'roles' => ['@'],
                     ],
                 ],
-                'denyCallback' => function ($rule, $action) {
-                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this endpoint');
-                }
             ],
         ]);
 

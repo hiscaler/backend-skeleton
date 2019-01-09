@@ -39,15 +39,7 @@ class LabelController extends ActiveController
                         'allow' => true,
                         'roles' => ['@'],
                     ],
-                    [
-                        'actions' => ['value', 'values'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
                 ],
-                'denyCallback' => function ($rule, $action) {
-                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this endpoint');
-                }
             ],
         ]);
 
