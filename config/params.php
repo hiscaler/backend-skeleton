@@ -9,6 +9,10 @@ return [
         'register' => [
             'status' => 0, // 会员注册默认值（待审核）
             'expiryMinutes' => 10, // 有效截止时间（单位为：分钟），如果为 0 表示无限制
+            'rules' => [
+                'required' => ['mobile_phone'], // 必填的字段
+                'unique' => ['mobile_phone'], // 保持数据唯一性的字段
+            ]
         ],
         'login' => [
             /**

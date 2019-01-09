@@ -83,7 +83,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function rules()
     {
-        return [
+        $rules = [
             [['type', 'category_id', 'parent_id', 'total_credits', 'available_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             [['username'], 'required'],
@@ -114,6 +114,19 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 'maxSize' => 1024 * 200,
             ],
         ];
+
+        // 自定义验证规则
+        $requiredFields = ApplicationHelper::getConfigValue('member.register.rules.required');
+        if ($requiredFields && is_array($requiredFields)) {
+            $rules = array_merge($rules, [[$requiredFields, 'required']]);
+        }
+
+        $uniqueFields = ApplicationHelper::getConfigValue('member.register.rules.unique');
+        if ($uniqueFields && is_array($uniqueFields)) {
+            $rules = array_merge($rules, [[$uniqueFields, 'unique']]);
+        }
+
+        return $rules;
     }
 
     public function behaviors()
