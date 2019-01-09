@@ -57,7 +57,7 @@ class ImageController extends FileController
      * @return \yii\web\Response|Response
      * @throws \yii\base\Exception
      */
-    public function actionIndex($url, $action = 'thumb', $size = null)
+    public function actionProcessing($url, $action = 'thumb', $size = null)
     {
         $actions = ['thumb'];
         if (!in_array($action, $actions)) {
