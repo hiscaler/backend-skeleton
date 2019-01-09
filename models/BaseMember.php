@@ -605,6 +605,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             if ($insert) {
                 $this->generateAuthKey();
                 $this->generateAccessToken();
+                $this->status = ApplicationHelper::getConfigValue('member.register.status', self::STATUS_PENDING);
                 // @todo 需要检测唯一性
                 $this->invitation_code = \yadjet\helpers\StringHelper::generateRandomString(16);
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
