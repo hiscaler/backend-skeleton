@@ -26,11 +26,11 @@ return [
     'api' => [
         'dbCacheDuration' => 300, // 是否激活 API 数据库查询缓存，默认 5 分钟（以秒为单位），如果设置为 null 则表示不启用缓存，
         'user' => [
-            'identityClass' => \app\modules\api\models\User::class,
+            'identityClass' => \app\modules\api\models\Member::class,
         ],
     ],
     'uninstall.module.after.droptable' => false,// 卸载模块后是否同步删除模块相关表
-    'ignorePassword' => false, // 是否忽略密码（只验证用户名，调试的时候用）
+    'ignorePassword' => true, // 是否忽略密码（只验证用户名，调试的时候用）
     'disableRepeatingLogin' => false, // 禁止重复登录（启用后，同一时间同一个用户只允许同一终端登录，第二次登录将会踢掉前一次登录的用户）
     'hideCaptcha' => true, // 用户登录的时候隐藏验证码验证
     'fromMailAddress' => [
