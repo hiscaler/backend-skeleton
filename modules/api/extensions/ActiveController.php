@@ -3,7 +3,6 @@
 namespace app\modules\api\extensions;
 
 use app\modules\api\components\ApplicationHelper;
-use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use Yii;
 use yii\filters\auth\QueryParamAuth;
 use yii\filters\ContentNegotiator;
@@ -78,24 +77,12 @@ class ActiveController extends \yii\rest\ActiveController
             ],
         ];
 
-        $request = \Yii::$app->getRequest();
-        $token = $request->get('accessToken');
-        if (empty($token)) {
-            $headers = $request->getHeaders();
-            $token = $headers->has('accessToken') ? $headers->get('accessToken') : null;
-        }
-        if (!empty($token)) {
-            $class = AccessTokenAuth::class;
-        } elseif ($request->get('access-token')) {
-            $class = QueryParamAuth::class;
-        } else {
-            $class = null;
-        }
-
-        if ($class != null) {
+        $token = \Yii::$app->getRequest()->get('accessToken');
+        if ($token) {
             $behaviors = array_merge($behaviors, [
                 'authenticator' => [
-                    'class' => $class,
+                    'class' => QueryParamAuth::class,
+                    'tokenParam' => 'accessToken'
                 ]
             ]);
         }
