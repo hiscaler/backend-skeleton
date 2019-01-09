@@ -10,6 +10,8 @@ use yadjet\helpers\StringHelper;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\FileHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
@@ -39,6 +41,31 @@ class FileController extends BaseController
         if (!isset(Yii::$app->params['uploading'])) {
             throw new InvalidConfigException('无效的上传配置。');
         }
+    }
+
+    public function behaviors()
+    {
+        $behaviors = array_merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'uploading' => ['POST'],
+                    'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['uploading', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ]);
+
+        return $behaviors;
     }
 
     /**
