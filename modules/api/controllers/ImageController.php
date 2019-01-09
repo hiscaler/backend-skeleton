@@ -5,6 +5,8 @@ namespace app\modules\api\controllers;
 use Imagine\Image\ImageInterface;
 use Yii;
 use yii\base\InvalidArgumentException;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\FileHelper;
 use yii\imagine\Image;
 use yii\web\Response;
@@ -19,6 +21,32 @@ class ImageController extends FileController
 {
 
     protected $type = 'image';
+
+    public function behaviors()
+    {
+        $behaviors = array_merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'uploading' => ['POST'],
+                    'delete' => ['POST'],
+                    'processing' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['uploading', 'delete', 'processing'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ]);
+
+        return $behaviors;
+    }
 
     /**
      * 图片处理
