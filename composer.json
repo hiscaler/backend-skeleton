@@ -28,6 +28,7 @@
         "yadjet/yii2-date-picker": "dev-master",
         "yadjet/yii2-ueditor": "dev-master",
         "yadjet/yii2-ztree": "dev-master",
+        "yadjet/yii2-validators": "dev-master",
         "yadjet/http": "dev-master",
         "overtrue/wechat": "~3.1",
         "yiisoft/yii2-imagine": "~2.1.0",
