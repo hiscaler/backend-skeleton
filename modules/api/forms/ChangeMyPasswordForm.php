@@ -4,6 +4,12 @@ namespace app\modules\api\forms;
 
 use yii\base\Model;
 
+/**
+ * 修改我的密码
+ *
+ * @package app\modules\api\forms
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class ChangeMyPasswordForm extends Model
 {
 
