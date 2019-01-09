@@ -4,6 +4,7 @@ namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\models\Label;
+use app\modules\api\models\LabelSearch;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
@@ -44,6 +45,25 @@ class LabelController extends ActiveController
         ]);
 
         return $behaviors;
+    }
+
+    public function actions()
+    {
+        $actions = parent::actions();
+        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
+
+        return $actions;
+    }
+
+    /**
+     * @return \yii\data\ActiveDataProvider
+     * @throws \Throwable
+     */
+    public function prepareDataProvider()
+    {
+        $search = new LabelSearch();
+
+        return $search->search(\Yii::$app->getRequest()->getQueryParams());
     }
 
 }
