@@ -5,6 +5,7 @@ namespace app\controllers;
 use cebe\markdown\GithubMarkdown;
 use Yii;
 use yii\helpers\FileHelper;
+use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 /**
@@ -32,7 +33,7 @@ class HelpController extends \yii\web\Controller
         $docs = [];
         $markdown = new GithubMarkdown();
         $appPath = FileHelper::normalizePath(Yii::getAlias('@app'), '/');
-        $files = FileHelper::findFiles($appPath . '/docs' . ($type == 'api' ? '/api' : '/db-dict'), [
+        $files = FileHelper::findFiles($appPath . '/docs/' . $type, [
             'recursive' => false,
         ]);
         foreach ($files as $file) {
@@ -65,15 +66,19 @@ class HelpController extends \yii\web\Controller
         return $docs;
     }
 
+    /**
+     * @param string $type
+     * @param null $file
+     * @return string
+     * @throws BadRequestHttpException
+     */
     public function actionIndex($type = 'guide', $file = null)
     {
-        $dir = $type;
-        if (!in_array($type, ['api', 'dict'])) {
-            $type = 'dict';
+        $baseDir = Yii::getAlias('@app/docs');
+        if (!file_exists($baseDir . "/" . $type)) {
+            throw new BadRequestHttpException("`$type` is not exist.");
         }
-        if ($type == 'dict') {
-            $dir = 'db-dict';
-        }
+
         $sections = [];
         $docs = $this->getDocs($type);
         foreach ($docs as $key => $doc) {
@@ -83,9 +88,9 @@ class HelpController extends \yii\web\Controller
         if (isset($docs[$file])) {
             $article = $docs[$file]['content'];
         } else {
-            $readmeFile = Yii::getAlias('@app/docs/' . $dir . '/readme.md');
+            $readmeFile = $baseDir . "/$type/readme.md";
             if (!file_exists($readmeFile)) {
-                $readmeFile = Yii::getAlias('@app/docs/readme.md');
+                $readmeFile = "$baseDir/readme.md";
             }
             $content = file_get_contents($readmeFile);
             $article = (new GithubMarkdown())->parse($content);

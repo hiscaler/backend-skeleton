@@ -23,8 +23,9 @@ $this->context->layout = false;
             <a href="<?= \yii\helpers\Url::toRoute(['help/index']) ?>" id="logo">帮助文档</a>
         </h1>
         <nav id="main-nav">
-            <a href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => 'dict']) ?>" class="main-nav-link<?= $type == 'dict' ? ' main-nav-link-active' : '' ?>">数据词典</a>
+            <a href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => 'db-dict']) ?>" class="main-nav-link<?= $type == 'db-dict' ? ' main-nav-link-active' : '' ?>">数据词典</a>
             <a href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => 'api']) ?>" class="main-nav-link<?= $type == 'api' ? ' main-nav-link-active' : '' ?>">接口文档</a>
+            <a href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => 'guide']) ?>" class="main-nav-link<?= $type == 'guide' ? ' main-nav-link-active' : '' ?>">使用手册</a>
             <a target="_blank" href="<?= \yii\helpers\Url::toRoute(['/api/default/index']) ?>" class="main-nav-link">API</a>
         </nav>
     </div>
