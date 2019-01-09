@@ -42,8 +42,14 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['member_id', 'operation', 'credits', 'created_at'], 'required'],
+            [['member_id', 'operation', 'credits'], 'required'],
             [['member_id', 'credits', 'created_at', 'created_by'], 'integer'],
+            ['credits', function ($attribute, $params) {
+                if ($this->credits == 0) {
+                    $this->addError($attribute, "积分值错误。");
+                }
+            }],
+            [['operation', 'remark'], 'trim'],
             [['remark'], 'string'],
             [['operation'], 'string', 'max' => 20],
             [['related_key'], 'string', 'max' => 60],
@@ -76,10 +82,10 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
     public static function operationOptions()
     {
         $default = [
-            self::OPERATION_MEMBER_REGISTER => Yii::t('memberCreditLog', 'Member Register'),
-            self::OPERATION_REFERRAL_REGISTER => Yii::t('memberCreditLog', 'Referral Register'),
-            self::OPERATION_MEMBER_LOGIN => Yii::t('memberCreditLog', 'Member Login'),
-            self::OPERATION_MANUAL => Yii::t('memberCreditLog', 'Manual'),
+            static::OPERATION_MEMBER_REGISTER => Yii::t('memberCreditLog', 'Member Register'),
+            static::OPERATION_REFERRAL_REGISTER => Yii::t('memberCreditLog', 'Referral Register'),
+            static::OPERATION_MEMBER_LOGIN => Yii::t('memberCreditLog', 'Member Login'),
+            static::OPERATION_MANUAL => Yii::t('memberCreditLog', 'Manual'),
         ];
         // 自定义积分类型 @todo 从语言文件中获取相应的定义
         $custom = [];
@@ -156,6 +162,38 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
     public function getCreater()
     {
         return $this->hasOne(User::class, ['id' => 'created_by']);
+    }
+
+    // Events
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($insert) {
+                $this->created_at = time();
+                $this->created_by = \Yii::$app->getUser()->getId();
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @throws \yii\db\Exception
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if ($insert) {
+            $credits = $this->credits;
+            $op = $credits ? ' + ' : ' - ';
+            $credits = abs($credits);
+            \Yii::$app->getDb()->createCommand("UPDATE {{%member}} SET [[total_credits]] = [[total_credits]] $op $credits, [[available_credits]] = [[available_credits]] $op $credits WHERE [[id]] = :id", [':id' => $this->member_id])->execute();
+            Member::updateGroup($this->member_id);
+        }
     }
 
 }

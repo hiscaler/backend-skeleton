@@ -511,6 +511,16 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * 积分记录
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreditLogs()
+    {
+        return $this->hasMany(MemberCreditLog::class, ['member_id' => 'id']);
+    }
+
+    /**
      * 根据用户积分修正用户所在分组
      *
      * @param integer $memberId
