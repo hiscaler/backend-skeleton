@@ -211,7 +211,9 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             }
         } else {
             $member = static::findOne(['access_token' => $token]);
-            if ($member && (int) substr($token, strrpos($token, '.') + 1) < time()) {
+            if ($member
+                && ($index = strrpos($token, '.')) !== false
+                && (int) substr($token, $index + 1) < time()) {
                 $member = null;
             }
         }
