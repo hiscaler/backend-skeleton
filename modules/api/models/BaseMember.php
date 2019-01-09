@@ -62,6 +62,11 @@ class BaseMember extends \app\models\Member
             'lastLoginTime' => 'last_login_time',
             'accessToken' => 'access_token',
             'status' => 'status',
+            'statusFormatted' => function ($model) {
+                $options = static::statusOptions();
+
+                return isset($options[$model->status]) ? $options[$model->status] : null;
+            },
             'remark' => 'remark',
             'createdAt' => 'created_at',
             'createdBy' => 'created_by',
