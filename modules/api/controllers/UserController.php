@@ -3,15 +3,13 @@
 namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\ActiveController;
-use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\forms\UserRegisterForm;
-use app\modules\api\models\Member;
 use app\modules\api\models\User;
 use InvalidArgumentException;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\helpers\Inflector;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
@@ -35,66 +33,35 @@ class UserController extends ActiveController
 
     public function behaviors()
     {
-        $behaviors = parent::behaviors();
-        if ($this->action->id == 'login') {
-            unset($behaviors['authenticator']);
-        }
+        $behaviors = array_merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'create' => ['POST'],
+                    'update' => ['PUT', 'PATCH'],
+                    'delete' => ['POST'],
+                    'change-password' => ['POST'],
+                    '*' => ['GET'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'change-password'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['login'],
+                        'allow' => true,
+                        'roles' => ['?', '@'],
+                    ],
+                ],
+            ],
+        ]);
 
         return $behaviors;
-    }
-
-    /**
-     * 会员列表
-     *
-     * @deprecated
-     * @param null $fields
-     * @param null $username
-     * @param int $page
-     * @param int $pageSize
-     * @return ActiveDataProvider
-     */
-    public function _actionIndex($fields = null, $username = null, $page = 1, $pageSize = 20)
-    {
-        // Basic condition
-        $condition = [];
-        if ($username) {
-            $condition = ['AND', $condition, ['t.username' => $username]];
-        }
-        $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.username', 't.nickname', 't.avatar', 't.access_token', 't.email', 't.role', 't.register_ip', 't.login_count', 't.last_login_ip', 'last_login_time', 't.last_login_session', 't.status', 't.remark', 't.created_at', 't.updated_at', 'u.nickname AS editor'], $fields, []);
-        $query = (new \yii\db\ActiveQuery(Member::class))
-            ->alias('t')
-            ->select($selectColumns);
-
-        $query->offset($page)->limit($pageSize);
-
-        $query->where($condition);
-
-        // Order By
-        $orderByColumns = [];
-        if (!empty($orderBy)) {
-            $orderByColumnLimit = ['id', 'username', 'createdAt', 'updatedAt']; // Supported order by column names
-            foreach (explode(',', trim($orderBy)) as $string) {
-                if (!empty($string)) {
-                    $string = explode('.', $string);
-                    if (in_array($string[0], $orderByColumnLimit)) {
-                        $orderByColumns['t.' . Inflector::camel2id($string[0], '_')] = isset($string[1]) && $string[1] == 'asc' ? SORT_ASC : SORT_DESC;
-                    }
-                }
-            }
-        }
-
-        $query->orderBy($orderByColumns ?: ['t.id' => SORT_DESC]);
-        if ($this->debug) {
-            Yii::debug($query->createCommand()->getRawSql(), 'API DEBUG');
-        }
-
-        return new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'page' => (int) $page - 1,
-                'pageSize' => (int) $pageSize ?: 20
-            ]
-        ]);
     }
 
     /**
