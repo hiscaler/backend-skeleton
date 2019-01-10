@@ -40,7 +40,7 @@ class MemberCreditLogController extends ActiveController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'view', 'delete'],
+                        'actions' => ['index', 'create', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
