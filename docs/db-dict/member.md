@@ -6,7 +6,7 @@ www_member
 |  2 | category_id          | integer  | 11  |   | 0 | 分类         | 
 |  3 | type                 | smallint | 6   |   | 0 | 会员类型   | 
 |  4 | group                | string   | 20  | Y |   | 分组         | 
-|  5 | invitation_code      | string   | 10  |   |   | 邀请码      | 
+|  5 | invitation_code      | string   | 16  |   |   | 邀请码      | 
 |  6 | parent_id            | integer  | 11  |   | 0 | 上级         | 
 |  7 | username             | string   | 20  |   |   | 帐号         | 
 |  8 | nickname             | string   | 60  |   |   | 昵称         | 
