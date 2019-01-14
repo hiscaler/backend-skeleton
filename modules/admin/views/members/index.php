@@ -44,6 +44,10 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'member-type'],
             ],
             [
+                'attribute' => 'category.name',
+                'contentOptions' => ['style' => 'width: 60px;'],
+            ],
+            [
                 'attribute' => 'avatar',
                 'format' => 'raw',
                 'value' => function ($model) {
