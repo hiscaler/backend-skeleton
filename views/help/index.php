@@ -45,9 +45,15 @@ $this->context->layout = false;
                 </article>
                 <aside id="sidebar" role="navigation">
                     <div class="inner">
-                        <strong class="sidebar-title">目录导航</strong>
-                        <?php foreach ($sections as $key => $title): ?>
-                            <a class="sidebar-link<?= $key == $file ? ' current' : '' ?>" href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => $type, 'file' => $key]) ?>"><?= $title ?></a>
+                        <?php foreach ($sections as $key => $items): ?>
+                            <strong class="sidebar-title"><?= $key == '_' ? '系统文档' : "{$key} 模块" ?></strong>
+                            <?php foreach ($items as $name => $title):
+                                if ($key != '_') {
+                                    $name = "$key.$name";
+                                }
+                                ?>
+                                <a class="sidebar-link<?= $name == $file ? ' current' : '' ?>" href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => $type, 'file' => $name]) ?>"><?= $title ?></a>
+                            <?php endforeach; ?>
                         <?php endforeach; ?>
                     </div>
                 </aside>
