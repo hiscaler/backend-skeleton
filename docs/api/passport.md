@@ -17,7 +17,7 @@ POST /api/passport/register
 POST /api/passport/login
 
 ### 说明
-会员登录，登录成功后其他需要认证的请求 url 带上 accessToken 参数
+登录成功后其他需要认证的请求 url 带上 accessToken 参数
 
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
