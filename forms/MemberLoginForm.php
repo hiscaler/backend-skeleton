@@ -71,7 +71,7 @@ class MemberLoginForm extends Model
     protected function getUser()
     {
         if ($this->_user === null) {
-            $user = Member::findOne(['username' => $this->username, 'type' => Member::TYPE_MEMBER]);
+            $user = Member::findByUsername($this->username);
             $this->_user = $user;
         }
 
@@ -81,8 +81,8 @@ class MemberLoginForm extends Model
     public function attributeLabels()
     {
         return [
-            'username' => Yii::t('site', 'Username'),
-            'password' => Yii::t('site', 'Password'),
+            'username' => '帐号',
+            'password' => '密码',
         ];
     }
 
