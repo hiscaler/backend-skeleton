@@ -37,10 +37,10 @@ POST /api/user/change-password?accessToken=:tokenValue
 | 确认密码 | confirm_password | string | | | Y ||
 
 ## 更新
-POST /api/user/update?id=:id
+PUT|PATCH /api/user/update?id=:id
 
 ## 删除
-POST /api/user/delete?id=:id
+DELETE /api/user/delete?id=:id
 
 ## 详情
 GET /api/user/view?id=:id
