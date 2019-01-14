@@ -10,9 +10,9 @@ function setHomepage(obj, vrl){
     catch(e){
         if(window.netscape) {
             try {
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");  
-            } catch (e) { 
-                alert("抱歉！您的浏览器不支持直接设为首页。请在浏览器地址栏输入“about:config”并回车然后将[signed.applets.codebase_principal_support]设置为“true”，点击“加入收藏”后忽略安全提示，即可设置成功。");  
+                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+            } catch (e) {
+                alert("抱歉！您的浏览器不支持直接设为首页。请在浏览器地址栏输入“about:config”并回车然后将[signed.applets.codebase_principal_support]设置为“true”，点击“加入收藏”后忽略安全提示，即可设置成功。");
             }
             var prefs = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch);
             prefs.setCharPref('browser.startup.homepage', vrl);
@@ -62,7 +62,7 @@ $(document).on('click', 'a.delete-photo', function () {
  * 显示图片：
  * <a href="javascript:;" class="delete-photo" data-url="<?= \yii\helpers\Url::toRoute(['delete-photo', 'id' => $photo['id']]) ?>">X</a>
  * 上传图片：
- * <input data-input-name="Person[photoFiles][]" type="file" accept="image/*" multiple="" name="pic" data-url="<?= \yii\helpers\Url::toRoute(['/api/file/uploading', 'key' => 'upload_file']) ?>" id="file-photo" class="weui-uploader__input">
+ * <input data-input-name="Person[photoFiles][]" data-limit="1" type="file" accept="image/*" multiple="" name="pic" data-url="<?= \yii\helpers\Url::toRoute(['/api/file/uploading', 'key' => 'upload_file']) ?>" id="file-photo" class="weui-uploader__input">
  */
 function uploadPhoto(vFD, DataURL, t, inputName) {
     var oXHR = new XMLHttpRequest;
@@ -108,14 +108,15 @@ function convertCanvasToBlob(o) {
         })
 }
 
-$("#file-photo").on("change", function (o) {
+$(".image-uploading").on("change", function (o) {
     var $this = $(this),
         e = o.target,
         t = e.files[0],
         a = t.size,
         n = t.type,
         inputName = $this.attr('data-input-name'),
-        uploadLimit = parseInt($this.attr('data-limit'));
+        uploadLimit = parseInt($this.attr('data-limit')),
+        uploadKey = $this.attr('data-upload-key');
     
     if (uploadLimit && ($this.parent().parent().find('li').length + 1) > uploadLimit) {
         alert("您最多可以上传 " + uploadLimit + " 张图片");
@@ -146,13 +147,13 @@ $("#file-photo").on("change", function (o) {
             var a = new Image;
             a.onload = function () {
                 var n = getJpegBlob(a);
-                n.size > 0 ? e.append("upload_file", n) : e.append("upload_file", t),
+                n.size > 0 ? e.append(uploadKey, o) : e.append(uploadKey, t),
                     uploadPhoto(e, o, $this, inputName),
-                    console.log("转换后blob：" + n.size, n.type)
+                    console.log("转换后blob：" + n.size, n.type, n)
             };
             a.src = o;
         } else {
-            e.append("upload_file", t);
+            e.append(uploadKey, t);
             uploadPhoto(e, o, $this, inputName);
         }
     };
