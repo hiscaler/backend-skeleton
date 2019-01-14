@@ -43,7 +43,7 @@ class BaseOption
      * @param integer $max
      * @return array
      */
-    public static function ordering($start = 0, $max = 60)
+    public static function ordering($start = 1, $max = 60)
     {
         return self::numbers($start, $max, 1);
     }
@@ -56,7 +56,7 @@ class BaseOption
      * @param int $step
      * @return array
      */
-    public static function numbers($min = 0, $max = 60, $step = 1)
+    public static function numbers($min = 1, $max = 60, $step = 1)
     {
         $numbers = [];
         for ($i = $min; $i <= $max; $i += $step) {
