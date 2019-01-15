@@ -21,16 +21,16 @@ class BaseLookup extends \app\models\Lookup
             'label',
             'description',
             'value',
-            'returnType' => 'return_type',
-            'inputMethod' => 'input_method',
-            'inputValue' => 'input_value',
+            'return_type',
+            'input_method',
+            'input_value',
             'enabled' => function ($model) {
                 return $model->enabled ? true : false;
             },
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
         ];
     }
 

@@ -15,23 +15,23 @@ class BaseMeta extends \app\models\Meta
     {
         return [
             'id',
-            'tableName' => 'table_name',
+            'table_name',
             'key',
             'label',
             'description',
-            'inputType' => 'input_type',
-            'inputCandidateValue' => 'input_candidate_value',
-            'returnValueType' => 'return_value_type',
-            'defaultValue' => 'default_value',
+            'input_type',
+            'input_candidate_value',
+            'return_value_type',
+            'default_value',
             'enabled' => function ($model) {
                 return $model->enabled ? true : false;
             },
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
-            'deletedAt' => 'deleted_at',
-            'deletedBy' => 'deleted_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'deleted_at',
+            'deleted_by',
         ];
     }
 

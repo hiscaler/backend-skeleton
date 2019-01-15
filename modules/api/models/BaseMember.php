@@ -22,18 +22,18 @@ class BaseMember extends \app\models\Member
         return [
             'id',
             'type',
-            'typeFormatted' => function ($model) {
+            'type_formatted' => function ($model) {
                 $options = static::typeOptions();
 
                 return isset($options[$model->type]) ? $options[$model->type] : null;
             },
-            'categoryId' => 'category_id',
+            'category_id',
             'group',
-            'invitationCode' => 'invitation_code',
-            'parentId' => 'parent_id',
+            'invitation_code',
+            'parent_id',
             'username',
             'nickname',
-            'realName' => 'real_name',
+            'real_name',
             'avatar' => function () {
                 $avatar = $this->avatar;
                 if (!empty($avatar)) {
@@ -53,30 +53,30 @@ class BaseMember extends \app\models\Member
                 return $avatar;
             },
             'email',
-            'mobilePhone' => 'mobile_phone',
-            'registerIp' => 'register_ip',
-            'totalCredits' => 'total_credits',
-            'availableCredits' => 'available_credits',
-            'loginCount' => 'login_count',
-            'lastLoginIp' => 'last_login_ip',
-            'lastLoginTime' => 'last_login_time',
-            'accessToken' => 'access_token',
+            'mobile_phone',
+            'register_ip',
+            'total_credits',
+            'available_credits',
+            'login_count',
+            'last_login_ip',
+            'last_login_time',
+            'access_token',
             'status' => 'status',
-            'statusFormatted' => function ($model) {
+            'status_formatted' => function ($model) {
                 $options = static::statusOptions();
 
                 return isset($options[$model->status]) ? $options[$model->status] : null;
             },
             'remark' => 'remark',
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
-            'metaItems' => function () {
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'meta_items' => function () {
                 $items = [];
                 $rawItems = \Yii::$app->getDb()->createCommand('SELECT [[m.key]], [[m.return_value_type]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} t LEFT JOIN {{%meta}} m ON [[t.meta_id]] = [[m.id]] WHERE [[t.object_id]] = :objectId AND [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName)', [
                     ':objectId' => $this->id,
-                    ':tableName' => strtr(static::tableName(), ['{{%' => '', '}}' => ''])
+                    ':tableName' => strtr(static::tableName(), ['{{%', '}}' => ''])
                 ])->queryAll();
                 foreach ($rawItems as $item) {
                     $valueKey = Meta::parseReturnKey($item['return_value_type']);

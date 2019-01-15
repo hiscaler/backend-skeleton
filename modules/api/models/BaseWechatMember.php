@@ -18,7 +18,7 @@ class BaseWechatMember extends \app\models\WechatMember
     {
         return [
             'id',
-            'memberId' => 'member_id',
+            'member_id',
             'subscribe' => function () {
                 return $this->subscribe ? true : false;
             },
@@ -29,8 +29,8 @@ class BaseWechatMember extends \app\models\WechatMember
             'province',
             'city',
             'language',
-            'headImgUrl' => 'headimgurl',
-            'subscribeTime' => 'subscribe_time',
+            'headimgurl',
+            'subscribe_time',
             'unionid',
         ];
     }

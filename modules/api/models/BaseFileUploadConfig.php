@@ -16,17 +16,17 @@ class BaseFileUploadConfig extends \app\models\FileUploadConfig
         return [
             'id',
             'type',
-            'modelName' => 'model_name',
+            'model_name',
             'attribute',
             'extensions',
-            'minSize' => 'min_size',
-            'maxSize' => 'max_size',
-            'thumbWidth' => 'thumb_width',
-            'thumbHeight' => 'thumb_height',
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
+            'min_size',
+            'max_size',
+            'thumb_width',
+            'thumb_height',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
         ];
     }
 

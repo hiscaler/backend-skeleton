@@ -16,10 +16,10 @@ class BaseMemberProfile extends MemberProfile
     public function fields()
     {
         return [
-            'memberId' => 'member_id',
+            'member_id',
             'tel',
             'address',
-            'zipCode' => 'zip_code',
+            'zip_code',
             'status',
         ];
     }

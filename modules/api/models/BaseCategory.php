@@ -18,11 +18,11 @@ class BaseCategory extends \app\models\Category
             'sign',
             'alias',
             'name',
-            'shortName' => 'short_name',
-            'parentId' => 'parent_id',
+            'short_name',
+            'parent_id',
             'level',
-            'idPath' => 'id_path',
-            'namePath' => 'name_path',
+            'id_path',
+            'name_path',
             'icon' => function ($model) {
                 $icon = $model->icon;
                 if ($icon) {
@@ -37,10 +37,10 @@ class BaseCategory extends \app\models\Category
             },
             'ordering',
             'quantity',
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
         ];
     }
 

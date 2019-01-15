@@ -22,10 +22,10 @@ class BaseLabel extends \app\models\Label
                 return $model->enabled ? true : false;
             },
             'ordering',
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
         ];
     }
 

@@ -15,13 +15,13 @@ class BaseMemberCreditLog extends \app\models\MemberCreditLog
     {
         return [
             'id',
-            'memberId' => 'member_id',
+            'member_id',
             'operation',
-            'relatedKey' => 'related_key',
+            'related_key',
             'credits',
             'remark',
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
+            'created_at',
+            'created_by',
         ];
     }
 

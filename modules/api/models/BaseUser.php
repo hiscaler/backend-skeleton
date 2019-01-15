@@ -37,19 +37,19 @@ class BaseUser extends \app\models\User
 
                 return $avatar;
             },
-            'accessToken' => 'access_token',
+            'access_token',
             'email',
             'role',
-            'registerIp' => 'register_ip',
-            'loginCount' => 'login_count',
-            'lastLoginIp' => 'last_login_ip',
-            'lastLoginTime' => 'last_login_time',
-            'lastLoginSession' => 'last_login_session',
+            'register_ip',
+            'login_count',
+            'last_login_ip',
+            'last_login_time',
+            'last_login_session',
             'status',
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
         ];
     }
 

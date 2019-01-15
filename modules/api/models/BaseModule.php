@@ -27,10 +27,10 @@ class BaseModule extends \app\models\Module
             'menus' => function ($model) {
                 return $model->menus ? json_decode($model->menus, true) : [];
             },
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
         ];
     }
 
