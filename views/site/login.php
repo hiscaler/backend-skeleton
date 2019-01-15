@@ -18,7 +18,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl();
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <?= Html::csrfMetaTags() ?>
-    <title>µÇÂ¼ - <?= Yii::$app->name ?></title>
+    <title>?? - <?= Yii::$app->name ?></title>
     <style type="text/css">
         body {
             background-color: #ffffff;
@@ -106,7 +106,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl();
 <div class="container" id="container">
     <div class="page-login">
         <div class="hd">
-            <div class="logo">ÏµÍ³µÇÂ¼</div>
+            <div class="logo">ç³»ç»Ÿç™»å½•</div>
         </div>
         <div class="bd">
             <?php
@@ -126,12 +126,12 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl();
             ];
             ?>
             <div class="weui-cells weui-cells_form">
-                <?= $form->field($model, 'username', $options)->textInput(['class' => 'weui-input', 'placeholder' => 'ÇëÌîÐ´µÇÂ¼ÕËºÅ']) ?>
+                <?= $form->field($model, 'username', $options)->textInput(['class' => 'weui-input', 'placeholder' => 'è¯·å¡«å†™ç™»å½•è´¦å·']) ?>
 
-                <?= $form->field($model, 'password', $options)->passwordInput(['class' => 'weui-input', 'placeholder' => 'ÇëÌîÐ´µÇÂ¼ÃÜÂë']) ?>
+                <?= $form->field($model, 'password', $options)->passwordInput(['class' => 'weui-input', 'placeholder' => 'è¯·å¡«å†™ç™»å½•å¯†ç ']) ?>
             </div>
             <div class="weui-btn-area">
-                <?= Html::submitButton('µÇÂ¼', ['class' => 'weui-btn weui-btn_primary weui-btn_disabled']) ?>
+                <?= Html::submitButton('ç™»å½•', ['class' => 'weui-btn weui-btn_primary weui-btn_disabled']) ?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>
