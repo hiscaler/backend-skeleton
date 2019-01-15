@@ -41,7 +41,7 @@ class MemberSearch extends Member
      */
     public function search($params)
     {
-        $query = Member::find()->asArray(true);
+        $query = Member::find();
 
         // add conditions that should always apply here
 
