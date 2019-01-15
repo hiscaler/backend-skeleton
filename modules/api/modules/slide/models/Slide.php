@@ -3,12 +3,7 @@
 namespace app\modules\api\modules\slide\models;
 
 use app\models\BaseActiveRecord;
-use app\models\FileUploadConfig;
-use app\models\Lookup;
-use app\modules\admin\components\ApplicationHelper;
-use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
-use yii\web\YiiAsset;
 
 /**
  * This is the model class for table "{{%slide}}".
@@ -47,11 +42,11 @@ class Slide extends BaseActiveRecord
     {
         return [
             'id',
-            'categoryId' => 'category_id',
+            'category_id',
             'title',
             'url',
-            'urlOpenTarget' => 'url_open_target',
-            'picturePath' => function () {
+            'url_open_target',
+            'picture_path' => function () {
                 return $this->picture_path ? Yii::$app->getRequest()->getHostInfo() . $this->picture_path : null;
             },
             'ordering',

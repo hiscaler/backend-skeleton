@@ -41,28 +41,28 @@ class Vote extends \yii\db\ActiveRecord
     {
         return [
             'id',
-            'categoryId' => 'category_id',
+            'category_id',
             'categoryName' => function () {
                 return $this->category_id ? $this->category->name : null;
             },
             'title',
             'description',
-            'beginDatetime' => 'begin_datetime',
-            'endDatetime' => 'end_datetime',
-            'totalVotesCount' => 'total_votes_count',
-            'allowAnonymous' => function () {
+            'begin_datetime',
+            'end_datetime',
+            'total_votes_count',
+            'allow_anonymous' => function () {
                 return boolval($this->allow_anonymous);
             },
-            'allowViewResults' => function () {
+            'allow_view_results' => function () {
                 return boolval($this->allow_view_results);
             },
-            'allowMultipleChoice' => function () {
+            'allow_multiple_choice' => function () {
                 return boolval($this->allow_multiple_choice);
             },
-            'intervalSeconds' => 'interval_seconds',
+            'interval_seconds',
             'ordering',
-            'createdAt' => 'created_at',
-            'updatedAt' => 'updated_at',
+            'created_at',
+            'updated_at',
         ];
     }
 

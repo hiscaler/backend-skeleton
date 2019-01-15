@@ -39,7 +39,7 @@ class VoteOption extends \yii\db\ActiveRecord
 
                 return $photo ? UtilsHelper::fixStaticAssetUrl($photo) : null;
             },
-            'votesCount' => 'votes_count',
+            'votes_count',
         ];
     }
 

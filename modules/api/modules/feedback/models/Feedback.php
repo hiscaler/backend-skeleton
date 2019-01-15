@@ -116,11 +116,11 @@ class Feedback extends \yii\db\ActiveRecord
     {
         return [
             'id',
-            'categoryId' => 'category_id',
+            'category_id',
             'title',
             'username',
             'tel',
-            'mobilePhone' => 'mobile_phone',
+            'mobile_phone',
             'email',
             'ip',
             'picture' => function () {
@@ -132,15 +132,15 @@ class Feedback extends \yii\db\ActiveRecord
                 }
             },
             'message',
-            'responseMessage' => 'response_message',
-            'responseDatetime' => 'response_datetime',
+            'response_message',
+            'response_datetime',
             'enabled' => function () {
                 return boolval($this->enabled);
             },
-            'createdAt' => 'created_at',
-            'createdBy' => 'created_by',
-            'updatedAt' => 'updated_at',
-            'updatedBy' => 'updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
         ];
     }
 

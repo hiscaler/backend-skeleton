@@ -127,24 +127,24 @@ class News extends BaseActiveRecord
     {
         return [
             'id',
-            'categoryId' => 'category_id',
+            'category_id',
             'title',
-            'shortTitle' => 'short_title',
+            'short_title',
             'author',
             'source',
-            'sourceUrl' => 'source_url',
+            'source_url',
             'keywords',
             'description',
-            'isPictureNews' => 'is_picture_news',
+            'is_picture_news',
             'picturePath' => function () {
                 return UtilsHelper::fixStaticAssetUrl($this->picture_path);
             },
-            'enabledComment' => 'enabled_comment',
-            'commentsCount' => 'comments_count',
-            'clicksCount' => 'clicks_count',
-            'publishedAt' => 'published_at',
-            'createdAt' => 'created_at',
-            'updatedAt' => 'updated_at',
+            'enabled_comment',
+            'comments_count',
+            'clicks_count',
+            'published_at',
+            'created_at',
+            'updated_at',
         ];
     }
 
