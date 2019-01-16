@@ -204,7 +204,7 @@ class ApplicationHelper
     {
         $params = Yii::$app->params;
         if (isset($params[$key])) {
-            $value = isset($params[$key]) ? $params[$key] : $defaultValue;
+            $value = $params[$key];
         } elseif (strpos($key, '.') !== false) {
             $value = ArrayHelper::getValue($params, $key, $defaultValue);
         } else {
