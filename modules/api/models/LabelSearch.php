@@ -2,7 +2,6 @@
 
 namespace app\modules\api\models;
 
-use Yii;
 use yii\data\ActiveDataProvider;
 
 class LabelSearch extends Label
@@ -24,19 +23,11 @@ class LabelSearch extends Label
     public function search($params)
     {
         $query = Label::find();
-        $where = [];
-        if ($identity = Yii::$app->getUser()->getIdentity()) {
-            /* @var $identity Member */
-            if ($identity->type !== Member::TYPE_ADMINISTRATOR) {
-                $where = '1 = 0'; // 非管理员不能查看会员信息
-            }
-        }
-        $where && $query->where($where);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
-                'defaultOrder' => ['id' => SORT_DESC],
+                'defaultOrder' => ['alias' => SORT_ASC],
             ]
         ]);
 

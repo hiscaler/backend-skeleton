@@ -24,14 +24,14 @@ class MemberSearch extends Member
     public function search($params)
     {
         $query = Member::find();
-        $where = [];
+        $condition = [];
         if ($identity = Yii::$app->getUser()->getIdentity()) {
             /* @var $identity Member */
             if ($identity->type !== Member::TYPE_ADMINISTRATOR) {
-                $where = '1 = 0'; // 非管理员不能查看会员信息
+                $condition = '1 = 0'; // 非管理员不能查看会员信息
             }
         }
-        $where && $query->where($where);
+        $condition && $query->where($condition);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
