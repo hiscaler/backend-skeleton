@@ -19,8 +19,8 @@ class BaseWechatMember extends \app\models\WechatMember
         return [
             'id',
             'member_id',
-            'subscribe' => function () {
-                return $this->subscribe ? true : false;
+            'subscribe' => function ($model) {
+                return $model->subscribe ? true : false;
             },
             'openid',
             'nickname',

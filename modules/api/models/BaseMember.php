@@ -34,8 +34,8 @@ class BaseMember extends \app\models\Member
             'username',
             'nickname',
             'real_name',
-            'avatar' => function () {
-                $avatar = $this->avatar;
+            'avatar' => function ($model) {
+                $avatar = $model->avatar;
                 if (!empty($avatar)) {
                     $addUrl = true;
                     foreach (['http', 'https', '//'] as $prefix) {
@@ -72,10 +72,10 @@ class BaseMember extends \app\models\Member
             'created_by',
             'updated_at',
             'updated_by',
-            'meta_items' => function () {
+            'meta_items' => function ($model) {
                 $items = [];
                 $rawItems = \Yii::$app->getDb()->createCommand('SELECT [[m.key]], [[m.return_value_type]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} t LEFT JOIN {{%meta}} m ON [[t.meta_id]] = [[m.id]] WHERE [[t.object_id]] = :objectId AND [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName)', [
-                    ':objectId' => $this->id,
+                    ':objectId' => $model->id,
                     ':tableName' => strtr(static::tableName(), ['{{%', '}}' => ''])
                 ])->queryAll();
                 foreach ($rawItems as $item) {

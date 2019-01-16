@@ -19,8 +19,8 @@ class BaseUser extends \app\models\User
             'id',
             'username',
             'nickname',
-            'avatar' => function () {
-                $avatar = $this->avatar;
+            'avatar' => function ($model) {
+                $avatar = $model->avatar;
                 if (!empty($avatar)) {
                     $addUrl = true;
                     foreach (['http', 'https', '//'] as $prefix) {
