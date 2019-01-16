@@ -23,7 +23,7 @@ class DefaultController extends ActiveController
      */
     public function findModel($id)
     {
-        if (is_integer($id)) {
+        if (is_numeric($id)) {
             $condition = ['id' => (int) $id];
         } else {
             $condition = ['alias' => $id];
