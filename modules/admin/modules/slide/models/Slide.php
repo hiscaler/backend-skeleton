@@ -49,7 +49,7 @@ class Slide extends BaseActiveRecord
      * 链接打开方式
      */
     const URL_OPEN_TARGET_BLANK = '_blank';
-    const URL_OPEN_TARGET_SLFE = '_self';
+    const URL_OPEN_TARGET_SELF = '_self';
 
     /**
      * @inheritdoc
@@ -124,7 +124,7 @@ class Slide extends BaseActiveRecord
     {
         return [
             self::URL_OPEN_TARGET_BLANK => '新窗口',
-            self::URL_OPEN_TARGET_SLFE => '当前窗口',
+            self::URL_OPEN_TARGET_SELF => '当前窗口',
         ];
     }
 
