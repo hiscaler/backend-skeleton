@@ -123,8 +123,8 @@ class Feedback extends \yii\db\ActiveRecord
             'mobile_phone',
             'email',
             'ip',
-            'picture' => function () {
-                $picture = $this->picture;
+            'picture' => function ($model) {
+                $picture = $model->picture;
                 if ($picture) {
                     return \Yii::$app->getRequest()->getHostInfo() . $picture;
                 } else {
