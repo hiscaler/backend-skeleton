@@ -10,6 +10,7 @@ class LinkSearch extends Link
     public function rules()
     {
         return [
+            [['title'], 'string'],
             [['category_id', 'type'], 'integer'],
         ];
     }
@@ -35,10 +36,12 @@ class LinkSearch extends Link
             return $dataProvider; // If validation fails, just return the unfiltered list
         }
 
-        $query->andFilterHaving([
+        $query->andFilterWhere([
             'type' => $this->type,
             'category_id' => $this->category_id,
-        ]);;
+        ]);
+
+        $query->andFilterWhere(['LIKE', 'title', $this->title]);
 
         return $dataProvider;
     }
