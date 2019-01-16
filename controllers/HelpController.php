@@ -18,6 +18,13 @@ use yii\web\Response;
 class HelpController extends \yii\web\Controller
 {
 
+    /**
+     * 文档类型
+     */
+    const TYPE_API = 'api';
+    const TYPE_GUIDE = 'guide';
+    const TYPE_DB_DICT = 'db-dict';
+
     public function init()
     {
         parent::init();
@@ -41,28 +48,30 @@ class HelpController extends \yii\web\Controller
         $markdown = new GithubMarkdown();
         $appPath = FileHelper::normalizePath(Yii::getAlias('@app'), '/');
 
-        foreach (\app\models\Module::map() as $alias => $name) {
-            $path = $appPath . "/modules/api/modules/$alias/docs";
-            if (file_exists("$path/$type/")) {
-                $searchDirs[$alias][] = "$path/$type/";
-            }
-        }
+        if ($type != self::TYPE_DB_DICT) {
+            foreach (\app\models\Module::map() as $alias => $name) {
+                if ($type == self::TYPE_API) {
+                    $path = $appPath . "/modules/api/modules/$alias/docs";
+                } else {
+                    $path = $appPath . "/modules/admin/modules/$alias/docs";
+                }
 
-        $filesList = [];
-        foreach ($searchDirs as $key => $dir) {
-            if (!isset($filesList[$key])) {
-                $filesList[$key] = [];
-            }
-            foreach ($dir as $name => $d) {
-                $rawFiles = FileHelper::findFiles($d, [
-                    'recursive' => false,
-                ]);
-                if ($rawFiles) {
-                    $filesList[$key] = array_merge($filesList[$key], $rawFiles);
+                if (file_exists($path)) {
+                    $searchDirs[$alias][] = $path;
                 }
             }
         }
-        foreach ($filesList as $key => $files) {
+
+        foreach ($searchDirs as $key => $dir) {
+            $files = [];
+            foreach ($dir as $name => $d) {
+                $findFiles = FileHelper::findFiles($d, [
+                    'recursive' => false,
+                ]);
+                if ($findFiles) {
+                    $files = array_merge($files, $findFiles);
+                }
+            }
             foreach ($files as $file) {
                 $file = FileHelper::normalizePath($file, '/');
                 $content = file_get_contents($file);
@@ -71,7 +80,7 @@ class HelpController extends \yii\web\Controller
                 }
 
                 $filename = basename($file, '.md');
-                if ($type == 'guide' && $filename == 'readme') {
+                if ($type == self::TYPE_GUIDE && $filename == 'readme') {
                     continue;
                 }
                 $content = $markdown->parse($content);
@@ -97,11 +106,11 @@ class HelpController extends \yii\web\Controller
      * @param null $file
      * @return string
      */
-    public function actionIndex($type = 'db-dict', $file = null)
+    public function actionIndex($type = self::TYPE_DB_DICT, $file = null)
     {
         $baseDir = Yii::getAlias('@app/docs');
-        if (!in_array($type, ['db-dict', 'guide', 'api'])) {
-            $type = 'db-dict';
+        if (!in_array($type, [self::TYPE_API, self::TYPE_GUIDE, self::TYPE_DB_DICT])) {
+            $type = self::TYPE_DB_DICT;
         }
 
         $sections = [];
