@@ -46,10 +46,10 @@ class Link extends BaseActiveRecord
         return [
             'id',
             'categoryId' => 'category_id',
-            'categoryName' => function () {
+            'categoryName' => function ($model) {
                 $name = null;
-                if ($this->category_id) {
-                    $name = $this->category->name;
+                if ($model->category_id && $model->category) {
+                    $name = $model->category->name;
                 }
 
                 return $name;
@@ -59,8 +59,8 @@ class Link extends BaseActiveRecord
             'description',
             'url',
             'urlOpenTarget' => 'url_open_target',
-            'logo' => function () {
-                return $this->logo ? Yii::$app->getRequest()->getHostInfo() . $this->logo : null;
+            'logo' => function ($model) {
+                return $model->logo ? Yii::$app->getRequest()->getHostInfo() . $model->logo : null;
             }
         ];
     }
