@@ -2,7 +2,6 @@
 
 namespace app\modules\api\modules\slide\models;
 
-use app\models\BaseActiveRecord;
 use Yii;
 
 /**
@@ -21,22 +20,8 @@ use Yii;
  * @property integer $updated_at
  * @property integer $updated_by
  */
-class Slide extends BaseActiveRecord
+class Slide extends \app\modules\admin\modules\slide\models\Slide
 {
-
-    /**
-     * 链接打开方式
-     */
-    const URL_OPEN_TARGET_BLANK = '_blank';
-    const URL_OPEN_TARGET_SLFE = '_self';
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%slide}}';
-    }
 
     public function fields()
     {
@@ -46,10 +31,15 @@ class Slide extends BaseActiveRecord
             'title',
             'url',
             'url_open_target',
-            'picture_path' => function () {
-                return $this->picture_path ? Yii::$app->getRequest()->getHostInfo() . $this->picture_path : null;
+            'picture_path' => function ($model) {
+                return $model->picture_path ? (Yii::$app->getRequest()->getHostInfo() . $model->picture_path) : null;
             },
             'ordering',
+            'enabled',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
         ];
     }
 

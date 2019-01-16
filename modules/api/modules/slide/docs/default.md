@@ -1,5 +1,5 @@
-链接接口
-=======
+幻灯片接口
+========
 
 ## GET /api/slide/default?fields=:fields&category=:category&page=:page&pageSize=:pageSize
 ### 接口说明
