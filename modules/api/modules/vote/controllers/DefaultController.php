@@ -189,7 +189,7 @@ class DefaultController extends BaseController
      * 活动详情
      *
      * @param $id
-     * @return Article|array|null|\yii\db\ActiveRecord
+     * @return Vote|array|null|\yii\db\ActiveRecord
      * @throws NotFoundHttpException
      */
     public function actionView($id)
@@ -199,6 +199,11 @@ class DefaultController extends BaseController
         return $model;
     }
 
+    /**
+     * @param $id
+     * @return Vote|array|\yii\db\ActiveRecord|null
+     * @throws NotFoundHttpException
+     */
     public function findModel($id)
     {
         $model = Vote::find()->where(['id' => (int) $id, 'enabled' => Constant::BOOLEAN_TRUE])->one();

@@ -34,8 +34,8 @@ class VoteOption extends \yii\db\ActiveRecord
             'ordering',
             'title',
             'description',
-            'photo' => function () {
-                $photo = $this->photo;
+            'photo' => function ($model) {
+                $photo = $model->photo;
 
                 return $photo ? UtilsHelper::fixStaticAssetUrl($photo) : null;
             },
