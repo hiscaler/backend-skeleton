@@ -4,7 +4,6 @@ Created on : 2018-02-18 21:32:24
 Author     : hiscaler <hiscaler@gmail.com>
 Description: 登录样式
 */
-@charset "utf-8";
 body {
     background: #cadff0 url(../images/login/bg1.jpg) no-repeat;
     font: 13px/1.5 \5FAE\8F6F\96C5\9ED1, tahoma, arial, \5b8b\4f53, sans-serif;
