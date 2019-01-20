@@ -66,7 +66,7 @@ class BaseFileUploadConfig extends BaseActiveRecord
         ]);
     }
 
-    public function checkMaxSize($attrirbute, $params)
+    public function checkMaxSize($attribute, $params)
     {
         if (!$this->hasErrors()) {
             if ($this->max_size < $this->min_size) {
