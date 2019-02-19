@@ -3,7 +3,6 @@
 namespace app\jobs;
 
 use Yii;
-use yii\base\BaseObject;
 use yii\queue\JobInterface;
 
 /**
@@ -12,7 +11,7 @@ use yii\queue\JobInterface;
  * @package app\jobs
  * @author hiscaler <hiscaler@gmail.com>
  */
-class ExampleJob extends BaseObject implements JobInterface
+class ExampleJob extends Job implements JobInterface
 {
 
     public $url;
