@@ -13,17 +13,16 @@ return [
     /**
      * 账号基本信息，请从微信公众平台/开放平台获取
      */
-    'app_id' => 'your-app-id',         // AppID
-    'secret' => 'your-app-secret',     // AppSecret
-    'token' => 'your-token',          // Token
-    'aes_key' => '',                    // EncodingAESKey，安全模式与兼容模式下请一定要填写！！！
+    'app_id' => 'your-app-id', // AppID
+    'secret' => 'your-app-secret', // AppSecret
+    'token' => 'your-token', // Token
+    'aes_key' => '', // EncodingAESKey，安全模式与兼容模式下请一定要填写！！！
 
     /**
      * 日志配置
      *
-     * level: 日志级别, 可选为：
-     *         debug/info/notice/warning/error/critical/alert/emergency
-     * permission：日志文件权限(可选)，默认为null（若为null值,monolog会取0644）
+     * level: 日志级别, 可选为：debug/info/notice/warning/error/critical/alert/emergency
+     * permission：日志文件权限(可选)，默认为 null（若为 null 值，monolog 会取 0644）
      * file：日志文件位置(绝对路径!!!)，要求可写权限
      */
     'log' => [
