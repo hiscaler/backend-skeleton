@@ -5,6 +5,7 @@ namespace app\modules\api\modules\wechat\controllers;
 use EasyWeChat\Foundation\Application;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\helpers\Url;
 use yii\rest\Controller;
 
 /**
@@ -37,6 +38,9 @@ class BaseController extends Controller
             throw new InvalidConfigException('无效的微信配置。');
         }
         $this->_config = Yii::$app->params['wechat'];
+        if (is_array($this->_config['oauth']['callback'])) {
+            $this->_config['oauth']['callback'] = Url::toRoute($this->_config['oauth']['callback']);
+        }
         $this->_application = new Application($this->_config);
     }
 

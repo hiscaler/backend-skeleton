@@ -40,7 +40,7 @@ return [
      */
     'oauth' => [
         'scopes' => ['snsapi_userinfo'],
-        'callback' => '/examples/oauth_callback.php',
+        'callback' => ['/api/oauth/callback'], // Yii URL route format
     ],
 
     /**
