@@ -67,7 +67,6 @@ class DefaultController extends BaseController
     {
         $openId = $this->_message->FromUserName;
         $user = $this->_application->user->get($openId);
-        $now = time();
         $db = Yii::$app->getDb();
         $wechatMemberId = $db->createCommand('SELECT [[id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openId])->queryScalar();
         if ($wechatMemberId) {
@@ -80,7 +79,7 @@ class DefaultController extends BaseController
                 'city' => $user->city,
                 'language' => $user->language,
                 'headimgurl' => $user->headimgurl,
-                'subscribe_time' => $now,
+                'subscribe_time' => time(),
             ];
             $db->createCommand()->update('{{%wechat_member}}', $columns, ['id' => $wechatMemberId])->execute();
         } else {
@@ -95,7 +94,7 @@ class DefaultController extends BaseController
                 'city' => $user->city,
                 'language' => $user->language,
                 'headimgurl' => $user->headimgurl,
-                'subscribe_time' => $now,
+                'subscribe_time' => time(),
             ];
             $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
         }
