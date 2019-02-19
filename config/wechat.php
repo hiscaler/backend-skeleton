@@ -66,4 +66,23 @@ return [
         'timeout' => 3.0, // 超时时间（秒）
         //'verify' => false, // 关掉 SSL 认证（强烈不建议！！！）
     ],
+
+    // 其他配置
+    'other' => [
+        'subscribe' => [
+            'required' => true, // 是否必须关注，如果未关注的话跳转到关注提醒页面
+            'redirectUrl' => '', // 关注页面地址
+        ],
+        // 菜单
+        'menu' => [
+            'buttons' => [
+                [
+                    "type" => "view",
+                    "name" => "test",
+                    'http://www.example.com'
+                ],
+            ],
+            'matchRule' => []
+        ]
+    ],
 ];

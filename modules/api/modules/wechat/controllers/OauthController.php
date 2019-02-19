@@ -61,8 +61,8 @@ class OauthController extends BaseController
         $user = $this->service->scopes(['snsapi_userinfo'])->user();
         if ($user) {
             $required = ArrayHelper::getValue($this->_config, 'other.subscribe.required', false);
-            if ($required && ($hintPageUrl = ArrayHelper::getValue($this->_config, 'other.subscribe.hintPageUrl'))) {
-                $url = $hintPageUrl;
+            if ($required && ($redirectUrl = ArrayHelper::getValue($this->_config, 'other.subscribe.redirectUrl'))) {
+                $url = $redirectUrl;
             } else {
                 $url = UrlHelper::addQueryParam($url, 'openId', $user->getId());
             }
