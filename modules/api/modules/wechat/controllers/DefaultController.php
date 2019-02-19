@@ -5,6 +5,7 @@ namespace app\modules\api\modules\wechat\controllers;
 use app\modules\api\models\Constant;
 use EasyWeChat\Foundation\Application;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * 微信消息、事件处理
@@ -110,9 +111,11 @@ class DefaultController extends BaseController
         $db = Yii::$app->getDb();
         $wechatMemberId = $db->createCommand('SELECT [[id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $this->_message->FromUserName])->queryScalar();
         if ($wechatMemberId) {
-            $db->createCommand()->update('{{%wechat_member}}', [
-                'subscribe' => Constant::BOOLEAN_FALSE
-            ], ['id' => $wechatMemberId])->execute();
+            if (ArrayHelper::getValue($this->_config, 'other.subscribe.deleteAfterCancel', false) === true) {
+                $db->createCommand()->delete('{{%wechat_member}}', ['id' => $wechatMemberId])->execute();
+            } else {
+                $db->createCommand()->update('{{%wechat_member}}', ['subscribe' => Constant::BOOLEAN_FALSE], ['id' => $wechatMemberId])->execute();
+            }
         }
     }
 

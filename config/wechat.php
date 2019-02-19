@@ -72,6 +72,7 @@ return [
         'subscribe' => [
             'required' => true, // 是否必须关注，如果未关注的话跳转到关注提醒页面
             'redirectUrl' => '', // 关注页面地址
+            'deleteAfterCancel' => false, // 取消关注后是否删除微信记录
         ],
         // 菜单
         'menu' => [
