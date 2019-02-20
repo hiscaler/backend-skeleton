@@ -6,7 +6,7 @@ namespace app\modules\api\modules\wechat\controllers;
  * 用户组
  * Class UserGroupController
  *
- * @property \EasyWeChat\User\Group $service
+ * @property \EasyWeChat\User\Group $wxService
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -16,7 +16,7 @@ class UserGroupController extends BaseController
     public function init()
     {
         parent::init();
-        $this->service = $this->_application->user_group;
+        $this->wxService = $this->wxApplication->user_group;
     }
 
     /**
@@ -26,7 +26,7 @@ class UserGroupController extends BaseController
      */
     public function actionIndex()
     {
-        return $this->service->lists();
+        return $this->wxService->lists();
     }
 
     /**
@@ -37,7 +37,7 @@ class UserGroupController extends BaseController
      */
     public function actionCreate($name)
     {
-        return $this->service->create($name);
+        return $this->wxService->create($name);
     }
 
     /**
@@ -49,7 +49,7 @@ class UserGroupController extends BaseController
      */
     public function actionUpdate($groupId, $name)
     {
-        return $this->service->update($groupId, $name);
+        return $this->wxService->update($groupId, $name);
     }
 
     /**
@@ -60,7 +60,7 @@ class UserGroupController extends BaseController
      */
     public function actionDelete($groupId)
     {
-        return $this->service->delete($groupId);
+        return $this->wxService->delete($groupId);
     }
 
     /**
@@ -73,9 +73,9 @@ class UserGroupController extends BaseController
     public function actionMoveUser($openId, $groupId)
     {
         if (strpos($openId, ',') === false) {
-            return $this->service->moveUser($openId, $groupId);
+            return $this->wxService->moveUser($openId, $groupId);
         } else {
-            return $this->service->moveUsers(explode(',', $openId), $groupId);
+            return $this->wxService->moveUsers(explode(',', $openId), $groupId);
         }
     }
 

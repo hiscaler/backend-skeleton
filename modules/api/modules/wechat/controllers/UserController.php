@@ -6,7 +6,7 @@ namespace app\modules\api\modules\wechat\controllers;
  * 用户
  * Class UserController
  *
- * @property \EasyWeChat\User\User $service
+ * @property \EasyWeChat\User\User $wxService
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -16,7 +16,7 @@ class UserController extends BaseController
     public function init()
     {
         parent::init();
-        $this->service = $this->_application->user;
+        $this->wxService = $this->wxApplication->user;
     }
 
     /**
@@ -27,7 +27,7 @@ class UserController extends BaseController
      */
     public function actionIndex($nextOpenId = null)
     {
-        return $this->service->lists($nextOpenId);
+        return $this->wxService->lists($nextOpenId);
     }
 
     /**
@@ -39,9 +39,9 @@ class UserController extends BaseController
     public function actionView($openId)
     {
         if (strpos($openId, ',') === false) {
-            return $this->service->get($openId);
+            return $this->wxService->get($openId);
         } else {
-            return $this->service->batchGet(explode(',', $openId));
+            return $this->wxService->batchGet(explode(',', $openId));
         }
     }
 

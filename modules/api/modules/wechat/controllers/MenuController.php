@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
  * 菜单
  * Class MenuController
  *
- * @property \EasyWeChat\Menu\Menu $service
+ * @property \EasyWeChat\Menu\Menu $wxService
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -19,7 +19,7 @@ class MenuController extends BaseController
     public function init()
     {
         parent::init();
-        $this->service = $this->_application->menu;
+        $this->wxService = $this->wxApplication->menu;
     }
 
     /**
@@ -29,7 +29,7 @@ class MenuController extends BaseController
      */
     public function actionIndex()
     {
-        return $this->service->all();
+        return $this->wxService->all();
     }
 
     /**
@@ -39,9 +39,9 @@ class MenuController extends BaseController
      */
     public function actionCreate()
     {
-        $buttons = ArrayHelper::getValue($this->_config, 'other.menu.buttons');
-        $matchRule = ArrayHelper::getValue($this->_config, 'other.menu.matchRule');
-        $menu = $this->service->add($buttons, $matchRule);
+        $buttons = ArrayHelper::getValue($this->wxConfig, 'other.menu.buttons');
+        $matchRule = ArrayHelper::getValue($this->wxConfig, 'other.menu.matchRule');
+        $menu = $this->wxService->add($buttons, $matchRule);
         $response = Yii::$app->getResponse();
         $response->setStatusCode(201);
 
@@ -55,7 +55,7 @@ class MenuController extends BaseController
      */
     public function actionDelete($menuId = null)
     {
-        $this->service->destroy($menuId);
+        $this->wxService->destroy($menuId);
     }
 
     /**
@@ -66,7 +66,7 @@ class MenuController extends BaseController
      */
     public function actionTest($userId)
     {
-        return $this->service->test($userId);
+        return $this->wxService->test($userId);
     }
 
 }

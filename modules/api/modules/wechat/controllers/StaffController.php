@@ -6,7 +6,7 @@ namespace app\modules\api\modules\wechat\controllers;
  * 客服
  * Class StaffController
  *
- * @property \EasyWeChat\Staff\Staff $service
+ * @property \EasyWeChat\Staff\Staff $wxService
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -16,7 +16,7 @@ class StaffController extends BaseController
     public function init()
     {
         parent::init();
-        $this->service = $this->_application->staff;
+        $this->wxService = $this->wxApplication->staff;
     }
 
     /**
@@ -26,7 +26,7 @@ class StaffController extends BaseController
      */
     public function actionIndex()
     {
-        return $this->service->lists();
+        return $this->wxService->lists();
     }
 
     /**
@@ -36,7 +36,7 @@ class StaffController extends BaseController
      */
     public function actionOnlines()
     {
-        return $this->service->onlines();
+        return $this->wxService->onlines();
     }
 
     /**
@@ -48,7 +48,7 @@ class StaffController extends BaseController
      */
     public function actionCreate($account, $nickname)
     {
-        return $this->service->create($account, $nickname);
+        return $this->wxService->create($account, $nickname);
     }
 
     /**
@@ -60,7 +60,7 @@ class StaffController extends BaseController
      */
     public function actionUpdate($account, $nickname)
     {
-        return $this->service->update($account, $nickname);
+        return $this->wxService->update($account, $nickname);
     }
 
     /**
@@ -70,7 +70,7 @@ class StaffController extends BaseController
      */
     public function actionDelete($account)
     {
-        $this->service->delete($account);
+        $this->wxService->delete($account);
     }
 
     /**
@@ -82,7 +82,7 @@ class StaffController extends BaseController
      */
     public function actionAvatar($account, $avatarPath)
     {
-        return $this->service->avatar($account, $avatarPath);
+        return $this->wxService->avatar($account, $avatarPath);
     }
 
 }

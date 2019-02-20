@@ -67,7 +67,7 @@ class DefaultController extends BaseController
     private function subscribeEvent()
     {
         $openId = $this->_message->FromUserName;
-        $user = $this->_application->user->get($openId);
+        $user = $this->wxApplication->user->get($openId);
         $db = Yii::$app->getDb();
         $wechatMemberId = $db->createCommand('SELECT [[id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openId])->queryScalar();
         if ($wechatMemberId) {
@@ -111,7 +111,7 @@ class DefaultController extends BaseController
         $db = Yii::$app->getDb();
         $wechatMemberId = $db->createCommand('SELECT [[id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $this->_message->FromUserName])->queryScalar();
         if ($wechatMemberId) {
-            if (ArrayHelper::getValue($this->_config, 'other.subscribe.deleteAfterCancel', false) === true) {
+            if (ArrayHelper::getValue($this->wxConfig, 'other.subscribe.deleteAfterCancel', false) === true) {
                 $db->createCommand()->delete('{{%wechat_member}}', ['id' => $wechatMemberId])->execute();
             } else {
                 $db->createCommand()->update('{{%wechat_member}}', ['subscribe' => Constant::BOOLEAN_FALSE], ['id' => $wechatMemberId])->execute();

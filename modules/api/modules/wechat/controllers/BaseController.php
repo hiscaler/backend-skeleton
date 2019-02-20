@@ -20,13 +20,13 @@ class BaseController extends Controller
 
     const DEFAULT_RETURN_MESSAGE = '';
 
-    protected $_config;
+    protected $wxConfig;
 
     /* @var $_application Application */
-    protected $_application;
+    protected $wxApplication;
 
-    /* @var $service \EasyWeChat\Core\AccessToken|\EasyWeChat\Server\Guard|\EasyWeChat\User\User|\EasyWeChat\User\Tag|\EasyWeChat\User\Group|\EasyWeChat\Js\Js|\Overtrue\Socialite\Providers\WeChatProvider|\EasyWeChat\Menu\Menu|\EasyWeChat\Notice\Notice|\EasyWeChat\Material\Material|\EasyWeChat\Material\Temporary|\EasyWeChat\Staff\Staff|\EasyWeChat\Url\Url|\EasyWeChat\QRCode\QRCode|\EasyWeChat\Semantic\Semantic\EasyWeChat\Stats\Stats|\EasyWeChat\Payment\Merchant|\EasyWeChat\Payment\Payment|\EasyWeChat\Payment\LuckyMoney\LuckyMoney|\EasyWeChat\Payment\MerchantPay\MerchantPay|\EasyWeChat\Payment\CashCoupon\CashCoupon|\EasyWeChat\Reply\Reply|\EasyWeChat\Broadcast\Broadcast|\EasyWeChat\Card\Card|\EasyWeChat\Device\Device|\EasyWeChat\Comment\Comment|\EasyWeChat\ShakeAround\ShakeAround|\EasyWeChat\OpenPlatform\OpenPlatform|\EasyWeChat\MiniProgram\MiniProgram */
-    protected $service;
+    /* @var $wxService \EasyWeChat\Core\AccessToken|\EasyWeChat\Server\Guard|\EasyWeChat\User\User|\EasyWeChat\User\Tag|\EasyWeChat\User\Group|\EasyWeChat\Js\Js|\Overtrue\Socialite\Providers\WeChatProvider|\EasyWeChat\Menu\Menu|\EasyWeChat\Notice\Notice|\EasyWeChat\Material\Material|\EasyWeChat\Material\Temporary|\EasyWeChat\Staff\Staff|\EasyWeChat\Url\Url|\EasyWeChat\QRCode\QRCode|\EasyWeChat\Semantic\Semantic\EasyWeChat\Stats\Stats|\EasyWeChat\Payment\Merchant|\EasyWeChat\Payment\Payment|\EasyWeChat\Payment\LuckyMoney\LuckyMoney|\EasyWeChat\Payment\MerchantPay\MerchantPay|\EasyWeChat\Payment\CashCoupon\CashCoupon|\EasyWeChat\Reply\Reply|\EasyWeChat\Broadcast\Broadcast|\EasyWeChat\Card\Card|\EasyWeChat\Device\Device|\EasyWeChat\Comment\Comment|\EasyWeChat\ShakeAround\ShakeAround|\EasyWeChat\OpenPlatform\OpenPlatform|\EasyWeChat\MiniProgram\MiniProgram */
+    protected $wxService;
 
     /**
      * @throws InvalidConfigException
@@ -37,11 +37,11 @@ class BaseController extends Controller
         if (!isset(Yii::$app->params['wechat']) || !Yii::$app->params['wechat'] || !isset(Yii::$app->params['wechat']['app_id'], Yii::$app->params['wechat']['secret'])) {
             throw new InvalidConfigException('无效的微信配置。');
         }
-        $this->_config = Yii::$app->params['wechat'];
-        if (is_array($this->_config['oauth']['callback'])) {
-            $this->_config['oauth']['callback'] = Url::toRoute($this->_config['oauth']['callback']);
+        $this->wxConfig = Yii::$app->params['wechat'];
+        if (is_array($this->wxConfig['oauth']['callback'])) {
+            $this->wxConfig['oauth']['callback'] = Url::toRoute($this->wxConfig['oauth']['callback']);
         }
-        $this->_application = new Application($this->_config);
+        $this->wxApplication = new Application($this->wxConfig);
     }
 
 }

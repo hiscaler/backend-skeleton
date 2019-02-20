@@ -11,7 +11,7 @@ use yii\web\BadRequestHttpException;
  * 模板消息
  * Class NoticeController
  *
- * @property \EasyWeChat\Notice\Notice $service
+ * @property \EasyWeChat\Notice\Notice $wxService
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -21,7 +21,7 @@ class NoticeController extends BaseController
     public function init()
     {
         parent::init();
-        $this->service = $this->_application->notice;
+        $this->wxService = $this->wxApplication->notice;
     }
 
     public function behaviors()
@@ -57,7 +57,7 @@ class NoticeController extends BaseController
                 if ($data === null) {
                     throw new BadRequestHttpException('无效的 data 参数。');
                 }
-                $messageId = $this->service->send([
+                $messageId = $this->wxService->send([
                     'touser' => trim($openId),
                     'template_id' => $templateId,
                     'url' => $url ? urldecode($url) : '',

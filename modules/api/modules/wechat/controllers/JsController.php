@@ -6,13 +6,20 @@ use Yii;
 
 /**
  * OAuth 授权
- * Class JssdkController
+ * Class JsController
  *
+ * @property \EasyWeChat\Js\Js $wxService
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class JssdkController extends BaseController
+class JsController extends BaseController
 {
+
+    public function init()
+    {
+        parent::init();
+        $this->wxService = $this->wxApplication->js;
+    }
 
     /**
      * JsSdk 配置值
@@ -31,11 +38,10 @@ class JssdkController extends BaseController
         });
         empty($api) && $api = ['checkJsApi'];
 
-        $js = $this->_application->js;
         $url = $url ? urldecode($url) : Yii::$app->getRequest()->getHostInfo();
-        $js->setUrl($url);
+        $this->wxService->setUrl($url);
 
-        return $js->config($api, $debug, $beta, false);
+        return $this->wxService->config($api, $debug, $beta, false);
     }
 
 }
