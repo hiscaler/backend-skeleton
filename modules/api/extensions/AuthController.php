@@ -3,7 +3,6 @@
 namespace app\modules\api\extensions;
 
 use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
-use yii\filters\auth\QueryParamAuth;
 
 /**
  * Class AuthController
@@ -16,24 +15,11 @@ class AuthController extends BaseController
 
     public function behaviors()
     {
-        $behaviors = parent::behaviors();
-        $token = \Yii::$app->getRequest()->get('accessToken');
-        if (empty($token)) {
-            $headers = \Yii::$app->getRequest()->getHeaders();
-            $token = $headers->has('accessToken') ? $headers->get('accessToken') : null;
-        }
-        if (!empty($token)) {
-            $class = AccessTokenAuth::class;
-        } else {
-            $class = QueryParamAuth::class;
-        }
-
-        $behaviors = array_merge($behaviors, [
+        return array_merge(parent::behaviors(), [
             'authenticator' => [
-                'class' => $class,
+                'class' => AccessTokenAuth::class,
             ]
         ]);
-
-        return $behaviors;
     }
+
 }
