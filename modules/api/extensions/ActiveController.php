@@ -3,8 +3,8 @@
 namespace app\modules\api\extensions;
 
 use app\modules\api\components\ApplicationHelper;
+use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use Yii;
-use yii\filters\auth\QueryParamAuth;
 use yii\filters\ContentNegotiator;
 use yii\filters\Cors;
 use yii\web\Response;
@@ -81,7 +81,7 @@ class ActiveController extends \yii\rest\ActiveController
         if ($token) {
             $behaviors = array_merge($behaviors, [
                 'authenticator' => [
-                    'class' => QueryParamAuth::class,
+                    'class' => AccessTokenAuth::class,
                     'tokenParam' => 'accessToken'
                 ]
             ]);
