@@ -39,7 +39,7 @@ return [
      */
     'oauth' => [
         'scopes' => ['snsapi_userinfo'],
-        'callback' => ['/api/oauth/callback'], // Yii URL route format
+        'callback' => ['/api/wechat/oauth/callback'], // Yii URL route format
     ],
 
     /**
