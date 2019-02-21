@@ -77,12 +77,17 @@ class ActiveController extends \yii\rest\ActiveController
             ],
         ];
 
-        $token = \Yii::$app->getRequest()->get('accessToken');
-        if ($token) {
+        $tokenParam = 'accessToken';
+        $accessToken = Yii::$app->getRequest()->getQueryParam($tokenParam);
+        if (empty($accessToken)) {
+            $headers = \Yii::$app->getRequest()->getHeaders();
+            $accessToken = $headers->has($tokenParam) ? $headers->get($tokenParam) : null;
+        }
+        if ($accessToken) {
             $behaviors = array_merge($behaviors, [
                 'authenticator' => [
                     'class' => AccessTokenAuth::class,
-                    'tokenParam' => 'accessToken'
+                    'tokenParam' => $tokenParam
                 ]
             ]);
         }
