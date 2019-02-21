@@ -207,15 +207,9 @@ class PassportController extends ActiveController
         if ($token) {
             $member = Member::findIdentityByAccessToken($token);
             if ($member) {
-                $password = $request->post('password');
-                $payload = [
-                    'oldPassword' => $request->post('oldPassword'),
-                    'password' => $password,
-                    'confirmPassword' => $request->post('confirmPassword'),
-                ];
                 $model = new ChangeMyPasswordForm();
-                $model->load($payload, '');
-                $member->setPassword($password);
+                $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+                $member->setPassword($model->password);
                 if ($member->save(false) === false && !$model->hasErrors()) {
                     throw new ServerErrorHttpException('Failed to update the object for unknown reason.');
                 } else {
