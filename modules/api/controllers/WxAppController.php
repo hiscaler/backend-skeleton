@@ -28,7 +28,7 @@ use yii\web\Response;
  * @see https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-login.html#wxchecksessionobject
  * @author hiscaler <hiscaler@gmail.com>
  */
-class WxappController extends BaseController
+class WxAppController extends BaseController
 {
 
     /* @var \EasyWeChat\Foundation\Application */

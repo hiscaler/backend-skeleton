@@ -13,12 +13,12 @@ use yii\base\InvalidConfigException;
 
 /**
  * 微信处理接口
- * Class WechatController
+ * Class WxController
  *
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class WechatController extends BaseController
+class WxController extends BaseController
 {
 
     /**
