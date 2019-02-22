@@ -3,7 +3,6 @@
 namespace app\modules\api\modules\wechat\controllers;
 
 use app\modules\api\models\Constant;
-use EasyWeChat\Foundation\Application;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -25,8 +24,7 @@ class DefaultController extends BaseController
      */
     public function actionIndex()
     {
-        $app = new Application(Yii::$app->params['wechat']);
-        $server = $app->server;
+        $server = $this->wxApplication->server;
 
         $server->setMessageHandler(function ($message) {
             $this->_message = $message;
@@ -71,7 +69,7 @@ class DefaultController extends BaseController
         $db = Yii::$app->getDb();
         if ($this->enableThirdPartyLogin) {
             $wxFieldName = 'unionid';
-            $wxFieldValue = $user->unionid; // unionid\
+            $wxFieldValue = $user->unionid; // unionid
         } else {
             $wxFieldName = 'openid';
             $wxFieldValue = $openId; // openid
