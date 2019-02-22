@@ -3,8 +3,13 @@
 namespace app\modules\api\modules\wechat\controllers;
 
 use EasyWeChat\Foundation\Application;
+use EasyWeChat\Material\Temporary;
+use EasyWeChat\ShakeAround\ShakeAround;
+use EasyWeChat\User\Tag;
+use Overtrue\Socialite\Providers\WeChatProvider;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\helpers\Inflector;
 use yii\helpers\Url;
 use yii\rest\Controller;
 
@@ -29,6 +34,11 @@ class BaseController extends Controller
     protected $wxService;
 
     /**
+     * @var bool 是否激活第三方登录
+     */
+    protected $enableThirdPartyLogin = false;
+
+    /**
      * @throws InvalidConfigException
      */
     public function init()
@@ -38,10 +48,56 @@ class BaseController extends Controller
             throw new InvalidConfigException('无效的微信配置。');
         }
         $this->wxConfig = Yii::$app->params['wechat'];
+        if (isset($this->wxConfig['enableThirdPartyLogin']) && $this->wxConfig['enableThirdPartyLogin']
+        ) {
+            if (!isset($this->wxConfig['thirdPartyLogin'], $this->wxConfig['thirdPartyLogin']['app_id'], $this->wxConfig['thirdPartyLogin']['secret'])) {
+                throw new InvalidConfigException('无效的微信第三方登录配置。');
+            } else {
+                $this->enableThirdPartyLogin = true;
+            }
+        }
+
         if (is_array($this->wxConfig['oauth']['callback'])) {
             $this->wxConfig['oauth']['callback'] = Url::toRoute($this->wxConfig['oauth']['callback']);
         }
         $this->wxApplication = new Application($this->wxConfig);
+    }
+
+    /**
+     * 刷新 wxApplication
+     */
+    public function refreshWxApplication()
+    {
+        $this->wxApplication = new Application($this->wxApplication['config']->all());
+        if ($this->wxService !== null) {
+            $className = get_class($this->wxService);
+            switch ($className) {
+                case WeChatProvider::class:
+                    $className = 'oauth';
+                    break;
+
+                case Tag::class:
+                    $className = 'user_tag';
+                    break;
+
+                case Temporary::class:
+                    $className = 'material_temporary';
+                    break;
+
+                case ShakeAround::class:
+                    $className = 'shakearound';
+                    break;
+
+                default:
+                    if (($index = strrpos($className, '\\')) !== false) {
+                        $className = substr($className, $index + 1);
+                        $className = Inflector::camel2id($className, '_');
+                    }
+                    $className = strtolower($className);
+            }
+
+            $this->wxService = $this->wxApplication->{$className};
+        }
     }
 
 }

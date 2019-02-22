@@ -69,9 +69,17 @@ class DefaultController extends BaseController
         $openId = $this->_message->FromUserName;
         $user = $this->wxApplication->user->get($openId);
         $db = Yii::$app->getDb();
-        $wechatMemberId = $db->createCommand('SELECT [[id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openId])->queryScalar();
+        if ($this->enableThirdPartyLogin) {
+            $wxFieldName = 'unionid';
+            $wxFieldValue = $user->unionid; // unionid\
+        } else {
+            $wxFieldName = 'openid';
+            $wxFieldValue = $openId; // openid
+        }
+        $wechatMemberId = $db->createCommand("SELECT [[id]] FROM {{%wechat_member}} WHERE [[$wxFieldName]] = :wxId", [':wxId' => $wxFieldValue])->queryScalar();
         if ($wechatMemberId) {
             $columns = [
+                'openid' => $openId,
                 'subscribe' => Constant::BOOLEAN_TRUE,
                 'nickname' => $user->nickname,
                 'sex' => $user->sex,
@@ -81,6 +89,7 @@ class DefaultController extends BaseController
                 'language' => $user->language,
                 'headimgurl' => $user->headimgurl,
                 'subscribe_time' => time(),
+                'unionid' => $user->unionid,
             ];
             $db->createCommand()->update('{{%wechat_member}}', $columns, ['id' => $wechatMemberId])->execute();
         } else {
@@ -89,13 +98,14 @@ class DefaultController extends BaseController
                 'subscribe' => Constant::BOOLEAN_TRUE,
                 'openid' => $openId,
                 'nickname' => $user->nickname,
-                'sex' => $user->sex,
+                'sex' => $user->sex ?: Constant::SEX_UNKNOWN,
                 'country' => $user->country,
                 'province' => $user->province,
                 'city' => $user->city,
                 'language' => $user->language,
                 'headimgurl' => $user->headimgurl,
                 'subscribe_time' => time(),
+                'unionid' => $user->unionid,
             ];
             $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
         }

@@ -11,12 +11,23 @@ return [
     'debug' => true,
 
     /**
+     * 是否激活微信第三方登录
+     * 默认为不激活，激活后请在 thirdPartyLogin 项中配置 app_id 和 secret
+     */
+    'enableThirdPartyLogin' => false,
+
+    /**
      * 账号基本信息，请从微信公众平台/开放平台获取
      */
     'app_id' => 'your-app-id', // AppID
     'secret' => 'your-app-secret', // AppSecret
     'token' => 'your-token', // Token
     'aes_key' => '', // EncodingAESKey，安全模式与兼容模式下请一定要填写！！！
+    'thirdPartyLogin' => [
+        // 第三方登录
+        'app_id' => '', // AppID
+        'secret' => '', // AppSecret
+    ],
 
     /**
      * 日志配置

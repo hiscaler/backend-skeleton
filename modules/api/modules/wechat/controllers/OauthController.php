@@ -3,11 +3,13 @@
 namespace app\modules\api\modules\wechat\controllers;
 
 use app\modules\api\models\Constant;
-use EasyWeChat\Foundation\Application;
+use app\modules\api\models\Member;
+use Exception;
 use yadjet\helpers\UrlHelper;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
+use yii\web\HttpException;
 
 /**
  * OAuth 授权
@@ -19,6 +21,9 @@ use yii\web\BadRequestHttpException;
  */
 class OauthController extends BaseController
 {
+
+    const CALLBACK_FROM_NORMAL = 'normal'; // 正常登录
+    const CALLBACK_FROM_OPEN = 'open'; // 第三方登录
 
     public function init()
     {
@@ -39,9 +44,8 @@ class OauthController extends BaseController
             $url && $callbackUrl = UrlHelper::addQueryParam($callbackUrl, "url", $url);
             $type && $callbackUrl = UrlHelper::addQueryParam($callbackUrl, "type", $type);
             if (strcmp($callbackUrl, $this->wxConfig['oauth']['callback']) !== 0) {
-                $this->wxConfig['oauth']['callback'] = $callbackUrl;
-                $this->wxApplication = new Application($this->wxConfig);
-                $this->wxService = $this->wxApplication->oauth;
+                $this->wxApplication['config']->set('oauth.callback', $callbackUrl);
+                $this->refreshWxApplication();
             }
         }
 
@@ -59,27 +63,111 @@ class OauthController extends BaseController
      * @return \yii\web\Response
      * @throws BadRequestHttpException
      * @throws \yii\db\Exception
+     * @throws \yii\base\Exception
+     * @throws Exception
      */
     public function actionCallback($url, $type = null)
     {
-        $user = $this->wxService->scopes(['snsapi_userinfo'])->user();
+        if ($type == self::CALLBACK_FROM_OPEN && $this->enableThirdPartyLogin) {
+            $this->wxApplication['config']->set('app_id', $this->wxConfig['thirdPartyLogin']['app_id']);
+            $this->wxApplication['config']->set('secret', $this->wxConfig['thirdPartyLogin']['secret']);
+            $scopes = ['snsapi_login'];
+            $this->wxApplication['config']->set('oauth.scopes', $scopes);
+            $this->refreshWxApplication();
+        } else {
+            $scopes = $this->wxConfig['oauth']['scopes'];
+        }
+        $user = $this->wxService->scopes($scopes)->user();
         if ($user) {
-            $openId = $user->getId();
-            $isSubscribed = Yii::$app->getDb()->createCommand("SELECT [[subscribe]] FROM {{%wechat_member}} WHERE [[openid]] = :openid", [
-                ':openid' => $openId
-            ])->queryScalar();
-            if ($isSubscribed == Constant::BOOLEAN_TRUE) {
-                $url = UrlHelper::addQueryParam($url, 'openid', $openId);
+            $originalUser = $user->getOriginal();
+            $openid = $user->getId();
+            if ($this->enableThirdPartyLogin) {
+                $wxFieldName = 'unionid';
+                $wxFieldValue = $originalUser['unionid']; // unionid
             } else {
-                if (
-                    ArrayHelper::getValue($this->wxConfig, 'other.subscribe.required', false) &&
-                    ($redirectUrl = ArrayHelper::getValue($this->wxConfig, 'other.subscribe.redirectUrl'))
-                ) {
-                    $url = $redirectUrl;
-                }
+                $wxFieldName = 'openid';
+                $wxFieldValue = $user->getId(); // openid
             }
+            if ($type == self::CALLBACK_FROM_OPEN) {
+                // 第三方登录
+                $db = \Yii::$app->getDb();
+                $now = time();
+                $accessToken = null;
+                $memberId = $db->createCommand("SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[$wxFieldName]] = :wxId", [':wxId' => $wxFieldValue])->queryScalar();
+                if ($memberId) {
+                    $member = Member::findOne(['id' => $memberId]);
+                    if ($member !== null) {
+                        $member->generateAccessToken();
+                        $accessToken = $member->access_token;
+                        $member->save(false);
+                    }
+                } else {
+                    $member = new Member();
+                    $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $user->getNickname());
+                    $maxId = $db->createCommand('SELECT MAX([[id]]) FROM {{%member}}')->queryScalar();
+                    $member->username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
+                    $member->nickname = $nickname ?: $member->username;
+                    $member->real_name = $member->nickname;
+                    $member->mobile_phone = $member->username;
+                    $member->setPassword($member->username);
+                    $member->avatar = $user->getAvatar();
+                    $member->status = Member::STATUS_ACTIVE;
+                    $transaction = $db->beginTransaction();
+                    try {
+                        if ($member->save()) {
+                            $accessToken = $member->access_token;
+                            $memberId = $member->id;
+                            $columns = [
+                                'member_id' => $memberId,
+                                'subscribe' => Constant::BOOLEAN_TRUE,
+                                'openid' => $openid,
+                                'nickname' => $originalUser['nickname'],
+                                'sex' => $originalUser['sex'],
+                                'country' => $originalUser['country'],
+                                'province' => $originalUser['province'],
+                                'city' => $originalUser['city'],
+                                'language' => $originalUser['language'],
+                                'headimgurl' => $originalUser['headimgurl'],
+                                'subscribe_time' => $now,
+                                'unionid' => $originalUser['unionid'],
+                            ];
+                            $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
+                            $transaction->commit();
+                        } else {
+                            $memberId = null;
+                        }
+                    } catch (Exception $e) {
+                        $transaction->rollBack();
+                        $memberId = null;
+                        throw new HttpException($e->getMessage());
+                    }
+                }
+                $redirectUrl = urldecode($url);
+                if ($accessToken) {
+                    if (strpos($redirectUrl, '?') === false) {
+                        $redirectUrl .= '?';
+                    } else {
+                        $redirectUrl .= '&';
+                    }
+                    $redirectUrl .= "accessToken=$accessToken";
+                }
 
-            return $this->redirect($url);
+                $this->redirect($redirectUrl);
+            } else {
+                $isSubscribed = Yii::$app->getDb()->createCommand("SELECT [[subscribe]] FROM {{%wechat_member}} WHERE [[$wxFieldName]] = :wxId", [':wxId' => $wxFieldValue])->queryScalar();
+                if ($isSubscribed == Constant::BOOLEAN_TRUE) {
+                    $url = UrlHelper::addQueryParam($url, 'openid', $wxFieldValue);
+                } else {
+                    if (
+                        ArrayHelper::getValue($this->wxConfig, 'other.subscribe.required', false) &&
+                        ($redirectUrl = ArrayHelper::getValue($this->wxConfig, 'other.subscribe.redirectUrl'))
+                    ) {
+                        $url = $redirectUrl;
+                    }
+                }
+
+                return $this->redirect($url);
+            }
         } else {
             throw new BadRequestHttpException("Bad request.");
         }
