@@ -5,6 +5,12 @@ namespace app\components;
 use Exception;
 use yii\widgets\Block;
 
+/**
+ * Class CssBlock
+ *
+ * @package app\components
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class CssBlock extends Block
 {
 

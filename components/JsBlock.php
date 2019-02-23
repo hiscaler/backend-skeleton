@@ -6,6 +6,12 @@ use Exception;
 use yii\web\View;
 use yii\widgets\Block;
 
+/**
+ * Class JsBlock
+ *
+ * @package app\components
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class JsBlock extends Block
 {
 

@@ -7,6 +7,12 @@ use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 
+/**
+ * Class DynamicMetaModel
+ *
+ * @package app\components
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class DynamicMetaModel
 {
 
