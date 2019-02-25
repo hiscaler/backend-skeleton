@@ -10,6 +10,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
+use yii\web\NotFoundHttpException;
 
 /**
  * OAuth 授权
@@ -60,7 +61,7 @@ class OauthController extends BaseController
      *
      * @param $url
      * @param null $type
-     * @return \yii\web\Response
+     * @return Member|\yii\web\Response
      * @throws BadRequestHttpException
      * @throws \yii\db\Exception
      * @throws \yii\base\Exception
@@ -100,6 +101,8 @@ class OauthController extends BaseController
                         $member->generateAccessToken();
                         $accessToken = $member->access_token;
                         $member->save(false);
+                    } else {
+                        throw new NotFoundHttpException("Not found #$member member.");
                     }
                 } else {
                     $member = new Member();
@@ -108,7 +111,6 @@ class OauthController extends BaseController
                     $member->username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
                     $member->nickname = $nickname ?: $member->username;
                     $member->real_name = $member->nickname;
-                    $member->mobile_phone = $member->username;
                     $member->setPassword($member->username);
                     $member->avatar = $user->getAvatar();
                     $member->status = Member::STATUS_ACTIVE;
@@ -134,7 +136,7 @@ class OauthController extends BaseController
                             $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
                             $transaction->commit();
                         } else {
-                            $memberId = null;
+                            return $member;
                         }
                     } catch (Exception $e) {
                         $transaction->rollBack();
@@ -144,12 +146,7 @@ class OauthController extends BaseController
                 }
                 $redirectUrl = urldecode($url);
                 if ($accessToken) {
-                    if (strpos($redirectUrl, '?') === false) {
-                        $redirectUrl .= '?';
-                    } else {
-                        $redirectUrl .= '&';
-                    }
-                    $redirectUrl .= "accessToken=$accessToken";
+                    $redirectUrl = UrlHelper::addQueryParam($redirectUrl, 'accessToken', $accessToken, false);
                 }
 
                 $this->redirect($redirectUrl);
