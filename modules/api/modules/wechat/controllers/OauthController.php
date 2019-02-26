@@ -23,8 +23,11 @@ use yii\web\NotFoundHttpException;
 class OauthController extends BaseController
 {
 
-    const CALLBACK_FROM_NORMAL = 'normal'; // 正常登录
-    const CALLBACK_FROM_OPEN = 'open'; // 第三方登录
+    /**
+     * 授权回调类型
+     */
+    const CALLBACK_NORMAL_TYPE = 'normal'; // 正常登录
+    const CALLBACK_OPEN_TYPE = 'open'; // 第三方登录
 
     public function init()
     {
@@ -60,16 +63,17 @@ class OauthController extends BaseController
      * 授权回调
      *
      * @param $url
-     * @param null $type
+     * @param string $type
      * @return Member|\yii\web\Response
      * @throws BadRequestHttpException
-     * @throws \yii\db\Exception
+     * @throws HttpException
+     * @throws NotFoundHttpException
      * @throws \yii\base\Exception
-     * @throws Exception
+     * @throws \yii\db\Exception
      */
-    public function actionCallback($url, $type = null)
+    public function actionCallback($url, $type = self::CALLBACK_NORMAL_TYPE)
     {
-        if ($type == self::CALLBACK_FROM_OPEN && $this->enableThirdPartyLogin) {
+        if ($type == self::CALLBACK_OPEN_TYPE && $this->enableThirdPartyLogin) {
             $this->wxApplication['config']->set('app_id', $this->wxConfig['thirdPartyLogin']['app_id']);
             $this->wxApplication['config']->set('secret', $this->wxConfig['thirdPartyLogin']['secret']);
             $scopes = ['snsapi_login'];
@@ -89,7 +93,7 @@ class OauthController extends BaseController
                 $wxFieldName = 'openid';
                 $wxFieldValue = $user->getId(); // openid
             }
-            if ($type == self::CALLBACK_FROM_OPEN) {
+            if ($type == self::CALLBACK_OPEN_TYPE) {
                 // 第三方登录
                 $db = \Yii::$app->getDb();
                 $now = time();
