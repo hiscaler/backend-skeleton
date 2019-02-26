@@ -3,6 +3,7 @@
 namespace app\modules\api\modules\wechat\controllers;
 
 use app\modules\api\models\Constant;
+use app\modules\api\modules\wechat\models\Response;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -44,6 +45,12 @@ class DefaultController extends BaseController
                     }
 
                     return self::DEFAULT_RETURN_MESSAGE;
+                    break;
+
+                case 'text':
+                case 'location':
+                    return call_user_func(Response::class . "::{$message->MsgType}", $message);
+
                     break;
 
                 default:
