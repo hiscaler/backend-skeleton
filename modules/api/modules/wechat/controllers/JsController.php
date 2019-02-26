@@ -5,7 +5,7 @@ namespace app\modules\api\modules\wechat\controllers;
 use Yii;
 
 /**
- * OAuth 授权
+ * JSSDK
  * Class JsController
  *
  * @property \EasyWeChat\Js\Js $wxService
@@ -22,7 +22,7 @@ class JsController extends BaseController
     }
 
     /**
-     * JsSdk 配置值
+     * JSSDK 配置值
      *
      * @param null $url
      * @param string $api
