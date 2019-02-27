@@ -39,13 +39,11 @@ $this->params['menus'] = [
                 'format' => 'raw',
                 'value' => function ($model) {
                     $obj = unserialize($model['job']);
-                    $vars = [];
-                    foreach (get_object_vars($obj) as $key => $value) {
-                        $vars[] = "<em class='badges badges-gray'>$key: $value</em>";
-                    }
+                    $vars = json_encode(get_object_vars($obj), JSON_UNESCAPED_UNICODE + JSON_NUMERIC_CHECK);
 
-                    return "<em class='badges badges-red'>{$model['id']}</em> " . get_class($obj) . PHP_EOL . implode(PHP_EOL, $vars);
-                }
+                    return nl2br("<em class='badges badges-red'>{$model['id']}</em> " . get_class($obj) . PHP_EOL . "<div class='code'>$vars</div>");
+                },
+                'contentOptions' => ['class' => 'wrap']
             ],
             [
                 'attribute' => 'ttr',
@@ -94,6 +92,19 @@ $this->params['menus'] = [
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
+<?php \app\modules\admin\components\CssBlock::begin() ?>
+<style type="text/css">
+    .code {
+        margin-top: 10px;
+        border-radius: 5px;
+        padding: 4px;
+        background: #0f0f0f;
+        color: #FFF;
+        line-height: 24px;
+    }
+</style>
+<?php \app\modules\admin\components\CssBlock::end() ?>
+
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
     $(function () {
@@ -134,4 +145,3 @@ $this->params['menus'] = [
     });
 </script>
 <?php \app\modules\admin\components\JsBlock::end() ?>
-
