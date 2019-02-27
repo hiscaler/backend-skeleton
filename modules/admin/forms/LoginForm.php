@@ -3,7 +3,6 @@
 namespace app\modules\admin\forms;
 
 use app\models\User;
-use app\models\UserLoginLog;
 use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\base\Model;
