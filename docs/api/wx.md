@@ -2,7 +2,7 @@
 ===
 
 ## 微信公众号认证
-GET /api/wechat/auth
+GET /api/wx/auth
 
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
@@ -12,7 +12,7 @@ GET /api/wechat/auth
 无
 
 ## 微信 JSSDK 数据
-GET /api/wechat/jssdk
+GET /api/wx/jssdk
 
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
