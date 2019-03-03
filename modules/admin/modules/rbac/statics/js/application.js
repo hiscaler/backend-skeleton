@@ -145,7 +145,7 @@ var vm = new Vue({
                     })
                     .catch(function (error) {
                     });
-                
+
                 layer.close(boxIndex);
             });
         },
@@ -158,7 +158,7 @@ var vm = new Vue({
                     })
                     .catch(function (error) {
                     });
-                
+
                 layer.close(boxIndex);
             });
         },
@@ -168,7 +168,7 @@ var vm = new Vue({
                 .then(function (response) {
                     vm.activeObject.role = roleName;
                     vm.role.permissions = response.data;
-                    
+
                     var $tr = $('#rbac-roles > table tr:eq(' + (index + 1) + ')'),
                         offset = $tr.offset();
                     $('#window-roles').css({
@@ -219,7 +219,7 @@ var vm = new Vue({
                     })
                     .catch(function (error) {
                     });
-                
+
                 layer.close(boxIndex);
             });
         },
@@ -254,7 +254,7 @@ var vm = new Vue({
                     })
                     .catch(function (error) {
                     });
-                
+
                 layer.close(boxIndex);
             });
         },
@@ -279,7 +279,7 @@ var vm = new Vue({
                 }
                 roles.push(role);
             }
-            
+
             return roles;
         },
         // 当前操作角色关联的权限
@@ -296,7 +296,7 @@ var vm = new Vue({
                 }
                 permissions.push(permission);
             }
-            
+
             return permissions;
         }
     }
@@ -309,10 +309,10 @@ $(function () {
         $('#rbac-app .panel').hide();
         $('#rbac-app #' + $t.attr('data-toggle')).show();
         vm.closeWindow();
-        
+
         return false;
     });
-    
+
     // 角色提交表单
     $('#rbac-submit-role').on('click', function () {
         $.ajax({
@@ -340,10 +340,10 @@ $(function () {
                 layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
             }
         });
-        
+
         return false;
     });
-    
+
     $('#rbac-submit-permission').on('click', function () {
         $.ajax({
             type: 'POST',
@@ -360,7 +360,7 @@ $(function () {
                 layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
             }
         });
-        
+
         return false;
     });
 });
