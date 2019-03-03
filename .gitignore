@@ -4,3 +4,4 @@
 
 /spa/node_modules
 /spa/src/je/*/*.js
+/node_modules
