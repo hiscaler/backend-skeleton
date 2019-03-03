@@ -1,4 +1,7 @@
-# 介绍
+Queue 扩展
+=========
+
+## 介绍
 本扩展基于 **Yii2** 队列管理，使用前请使用
 ```shell
 php composer.phar require --prefer-dist yiisoft/yii2-queue
@@ -13,7 +16,7 @@ php composer update -vvv
 ```
 安装队列扩展
 
-# 相关资料
+## 相关资料
 - [数据表创建](https://github.com/yiisoft/yii2-queue/blob/master/docs/guide/driver-db.md)
 
 注意：暂只针对 **\\yii\\queue\\db\\Queue** 进行处理。
