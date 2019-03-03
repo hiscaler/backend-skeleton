@@ -336,29 +336,42 @@ class BaseCategory extends BaseActiveRecord
     /**
      * 获取所有子节点数据
      *
-     * @param int $id
+     * @param int|null|string $signOrId
      * @param int $level
      * @param bool $getAll
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function getChildren($id = 0, $level = 0, $getAll = false)
+    public static function getChildren($signOrId = null, $level = 0, $getAll = false)
     {
-        return self::_getChildren(self::rawData(false), (int) $id, (int) $level, $getAll);
+        $signOrId = trim($signOrId);
+        $db = \Yii::$app->getDb();
+        if (is_numeric($signOrId)) {
+            $id = (int) $signOrId;
+        } elseif (is_string($signOrId) && $signOrId) {
+            $id = $db->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
+            if (!$id) {
+                return [];
+            }
+        } else {
+            $id = 0;
+        }
+
+        return self::_getChildren(self::rawData(false), $id, (int) $level, $getAll);
     }
 
     /**
      * 获取所有子节点 id 集合
      *
-     * @param mixed|integer $id
+     * @param mixed|integer $signOrId
      * @param int $level
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function getChildrenIds($id = 0, $level = 0)
+    public static function getChildrenIds($signOrId = 0, $level = 0)
     {
         $ids = [];
-        foreach (self::getChildren($id, $level) as $child) {
+        foreach (self::getChildren($signOrId, $level) as $child) {
             $ids[] = (int) $child['id'];
         }
 
