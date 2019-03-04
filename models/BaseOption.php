@@ -66,9 +66,15 @@ class BaseOption
         return $numbers;
     }
 
-    public static function weekDays()
+    /**
+     * 周选项
+     *
+     * @param string $textPrefix
+     * @return array
+     */
+    public static function weekDays($textPrefix = '周')
     {
-        return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        return ["{$textPrefix}日", "{$textPrefix}一", "{$textPrefix}二", "{$textPrefix}三", "{$textPrefix}四", "{$textPrefix}五", "{$textPrefix}六"];
     }
 
     /**
