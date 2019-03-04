@@ -128,10 +128,14 @@ class BaseOption
      */
     public static function tables($withPrefix = true)
     {
-        $tables = Yii::$app->getDb()->getSchema()->getTableNames('', true);
-        if ($withPrefix && $tablePrefix = \Yii::$app->getDb()->tablePrefix) {
+        $db = Yii::$app->getDb();
+        $tables = $db->getSchema()->getTableNames('', true);
+        if (!$withPrefix && $tablePrefix = $db->tablePrefix) {
+            $n = strlen($tablePrefix);
             foreach ($tables as &$table) {
-                $table = str_replace($tablePrefix, '', $table);
+                if (strncmp($table, $tablePrefix, $n) == 0) {
+                    $table = substr($table, $n);
+                }
             }
         }
 
