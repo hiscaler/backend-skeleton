@@ -12,6 +12,16 @@ use yii\console\Exception;
 class Controller extends \yii\console\Controller
 {
 
+    public $debug = true;
+
+    public function init()
+    {
+        parent::init();
+        if (YII_ENV != 'prod') {
+            $this->debug = false;
+        }
+    }
+
     /**
      * @var string 帮助信息
      */
