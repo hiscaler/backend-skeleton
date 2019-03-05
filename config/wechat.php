@@ -94,6 +94,11 @@ return [
                 ],
             ],
             'matchRule' => []
+        ],
+        'oauth' => [
+            'autoRegister' => false, // 第三方扫码后如果不是新会员是否自动注册
+            'appendValueIfNotExistsMember' => 'type=register', // 扫码后会员不存在的情况下在跳转的页面地址上添加什么参数
+            'appendValueIfExistsMember' => 'type=bind', // 扫码后会员存在的情况下在跳转的页面地址上添加什么参数
         ]
     ],
 ];

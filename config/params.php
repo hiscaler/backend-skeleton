@@ -7,6 +7,7 @@ return [
     // 会员
     'member' => [
         'register' => [
+            'type' => 'wx', // 注册类型 normal: 常规表单注册, wx: 使用微信第三方注册
             'status' => 0, // 会员注册默认值（待审核）
             'expiryMinutes' => 10, // 有效截止时间（单位为：分钟），如果为 0 表示无限制
             'rules' => [

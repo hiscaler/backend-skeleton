@@ -10,7 +10,6 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
-use yii\web\NotFoundHttpException;
 
 /**
  * OAuth 授权
@@ -67,7 +66,6 @@ class OauthController extends BaseController
      * @return Member|\yii\web\Response
      * @throws BadRequestHttpException
      * @throws HttpException
-     * @throws NotFoundHttpException
      * @throws \yii\base\Exception
      * @throws \yii\db\Exception
      */
@@ -97,7 +95,7 @@ class OauthController extends BaseController
                 // 第三方登录
                 $db = \Yii::$app->getDb();
                 $now = time();
-                $accessToken = null;
+                $accessToken = null; // 认证成功后的会员 access token 值
                 $memberId = $db->createCommand("SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[$wxFieldName]] = :wxId", [':wxId' => $wxFieldValue])->queryScalar();
                 if ($memberId) {
                     $member = Member::findOne(['id' => $memberId]);
@@ -105,52 +103,72 @@ class OauthController extends BaseController
                         $member->generateAccessToken();
                         $accessToken = $member->access_token;
                         $member->save(false);
-                    } else {
-                        throw new NotFoundHttpException("Not found #$member member.");
                     }
-                } else {
-                    $member = new Member();
-                    $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $user->getNickname());
-                    $maxId = $db->createCommand('SELECT MAX([[id]]) FROM {{%member}}')->queryScalar();
-                    $member->username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
-                    $member->nickname = $nickname ?: $member->username;
-                    $member->real_name = $member->nickname;
-                    $member->setPassword($member->username);
-                    $member->avatar = $user->getAvatar();
-                    $member->status = Member::STATUS_ACTIVE;
+                } elseif ($memberId === false) {
                     $transaction = $db->beginTransaction();
                     try {
-                        if ($member->save()) {
-                            $accessToken = $member->access_token;
-                            $memberId = $member->id;
-                            $columns = [
-                                'member_id' => $memberId,
-                                'subscribe' => Constant::BOOLEAN_TRUE,
-                                'openid' => $openid,
-                                'nickname' => $originalUser['nickname'],
-                                'sex' => $originalUser['sex'],
-                                'country' => $originalUser['country'],
-                                'province' => $originalUser['province'],
-                                'city' => $originalUser['city'],
-                                'language' => $originalUser['language'],
-                                'headimgurl' => $originalUser['headimgurl'],
-                                'subscribe_time' => $now,
-                                'unionid' => $originalUser['unionid'],
-                            ];
-                            $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
-                            $transaction->commit();
+                        if (isset($this->wxConfig['other']['oauth']['autoRegister']) && $this->wxConfig['other']['oauth']['autoRegister']) {
+                            $member = new Member();
+                            $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $user->getNickname());
+                            $maxId = $db->createCommand('SELECT MAX([[id]]) FROM {{%member}}')->queryScalar();
+                            $member->username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
+                            $member->nickname = $nickname ?: $member->username;
+                            $member->real_name = $member->nickname;
+                            $member->setPassword($member->username);
+                            $member->avatar = $user->getAvatar();
+                            $member->status = Member::STATUS_ACTIVE;
+                            if ($member->save()) {
+                                $accessToken = $member->access_token;
+                                $memberId = $member->id;
+                            } else {
+                                return $member;
+                            }
                         } else {
-                            return $member;
+                            $memberId = 0;
                         }
+                        $columns = [
+                            'member_id' => $memberId,
+                            'subscribe' => Constant::BOOLEAN_TRUE,
+                            'openid' => $openid,
+                            'nickname' => $originalUser['nickname'],
+                            'sex' => $originalUser['sex'],
+                            'country' => $originalUser['country'],
+                            'province' => $originalUser['province'],
+                            'city' => $originalUser['city'],
+                            'language' => $originalUser['language'],
+                            'headimgurl' => $originalUser['headimgurl'],
+                            'subscribe_time' => $now,
+                            'unionid' => $originalUser['unionid'],
+                        ];
+                        $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
+                        $transaction->commit();
                     } catch (Exception $e) {
                         $transaction->rollBack();
-                        $memberId = null;
                         throw new HttpException($e->getMessage());
                     }
                 }
+
                 $redirectUrl = urldecode($url);
                 if ($accessToken) {
+                    // $accessToken 有值则表示会员和微信记录均存在，是一个有效的会员，可以发起登录请求
                     $redirectUrl = UrlHelper::addQueryParam($redirectUrl, 'accessToken', $accessToken, false);
+                } else {
+                    $redirectUrl = UrlHelper::addQueryParam($redirectUrl, 'xId', $wxFieldValue, false);
+                }
+
+                if ($memberId) {
+                    $paramKey = 'appendValueIfExistsMember';
+                } else {
+                    $paramKey = 'appendValueIfNotExistsMember';
+                }
+                $appendValue = isset($this->wxConfig['other']['oauth'][$paramKey]) ? trim($this->wxConfig['other']['oauth'][$paramKey]) : null;
+                if ($appendValue) {
+                    if (stripos($redirectUrl, '?') === false) {
+                        $redirectUrl .= '?';
+                    } else {
+                        $redirectUrl .= '&';
+                    }
+                    $redirectUrl .= $appendValue;
                 }
 
                 $this->redirect($redirectUrl);
