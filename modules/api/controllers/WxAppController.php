@@ -88,15 +88,15 @@ class WxAppController extends BaseController
         if (empty($wechatResponseBody) || isset($wechatResponseBody['errcode'])) {
             throw new InvalidValueException("Access wechat api error: {$wechatResponseBody['errmsg']}");
         }
-        $openid = $wechatResponseBody['openid'];
-        if (empty($openid)) {
+        $openId = $wechatResponseBody['openid'];
+        if (empty($openId)) {
             throw new InvalidValueException('openid 无效。');
         }
 
         $now = time();
-        $accessToken = 'wxapp.' . md5($openid . $wechatResponseBody['session_key']) . '.' . ($now + 24 * 3600);
+        $accessToken = 'wxapp.' . md5($openId . $wechatResponseBody['session_key']) . '.' . ($now + 24 * 3600);
         $db = \Yii::$app->getDb();
-        $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
+        $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openId])->queryScalar();
         $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $wechatResponseBody["nickName"]);
         $maxId = $db->createCommand('SELECT MAX([[id]]) FROM {{%member}}')->queryScalar();
         $username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
@@ -122,7 +122,7 @@ class WxAppController extends BaseController
         try {
             if ($member->validate() && $member->save()) {
                 $wechatMember = [
-                    'openid' => $openid,
+                    'openid' => $openId,
                     'nickname' => $nickname,
                     'sex' => $wechatResponseBody['gender'],
                     'country' => isset($wechatResponseBody['country']) ? $wechatResponseBody['country'] : null,
@@ -138,14 +138,14 @@ class WxAppController extends BaseController
                     $wechatMember['subscribe_time'] = null;
                     $db->createCommand()->insert('{{%wechat_member}}', $wechatMember)->execute();
                 } else {
-                    $db->createCommand()->update('{{%wechat_member}}', $wechatMember, ['openid' => $openid])->execute();
+                    $db->createCommand()->update('{{%wechat_member}}', $wechatMember, ['openid' => $openId])->execute();
                 }
 
                 $transaction->commit();
 
                 return [
                     'sessionKey' => $accessToken,
-                    'openid' => $openid,
+                    'openid' => $openId,
                 ];
             } else {
                 Yii::$app->getResponse()->setStatusCode(400);
@@ -201,13 +201,13 @@ class WxAppController extends BaseController
         if (!$totalFee) {
             throw new InvalidArgumentException('无效的 total_fee 参数值。');
         }
-        $openid = trim($request->post('openid'));
-        if (!$openid) {
+        $openId = trim($request->post('openid'));
+        if (!$openId) {
             throw new InvalidArgumentException('无效的 openid 参数值。');
         }
-        $exist = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
+        $exist = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openId])->queryScalar();
         if (!$exist) {
-            throw new InvalidArgumentException("openid $openid 不存在。");
+            throw new InvalidArgumentException("openid $openId 不存在。");
         }
 
         $attributes = [
@@ -215,7 +215,7 @@ class WxAppController extends BaseController
             'body' => $body,
             'out_trade_no' => $outTradeNo,
             'total_fee' => $totalFee,
-            'openid' => $openid,
+            'openid' => $openId,
             'notify_url' => Url::toRoute(['wxapp/payment-notify'], true),
         ];
         $order = new \EasyWeChat\Payment\Order($attributes);
@@ -392,16 +392,16 @@ EOT;
     /**
      * 微信提现（企业付款）
      *
-     * @param $openid
+     * @param $openId
      * @param $amount
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      * @throws \yii\db\Exception
      */
-    public function actionTransfer($openid, $amount)
+    public function actionTransfer($openId, $amount)
     {
         $db = \Yii::$app->getDb();
-        $wechatMember = $db->createCommand('SELECT * FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryOne();
+        $wechatMember = $db->createCommand('SELECT * FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openId])->queryOne();
         if ($wechatMember && $wechatMember['member_id'] == \Yii::$app->getUser()->getId()) {
             $money = (int) Meta::getValue('member', $wechatMember['member_id'], 'money', 0);
             if ($money && $money >= $amount) {
@@ -409,7 +409,7 @@ EOT;
                 $amount = $amount * 100;
                 $merchantPayData = [
                     'partner_trade_no' => $artnerTradeNo,
-                    'openid' => $openid,
+                    'openid' => $openId,
                     'check_name' => 'NO_CHECK',
                     'amount' => $amount,
                     'desc' => '提现测试',

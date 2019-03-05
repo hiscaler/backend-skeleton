@@ -83,7 +83,7 @@ class OauthController extends BaseController
         $user = $this->wxService->scopes($scopes)->user();
         if ($user) {
             $originalUser = $user->getOriginal();
-            $openid = $user->getId();
+            $openId = $user->getId();
             if ($this->enableThirdPartyLogin) {
                 $wxFieldName = 'unionid';
                 $wxFieldValue = $originalUser['unionid']; // unionid
@@ -129,7 +129,7 @@ class OauthController extends BaseController
                         $columns = [
                             'member_id' => $memberId,
                             'subscribe' => Constant::BOOLEAN_FALSE,
-                            'openid' => $openid,
+                            'openid' => $openId,
                             'nickname' => $originalUser['nickname'],
                             'sex' => $originalUser['sex'],
                             'country' => $originalUser['country'],
