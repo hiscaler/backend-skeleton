@@ -103,6 +103,8 @@ class OauthController extends BaseController
                         $member->generateAccessToken();
                         $accessToken = $member->access_token;
                         $member->save(false);
+                    } else {
+                        $memberId = 0;
                     }
                 } elseif ($memberId === false) {
                     $transaction = $db->beginTransaction();
