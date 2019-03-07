@@ -3,6 +3,7 @@
 namespace app\modules\api\modules\wechat\controllers;
 
 use app\modules\api\modules\wechat\models\Order;
+use EasyWeChat\Payment\API;
 use Yii;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
@@ -114,6 +115,30 @@ class PaymentController extends BaseController
         Yii::$app->getResponse()->format = Response::FORMAT_RAW;
         Yii::$app->getResponse()->content = ($response->getContent());
         Yii::$app->end();
+    }
+
+    /**
+     * 撤销订单
+     *
+     * @param $sn
+     * @param string $type
+     * @return \EasyWeChat\Support\Collection
+     * @throws BadRequestHttpException
+     */
+    public function actionReverse($sn, $type = API::OUT_TRADE_NO)
+    {
+        $types = [
+            API::TRANSACTION_ID => 'transaction_id',
+            API::OUT_TRADE_NO => 'out_trade_no',
+        ];
+        if (isset($types[$type])) {
+            throw new BadRequestHttpException('type 参数值错误。');
+        }
+        if ($type == API::OUT_TRADE_NO) {
+            return $this->wxService->reverse($sn, $type);
+        } else {
+            return $this->wxService->reverseByTransactionId($sn);
+        }
     }
 
 }
