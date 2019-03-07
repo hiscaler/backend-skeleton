@@ -40,77 +40,81 @@ class WxController extends BaseController
      * @throws \yii\db\Exception
      * @throws Exception
      */
-    public function actionAuth($redirectUrl)
+    public function actionAuth($redirectUrl = null)
     {
-        $db = Yii::$app->getDb();
         $application = new Application(Yii::$app->params['wechat']);
-        $user = $application->oauth->scopes(['snsapi_userinfo'])->user();
-        if ($user) {
-            $now = time();
-            $accessToken = null;
-            $openid = $user->openid;
-            $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
-            if ($memberId) {
-                $member = Member::findOne(['id' => $memberId]);
-                if ($member !== null) {
-                    $accessToken = $member->generateAccessToken();
-                    $member->access_token = $accessToken;
-                    $member->save(false);
-                }
-            } else {
-                $member = new Member();
-                $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $user->getNickname());
-                $maxId = $db->createCommand('SELECT MAX[[id]] FROM {{%member}}')->queryScalar();
-                $member->username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
-                $member->nickname = $nickname ?: $member->username;
-                $member->real_name = $member->nickname;
-                $member->setPassword($member->username);
-                $member->avatar = $user->headimgurl;
-                $member->status = Member::STATUS_ACTIVE;
-                $accessToken = $member->generateAccessToken();
-                $member->access_token = $accessToken;
-                $transaction = $db->beginTransaction();
-                try {
-                    if ($member->save()) {
-                        $memberId = $member->id;
-                        $columns = [
-                            'member_id' => $memberId,
-                            'subscribe' => Constant::BOOLEAN_TRUE,
-                            'openid' => $openid,
-                            'nickname' => $user->nickname,
-                            'sex' => $user->sex,
-                            'country' => $user->country,
-                            'province' => $user->province,
-                            'city' => $user->city,
-                            'language' => $user->language,
-                            'headimgurl' => $user->headimgurl,
-                            'subscribe_time' => $now,
-                        ];
-                        $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
-                        $transaction->commit();
-                    } else {
-                        $memberId = null;
-                    }
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                    $memberId = null;
-                    throw new Exception($e->getMessage());
-                }
-            }
-
-            $redirectUrl = urldecode($redirectUrl);
-            if ($accessToken) {
-                if (strpos($redirectUrl, '?') === false) {
-                    $redirectUrl .= '?';
-                } else {
-                    $redirectUrl .= '&';
-                }
-                $redirectUrl .= "accessToken=$accessToken";
-            }
-
-            $this->redirect($redirectUrl);
+        if (empty($redirectUrl)) {
+            $application->server->serve()->send();
         } else {
-            throw new InvalidCallException('拉取微信认证失败。');
+            $db = Yii::$app->getDb();
+            $user = $application->oauth->scopes(['snsapi_userinfo'])->user();
+            if ($user) {
+                $now = time();
+                $accessToken = null;
+                $openId = $user->getId();
+                $memberId = $db->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openId])->queryScalar();
+                if ($memberId) {
+                    $member = Member::findOne(['id' => $memberId]);
+                    if ($member !== null) {
+                        $accessToken = $member->generateAccessToken();
+                        $member->access_token = $accessToken;
+                        $member->save(false);
+                    }
+                } else {
+                    $member = new Member();
+                    $nickname = preg_replace('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', '', $user->nickname);
+                    $maxId = $db->createCommand('SELECT MAX([[id]]) FROM {{%member}}')->queryScalar();
+                    $member->username = sprintf('wx%08d', $maxId + 1) . rand(1000, 9999);
+                    $member->nickname = $nickname ?: $member->username;
+                    $member->real_name = $member->nickname;
+                    $member->setPassword($member->username);
+                    $member->avatar = $user->headimgurl;
+                    $member->status = Member::STATUS_ACTIVE;
+                    $member->generateAccessToken();
+                    $accessToken = $member->access_token;
+                    $transaction = $db->beginTransaction();
+                    try {
+                        if ($member->save()) {
+                            $memberId = $member->id;
+
+                            $columns = [
+                                'member_id' => $memberId,
+                                'subscribe' => Constant::BOOLEAN_TRUE,
+                                'openid' => $openId,
+                                'nickname' => $user->nickname,
+                                'sex' => $user->sex,
+                                'country' => $user->country,
+                                'province' => $user->province,
+                                'city' => $user->city,
+                                'language' => $user->language,
+                                'headimgurl' => $user->headimgurl,
+                                'subscribe_time' => $now,
+                            ];
+                            $db->createCommand()->insert('{{%wechat_member}}', $columns)->execute();
+                            $transaction->commit();
+                        } else {
+                            $memberId = null;
+                        }
+                    } catch (Exception $e) {
+                        $transaction->rollBack();
+                        $memberId = null;
+                        throw new Exception($e->getMessage());
+                    }
+                }
+                $redirectUrl = urldecode($redirectUrl);
+                if ($accessToken) {
+                    if (strpos($redirectUrl, '?') === false) {
+                        $redirectUrl .= '?';
+                    } else {
+                        $redirectUrl .= '&';
+                    }
+                    $redirectUrl .= "accessToken=$accessToken";
+                }
+
+                $this->redirect($redirectUrl);
+            } else {
+                throw new InvalidCallException('拉取微信认证失败。');
+            }
         }
     }
 
