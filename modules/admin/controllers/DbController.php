@@ -57,6 +57,7 @@ class DbController extends Controller
      * @rbacDescription 备份历史记录查看权限
      *
      * @return string
+     * @throws Exception
      */
     public function actionIndex()
     {
