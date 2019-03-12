@@ -1,8 +1,7 @@
 <?php
 
-namespace app\modules\api\modules\slide\models;
+namespace app\modules\api\modules\notice\models;
 
-use app\modules\api\modules\notice\models\Notice;
 use yii\data\ActiveDataProvider;
 
 class NoticeSearch extends Notice
