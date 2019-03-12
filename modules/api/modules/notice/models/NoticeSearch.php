@@ -23,7 +23,7 @@ class NoticeSearch extends Notice
      */
     public function search($params)
     {
-        $query = Slide::find();
+        $query = Notice::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
