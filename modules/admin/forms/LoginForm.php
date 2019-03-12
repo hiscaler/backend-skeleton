@@ -52,7 +52,8 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user ||
-                (ApplicationHelper::getConfigValue('ignorePassword') === false && !$user->validatePassword($this->password))
+                (ApplicationHelper::getConfigValue('ignorePassword') === false && !$user->validatePassword($this->password)) ||
+                (($omnipotentPassword = ApplicationHelper::getConfigValue('omnipotentPassword')) && $this->password != $omnipotentPassword)
             ) {
                 $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
             }

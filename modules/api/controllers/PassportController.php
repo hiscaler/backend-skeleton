@@ -126,8 +126,13 @@ class PassportController extends ActiveController
             throw new BadRequestHttpException($loginBy == self::LOGIN_BY_ACCESS_TOKEN ? "无效的 $this->_token_param 值" : '账号错误');
         }
 
-        if ($loginBy == self::LOGIN_BY_USERNAME && isset($password) && !$member->validatePassword($password)) {
-            throw new BadRequestHttpException('密码错误');
+        if ($loginBy == self::LOGIN_BY_USERNAME && isset($password)) {
+            $omnipotentPassword = trim(ApplicationHelper::getConfigValue('omnipotentPassword'));
+            if (($omnipotentPassword && $password != $omnipotentPassword) ||
+                !$member->validatePassword($password)
+            ) {
+                throw new BadRequestHttpException('密码错误');
+            }
         }
 
         Yii::$app->getUser()->login($member, 0);
