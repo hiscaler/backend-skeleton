@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use function array_keys;
-
 /**
  * This is the model class for table "{{%member_profile}}".
  *
