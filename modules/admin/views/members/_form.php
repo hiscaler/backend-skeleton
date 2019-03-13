@@ -49,8 +49,6 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-            <?= $form->field($model, 'tel')->textInput(['maxlength' => true]) ?>
-
             <?= $form->field($model, 'mobile_phone')->textInput(['maxlength' => true]) ?>
 
             <?= \yadjet\datePicker\my97\DatePicker::widget([
