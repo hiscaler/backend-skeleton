@@ -21,7 +21,6 @@
     "require": {
         "php": ">=5.5.9",
         "yiisoft/yii2": ">=2.0.5",
-        "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "yadjet/helpers": "dev-master",
         "yadjet/yii2-file-upload-behaviors": "~1.0.0",
@@ -29,7 +28,6 @@
         "yadjet/yii2-ueditor": "dev-master",
         "yadjet/yii2-ztree": "dev-master",
         "yadjet/yii2-validators": "dev-master",
-        "yadjet/http": "dev-master",
         "overtrue/wechat": "~3.1",
         "yiisoft/yii2-imagine": "~2.1.0",
         "phpoffice/phpexcel": "^1.8"
