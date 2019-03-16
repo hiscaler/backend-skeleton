@@ -65,8 +65,20 @@ class Module extends \yii\base\Module
         $response = Yii::$app->getResponse();
         $response->format && $response->format = Response::FORMAT_JSON;
 
+        $modules = \app\models\Module::map();
+        if (isset($modules['queue']) && class_exists('\yii\queue\db\Queue')) {
+            \Yii::$app->setComponents([
+                'queue' => [
+                    'class' => \yii\queue\db\Queue::class,
+                    'mutex' => \yii\mutex\MysqlMutex::class,
+                    'channel' => 'default',
+                    'as log' => \yii\queue\LogBehavior::class,
+                ],
+            ]);
+        }
+
         // 载入已经安装的模块
-        foreach (\app\models\Module::map() as $alias => $name) {
+        foreach ($modules as $alias => $name) {
             $this->setModule($alias, [
                 'class' => 'app\\modules\\api\\modules\\' . $alias . '\\Module',
             ]);
