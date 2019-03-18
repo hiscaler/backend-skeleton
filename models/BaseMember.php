@@ -178,11 +178,13 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @inheritdoc
+     * 验证会员是否到期
+     *
+     * @param BaseMember $member
+     * @return BaseMember|null
      */
-    public static function findIdentity($id)
+    private static function parseExpiredMember(BaseMember $member)
     {
-        $member = static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
         if ($member &&
             $member->expired_datetime &&
             ApplicationHelper::getConfigValue('member.login.expiredAfter') != 'continue' &&
@@ -192,6 +194,16 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         }
 
         return $member;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findIdentity($id)
+    {
+        $member = static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+
+        return self::parseExpiredMember($member);
     }
 
     /**
@@ -233,15 +245,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             }
         }
 
-        if ($member &&
-            $member->expired_datetime &&
-            ApplicationHelper::getConfigValue('member.login.expiredAfter') != 'continue' &&
-            $member->expired_datetime <= time()
-        ) {
-            $member = null;
-        }
-
-        return $member;
+        return self::parseExpiredMember($member);
     }
 
     /**
@@ -258,17 +262,24 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             $condition['type'] = (int) $type;
         }
 
-        $member = static::findOne($condition);
+        return self::parseExpiredMember(static::findOne($condition));
+    }
 
-        if ($member &&
-            $member->expired_datetime &&
-            ApplicationHelper::getConfigValue('member.login.expiredAfter') != 'continue' &&
-            $member->expired_datetime <= time()
-        ) {
-            $member = null;
+    /**
+     * 根据手机号码查找会员
+     *
+     * @param $mobilePhone
+     * @param null $type
+     * @return BaseMember|null
+     */
+    public static function findByMobilePhone($mobilePhone, $type = null)
+    {
+        $condition = ['mobile_phone' => $mobilePhone, 'status' => self::STATUS_ACTIVE];
+        if ($type !== null) {
+            $condition['type'] = (int) $type;
         }
 
-        return $member;
+        return self::parseExpiredMember(static::findOne($condition));
     }
 
     /**
