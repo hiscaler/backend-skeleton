@@ -2,6 +2,7 @@
 
 namespace app\modules\api\modules\wechat\controllers;
 
+use app\modules\api\modules\wechat\business\TradeOrder;
 use app\modules\api\modules\wechat\models\Order;
 use EasyWeChat\Payment\API;
 use Yii;
@@ -103,7 +104,17 @@ class PaymentController extends BaseController
                     }
                     $db->createCommand()->update('{{%wechat_order}}', $columns, ['id' => $orderId])->execute();
 
-                    return true;
+                    $tradeOrder = TradeOrder::findOne($orderId);
+                    if ($this->wxConfig['business']['class'] && class_exists($this->wxConfig['business']['class'])) {
+                        $success = call_user_func([$this->wxConfig['business']['class'], 'process'], $tradeOrder);
+                        if ($success) {
+                            return true;
+                        } else {
+                            throw new BadRequestHttpException("订单处理失败。");
+                        }
+                    } else {
+                        return true;
+                    }
                 } else {
                     throw new NotFoundHttpException('ORDER NOT FOUND');
                 }
