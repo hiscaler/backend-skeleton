@@ -183,7 +183,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
      * @param BaseMember $member
      * @return BaseMember|null
      */
-    private static function parseExpiredMember(BaseMember $member)
+    private static function parseExpiredMember($member)
     {
         if ($member &&
             $member->expired_datetime &&
