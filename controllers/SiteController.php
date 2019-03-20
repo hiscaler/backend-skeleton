@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\forms\ForgetPasswordForm;
 use app\forms\MemberLoginForm;
+use app\forms\MemberMobilePhoneLoginForm;
 use app\forms\MemberRegisterForm;
 use app\forms\ResetPasswordForm;
 use app\models\Meta;
@@ -120,6 +121,28 @@ class SiteController extends Controller
         }
 
         return $this->render('login', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * 手机验证码登录
+     *
+     * @return string|\yii\web\Response
+     */
+    public function actionMobilePhoneLogin()
+    {
+        $this->layout = 'base';
+        if (!Yii::$app->getUser()->getIsGuest()) {
+            return $this->goHome();
+        }
+
+        $model = new MemberMobilePhoneLoginForm();
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
+            return $this->goBack();
+        }
+
+        return $this->render('mobile-phone-login', [
             'model' => $model,
         ]);
     }
