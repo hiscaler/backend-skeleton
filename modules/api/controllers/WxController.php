@@ -3,6 +3,7 @@
 namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\BaseController;
+use app\modules\api\forms\WechatMemberBindForm;
 use app\modules\api\models\Constant;
 use app\modules\api\models\Member;
 use EasyWeChat\Foundation\Application;
@@ -141,6 +142,32 @@ class WxController extends BaseController
         $js->setUrl($url);
 
         return $js->config($api, $debug, $beta, false);
+    }
+
+    /**
+     * 微信帐号绑定
+     *
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
+     */
+    public function actionBind()
+    {
+        $config = Yii::$app->params['wechat'];
+        if (!isset($config['thirdPartyLogin'], $config['thirdPartyLogin']['app_id'], $config['thirdPartyLogin']['secret'])) {
+            $field = 'unionid';
+        } else {
+            $field = 'openid';
+        }
+
+        $model = new WechatMemberBindForm();
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $model->xid_field = $field;
+        if ($model->validate() && $model->bind()) {
+            $response = Yii::$app->getResponse();
+            $response->setStatusCode(204);
+        }
+
+        return $model;
     }
 
 }
