@@ -12,6 +12,7 @@ use yii\base\InvalidArgumentException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
+use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
 
 /**
@@ -23,7 +24,11 @@ use yii\web\ServerErrorHttpException;
 class PassportController extends ActiveController
 {
 
+    /**
+     * 会员登录类型
+     */
     const LOGIN_BY_USERNAME = 'username';
+    const LOGIN_BY_MOBILE_PHONE = 'mobilePhone';
     const LOGIN_BY_ACCESS_TOKEN = 'accessToken';
 
     public $modelClass = Member::class;
@@ -113,20 +118,29 @@ class PassportController extends ActiveController
             $loginBy = self::LOGIN_BY_ACCESS_TOKEN;
             $member = Member::findIdentityByAccessToken($token);
         } else {
-            $loginBy = self::LOGIN_BY_USERNAME;
+            $mobilePhone = $request->post('mobile_phone');
             $username = $request->post('username');
             $password = $request->post('password');
-            if (empty($username) || empty($password)) {
-                throw new InvalidArgumentException('无效的 username 或 password 参数。');
+            if ($mobilePhone) {
+                $loginBy = self::LOGIN_BY_MOBILE_PHONE;
+                if (empty($mobilePhone) || empty($password)) {
+                    throw new HttpException('无效的 mobile_phone 或 password 参数。');
+                }
+                $member = Member::findByMobilePhone($mobilePhone);
+            } else {
+                $loginBy = self::LOGIN_BY_USERNAME;
+                if (empty($username) || empty($password)) {
+                    throw new HttpException('无效的 username 或 password 参数。');
+                }
+                $member = Member::findByUsername($username);
             }
-            $member = Member::findByUsername($username);
         }
 
         if ($member === null) {
-            throw new BadRequestHttpException($loginBy == self::LOGIN_BY_ACCESS_TOKEN ? "无效的 $this->_token_param 值" : '账号错误');
+            throw new BadRequestHttpException($loginBy == self::LOGIN_BY_ACCESS_TOKEN ? "无效的 $this->_token_param 值。" : '无效的登录帐号。');
         }
 
-        if ($loginBy == self::LOGIN_BY_USERNAME && isset($password)) {
+        if ($loginBy != self::LOGIN_BY_USERNAME && isset($password)) {
             $omnipotentPassword = trim(ApplicationHelper::getConfigValue('omnipotentPassword'));
             if (($omnipotentPassword && $password != $omnipotentPassword) ||
                 !$member->validatePassword($password)
