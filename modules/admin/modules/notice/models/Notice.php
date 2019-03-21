@@ -3,6 +3,7 @@
 namespace app\modules\admin\modules\notice\models;
 
 use app\models\BaseActiveRecord;
+use app\models\Constant;
 use Yii;
 
 /**
@@ -48,11 +49,13 @@ class Notice extends BaseActiveRecord
         return array_merge(parent::rules(), [
             [['category_id', 'enabled', 'clicks_count', 'ordering', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title', 'content', 'published_at'], 'required'],
-            [['title', 'description'], 'trim'],
+            [['title', 'description', 'content'], 'trim'],
             [['description', 'content'], 'string'],
             [['title'], 'string', 'max' => 160],
             ['category_id', 'default', 'value' => 0],
             ['clicks_count', 'default', 'value' => 0],
+            ['enabled', 'boolean'],
+            ['enabled', 'default', 'value' => Constant::BOOLEAN_TRUE],
             ['published_at', 'datetime', 'timestampAttribute' => 'published_at'],
         ]);
     }
@@ -77,6 +80,20 @@ class Notice extends BaseActiveRecord
             'updated_at' => '更新时间',
             'updated_by' => '更新人',
         ];
+    }
+
+    // Events
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($insert) {
+                $this->clicks_count = 0;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
