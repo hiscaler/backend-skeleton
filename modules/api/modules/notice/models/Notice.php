@@ -26,4 +26,9 @@ class Notice extends \app\modules\admin\modules\notice\models\Notice
         ];
     }
 
+    public function extraFields()
+    {
+        return ['category'];
+    }
+
 }
