@@ -4,7 +4,7 @@ namespace app\modules\api\modules\notice\controllers;
 
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\modules\notice\models\Notice;
-use app\modules\api\modules\slide\models\NoticeSearch;
+use app\modules\api\modules\notice\models\NoticeSearch;
 
 /**
  * /api/notice/default
