@@ -90,7 +90,6 @@ class DefaultController extends BaseController
      * @return mixed
      * @throws HttpException
      * @throws \yii\base\InvalidConfigException
-     * @throws \yii\db\Exception
      */
     public function actionCreate()
     {
