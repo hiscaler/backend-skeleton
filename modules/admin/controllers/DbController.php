@@ -154,9 +154,7 @@ class DbController extends Controller
      *
      * @param $name
      * @throws NotFoundHttpException
-     * @throws \Exception
      * @throws \yii\base\NotSupportedException
-     * @throws \yii\db\Exception
      */
     public function actionRestore($name)
     {
