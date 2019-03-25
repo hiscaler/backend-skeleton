@@ -57,10 +57,10 @@ return [
      * 微信支付
      */
     'payment' => [
-        'merchant_id' => 'your-mch-id',
-        'key' => 'key-for-signature',
-        'cert_path' => 'path/to/your/cert.pem', // XXX: 绝对路径！！！！
-        'key_path' => 'path/to/your/key',      // XXX: 绝对路径！！！！
+        'merchant_id' => '', // 商户号
+        'key' => '', // 支付密钥
+        'cert_path' => 'certs/cert.pem', // 基于站点根目录
+        'key_path' => 'certs/key',      // 基于站点根目录
         // 'device_info'     => '013467007045764',
         // 'sub_app_id'      => '',
         // 'sub_merchant_id' => '',

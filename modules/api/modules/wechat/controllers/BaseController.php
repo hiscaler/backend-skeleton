@@ -9,6 +9,7 @@ use EasyWeChat\User\Tag;
 use Overtrue\Socialite\Providers\WeChatProvider;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\helpers\FileHelper;
 use yii\helpers\Inflector;
 use yii\helpers\Url;
 use yii\rest\Controller;
@@ -60,6 +61,24 @@ class BaseController extends Controller
         if (is_array($this->wxConfig['oauth']['callback'])) {
             $this->wxConfig['oauth']['callback'] = Url::toRoute($this->wxConfig['oauth']['callback']);
         }
+
+        // 支付设置
+        if (isset($this->wxConfig['merchant_id'])) {
+            $certPath = $this->wxConfig['cert_path'];
+            $keyPath = $this->wxConfig['key_path'];
+            if ($certPath || $keyPath) {
+                $dir = Yii::getAlias('@webroot');
+                if (!file_exists($certPath)) {
+                    $certPath = $dir . '/' . trim($certPath, '/');
+                    $this->wxConfig['cert_path'] = FileHelper::normalizePath($certPath, '/');
+                }
+                if ($keyPath && !file_exists($keyPath)) {
+                    $keyPath = $dir . '/' . trim($keyPath, '/');
+                    $this->wxConfig['key_path'] = FileHelper::normalizePath($keyPath, '/');
+                }
+            }
+        }
+
         $this->wxApplication = new Application($this->wxConfig);
     }
 
