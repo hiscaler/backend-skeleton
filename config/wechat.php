@@ -101,6 +101,7 @@ return [
             'appendValueIfExistsMember' => 'type=bind', // 扫码后会员存在的情况下在跳转的页面地址上添加什么参数
         ]
     ],
+    // 微信支付发起回调后的业务逻辑处理类
     'business' => [
         'class' => \app\modules\api\modules\wechat\business\NothingBusiness::class,
     ]
