@@ -15,7 +15,7 @@ use yii\web\BadRequestHttpException;
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class NoticeController extends BaseController
+class NoticeController extends Controller
 {
 
     public function init()

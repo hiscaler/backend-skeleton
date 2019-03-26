@@ -13,7 +13,7 @@ use yii\helpers\ArrayHelper;
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class MenuController extends BaseController
+class MenuController extends Controller
 {
 
     public function init()

@@ -2,6 +2,7 @@
 
 namespace app\modules\api\modules\wechat\controllers;
 
+use app\modules\api\extensions\BaseController;
 use EasyWeChat\Foundation\Application;
 use EasyWeChat\Material\Temporary;
 use EasyWeChat\ShakeAround\ShakeAround;
@@ -12,7 +13,6 @@ use yii\base\InvalidConfigException;
 use yii\helpers\FileHelper;
 use yii\helpers\Inflector;
 use yii\helpers\Url;
-use yii\rest\Controller;
 
 /**
  * 微信处理接口
@@ -21,7 +21,7 @@ use yii\rest\Controller;
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class BaseController extends Controller
+class Controller extends BaseController
 {
 
     const DEFAULT_RETURN_MESSAGE = '';

@@ -14,7 +14,7 @@ use yii\helpers\ArrayHelper;
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class DefaultController extends BaseController
+class DefaultController extends Controller
 {
 
     private $_message;

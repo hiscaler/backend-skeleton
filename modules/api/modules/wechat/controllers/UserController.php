@@ -10,7 +10,7 @@ namespace app\modules\api\modules\wechat\controllers;
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class UserController extends BaseController
+class UserController extends Controller
 {
 
     public function init()

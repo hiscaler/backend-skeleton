@@ -17,7 +17,7 @@ use yii\web\UploadedFile;
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class MaterialController extends BaseController
+class MaterialController extends Controller
 {
 
     /**
