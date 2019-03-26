@@ -2,14 +2,15 @@
 
 namespace app\modules\api\modules\wechat\controllers;
 
-use app\modules\api\modules\wechat\business\TradeOrder;
 use app\modules\api\modules\wechat\models\Order;
+use app\modules\api\modules\wechat\models\PrepareOrder;
 use EasyWeChat\Payment\API;
 use Yii;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\web\ServerErrorHttpException;
 
 /**
  * 支付
@@ -19,7 +20,7 @@ use yii\web\Response;
  * @package app\modules\api\modules\wechat\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class PaymentController extends BaseController
+class PaymentController extends Controller
 {
 
     private $_notify_url;
@@ -30,7 +31,7 @@ class PaymentController extends BaseController
         $this->wxService = $this->wxApplication->payment;
         $notifyUrl = isset($this->wxConfig['payment']['notify_url']) ? $this->wxConfig['payment']['notify_url'] : null;
         if (empty($notifyUrl)) {
-            $this->_notify_url = Url::toRoute(['/api/payment/notify'], true);
+            $this->_notify_url = Url::toRoute(['/api/wechat/payment/notify'], true);
         } elseif (is_array($notifyUrl)) {
             $this->_notify_url = Url::toRoute($notifyUrl, true);
         } else {
@@ -43,38 +44,76 @@ class PaymentController extends BaseController
      *
      * @return array|\EasyWeChat\Support\Collection|string
      * @throws BadRequestHttpException
-     * @throws \yii\db\Exception
+     * @throws ServerErrorHttpException
      */
     public function actionOrder()
     {
-        $model = new Order();
+        $model = new PrepareOrder();
         $model->notify_url = $this->_notify_url;
         $model->load(Yii::$app->getRequest()->getQueryParams(), '');
         if ($model->validate()) {
-            $attributes = $model->toArray();
-            $order = new \EasyWeChat\Payment\Order($attributes);
-            $response = $this->wxService->prepare($order);
+            $allowAttributes = [
+                'body',
+                'detail',
+                'attach',
+                'out_trade_no',
+                'fee_type',
+                'total_fee',
+                'spbill_create_ip',
+                'time_start',
+                'time_expire',
+                'goods_tag',
+                'notify_url',
+                'trade_type',
+                'product_id',
+                'limit_pay',
+                'openid',
+                'sub_openid',
+                'auth_code',
+            ];
+            $attributes = [
+                'notify_url' => $model->notify_url,
+            ];
+            foreach ($model->toArray() as $key => $value) {
+                if (in_array($key, $allowAttributes)) {
+                    $attributes[$key] = $value;
+                }
+            }
+
+            $response = $this->wxService->prepare(new \EasyWeChat\Payment\Order($attributes));
             if ($response->return_code == 'SUCCESS' && $response->result_code == 'SUCCESS') {
                 $prepayId = $response->prepay_id;
-                $config = $this->wxService->configForJSSDKPayment($prepayId);
+                switch ($model->trade_type) {
+                    case \EasyWeChat\Payment\Order::NATIVE:
+                        $config = $this->wxService->configForJSSDKPayment($prepayId);
+                        $config['code_url'] = $response->get('code_url');
+                        $config['out_trade_no'] = $model->out_trade_no;
+                        break;
+
+                    case \EasyWeChat\Payment\Order::APP:
+                        $config = $this->wxService->configForAppPayment($prepayId);
+                        break;
+
+                    default:
+                        $config = $this->wxService->configForPayment($prepayId, true);
+                        break;
+                }
 
                 // 创建商户订单
-                $columns = $attributes;
-                unset($columns['notify_url']);
-                $wechatOptions = Yii::$app->params['wechat'];
-                $columns['appid'] = $wechatOptions['app_id'];
-                $columns['mch_id'] = $wechatOptions['payment']['merchant_id'];
-                $columns['nonce_str'] = $config['nonceStr'];
-                $columns['sign'] = $config['paySign'];
-                $columns['sign_type'] = $config['signType'];
-                $columns['time_start'] = time();
-                $columns['status'] = \app\modules\admin\modules\wechat\models\Order::STATUS_PENDING;
-                $columns['spbill_create_ip'] = Yii::$app->getRequest()->getUserIP();
-                \Yii::$app->getDb()->createCommand()->insert('{{%wechat_order}}', $columns)->execute();
+                $model->nonce_str = $config['nonceStr'];
+                $model->sign = $config['paySign'];
+                $model->sign_type = $config['signType'];
+                if ($model->save()) {
+                    $config['id'] = $model->id;
 
-                return $config;
+                    return $config;
+                } elseif (!$model->hasErrors()) {
+                    throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
+                }
+
+                return $model;
             } else {
-                throw new BadRequestHttpException('支付失败。');
+                throw new BadRequestHttpException('支付失败（' . ($response->err_code_des ?: $response->return_msg) . '）。');
             }
         } else {
             return $model;
@@ -90,36 +129,54 @@ class PaymentController extends BaseController
     public function actionNotify()
     {
         $response = $this->wxService->handleNotify(function ($notify, $successful) {
+            $order = Order::findOne(['appid' => $notify['appid'], 'out_trade_no' => $notify['out_trade_no']]);
+            if ($order === null) {
+                throw new NotFoundHttpException('ORDER NOT FOUND');
+            }
             if ($successful) {
-                $db = \Yii::$app->getDb();
-                $orderId = $db->createCommand('SELECT [[id]] FROM {{%wechat_order}} WHERE [[appid]] = :appId AND [[nonce_str]] = :nonceStr AND [[out_trade_no]] = :outTradeNo AND [[openid]] = :openid', [':appId' => $notify['appid'], ':nonceStr' => $notify['nonce_str'], ':outTradeNo' => $notify['out_trade_no'], ':openid' => $notify['openid']])->queryScalar();
-                if ($orderId) {
-                    $columns = [
-                        'transaction_id' => $notify['transaction_id'],
-                        'time_expire' => $notify['time_end'],
-                    ];
-                    if (isset($notify['trade_state'])) {
-                        $columns['trade_state'] = $notify['trade_state'];
-                        $columns['trade_state_desc'] = $notify['trade_state_desc'];
-                    }
-                    $db->createCommand()->update('{{%wechat_order}}', $columns, ['id' => $orderId])->execute();
+                if ($order->status == Order::STATUS_PENDING) {
+                    !$order->openid && $order->openid = $notify['openid'];
+                    $order->transaction_id = $notify['transaction_id'];
+                    $timeEnd = $notify['time_end'];
+                    $year = substr($timeEnd, 0, 4);
+                    list($month, $day, $hour, $minute, $second) = str_split(substr($timeEnd, 4), 2);
+                    $order->time_end = (new \DateTime())->setDate($year, $month, $day)->setTime($hour, $minute, $second)->getTimestamp();
 
-                    $tradeOrder = TradeOrder::findOne($orderId);
+                    if (isset($notify['trade_state'])) {
+                        $order->trade_state = $notify['trade_state'];
+                        $order->trade_state_desc = $notify['trade_state_desc'];
+                    }
+
                     if (isset($this->wxConfig['business']['class']) && class_exists($this->wxConfig['business']['class'])) {
-                        $success = call_user_func([$this->wxConfig['business']['class'], 'process'], $tradeOrder);
-                        if ($success) {
-                            return true;
-                        } else {
-                            throw new BadRequestHttpException("订单处理失败。");
+                        try {
+                            $class = $this->wxConfig['business']['class'];
+                            $success = call_user_func([new $class(), 'process'], $order);
+                            if ($success) {
+                                $order->status = Order::STATUS_SUCCESS;
+
+                                return $order->save();
+                            } else {
+                                throw new BadRequestHttpException("订单处理失败。");
+                            }
+                        } catch (\Exception $e) {
+                            Yii::error($e->getMessage(), 'api');
+
+                            return false;
                         }
                     } else {
                         return true;
                     }
                 } else {
-                    throw new NotFoundHttpException('ORDER NOT FOUND');
+                    return true;
                 }
             } else {
-                return false;
+                if (isset($notify['trade_state'])) {
+                    $order->trade_state = $notify['trade_state'];
+                    $order->trade_state_desc = $notify['trade_state_desc'];
+                }
+                $order->status = Order::STATUS_FAIL;
+
+                return $order->save();
             }
         });
 
