@@ -1,9 +1,7 @@
 <?php
 
-use app\modules\admin\components\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\admin\modules\wechat\models\OrderSearch */

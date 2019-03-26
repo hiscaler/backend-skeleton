@@ -96,7 +96,7 @@ $this->params['menus'] = [
                 shadeClose: true,
                 content: queryUrl.replace('_id', $t.attr('data-key'))
             });
-
+            
             return false;
         });
     });

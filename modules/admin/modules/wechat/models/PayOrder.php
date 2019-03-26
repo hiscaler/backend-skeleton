@@ -2,8 +2,6 @@
 
 namespace app\modules\admin\modules\wechat\models;
 
-use Yii;
-
 /**
  * This is the model class for table "{{%wechat_pay_order}}".
  *
