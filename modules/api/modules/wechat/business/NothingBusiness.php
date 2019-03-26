@@ -2,6 +2,8 @@
 
 namespace app\modules\api\modules\wechat\business;
 
+use app\modules\api\modules\wechat\models\Order;
+
 /**
  * Class BusinessInterface
  * 业务处理接口类
@@ -11,7 +13,7 @@ namespace app\modules\api\modules\wechat\business;
 class NothingBusiness implements BusinessInterface
 {
 
-    public function process(TradeOrder $order)
+    public function process(Order $order)
     {
         return true;
     }
