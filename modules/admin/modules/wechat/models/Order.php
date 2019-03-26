@@ -2,7 +2,9 @@
 
 namespace app\modules\admin\modules\wechat\models;
 
+use app\models\Member;
 use app\models\WechatMember;
+use Yii;
 
 /**
  * This is the model class for table "{{%wechat_order}}".
@@ -33,15 +35,17 @@ use app\models\WechatMember;
  * @property string $trade_state 交易状态
  * @property string $trade_state_desc 交易状态描述
  * @property int $status 状态
+ * @property int $member_id 会员
  */
 class Order extends \yii\db\ActiveRecord
 {
 
+    /**
+     * 状态选项
+     */
     const STATUS_PENDING = 0;
-    const STATUS_NOTIFIED = 1;
-    const STATUS_REFUND = 2;
-    const STATUS_PARTIAL_REFUND = 3;
-    const STATUS_CANCEL = 4;
+    const STATUS_SUCCESS = 1;
+    const STATUS_FAIL = 2;
 
     /**
      * 支付成功
@@ -86,14 +90,41 @@ class Order extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['appid', 'mch_id', 'nonce_str', 'sign', 'out_trade_no', 'total_fee', 'spbill_create_ip', 'time_start', 'openid'], 'required'],
+            'required' => [['nonce_str', 'sign', 'total_fee'], 'required'],
+            ['openid', 'required', 'when' => function ($model) {
+                return $model->trade_type == \EasyWeChat\Payment\Order::JSAPI;
+            }],
             [['detail'], 'string'],
-            [['total_fee', 'time_start', 'time_expire', 'time_end', 'status'], 'integer'],
-            [['appid', 'mch_id', 'device_info', 'nonce_str', 'sign', 'sign_type', 'transaction_id', 'out_trade_no', 'goods_tag', 'product_id', 'limit_pay', 'trade_state_desc'], 'string', 'max' => 32],
+            [['total_fee', 'time_start', 'time_expire', 'time_end', 'status', 'member_id'], 'integer'],
+            ['total_fee', 'integer', 'min' => 1],
+            ['status', 'default', 'value' => self::STATUS_PENDING],
+            ['member_id', 'default', 'value' => 0],
+            ['trade_type', 'default', 'value' => \EasyWeChat\Payment\Order::JSAPI],
+            ['trade_type', 'in', 'range' => array_keys(self::tradeTypeOptions())],
+            ['status', 'in', 'range' => array_keys(self::statusOptions())],
+            ['out_trade_no', 'trim'],
+            [['appid', 'mch_id', 'device_info', 'nonce_str', 'sign', 'sign_type', 'transaction_id', 'out_trade_no', 'goods_tag', 'product_id', 'limit_pay', 'trade_state'], 'string', 'max' => 32],
             [['body', 'openid'], 'string', 'max' => 128],
             [['attach'], 'string', 'max' => 127],
             [['fee_type', 'spbill_create_ip', 'trade_type'], 'string', 'max' => 16],
             ['trade_state_desc', 'string', 'max' => 256],
+            ['openid', function ($attribute, $params) {
+                if ($this->trade_type == \EasyWeChat\Payment\Order::JSAPI) {
+                    $exist = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $this->openid])->queryScalar();
+                    if (!$exist) {
+                        $this->addError($attribute, 'openid 不存在。');
+                    }
+                }
+            }],
+            ['member_id', function ($attribute, $params) {
+                if ($this->member_id) {
+                    $exist = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%member}} WHERE [[id]] = :id', [':id' => $this->member_id])->queryScalar();
+                    if (!$exist) {
+                        $this->addError($attribute, '无效的会员。');
+                    }
+                }
+            }],
+            ['out_trade_no', 'unique'],
         ];
     }
 
@@ -132,6 +163,7 @@ class Order extends \yii\db\ActiveRecord
             'refund_times' => '退款次数',
             'refund_total_fee' => '退款总金额',
             'wechatMember.nickname' => '付款人',
+            'member_id' => '会员',
         ];
     }
 
@@ -144,10 +176,8 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             self::STATUS_PENDING => '待通知',
-            self::STATUS_NOTIFIED => '已通知',
-            self::STATUS_REFUND => '已退款',
-            self::STATUS_PARTIAL_REFUND => '部分退款',
-            self::STATUS_CANCEL => '取消',
+            self::STATUS_SUCCESS => '成功',
+            self::STATUS_FAIL => '失败',
         ];
     }
 
@@ -166,6 +196,21 @@ class Order extends \yii\db\ActiveRecord
             self::TRADE_STATE_REVOKED => '已撤销（刷卡支付）',
             self::TRADE_STATE_USERPAYING => '用户支付中',
             self::TRADE_STATE_PAYERROR => '支付失败(其他原因，如银行返回失败)',
+        ];
+    }
+
+    /**
+     * 支付方式
+     *
+     * @return array
+     */
+    public static function tradeTypeOptions()
+    {
+        return [
+            \EasyWeChat\Payment\Order::JSAPI => 'JSAPI 支付',
+            \EasyWeChat\Payment\Order::NATIVE => '扫一扫支付',
+            \EasyWeChat\Payment\Order::APP => 'APP 支付',
+            \EasyWeChat\Payment\Order::MICROPAY => '小程序支付',
         ];
     }
 
@@ -199,6 +244,48 @@ class Order extends \yii\db\ActiveRecord
     public function getWechatMember()
     {
         return $this->hasOne(WechatMember::class, ['openid' => 'openid']);
+    }
+
+    /**
+     * 会员
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMember()
+    {
+        return $this->hasOne(Member::class, ['id' => 'member_id']);
+    }
+
+    // Events
+    public function beforeValidate()
+    {
+        if (parent::beforeValidate()) {
+            if (!$this->out_trade_no) {
+                $this->out_trade_no = 'wx' . number_format(date('YmdHis') . str_pad(mt_rand(1, 99999999), 8, '0', STR_PAD_LEFT), 0, '', '');
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($insert) {
+                $wechatOptions = Yii::$app->params['wechat'];
+                $this->appid = $wechatOptions['app_id'];
+                $this->mch_id = $wechatOptions['payment']['merchant_id'];
+                $this->time_start = time();
+                $this->spbill_create_ip = Yii::$app->getRequest()->getUserIP();
+                $this->status = self::STATUS_PENDING;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

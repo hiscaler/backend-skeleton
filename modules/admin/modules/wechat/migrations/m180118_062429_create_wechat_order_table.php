@@ -43,6 +43,7 @@ class m180118_062429_create_wechat_order_table extends Migration
             'trade_state' => $this->string(32)->comment('交易状态'),
             'trade_state_desc' => $this->string(256)->comment('交易状态描述'),
             'status' => $this->smallInteger()->defaultValue(0)->comment('状态'),
+            'member_id' => $this->integer()->notNull()->defaultValue(0)->comment('会员'),
         ]);
     }
 
