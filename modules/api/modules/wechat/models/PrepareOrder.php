@@ -22,10 +22,12 @@ class PrepareOrder extends Order
         $rules = parent::rules();
         unset($rules['required']);
         array_unshift($rules, [['total_fee'], 'required']);
-        $rules[] = ['notify_url', 'trim'];
-        $rules[] = ['notify_url', 'string', 'max' => 256];
 
-        return $rules;
+        return array_merge($rules, [
+            ['notify_url', 'trim'],
+            ['notify_url', 'url'],
+            ['notify_url', 'string', 'max' => 256],
+        ]);
     }
 
     public function attributeLabels()

@@ -95,8 +95,8 @@ class Order extends \yii\db\ActiveRecord
                 return $model->trade_type == \EasyWeChat\Payment\Order::JSAPI;
             }],
             [['detail'], 'string'],
-            [['total_fee', 'time_start', 'time_expire', 'time_end', 'status', 'member_id'], 'integer'],
-            ['total_fee', 'integer', 'min' => 1],
+            [['time_start', 'time_expire', 'time_end', 'status', 'member_id'], 'integer'],
+            ['total_fee', 'integer', 'min' => 1, 'integerPattern' => '/^\+?[1-9][0-9]*$/'],
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['member_id', 'default', 'value' => 0],
             ['trade_type', 'default', 'value' => \EasyWeChat\Payment\Order::JSAPI],
@@ -237,6 +237,14 @@ class Order extends \yii\db\ActiveRecord
     }
 
     /**
+     * 生成商家订单号
+     */
+    public function generateOutTradeNo()
+    {
+        $this->out_trade_no = 'wx' . number_format(date('YmdHis') . str_pad(mt_rand(1, 99999999), 8, '0', STR_PAD_LEFT), 0, '', '');
+    }
+
+    /**
      * 微信会员
      *
      * @return \yii\db\ActiveQuery
@@ -257,19 +265,6 @@ class Order extends \yii\db\ActiveRecord
     }
 
     // Events
-    public function beforeValidate()
-    {
-        if (parent::beforeValidate()) {
-            if (!$this->out_trade_no) {
-                $this->out_trade_no = 'wx' . number_format(date('YmdHis') . str_pad(mt_rand(1, 99999999), 8, '0', STR_PAD_LEFT), 0, '', '');
-            }
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {

@@ -45,14 +45,17 @@ class PaymentController extends Controller
      * @return array|\EasyWeChat\Support\Collection|string
      * @throws BadRequestHttpException
      * @throws ServerErrorHttpException
+     * @throws \yii\db\Exception
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionOrder()
     {
         $model = new PrepareOrder();
         $model->notify_url = $this->_notify_url;
-        $model->load(Yii::$app->getRequest()->getQueryParams(), '');
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $model->out_trade_no || $model->generateOutTradeNo();
         if ($model->validate()) {
-            $allowAttributes = [
+            $allowedAttributes = [
                 'body',
                 'detail',
                 'attach',
@@ -75,7 +78,7 @@ class PaymentController extends Controller
                 'notify_url' => $model->notify_url,
             ];
             foreach ($model->toArray() as $key => $value) {
-                if (in_array($key, $allowAttributes)) {
+                if (in_array($key, $allowedAttributes)) {
                     $attributes[$key] = $value;
                 }
             }
@@ -99,19 +102,28 @@ class PaymentController extends Controller
                         break;
                 }
 
-                // 创建商户订单
-                $model->nonce_str = $config['nonceStr'];
-                $model->sign = $config['paySign'];
-                $model->sign_type = $config['signType'];
-                if ($model->save()) {
-                    $config['id'] = $model->id;
+                $orderId = \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%wechat_order}} WHERE [[out_trade_no]] = :outTradeNo', [
+                    ':outTradeNo' => $model->out_trade_no,
+                ])->queryScalar();
+                if (!$orderId) {
+                    // 创建商户订单
+                    $model->nonce_str = $config['nonceStr'];
+                    $model->sign = $config['paySign'];
+                    $model->sign_type = $config['signType'];
+                    if ($model->save()) {
+                        $config['id'] = $model->id;
+
+                        return $config;
+                    } elseif (!$model->hasErrors()) {
+                        throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
+                    }
+
+                    return $model;
+                } else {
+                    $config['id'] = $orderId;
 
                     return $config;
-                } elseif (!$model->hasErrors()) {
-                    throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
                 }
-
-                return $model;
             } else {
                 throw new BadRequestHttpException('支付失败（' . ($response->err_code_des ?: $response->return_msg) . '）。');
             }
