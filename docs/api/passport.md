@@ -45,3 +45,16 @@ GET /api/passport/logout
     "data": [true|false]
 }
 ```
+##修改密码
+POST /api/passport/change-password
+
+### 说明
+修改密码需要认证的请求 url 带上 accessToken 参数
+
+### 参数说明
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|---|:---:|:---:|:---:|---|
+| username | string | 是 | null | 用户名 |
+| oldPassword | string | 是 | null | 旧密码 |
+| password | string | 是 | null | 新密码 |
+| confirmPassword | string | 是 | null | 确认密码 |
