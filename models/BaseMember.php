@@ -86,7 +86,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         $rules = [
             [['type', 'category_id', 'parent_id', 'total_credits', 'available_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
-            [['username'], 'required'],
+            'registerByUsername' => [['username'], 'required'],
             [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
             ['invitation_code', 'string', 'max' => 16],
             [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
