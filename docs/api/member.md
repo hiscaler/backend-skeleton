@@ -19,7 +19,7 @@ POST /api/member/create
 PUT|PATCH /api/member/update?id=:id
 
 ## 详情
-DELETE /api/member/view?id=:id
+GET /api/member/view?id=:id
 
 ## 删除
 DELETE /api/member/delete?id=:id
