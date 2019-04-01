@@ -59,6 +59,8 @@ class AccountController extends ActiveController
     }
 
     /**
+     * 更新
+     *
      * @param $id
      * @return Member|MemberProfile
      * @throws NotFoundHttpException
