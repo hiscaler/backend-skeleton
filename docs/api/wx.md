@@ -8,6 +8,7 @@ GET /api/wx/auth
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |---|:---:|:---:|:---:|---|
 | redirectUri | string | 是 | null | 回调地址 |
+
 ### 返回值
 无
 
@@ -19,8 +20,9 @@ GET /api/wx/jssdk
 |---|:---:|:---:|:---:|---|
 | url | string | 否 | null | 当前页面地址 |
 | apis | string | 否 | null | 激活的 api 接口，比如 checkJsApi, onMenuShareTimeline, onMenuShareAppMessage, onMenuShareQQ, onMenuShareWeibo, onMenuShareQZone 等 |
+
 ### 返回值
-```javascript
+```json
 {
     "appId": "公众号的唯一标识",
     "timestamp": "生成签名的时间戳",
