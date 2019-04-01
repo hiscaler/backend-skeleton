@@ -90,6 +90,7 @@ class BaseActiveRecord extends ActiveRecord
      * 数据关联的推送位
      *
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public function getRelatedLabels()
     {
@@ -105,6 +106,7 @@ class BaseActiveRecord extends ActiveRecord
      * 自定义推送位数据
      *
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public function getCustomLabels()
     {
@@ -225,7 +227,6 @@ class BaseActiveRecord extends ActiveRecord
     /**
      * @param $insert
      * @param $changedAttributes
-     * @throws Exception
      * @throws HttpException
      */
     public function afterSave($insert, $changedAttributes)
