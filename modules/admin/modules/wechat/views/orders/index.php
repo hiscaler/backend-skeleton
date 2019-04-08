@@ -100,7 +100,7 @@ $this->params['menus'] = [
             //'product_id',
             //'limit_pay',
             [
-                'attribute' => 'wechatMember.nickname',
+                'attribute' => 'member.username',
                 'contentOptions' => ['class' => 'username']
             ],
             [
