@@ -80,7 +80,7 @@ class CategoryController extends ActiveController
     }
 
     /**
-     * 分类数据
+     * 获取分类数据列表
      *
      * @param null|string $sign
      * @param int $level
@@ -90,6 +90,7 @@ class CategoryController extends ActiveController
      */
     public function actionIndex($sign = null, $level = 0, $flat = true)
     {
+        $items = [];
         if ($sign) {
             $parentId = \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $sign])->queryScalar();
             if (!$parentId) {
@@ -98,8 +99,15 @@ class CategoryController extends ActiveController
         } else {
             $parentId = 0;
         }
-        $items = Category::getChildren($parentId, $level);
-        !$flat && $items = ArrayHelper::toTree($items, 'id', 'parent');
+        $rawItems = Category::getChildren($parentId, $level);
+        if ($rawItems) {
+            foreach ($rawItems as $item) {
+                $item['short_name'] = $item['shortName'];
+                unset($item['shortName']);
+                $items[] = $item;
+            }
+            !$flat && $items = ArrayHelper::toTree($items, 'id', 'parent');
+        }
 
         return $items;
     }
