@@ -7,41 +7,28 @@ use yii\widgets\ActiveForm;
 /* @var $model app\modules\admin\modules\ticket\models\TicketSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-<div class="ticket-search">
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-        'options' => [
-            'data-pjax' => 1
-        ],
-    ]); ?>
+<div class="form-outside form-search form-layout-column">
+    <div class="form">
+        <?php $form = ActiveForm::begin([
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => [
+                'data-pjax' => 1
+            ],
+        ]); ?>
+        <div class="entry">
+            <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('ticket.module.category')) ?>
 
-    <?= $form->field($model, 'id') ?>
-
-    <?= $form->field($model, 'category_id') ?>
-
-    <?= $form->field($model, 'title') ?>
-
-    <?= $form->field($model, 'description') ?>
-
-    <?= $form->field($model, 'confidential_information') ?>
-
-    <?php // echo $form->field($model, 'mobile_phone') ?>
-
-    <?php // echo $form->field($model, 'email') ?>
-
-    <?php // echo $form->field($model, 'status') ?>
-
-    <?php // echo $form->field($model, 'created_at') ?>
-
-    <?php // echo $form->field($model, 'created_by') ?>
-
-    <?php // echo $form->field($model, 'updated_at') ?>
-
-    <?php // echo $form->field($model, 'updated_by') ?>
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+            <?= $form->field($model, 'title') ?>
+        </div>
+        <div class="entry">
+            <?= $form->field($model, 'mobile_phone') ?>
+            <?= $form->field($model, 'status')->dropDownList(\app\modules\admin\modules\ticket\models\Ticket::statusOptions(), ['prompt' => '']) ?>
+        </div>
+        <div class="form-group buttons">
+            <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>
+            <?= Html::resetButton('重置', ['class' => 'btn btn-outline-secondary']) ?>
+        </div>
+        <?php ActiveForm::end(); ?>
     </div>
-    <?php ActiveForm::end(); ?>
 </div>

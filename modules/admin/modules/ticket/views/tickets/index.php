@@ -1,46 +1,50 @@
 <?php
 
 use yii\grid\GridView;
-use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\admin\modules\ticket\models\TicketSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Tickets';
+$this->title = '工单管理';
 $this->params['breadcrumbs'][] = $this->title;
+
+$this->params['menus'] = [
+    ['label' => Yii::t('app', 'List'), 'url' => ['index']]
+]
 ?>
 <div class="ticket-index">
-    <h1><?= Html::encode($this->title) ?></h1>
-    <p>
-        <?= Html::a('Create Ticket', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
     <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'id',
             'category_id',
             'title',
             'description:ntext',
-            'confidential_information:ntext',
-            //'mobile_phone',
-            //'email:email',
-            //'status',
-            //'created_at',
-            //'created_by',
-            //'updated_at',
-            //'updated_by',
-
+            'mobile_phone',
+            'email:email',
+            [
+                'attribute' => 'status',
+                'format' => 'ticketStatus',
+                'contentOptions' => ['style' => 'width: 80px; text-align: center'],
+            ],
+            [
+                'attribute' => 'created_at',
+                'format' => 'datetime',
+                'contentOptions' => ['class' => 'datetime'],
+            ],
+            [
+                'attribute' => 'updated_at',
+                'format' => 'datetime',
+                'contentOptions' => ['class' => 'datetime'],
+            ],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-
     <?php Pjax::end(); ?>
 </div>

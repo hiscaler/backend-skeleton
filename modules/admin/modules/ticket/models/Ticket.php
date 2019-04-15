@@ -58,7 +58,7 @@ class Ticket extends \yii\db\ActiveRecord
         return [
             [['category_id', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title', 'description', 'confidential_information', 'mobile_phone', 'email'], 'trim'],
-            [['title', 'description'], 'required'],
+            [['description'], 'required'],
             [['description', 'confidential_information'], 'string'],
             [['title', 'email'], 'string', 'max' => 100],
             ['email', 'email'],
