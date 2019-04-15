@@ -16,7 +16,7 @@ class Ticket extends \app\modules\admin\modules\ticket\models\Ticket
             'mobile_phone',
             'email',
             'status',
-            'status' => function ($model) {
+            'status_formatted' => function ($model) {
                 $options = Ticket::statusOptions();
 
                 return isset($options[$model->status]) ? $options[$model->status] : null;

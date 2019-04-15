@@ -2,6 +2,7 @@
 
 namespace app\modules\api\modules\ticket\controllers;
 
+use app\modules\api\extensions\yii\rest\CreateAction;
 use app\modules\api\modules\ticket\models\Ticket;
 use app\modules\api\modules\ticket\models\TicketSearch;
 use yii\filters\AccessControl;
@@ -22,6 +23,7 @@ class DefaultController extends Controller
     {
         $actions = parent::actions();
         $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
+        $actions['create']['class'] = CreateAction::class;
 
         return $actions;
     }
