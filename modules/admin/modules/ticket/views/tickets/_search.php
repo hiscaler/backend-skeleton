@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
         <div class="entry">
-            <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('ticket.module.category')) ?>
+            <?= $form->field($model, 'category_id')->dropDownList(\app\models\Category::tree('ticket.module.category'), ['prompt' => '']) ?>
 
             <?= $form->field($model, 'title') ?>
         </div>

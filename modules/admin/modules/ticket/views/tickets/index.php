@@ -21,13 +21,24 @@ $this->params['menus'] = [
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            'id',
-            'category_id',
+            [
+                'class' => 'yii\grid\SerialColumn',
+                'contentOptions' => ['class' => 'serial-number']
+            ],
+            [
+                'attribute' => 'category.name',
+                'contentOptions' => ['style' => 'width: 120px;'],
+            ],
             'title',
             'description:ntext',
-            'mobile_phone',
-            'email:email',
+            [
+                'attribute' => 'mobile_phone',
+                'contentOptions' => ['class' => 'mobile-phone'],
+            ],
+            [
+                'attribute' => 'email',
+                'contentOptions' => ['class' => 'email'],
+            ],
             [
                 'attribute' => 'status',
                 'format' => 'ticketStatus',
@@ -43,7 +54,10 @@ $this->params['menus'] = [
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime'],
             ],
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'headerOptions' => ['class' => 'buttons-3 last'],
+            ],
         ],
     ]); ?>
     <?php Pjax::end(); ?>
