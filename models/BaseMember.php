@@ -546,7 +546,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getCreditLogs()
     {
-        return $this->hasMany(MemberCreditLog::class, ['member_id' => 'id']);
+        return $this->hasMany(MemberCreditLog::class, ['member_id' => 'id'])
+            ->orderBy(['id' => SORT_DESC]);
     }
 
     /**

@@ -17,6 +17,7 @@ $this->params['menus'] = [
 
 $wechatModel = $model->wechat;
 $profile = $model->profile;
+$creditLogs = $model->creditLogs;
 ?>
 <div>
     <ul class="tabs-common">
@@ -26,6 +27,9 @@ $profile = $model->profile;
         <?php endif; ?>
         <?php if ($wechatModel): ?>
             <li><a href="javascript:;" data-toggle="tab-panel-wehcat">微信资料</a></li>
+        <?php endif; ?>
+        <?php if ($creditLogs): ?>
+            <li><a href="javascript:;" data-toggle="tab-panel-credit-logs">积分日志</a></li>
         <?php endif; ?>
     </ul>
     <div class="panels">
@@ -103,6 +107,36 @@ $profile = $model->profile;
                         'unionid',
                     ],
                 ]) ?>
+            </div>
+        <?php endif; ?>
+        <?php if ($creditLogs): ?>
+            <div class="tab-panel" id="tab-panel-credit-logs" style="display: none;">
+                <div class="grid-view">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>积分类型</th>
+                            <th>外部关联数据</th>
+                            <th>积分</th>
+                            <th>备注</th>
+                            <th class="last">操作时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($creditLogs as $i => $log): ?>
+                            <tr>
+                                <td class="serial-number"><?= $i + 1 ?></td>
+                                <td style="width: 120px;"><?= $log['operation'] ?></td>
+                                <td style="width: 60px;"><?= $log['related_key'] ?></td>
+                                <td class="number"><?= $log['credits'] ?></td>
+                                <td><?= $log['remark'] ?></td>
+                                <td class="datetime"><?= date('Y-m-d H:i:s', $log['created_at']) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         <?php endif; ?>
     </div>
