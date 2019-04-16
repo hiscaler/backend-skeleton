@@ -16,7 +16,7 @@ class m160824_141157_create_member_credit_log_table extends Migration
         $this->createTable('{{%member_credit_log}}', [
             'id' => $this->primaryKey(),
             'member_id' => $this->integer()->notNull()->comment('会员 id'),
-            'operation' => $this->string(20)->notNull()->comment('积分类型'),
+            'operation' => $this->string(40)->notNull()->comment('积分类型'),
             'related_key' => $this->string(60)->comment('外部关联数据'),
             'credits' => $this->smallInteger()->notNull()->comment('积分'),
             'remark' => $this->text()->comment('备注'),

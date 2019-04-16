@@ -51,7 +51,7 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
             }],
             [['operation', 'remark'], 'trim'],
             [['remark'], 'string'],
-            [['operation'], 'string', 'max' => 20],
+            [['operation'], 'string', 'max' => 40],
             [['related_key'], 'string', 'max' => 60],
         ];
     }
