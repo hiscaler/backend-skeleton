@@ -1,0 +1,228 @@
+<?php
+
+namespace app\modules\admin\modules\finance\models;
+
+use app\models\FileUploadConfig;
+use app\models\Member;
+use yadjet\behaviors\ImageUploadBehavior;
+use Yii;
+
+/**
+ * This is the model class for table "{{%finance}}".
+ *
+ * @property int $id
+ * @property int $type 类型
+ * @property int $money 金额
+ * @property int $source 来源
+ * @property string $remittance_slip 汇款凭单
+ * @property string $related_key 关联业务
+ * @property int $status 状态
+ * @property string $remark 备注
+ * @property int $member_id 会员
+ * @property int $created_at 添加时间
+ * @property int $created_by 添加人
+ * @property int $updated_at 更新时间
+ * @property int $updated_by 更新人
+ */
+class Finance extends \yii\db\ActiveRecord
+{
+
+    /**
+     * @var string 文件上传字段
+     */
+    public $fileFields = 'remittance_slip';
+
+    /**
+     * @var array 文件上传设置
+     */
+    public $_fileUploadConfig;
+
+    /**
+     * @throws \yii\db\Exception
+     */
+    public function init()
+    {
+        parent::init();
+        $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'remittance_slip');
+    }
+
+    /**
+     * 类型选项
+     */
+    const TYPE_INCOME = 0; // 入账
+    const TYPE_REFUND = 1; // 退款
+
+    const SOURCE_CASH = 1;
+    const SOURCE_WECHAT = 2;
+    const SOURCE_ALIPAY = 3;
+    const SOURCE_BANK = 4;
+    const SOURCE_OTHER = 0;
+
+    /**
+     * 状态选项
+     */
+    const STATUS_PENDING = 0;
+    const STATUS_VALID = 1;
+    const STATUS_INVALID = 2;
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return '{{%finance}}';
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['type', 'source', 'status', 'member_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            ['type', 'default', 'value' => self::TYPE_INCOME],
+            ['type', 'in', 'range' => array_keys(self::typeOptions())],
+            ['source', 'default', 'value' => self::SOURCE_CASH],
+            ['source', 'in', 'range' => array_keys(self::sourceOptions())],
+            ['money', 'integer', 'min' => 1],
+            [['money', 'member_id'], 'required'],
+            [['remark'], 'trim'],
+            [['remark'], 'string'],
+            [['related_key'], 'string', 'max' => 20],
+            ['remittance_slip', 'image',
+                'extensions' => $this->_fileUploadConfig['extensions'],
+                'minSize' => $this->_fileUploadConfig['size']['min'],
+                'maxSize' => $this->_fileUploadConfig['size']['max'],
+            ],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            [
+                'class' => ImageUploadBehavior::class,
+                'attribute' => 'remittance_slip',
+                'thumb' => $this->_fileUploadConfig['thumb']
+            ],
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => '编号',
+            'type' => '类型',
+            'money' => '金额',
+            'source' => '来源',
+            'remittance_slip' => '汇款凭单',
+            'related_key' => '关联业务',
+            'status' => '状态',
+            'remark' => '备注',
+            'member_id' => '会员',
+            'member.username' => '会员',
+            'created_at' => '添加时间',
+            'created_by' => '添加人',
+            'updated_at' => '更新时间',
+            'updated_by' => '更新人',
+        ];
+    }
+
+    /**
+     * 类型选项
+     *
+     * @return array
+     */
+    public static function typeOptions()
+    {
+        return [
+            self::TYPE_INCOME => "入账",
+            self::TYPE_REFUND => "退款",
+        ];
+    }
+
+    /**
+     * 来源选项
+     *
+     * @return array
+     */
+    public static function sourceOptions()
+    {
+        return [
+            self::SOURCE_CASH => '现金',
+            self::SOURCE_WECHAT => '微信',
+            self::SOURCE_ALIPAY => '支付宝',
+            self::SOURCE_OTHER => '其他',
+        ];
+    }
+
+    /**
+     * 状态选项
+     *
+     * @return array
+     */
+    public static function statusOptions()
+    {
+        return [
+            self::STATUS_PENDING => '待处理',
+            self::STATUS_VALID => '有效',
+            self::STATUS_INVALID => '无效',
+        ];
+    }
+
+    /**
+     * 所属会员
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMember()
+    {
+        return $this->hasOne(Member::class, ['id' => 'member_id']);
+    }
+
+    // Events
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->type == self::TYPE_REFUND) {
+                $this->money = -$this->money;
+            }
+            $userId = \Yii::$app->getUser()->getId() ?: 0;
+            if ($insert) {
+                $this->created_by = $this->updated_by = $userId;
+                $this->created_at = $this->updated_at = time();
+            } else {
+                $this->updated_by = $userId;
+                $this->updated_at = time();
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if (isset(Yii::$app->params['module']['finance']['business']['class']) && class_exists(Yii::$app->params['module']['finance']['business']['class'])) {
+            try {
+                $class = Yii::$app->params['module']['finance']['business']['class'];
+                call_user_func_array([new $class(), 'process'], [$insert, $changedAttributes, $this]);
+            } catch (\Exception $e) {
+                Yii::error($e->getMessage());
+            }
+        }
+    }
+
+}
