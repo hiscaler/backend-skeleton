@@ -15,7 +15,7 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'Update'), 'url' => ['update', 'id' => $model->id]]
 ];
 ?>
-<div class="classic-case-view">
+<div class="notice-view">
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -27,6 +27,7 @@ $this->params['menus'] = [
             'enabled:boolean',
             'clicks_count',
             'published_at:datetime',
+            'view_permission:noticeViewPermission',
             'ordering',
             'created_at:datetime',
             'creater.nickname',

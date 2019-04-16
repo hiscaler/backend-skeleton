@@ -42,14 +42,16 @@ use yii\widgets\ActiveForm;
             <?php endif; ?>
             <div class="entry">
                 <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
-
-                <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+                <?= $form->field($model, 'view_permission')->dropDownList(\app\modules\admin\modules\notice\models\Notice::viewPermissionOptions()) ?>
             </div>
-            <?= UEditor::widget([
-                'form' => $form,
-                'model' => $model,
-                'attribute' => 'content',
-            ]) ?>
+            <div class="entry">
+                <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+                <?= UEditor::widget([
+                    'form' => $form,
+                    'model' => $model,
+                    'attribute' => 'content',
+                ]) ?>
+            </div>
             <div class="entry">
                 <?= \yadjet\datePicker\my97\DatePicker::widget([
                     'form' => $form,
@@ -59,7 +61,7 @@ use yii\widgets\ActiveForm;
                 ]) ?>
             </div>
             <div class="entry">
-                <?= $form->field($model, 'enabled')->checkbox() ?>
+                <?= $form->field($model, 'enabled')->checkbox(null, false) ?>
                 <?= $form->field($model, 'ordering')->dropDownList(\app\models\Option::ordering()) ?>
             </div>
         </div>

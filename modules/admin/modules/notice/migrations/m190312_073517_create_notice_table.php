@@ -26,6 +26,7 @@ class m190312_073517_create_notice_table extends Migration
             'clicks_count' => $this->integer()->notNull()->defaultValue(0)->comment('点击次数'),
             'published_at' => $this->integer()->notNull()->comment('发布时间'),
             'ordering' => $this->integer()->notNull()->defaultValue(0)->comment('排序'),
+            'view_permission' => $this->tinyInteger()->notNull()->defaultValue(0)->comment('查看权限'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'created_by' => $this->integer()->notNull()->comment('添加人'),
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),

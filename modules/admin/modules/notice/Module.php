@@ -19,6 +19,11 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
+        \Yii::$app->setComponents([
+            'formatter' => [
+                'class' => 'app\modules\admin\modules\notice\extensions\Formatter',
+            ],
+        ]);
     }
 
 }
