@@ -9,7 +9,7 @@ www_user
 |  5 | auth_key             | string   | 32  |   |   | 认证 key     | 
 |  6 | password_hash        | string   | 255 |   |   | 密码         | 
 |  7 | password_reset_token | string   | 255 | Y |   | 密码重置 token | 
-|  8 | access_token         | string   | 255 |   |   | 访问 Token   | 
+|  8 | access_token         | string   | 255 | Y |   | 访问 token   | 
 |  9 | email                | string   | 50  | Y |   | 邮箱         | 
 | 10 | role                 | string   | 64  | Y |   | 角色         | 
 | 11 | register_ip          | string   | 39  |   |   | 注册 IP      | 
