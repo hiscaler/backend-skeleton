@@ -22,6 +22,10 @@ return [
              */
             'expiredAfter' => 'continue',
         ],
+        // 自定义积分消费选项
+        'creditOperations' => [
+            'task' => '任务消费',
+        ]
     ],
     // 接口设置
     'api' => [

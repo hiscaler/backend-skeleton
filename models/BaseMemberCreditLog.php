@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\modules\admin\components\ApplicationHelper;
 use Yii;
 
 /**
@@ -26,6 +27,7 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
     const OPERATION_REFERRAL_REGISTER = 'referral.register'; // 推荐注册
     const OPERATION_MEMBER_LOGIN = 'member.login'; // 会员登录
     const OPERATION_MANUAL = 'manual'; // 手动添加
+    const OPERATION_FINANCE_RECHARGE_CONVERSION = 'finance.recharge.conversion';  // 财务充值转换
 
     /**
      * @inheritdoc
@@ -86,9 +88,10 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
             static::OPERATION_REFERRAL_REGISTER => Yii::t('memberCreditLog', 'Referral Register'),
             static::OPERATION_MEMBER_LOGIN => Yii::t('memberCreditLog', 'Member Login'),
             static::OPERATION_MANUAL => Yii::t('memberCreditLog', 'Manual'),
+            static::OPERATION_FINANCE_RECHARGE_CONVERSION => '充值转换',
         ];
         // 自定义积分类型 @todo 从语言文件中获取相应的定义
-        $custom = [];
+        $custom = ApplicationHelper::getConfigValue('member.creditOperations', []);
 
         return array_merge($custom, $default);
     }
