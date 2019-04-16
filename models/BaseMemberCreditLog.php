@@ -112,7 +112,7 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
      * @param string $relatedKey
      * @param string $remark
      * @param integer $posterId
-     * @return boolean
+     * @return int|boolean
      * @throws \Exception
      */
     public static function add($memberId, $operation, $credits, $relatedKey = null, $remark = null, $posterId = null)
@@ -129,10 +129,11 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
         if ($memberExists) {
             $transaction = $db->beginTransaction();
             try {
-                $posterId = (int) $posterId;
-                if (!$posterId) {
+                if ($posterId === null) {
                     $user = Yii::$app->getUser();
                     $posterId = $user->getIsGuest() ? 0 : $user->getId();
+                } else {
+                    $posterId = (int) $posterId;
                 }
                 $columns = [
                     'member_id' => $memberId,
@@ -145,7 +146,8 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
                 ];
                 $result = $db->createCommand()->insert('{{%member_credit_log}}', $columns)->execute() ? true : false;
                 if ($result) {
-                    $op = $credits ? ' + ' : ' - ';
+                    $result = $db->getLastInsertID();
+                    $op = $credits > 0 ? ' + ' : ' - ';
                     $credits = abs($credits);
                     $db->createCommand("UPDATE {{%member}} SET [[total_credits]] = [[total_credits]] $op $credits, [[available_credits]] = [[available_credits]] $op $credits WHERE [[id]] = :id", [':id' => $memberId])->execute();
                     Member::updateGroup($memberId);
