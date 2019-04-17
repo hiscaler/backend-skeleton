@@ -87,6 +87,7 @@ return [
     ],
     // 微信公众号设置
     'wechat' => require(__DIR__ . '/wechat.php'),
+    'module' => require(__DIR__ . '/module.php'),
     'modules' => [
         /**
          *'app-models-Article' => [
