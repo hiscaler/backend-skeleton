@@ -52,6 +52,9 @@ class Finance extends \yii\db\ActiveRecord
     const TYPE_INCOME = 0; // 入账
     const TYPE_REFUND = 1; // 退款
 
+    /**
+     * 来源选项
+     */
     const SOURCE_CASH = 1;
     const SOURCE_WECHAT = 2;
     const SOURCE_ALIPAY = 3;

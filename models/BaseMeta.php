@@ -371,7 +371,6 @@ class BaseMeta extends ActiveRecord
      * @param bool $throwException
      * @return bool|null
      * @throws ErrorException
-     * @throws \yii\db\Exception
      */
     public static function saveValues(ActiveRecord $activeRecord, \yii\base\DynamicModel $dynamicModel, $throwException = false)
     {
@@ -864,7 +863,6 @@ class BaseMeta extends ActiveRecord
     /**
      * @param bool $insert
      * @param array $changedAttributes
-     * @throws \yii\db\Exception
      * @throws \Throwable
      */
     public function afterSave($insert, $changedAttributes)
