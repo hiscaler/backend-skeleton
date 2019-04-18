@@ -51,4 +51,5 @@ class CreateAction extends \yii\rest\Action
 
         return $model;
     }
+
 }

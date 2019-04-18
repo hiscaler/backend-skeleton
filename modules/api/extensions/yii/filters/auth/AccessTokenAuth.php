@@ -5,8 +5,9 @@ namespace app\modules\api\extensions\yii\filters\auth;
 use yii\filters\auth\AuthMethod;
 
 /**
- * AccessTokenAuth 用于第三方用户有效性验证
+ * 增强 QueryParamAuth 认证，支持从 headers 中获取携带的 access-token 值
  *
+ * @package app\modules\api\extensions\yii\filters\auth
  * @author hiscaler <hiscaler@gmail.com>
  */
 class AccessTokenAuth extends AuthMethod
@@ -43,4 +44,5 @@ class AccessTokenAuth extends AuthMethod
 
         return null;
     }
+
 }
