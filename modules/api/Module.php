@@ -33,6 +33,8 @@ class Module extends \yii\base\Module
                 'identityCookie' => ['name' => '_identity_api', 'httpOnly' => true],
                 'idParam' => '__id_api',
                 'enableAutoLogin' => true,
+                'enableSession' => false,
+                'loginUrl' => null,
             ],
             'response' => [
                 'class' => 'yii\web\Response',
