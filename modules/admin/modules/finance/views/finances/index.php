@@ -27,6 +27,10 @@ $this->params['menus'] = [
                     $class = 'type-income';
                     break;
 
+                case \app\modules\admin\modules\finance\models\Finance::TYPE_DISBURSE:
+                    $class = 'type-disburse';
+                    break;
+
                 case \app\modules\admin\modules\finance\models\Finance::TYPE_REFUND:
                     $class = 'type-refund';
                     break;
@@ -87,6 +91,7 @@ $this->params['menus'] = [
 <?php \app\modules\admin\components\CssBlock::begin() ?>
 <style type="text/css">
     .type-income td.type,
+    .type-disburse td.type,
     .type-refund td.type {
         width: 60px;
         text-align: center;
@@ -98,6 +103,7 @@ $this->params['menus'] = [
         color: green;
     }
 
+    .type-disburse td.type,
     .type-refund td.type {
         color: red;
     }

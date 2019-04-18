@@ -36,6 +36,16 @@ class CreditBusiness implements BusinessInterface
             $v = \app\models\MemberCreditLog::add($finance->member_id, MemberCreditLog::OPERATION_FINANCE_RECHARGE_CONVERSION, $credits, $finance->id);
             if ($v !== false) {
                 \Yii::$app->getDb()->createCommand()->update('{{%finance}}', ['related_key' => $v], ['id' => $finance->id])->execute();
+
+                // 添加资金出账记录
+                $financeLog = new Finance();
+                $financeLog->call_business_process = false;
+                $financeLog->type = Finance::TYPE_DISBURSE;
+                $financeLog->money = abs($finance->money);
+                $financeLog->source = Finance::SOURCE_OTHER;
+                $financeLog->member_id = $finance->member_id;
+                $financeLog->status = Finance::STATUS_VALID;
+                $financeLog->save();
             }
         }
     }

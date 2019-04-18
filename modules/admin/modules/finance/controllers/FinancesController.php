@@ -2,19 +2,23 @@
 
 namespace app\modules\admin\modules\finance\controllers;
 
-use Yii;
 use app\modules\admin\modules\finance\models\Finance;
 use app\modules\admin\modules\finance\models\FinanceSearch;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
- * FinancesController implements the CRUD actions for Finance model.
+ * 财务管理
+ *
+ * @package app\modules\admin\modules\finance\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class FinancesController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -25,7 +29,7 @@ class FinancesController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'view', 'update', 'delete'],
+                        'actions' => ['index', 'create', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -42,12 +46,13 @@ class FinancesController extends Controller
 
     /**
      * Lists all Finance models.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
         $searchModel = new FinanceSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -57,6 +62,7 @@ class FinancesController extends Controller
 
     /**
      * Displays a single Finance model.
+     *
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -71,13 +77,16 @@ class FinancesController extends Controller
     /**
      * Creates a new Finance model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
     {
         $model = new Finance();
+        $model->loadDefaultValues();
+        $model->status = Finance::STATUS_VALID;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -89,6 +98,7 @@ class FinancesController extends Controller
     /**
      * Updates an existing Finance model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -97,7 +107,7 @@ class FinancesController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -109,9 +119,12 @@ class FinancesController extends Controller
     /**
      * Deletes an existing Finance model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -123,6 +136,7 @@ class FinancesController extends Controller
     /**
      * Finds the Finance model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param integer $id
      * @return Finance the loaded model
      * @throws NotFoundHttpException if the model cannot be found
@@ -135,4 +149,5 @@ class FinancesController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

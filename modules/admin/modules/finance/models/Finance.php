@@ -6,6 +6,7 @@ use app\models\FileUploadConfig;
 use app\models\Member;
 use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "{{%finance}}".
@@ -27,6 +28,10 @@ use Yii;
 class Finance extends \yii\db\ActiveRecord
 {
 
+    /**
+     * @var bool 是否处理后续的业务逻辑
+     */
+    public $call_business_process = true;
     /**
      * @var string 文件上传字段
      */
@@ -50,7 +55,8 @@ class Finance extends \yii\db\ActiveRecord
      * 类型选项
      */
     const TYPE_INCOME = 0; // 入账
-    const TYPE_REFUND = 1; // 退款
+    const TYPE_DISBURSE = 1; // 支出
+    const TYPE_REFUND = 10; // 退款
 
     /**
      * 来源选项
@@ -150,6 +156,7 @@ class Finance extends \yii\db\ActiveRecord
     {
         return [
             self::TYPE_INCOME => "入账",
+            self::TYPE_DISBURSE => '支出',
             self::TYPE_REFUND => "退款",
         ];
     }
@@ -197,7 +204,7 @@ class Finance extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if ($this->type == self::TYPE_REFUND) {
+            if ($this->type != self::TYPE_INCOME) {
                 $this->money = -$this->money;
             }
             $userId = \Yii::$app->getUser()->getId() ?: 0;
@@ -215,15 +222,38 @@ class Finance extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @throws \yii\db\Exception
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        if (isset(Yii::$app->params['module']['finance']['business']['class']) && class_exists(Yii::$app->params['module']['finance']['business']['class'])) {
-            try {
-                $class = Yii::$app->params['module']['finance']['business']['class'];
-                call_user_func_array([new $class(), 'process'], [$insert, $changedAttributes, $this]);
-            } catch (\Exception $e) {
-                Yii::error($e->getMessage());
+        if ($insert) {
+            $money = abs($this->money);
+            if ($this->type == self::TYPE_INCOME) {
+                $columns = [
+                    'total_money' => new Expression('[[total_money]] + ' . $money),
+                    'available_money' => new Expression('[[available_money]] + ' . $money),
+                ];
+            } else {
+                $columns = [
+                    'available_money' => new Expression('[[available_money]] - ' . $money),
+                ];
+            }
+            \Yii::$app->getDb()
+                ->createCommand()
+                ->update('{{%member}}', $columns, ['id' => $this->member_id])
+                ->execute();
+
+            if ($this->call_business_process && isset(Yii::$app->params['module']['finance']['business']['class']) && class_exists(Yii::$app->params['module']['finance']['business']['class'])) {
+                try {
+                    $class = Yii::$app->params['module']['finance']['business']['class'];
+                    call_user_func_array([new $class(), 'process'], [$insert, $changedAttributes, $this]);
+                } catch (\Exception $e) {
+                    Yii::error($e->getMessage());
+                }
             }
         }
     }

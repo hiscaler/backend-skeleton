@@ -5,7 +5,10 @@ namespace app\modules\admin\modules\finance\controllers;
 use yii\filters\AccessControl;
 
 /**
- * `finance` 子模块
+ * 默认控制器
+ *
+ * @package app\modules\admin\modules\finance\controllers
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends Controller
 {
