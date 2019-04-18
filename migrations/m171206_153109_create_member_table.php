@@ -34,6 +34,8 @@ class m171206_153109_create_member_table extends Migration
             'mobile_phone' => $this->string(35)->comment('手机号码'),
             'register_ip' => $this->string(39)->notNull()->comment('注册 IP'),
             'login_count' => $this->integer()->notNull()->defaultValue(0)->comment('登录次数'),
+            'total_money' => $this->integer()->notNull()->defaultValue(0)->comment('总金额'),
+            'available_money' => $this->integer()->notNull()->defaultValue(0)->comment('可用金额'),
             'total_credits' => $this->integer()->notNull()->defaultValue(0)->comment('总积分'),
             'available_credits' => $this->integer()->notNull()->defaultValue(0)->comment('可用积分'),
             'last_login_ip' => $this->string(39)->defaultValue(null)->comment('最后登录 IP'),

@@ -29,6 +29,8 @@ use yii\web\IdentityInterface;
  * @property string $email
  * @property string $mobile_phone
  * @property string $register_ip
+ * @property integer $total_money
+ * @property integer $available_money
  * @property integer $total_credits
  * @property integer $available_credits
  * @property integer $login_count
@@ -84,7 +86,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         $rules = [
-            [['type', 'category_id', 'parent_id', 'total_credits', 'available_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'category_id', 'parent_id', 'total_money', 'available_money', 'total_credits', 'available_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             'registerByUsername' => [['username'], 'required'],
             [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
@@ -162,6 +164,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             'email' => '邮箱',
             'mobile_phone' => '手机号码',
             'register_ip' => '注册 IP',
+            'total_money' => '总金额',
+            'available_money' => '可用金额',
             'total_credits' => '总积分',
             'available_credits' => '可用积分',
             'login_count' => '登录次数',
@@ -615,6 +619,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->nickname = $nickname;
             }
             if ($insert) {
+                $this->total_money = $this->available_money = 0;
                 $this->generateAuthKey();
                 $this->generateAccessToken();
                 $this->status = ApplicationHelper::getConfigValue('member.register.status', self::STATUS_PENDING);

@@ -55,6 +55,8 @@ class BaseMember extends \app\models\Member
             'email',
             'mobile_phone',
             'register_ip',
+            'total_money',
+            'available_money',
             'total_credits',
             'available_credits',
             'login_count',
