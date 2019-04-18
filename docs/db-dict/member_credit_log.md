@@ -4,7 +4,7 @@ www_member_credit_log
 | :---: | --- | --- | :---: | :---: | :---: | --- | 
 | 1 | id          | integer  | 11 |   |   | 自增主键 | 
 | 2 | member_id   | integer  | 11 |   |   | 会员 id | 
-| 3 | operation   | string   | 20 |   |   | 积分类型 | 
+| 3 | operation   | string   | 40 |   |   | 积分类型 | 
 | 4 | related_key | string   | 60 | Y |   | 外部关联数据 | 
 | 5 | credits     | smallint | 6  |   |   | 积分 | 
 | 6 | remark      | text     |    | Y |   | 备注 | 
