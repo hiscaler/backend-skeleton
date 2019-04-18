@@ -82,6 +82,14 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'number'],
             ],
             [
+                'attribute' => 'total_money',
+                'contentOptions' => ['class' => 'number'],
+            ],
+            [
+                'attribute' => 'available_money',
+                'contentOptions' => ['class' => 'number'],
+            ],
+            [
                 'attribute' => 'total_credits',
                 'contentOptions' => ['class' => 'number'],
             ],

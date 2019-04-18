@@ -57,6 +57,8 @@ $creditLogs = $model->creditLogs;
                                 return $model['register_ip'];
                             },
                         ],
+                        'total_money',
+                        'available_money',
                         'total_credits',
                         'available_credits',
                         'login_count',
