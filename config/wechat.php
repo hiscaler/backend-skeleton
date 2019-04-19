@@ -103,6 +103,6 @@ return [
     ],
     // 微信支付发起回调后的业务逻辑处理类
     'business' => [
-        'class' => \app\modules\api\modules\wechat\business\NothingBusiness::class,
+        'class' => \app\modules\api\modules\wechat\business\RechargeBusiness::class,
     ]
 ];
