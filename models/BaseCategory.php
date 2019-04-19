@@ -482,6 +482,7 @@ class BaseCategory extends BaseActiveRecord
     private $_alias = null;
     private $_parent_id = null;
     private $_level = null;
+    private $_name;
 
     public function afterFind()
     {
@@ -490,6 +491,7 @@ class BaseCategory extends BaseActiveRecord
             $this->_alias = $this->alias;
             $this->_parent_id = $this->parent_id;
             $this->_level = $this->level;
+            $this->_name = $this->name;
         }
     }
 
@@ -565,7 +567,7 @@ class BaseCategory extends BaseActiveRecord
             }
         }
 
-        if ($this->parent_id != $this->_parent_id) {
+        if ($this->parent_id != $this->_parent_id || $this->name != $this->_name) {
             $childrenIds = self::getChildrenIds($this->id);
             $childrenIds[] = $this->id;
             foreach ($childrenIds as $childId) {
