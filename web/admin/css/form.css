@@ -40,6 +40,7 @@ Description: 表单样式
     line-height: 30px;
 }
 
+.entry,
 .form-layout-column .entry {
     clear: none;
     padding: 6px 0;
@@ -78,7 +79,6 @@ div.form .form-group {
     clear: both;
     padding: 6px 0;
     display: block;
-    background: transparent url(../images/dot.gif) repeat-x left bottom;
 }
 
 .form-layout-column .entry .form-group {
@@ -131,7 +131,7 @@ form .form-group .hint-block {
     color: #ccc;
     height: 24px;
     line-height: 24px;
-    margin-left: 135px;
+    margin-left: 155px;
 }
 
 div.form .form-group input[type="radio"], div.form .form-group div label input[type="checkbox"] {
