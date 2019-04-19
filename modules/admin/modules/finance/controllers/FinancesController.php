@@ -7,7 +7,6 @@ use app\modules\admin\modules\finance\models\FinanceSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
