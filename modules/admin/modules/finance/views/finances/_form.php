@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'source')->dropDownList(\app\modules\admin\modules\finance\models\Finance::sourceOptions()) ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'money')->textInput() ?>
+            <?= $form->field($model, 'money')->textInput(['type' => 'number'])->hint('单位为：分') ?>
 
             <?= $form->field($model, 'remittance_slip')->fileInput() ?>
         </div>

@@ -253,4 +253,22 @@ class Formatter extends \yii\i18n\Formatter
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }
 
+    /**
+     * 金额的“分”转换为“元”
+     *
+     * @param $value
+     * @return float|string
+     */
+    public function asYuan($value)
+    {
+        if ($value === null) {
+            return $this->nullDisplay;
+        }
+
+        if ($value) {
+            $value = round($value / 100, 2);
+        }
+
+        return $value;
+    }
 }

@@ -20,7 +20,7 @@ $this->params['menus'] = [
         'attributes' => [
             'id',
             'type:financeType',
-            'money',
+            'money:yuan',
             'source:financeSource',
             'remittance_slip:image',
             'related_key',

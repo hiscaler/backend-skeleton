@@ -60,6 +60,7 @@ $this->params['menus'] = [
             ],
             [
                 'attribute' => 'money',
+                'format' => 'yuan',
                 'contentOptions' => ['class' => 'number']
             ],
 
