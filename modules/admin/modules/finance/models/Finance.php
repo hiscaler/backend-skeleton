@@ -61,11 +61,12 @@ class Finance extends \yii\db\ActiveRecord
     /**
      * 来源选项
      */
+    const SOURCE_NONE = 0;
     const SOURCE_CASH = 1;
     const SOURCE_WECHAT = 2;
     const SOURCE_ALIPAY = 3;
     const SOURCE_BANK = 4;
-    const SOURCE_OTHER = 0;
+    const SOURCE_OTHER = 100;
 
     /**
      * 状态选项
@@ -169,6 +170,7 @@ class Finance extends \yii\db\ActiveRecord
     public static function sourceOptions()
     {
         return [
+            self::SOURCE_NONE => '无',
             self::SOURCE_CASH => '现金',
             self::SOURCE_WECHAT => '微信',
             self::SOURCE_ALIPAY => '支付宝',
