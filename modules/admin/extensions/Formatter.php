@@ -5,6 +5,7 @@ namespace app\modules\admin\extensions;
 use app\models\FileUploadConfig;
 use app\models\Lookup;
 use app\models\Member;
+use app\models\MemberCreditLog;
 use app\models\Meta;
 use app\models\Option;
 use app\models\User;
@@ -242,6 +243,12 @@ class Formatter extends \yii\i18n\Formatter
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }
 
+    /**
+     * 星期处理
+     *
+     * @param $value
+     * @return string
+     */
     public function asWeekDay($value)
     {
         if ($value === null) {
@@ -271,4 +278,18 @@ class Formatter extends \yii\i18n\Formatter
 
         return $value;
     }
+
+    /**
+     * 会员积分操作
+     *
+     * @param $value
+     * @return string|null
+     */
+    public function asMemberCreditOperation($value)
+    {
+        $options = MemberCreditLog::operationOptions();
+
+        return isset($options[$value]) ? $options[$value] : null;
+    }
+
 }
