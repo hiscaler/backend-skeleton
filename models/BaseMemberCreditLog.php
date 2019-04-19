@@ -27,7 +27,7 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
     const OPERATION_REFERRAL_REGISTER = 'referral.register'; // 推荐注册
     const OPERATION_MEMBER_LOGIN = 'member.login'; // 会员登录
     const OPERATION_MANUAL = 'manual'; // 手动添加
-    const OPERATION_FINANCE_RECHARGE_CONVERSION = 'finance.recharge.conversion';  // 财务充值转换
+    const OPERATION_FINANCE = 'finance';  // 财务处理
 
     /**
      * @inheritdoc
@@ -64,15 +64,15 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('userCreditLog', 'ID'),
-            'member_id' => Yii::t('userCreditLog', 'User ID'),
-            'operation' => Yii::t('userCreditLog', 'Operation'),
-            'operation_formatted' => Yii::t('userCreditLog', 'Operation'),
-            'related_key' => Yii::t('userCreditLog', 'Related Key'),
-            'credits' => Yii::t('userCreditLog', 'Credits'),
-            'remark' => Yii::t('userCreditLog', 'Remark'),
-            'created_at' => Yii::t('userCreditLog', 'Created At'),
-            'created_by' => Yii::t('userCreditLog', 'Created By'),
+            'id' => Yii::t('memberCreditLog', 'ID'),
+            'member_id' => Yii::t('memberCreditLog', 'User ID'),
+            'operation' => Yii::t('memberCreditLog', 'Operation'),
+            'operation_formatted' => Yii::t('memberCreditLog', 'Operation'),
+            'related_key' => Yii::t('memberCreditLog', 'Related Key'),
+            'credits' => Yii::t('memberCreditLog', 'Credits'),
+            'remark' => Yii::t('memberCreditLog', 'Remark'),
+            'created_at' => Yii::t('memberCreditLog', 'Created At'),
+            'created_by' => Yii::t('memberCreditLog', 'Created By'),
         ];
     }
 
@@ -88,19 +88,12 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
             static::OPERATION_REFERRAL_REGISTER => Yii::t('memberCreditLog', 'Referral Register'),
             static::OPERATION_MEMBER_LOGIN => Yii::t('memberCreditLog', 'Member Login'),
             static::OPERATION_MANUAL => Yii::t('memberCreditLog', 'Manual'),
-            static::OPERATION_FINANCE_RECHARGE_CONVERSION => '充值转换',
+            static::OPERATION_FINANCE => '财务',
         ];
         // 自定义积分类型 @todo 从语言文件中获取相应的定义
         $custom = ApplicationHelper::getConfigValue('member.creditOperations', []);
 
         return array_merge($custom, $default);
-    }
-
-    public function getOperation_formatted()
-    {
-        $options = self::operationOptions();
-
-        return isset($options[$this->operation]) ? $options[$this->operation] : null;
     }
 
     /**

@@ -33,7 +33,7 @@ class CreditBusiness implements BusinessInterface
             }
             list($m, $c) = explode(':', $rate);
             $credits = $finance->money * round($c / $m, 2);
-            $v = \app\models\MemberCreditLog::add($finance->member_id, MemberCreditLog::OPERATION_FINANCE_RECHARGE_CONVERSION, $credits, $finance->id);
+            $v = \app\models\MemberCreditLog::add($finance->member_id, MemberCreditLog::OPERATION_FINANCE, $credits, $finance->id);
             if ($v !== false) {
                 \Yii::$app->getDb()->createCommand()->update('{{%finance}}', ['related_key' => $v], ['id' => $finance->id])->execute();
 

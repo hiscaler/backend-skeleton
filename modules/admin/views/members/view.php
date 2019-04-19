@@ -15,6 +15,8 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'Update'), 'url' => ['update', 'id' => $model->id]],
 ];
 
+/* @var $formatter \app\modules\admin\extensions\Formatter */
+$formatter = Yii::$app->getFormatter();
 $wechatModel = $model->wechat;
 $profile = $model->profile;
 $creditLogs = $model->creditLogs;
@@ -118,7 +120,7 @@ $creditLogs = $model->creditLogs;
                         <thead>
                         <tr>
                             <th>序号</th>
-                            <th>积分类型</th>
+                            <th>动作</th>
                             <th>外部关联数据</th>
                             <th>积分</th>
                             <th>备注</th>
@@ -129,7 +131,7 @@ $creditLogs = $model->creditLogs;
                         <?php foreach ($creditLogs as $i => $log): ?>
                             <tr>
                                 <td class="serial-number"><?= $i + 1 ?></td>
-                                <td style="width: 120px;"><?= $log['operation'] ?></td>
+                                <td style="width: 120px;"><?= $formatter->asMemberCreditOperation($log['operation']) ?></td>
                                 <td style="width: 60px;"><?= $log['related_key'] ?></td>
                                 <td class="number"><?= $log['credits'] ?></td>
                                 <td><?= $log['remark'] ?></td>
