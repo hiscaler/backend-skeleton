@@ -63,7 +63,11 @@ $this->params['menus'] = [
                 'format' => 'yuan',
                 'contentOptions' => ['class' => 'number']
             ],
-
+            [
+                'attribute' => 'balance',
+                'format' => 'yuan',
+                'contentOptions' => ['class' => 'number']
+            ],
             [
                 'attribute' => 'source',
                 'format' => 'financeSource',

@@ -20,14 +20,13 @@ class Finance extends \app\modules\admin\modules\finance\models\Finance
                 return $formatter->asFinanceType($model->type);
             },
             'money',
+            'balance',
             'source',
             'source_formatted' => function ($model) use ($formatter) {
                 return $formatter->asFinanceSource($model->source);
             },
-            'remittance_slip' => function ($model) {
-                $img = $model->remittance_slip;
-
-                return $img ? (Yii::$app->getRequest()->getBaseUrl() . $img) : null;
+            'remittance_slip' => function ($model) use ($formatter) {
+                return $formatter->asAssetFullPath($model->remittance_slip);
             },
             'related_key',
             'status',

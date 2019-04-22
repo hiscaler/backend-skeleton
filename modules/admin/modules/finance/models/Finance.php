@@ -14,6 +14,7 @@ use yii\db\Expression;
  * @property int $id
  * @property int $type 类型
  * @property int $money 金额
+ * @property int $balance 余额
  * @property int $source 来源
  * @property string $remittance_slip 汇款凭单
  * @property string $related_key 关联业务
@@ -96,7 +97,7 @@ class Finance extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'source', 'status', 'member_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'source', 'balance', 'status', 'member_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             ['type', 'default', 'value' => self::TYPE_INCOME],
             ['type', 'in', 'range' => array_keys(self::typeOptions())],
             ['source', 'default', 'value' => self::SOURCE_CASH],
@@ -134,6 +135,7 @@ class Finance extends \yii\db\ActiveRecord
             'id' => '编号',
             'type' => '类型',
             'money' => '金额',
+            'balance' => '余额',
             'source' => '来源',
             'remittance_slip' => '汇款凭单',
             'related_key' => '关联业务',
@@ -211,6 +213,7 @@ class Finance extends \yii\db\ActiveRecord
             }
             $userId = \Yii::$app->getUser()->getId() ?: 0;
             if ($insert) {
+                $this->balance = 0;
                 $this->created_by = $this->updated_by = $userId;
                 $this->created_at = $this->updated_at = time();
             } else {
@@ -233,21 +236,23 @@ class Finance extends \yii\db\ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         if ($insert) {
+            $db = \Yii::$app->getDb();
             $money = abs($this->money);
+            $availableMoney = (int) $db->createCommand("SELECT [[available_money]] FROM {{%member}} WHERE [[id]] = :id", [':id' => $this->member_id])->queryScalar();
+            $columns = [];
             if ($this->type == self::TYPE_INCOME) {
-                $columns = [
-                    'total_money' => new Expression('[[total_money]] + ' . $money),
-                    'available_money' => new Expression('[[available_money]] + ' . $money),
-                ];
+                $columns['total_money'] = new Expression('[[total_money]] + ' . $money);
+                $availableMoney = $availableMoney + $money;
             } else {
-                $columns = [
-                    'available_money' => new Expression('[[available_money]] - ' . $money),
-                ];
+                $availableMoney = $availableMoney - $money;
             }
-            \Yii::$app->getDb()
-                ->createCommand()
-                ->update('{{%member}}', $columns, ['id' => $this->member_id])
-                ->execute();
+            $columns['available_money'] = $availableMoney;
+
+            $cmd = $db->createCommand();
+            $cmd->update('{{%member}}', $columns, ['id' => $this->member_id])->execute();
+            $cmd->update('{{%finance}}', [
+                'balance' => $availableMoney
+            ], ['id' => $this->id])->execute();
 
             if ($this->call_business_process && isset(Yii::$app->params['module']['finance']['business']['class']) && class_exists(Yii::$app->params['module']['finance']['business']['class'])) {
                 try {

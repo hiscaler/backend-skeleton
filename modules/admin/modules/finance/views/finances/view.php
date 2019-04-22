@@ -21,6 +21,7 @@ $this->params['menus'] = [
             'id',
             'type:financeType',
             'money:yuan',
+            'balance:yuan',
             'source:financeSource',
             'remittance_slip:image',
             'related_key',
