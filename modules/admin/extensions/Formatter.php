@@ -292,4 +292,19 @@ class Formatter extends \yii\i18n\Formatter
         return isset($options[$value]) ? $options[$value] : null;
     }
 
+    /**
+     * 资源文件地址全路径
+     *
+     * @param $value
+     * @return string
+     */
+    public function asAssetFullPath($value)
+    {
+        if (!empty($value) && strncmp($value, 'http', 4) !== 0 && strncmp($value, '//', 2) !== 0) {
+            return Yii::$app->getRequest()->getHostInfo() . '/' . trim($value, '/');
+        } else {
+            return $value;
+        }
+    }
+
 }
