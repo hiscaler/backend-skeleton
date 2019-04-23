@@ -345,11 +345,10 @@ class BaseCategory extends BaseActiveRecord
     public static function getChildren($signOrId = null, $level = 0, $getAll = false)
     {
         $signOrId = trim($signOrId);
-        $db = \Yii::$app->getDb();
         if (is_numeric($signOrId)) {
             $id = (int) $signOrId;
         } elseif (is_string($signOrId) && $signOrId) {
-            $id = $db->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
+            $id = \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
             if (!$id) {
                 return [];
             }
@@ -376,6 +375,34 @@ class BaseCategory extends BaseActiveRecord
         }
 
         return $ids;
+    }
+
+    /**
+     * 获取所有子节点 id 集合（包含自身）
+     *
+     * @param int $signOrId
+     * @param int $level
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public static function getChildrenIdsWithSelf($signOrId = 0, $level = 0)
+    {
+        $signOrId = trim($signOrId);
+        if (is_numeric($signOrId)) {
+            $id = (int) $signOrId;
+        } elseif (is_string($signOrId) && $signOrId) {
+            $id = \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
+            if (!$id) {
+                return [];
+            }
+        } else {
+            $id = 0;
+        }
+
+        $childrenIds = self::getChildrenIds($id, $level);
+        $id && $childrenIds[] = $id;
+
+        return $childrenIds;
     }
 
     /**

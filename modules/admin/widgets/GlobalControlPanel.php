@@ -2,15 +2,18 @@
 
 namespace app\modules\admin\widgets;
 
+use app\models\Member;
+use app\models\MemberCreditLog;
 use app\models\Module;
+use app\models\User;
 use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\base\Widget;
-use yii\helpers\ArrayHelper;
 
 /**
  * 全局管理控制面板
  *
+ * @package app\modules\admin\widgets
  * @author hiscaler <hiscaler@gmail.com>
  */
 class GlobalControlPanel extends Widget
@@ -27,14 +30,22 @@ class GlobalControlPanel extends Widget
         $rbacConfig = ApplicationHelper::getConfigValue('rbac', []);
         $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
         if ($requireCheckAuth) {
-            $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
-            if (!is_array($ignoreUsers)) {
-                $ignoreUsers = [];
-            }
-            if ($ignoreUsers) {
-                if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
-                    $requireCheckAuth = false;
+            $identity = $user->getIdentity();
+            /* @var $identity Member */
+            if ($user->identityClass != MemberCreditLog::class || $identity->type != Member::TYPE_ADMINISTRATOR) {
+                $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
+                if (!is_array($ignoreUsers)) {
+                    $ignoreUsers = [];
                 }
+                if ($ignoreUsers) {
+                    /* @var $identity User */
+                    if (!$user->getIsGuest() && in_array($identity->getUsername(), $ignoreUsers)) {
+                        $requireCheckAuth = false;
+                    }
+                }
+            } else {
+                // 验证类为 Member 并且类型是系统管理员则不需要走权限认证处理
+                $requireCheckAuth = false;
             }
         }
         $items = [];

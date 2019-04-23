@@ -6,6 +6,13 @@ return [
     'member.accessTokenExpire' => 86400, // 会员 Access Token 有效期（单位为秒，默认 24 小时）
     // 会员
     'member' => [
+        /**
+         * 会员类型选项
+         * 格式：key => value
+         * key 为除 1 外的正整数, 1 表示系统管理员
+         * value 可以为任意字符串
+         */
+        'types' => [],
         'register' => [
             'type' => 'wx', // 注册类型 normal: 常规表单注册, wx: 使用微信第三方注册
             'status' => 0, // 会员注册默认值（待审核）

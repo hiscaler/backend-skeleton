@@ -6,6 +6,7 @@ use app\modules\admin\components\ApplicationHelper;
 use yadjet\behaviors\ImageUploadBehavior;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
 use yii\web\IdentityInterface;
 
@@ -51,6 +52,10 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
 
     const SCENARIO_DELETE = 'DELETE';
 
+    /**
+     * 会员类型
+     */
+    const TYPE_NONE = 0;
     const TYPE_ADMINISTRATOR = 1;
 
     /**
@@ -94,7 +99,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
             ['invitation_code', 'string', 'max' => 16],
             [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
-            [['type'], 'default', 'value' => self::TYPE_ADMINISTRATOR],
+            [['type'], 'default', 'value' => self::TYPE_NONE],
             [['type'], 'in', 'range' => array_keys(static::typeOptions())],
             [['category_id', 'parent_id'], 'default', 'value' => 0],
             [['remark'], 'string'],
@@ -469,9 +474,25 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function typeOptions()
     {
-        return [
-            self::TYPE_ADMINISTRATOR => '管理员',
+        $options = [
+            self::TYPE_NONE => '普通会员',
         ];
+
+        if (\Yii::$app->getUser()->identityClass == Member::class) {
+            $options[self::TYPE_ADMINISTRATOR] = '管理员';
+        }
+
+        $types = ApplicationHelper::getConfigValue('member.types', []);
+        if (ArrayHelper::isIndexed($types)) {
+            foreach ($types as $key => $value) {
+                if ($key == 1) {
+                    unset($types[$key]);
+                }
+            }
+        }
+        $types && $options = array_replace($options, $types);
+
+        return $options;
     }
 
     /**
