@@ -33,6 +33,7 @@ use yii\web\IdentityInterface;
  * @property integer $available_money
  * @property integer $total_credits
  * @property integer $available_credits
+ * @property integer $alarm_credits
  * @property integer $login_count
  * @property string $last_login_ip
  * @property integer $last_login_time
@@ -86,7 +87,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         $rules = [
-            [['type', 'category_id', 'parent_id', 'total_money', 'available_money', 'total_credits', 'available_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'category_id', 'parent_id', 'total_money', 'available_money', 'total_credits', 'available_credits', 'alarm_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            ['alarm_credits', 'default', 'value' => 0],
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             'registerByUsername' => [['username'], 'required'],
             [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
@@ -168,6 +170,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             'available_money' => '可用金额',
             'total_credits' => '总积分',
             'available_credits' => '可用积分',
+            'alarm_credits' => '积分预警值',
             'login_count' => '登录次数',
             'last_login_ip' => '最后登录 IP',
             'last_login_time' => '最后登录时间',

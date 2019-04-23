@@ -99,6 +99,13 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'attribute' => 'available_credits',
                 'contentOptions' => ['class' => 'number'],
             ],
+            [
+                'attribute' => 'alarm_credits',
+                'value' => function ($model) {
+                    return $model->alarm_credits ?: null;
+                },
+                'contentOptions' => ['class' => 'number'],
+            ],
             // 'last_login_ip',
             [
                 'attribute' => 'last_login_time',

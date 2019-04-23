@@ -59,6 +59,7 @@ class BaseMember extends \app\models\Member
             'available_money',
             'total_credits',
             'available_credits',
+            'alarm_credits',
             'login_count',
             'last_login_ip',
             'last_login_time',

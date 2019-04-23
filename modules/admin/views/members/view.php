@@ -63,6 +63,12 @@ $creditLogs = $model->creditLogs;
                         'available_money:yuan',
                         'total_credits',
                         'available_credits',
+                        [
+                            'attribute' => 'alarm_credits',
+                            'value' => function ($model) {
+                                return $model['alarm_credits'] ?: null;
+                            },
+                        ],
                         'login_count',
                         'last_login_ip',
                         'last_login_time:datetime',
