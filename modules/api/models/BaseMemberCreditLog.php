@@ -17,6 +17,11 @@ class BaseMemberCreditLog extends \app\models\MemberCreditLog
             'id',
             'member_id',
             'operation',
+            'operation_formatted' => function ($model) {
+                $options = MemberCreditLog::operationOptions();
+
+                return isset($options[$model->operation]) ? $options[$model->operation] : null;
+            },
             'related_key',
             'credits',
             'remark',
