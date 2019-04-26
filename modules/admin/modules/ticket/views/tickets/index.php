@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -12,7 +13,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']]
-]
+];
+
+$baseUrl = \Yii::$app->getRequest()->getBaseUrl() . '/admin';
 ?>
 <div class="ticket-index">
     <?php Pjax::begin(); ?>
@@ -56,7 +59,13 @@ $this->params['menus'] = [
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'headerOptions' => ['class' => 'buttons-3 last'],
+                'template' => '{view} {messages} {update} {delete}',
+                'buttons' => [
+                    'messages' => function ($url, $model, $key) use ($baseUrl) {
+                        return Html::a(Html::img($baseUrl . '/images/messages.png'), ['messages/index', 'ticketId' => $model->id], ['title' => Yii::t('app', 'Change Password')]);
+                    },
+                ],
+                'headerOptions' => ['class' => 'buttons-4 last'],
             ],
         ],
     ]); ?>

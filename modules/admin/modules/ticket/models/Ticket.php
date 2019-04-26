@@ -76,7 +76,7 @@ class Ticket extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => '编号',
             'category_id' => '问题类型',
             'title' => '标题',
             'description' => '问题描述',
@@ -112,7 +112,8 @@ class Ticket extends \yii\db\ActiveRecord
      */
     public function getCategory()
     {
-        return $this->hasOne(Category::class, ['id' => 'category_id']);
+        return $this->hasOne(Category::class, ['id' => 'category_id'])
+            ->select(['id', 'alias', 'name', 'short_name', 'icon', 'description']);
     }
 
     /**
@@ -123,6 +124,17 @@ class Ticket extends \yii\db\ActiveRecord
     public function getAttachments()
     {
         return $this->hasMany(TicketAttachment::class, ['ticket_id' => 'id']);
+    }
+
+    /**
+     * 消息
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMessages()
+    {
+        return $this->hasMany(TicketMessage::class, ['ticket_id' => 'id'])
+            ->orderBy(['id' => SORT_DESC]);
     }
 
     // Events

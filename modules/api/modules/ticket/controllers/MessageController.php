@@ -4,17 +4,17 @@ namespace app\modules\api\modules\ticket\controllers;
 
 use app\modules\api\extensions\yii\rest\CreateAction;
 use app\modules\api\modules\ticket\models\Ticket;
-use app\modules\api\modules\ticket\models\TicketSearch;
+use app\modules\api\modules\ticket\models\TicketMessageSearch;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
 /**
- * `ticket` 工单接口
+ * `ticket/message` 工单消息接口
  *
  * @package app\modules\api\modules\ticket\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class DefaultController extends Controller
+class MessageController extends Controller
 {
 
     public $modelClass = Ticket::class;
@@ -63,9 +63,9 @@ class DefaultController extends Controller
      */
     public function prepareDataProvider()
     {
-        $search = new TicketSearch();
+        $search = new TicketMessageSearch();
 
         return $search->search(\Yii::$app->getRequest()->getQueryParams());
     }
-    
+
 }

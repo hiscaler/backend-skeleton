@@ -30,7 +30,7 @@ class Ticket extends \app\modules\admin\modules\ticket\models\Ticket
 
     public function extraFields()
     {
-        return ['category', 'attachments'];
+        return ['category', 'attachments', 'messages'];
     }
 
 }
