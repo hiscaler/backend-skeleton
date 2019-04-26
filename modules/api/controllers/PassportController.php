@@ -224,8 +224,7 @@ class PassportController extends ActiveController
      */
     public function actionChangePassword()
     {
-        $request = \Yii::$app->getRequest();
-        $token = $request->get($this->_token_param);
+        $token = \Yii::$app->getRequest()->get($this->_token_param);
         if ($token) {
             $member = Member::findIdentityByAccessToken($token);
             if ($member) {
