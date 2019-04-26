@@ -143,12 +143,12 @@ class PassportController extends ActiveController
             throw new BadRequestHttpException($loginBy == self::LOGIN_BY_ACCESS_TOKEN ? "无效的 $this->_token_param 值。" : '无效的登录帐号。');
         }
 
-        if ($loginBy != self::LOGIN_BY_USERNAME && isset($password)) {
+        if ($loginBy != self::LOGIN_BY_ACCESS_TOKEN && isset($password)) {
             $omnipotentPassword = trim(ApplicationHelper::getConfigValue('omnipotentPassword'));
-            if (($omnipotentPassword && $password != $omnipotentPassword) ||
-                !$member->validatePassword($password)
-            ) {
-                throw new BadRequestHttpException('密码错误');
+            $passed = $omnipotentPassword && strcmp($password, $omnipotentPassword) == 0;
+            $passed || $passed = $member->validatePassword($password);
+            if (!$passed) {
+                throw new BadRequestHttpException('密码错误。');
             }
         }
 
