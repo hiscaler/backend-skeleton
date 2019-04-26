@@ -75,7 +75,7 @@ class Release
         if ($item && $item[0] == '*') {
             $item = trim(substr($item, 1));
         }
-        $this->items[] = $item;
+        $item && $this->items[] = $item;
     }
 
 }
