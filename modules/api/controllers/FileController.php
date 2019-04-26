@@ -224,10 +224,10 @@ class FileController extends BaseController
     /**
      * 删除文件
      *
-     * @todo 需要判断文件所有者权限
      * @param $url
      * @return string
      * @throws NotFoundHttpException
+     * @todo 需要判断文件所有者权限
      */
     public function actionDelete($url)
     {
