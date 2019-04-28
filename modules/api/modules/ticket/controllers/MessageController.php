@@ -3,7 +3,7 @@
 namespace app\modules\api\modules\ticket\controllers;
 
 use app\modules\api\extensions\yii\rest\CreateAction;
-use app\modules\api\modules\ticket\models\Ticket;
+use app\modules\api\modules\ticket\models\TicketMessage;
 use app\modules\api\modules\ticket\models\TicketMessageSearch;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -17,7 +17,7 @@ use yii\filters\VerbFilter;
 class MessageController extends Controller
 {
 
-    public $modelClass = Ticket::class;
+    public $modelClass = TicketMessage::class;
 
     public function actions()
     {

@@ -17,7 +17,7 @@ class TicketMessageSearch extends TicketMessage
     public function rules()
     {
         return [
-            [['type'], 'integer'],
+            [['ticket_id', 'type'], 'integer'],
             [['reply_username'], 'safe'],
         ];
     }
@@ -40,7 +40,8 @@ class TicketMessageSearch extends TicketMessage
      */
     public function search($params)
     {
-        $query = TicketMessage::find();
+        $query = TicketMessage::find()
+            ->where(['ticket_id' => $this->ticket_id]);
 
         // add conditions that should always apply here
 
