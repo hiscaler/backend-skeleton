@@ -12,6 +12,7 @@ use yii\helpers\FileHelper;
 /**
  * 数据库操作
  *
+ * @package app\commands
  * @author hiscaler <hiscaler@gmail.com>
  */
 class DbController extends Controller

@@ -13,6 +13,7 @@ use yii\rest\ActiveController;
 /**
  * 接口文档生成
  *
+ * @package app\commands
  * @author hiscaler <hiscaler@gmail.com>
  */
 class ApiController extends Controller

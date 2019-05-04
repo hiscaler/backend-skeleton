@@ -13,6 +13,9 @@ use yii\helpers\Inflector;
 
 /**
  * 初始化数据
+ *
+ * @package app\commands
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class InitController extends Controller
 {

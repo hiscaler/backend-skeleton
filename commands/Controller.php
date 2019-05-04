@@ -7,6 +7,7 @@ use yii\console\Exception;
 /**
  * 命令行脚本基类
  *
+ * @package app\commands
  * @author hiscaler <hiscaler@gmail.com>
  */
 class Controller extends \yii\console\Controller
