@@ -4,6 +4,11 @@
 ## 列表
 GET /api/notice/default/index?accessToken=:accessToken
 
+### 查询参数
+| 参数 | 类型 | 默认值 | 必填 | 备注 |
+| --- | :---: | :---: | :---: | --- |
+| read | string | 无 | 否 | 是否已读（y,n） |
+
 ## 创建通知
 POST /api/notice/default/create?accessToken=:accessToken
 
@@ -25,3 +30,6 @@ DELETE /api/notice/default/delete?id=:id&accessToken=:accessToken
 | 排序 | ordering | int | | | 否 | |
 | 查看权限 | view_permission | int | | | 是 | 0：所有人员, 1: 指定的人员, 3: 根据会员级别 |
 | 允许查看的会员 | view_member_id_list | string | | | 否 | 允许查看的会员 id，多个之间使用小写的逗号进行分隔 |
+
+## 设置为已读
+POST /api/notice/default/read?id=:id&accessToken=:accessToken

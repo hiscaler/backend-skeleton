@@ -5,8 +5,10 @@ namespace app\modules\api\modules\notice\controllers;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\modules\notice\models\Notice;
 use app\modules\api\modules\notice\models\NoticeSearch;
+use stdClass;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * /api/notice/default
@@ -30,6 +32,7 @@ class DefaultController extends ActiveController
                 'actions' => [
                     'create' => ['POST'],
                     'update' => ['PUT', 'PATCH'],
+                    'read' => ['POST'],
                     'delete' => ['DELETE'],
                     '*' => ['GET'],
                 ],
@@ -38,7 +41,7 @@ class DefaultController extends ActiveController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view'],
+                        'actions' => ['index', 'create', 'update', 'view', 'read'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -67,6 +70,48 @@ class DefaultController extends ActiveController
         $search = new NoticeSearch();
 
         return $search->search(\Yii::$app->getRequest()->getQueryParams());
+    }
+
+    /**
+     * 设置为已读状态
+     *
+     * @param $id
+     * @return stdClass
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
+     */
+    public function actionRead($id)
+    {
+        $model = $this->findModel($id);
+        $memberId = \Yii::$app->getUser()->getId();
+        $db = \Yii::$app->getDb();
+        $exist = $db->createCommand('SELECT COUNT(*) FROM {{%notice_view}} WHERE [[notice_id]] = :noticeId AND [[member_id]] = :memberId', [
+            ':noticeId' => $model->id,
+            ':memberId' => $memberId,
+        ])->queryScalar();
+        if (!$exist) {
+            $db->createCommand()->insert('{{%notice_view}}', [
+                'notice_id' => $model->id,
+                'member_id' => $memberId,
+                'view_datetime' => time(),
+            ])->execute();
+        }
+
+        return new stdClass();
+    }
+
+    /**
+     * @param $id
+     * @return Notice|null
+     * @throws NotFoundHttpException
+     */
+    protected function findModel($id)
+    {
+        if (($model = Notice::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
 }

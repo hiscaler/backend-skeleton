@@ -2,15 +2,23 @@
 
 namespace app\modules\api\modules\notice\models;
 
+use app\modules\api\extensions\yii\data\ActiveWithStatisticsDataProvider;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
 
 class NoticeSearch extends Notice
 {
 
+    /**
+     * @var null|string 是否已经读取消息
+     */
+    public $read = null;
+
     public function rules()
     {
         return [
-            [['title'], 'string'],
+            [['title', 'read'], 'string'],
+            [['title', 'read'], 'trim'],
             [['category_id', 'enabled'], 'integer'],
         ];
     }
@@ -22,10 +30,41 @@ class NoticeSearch extends Notice
      */
     public function search($params)
     {
-        $query = Notice::find();
+        $query = Notice::find()->with(['read']);
 
-        $dataProvider = new ActiveDataProvider([
+        $dataProvider = new ActiveWithStatisticsDataProvider([
             'query' => $query,
+            'statistics' => function ($models, $query) {
+                $statFunc = function ($items) {
+                    $totalCount = $hasReadCount = 0;
+                    foreach ($items as $item) {
+                        $totalCount++;
+                        if ($item->read) {
+                            $hasReadCount++;
+                        }
+                    };
+
+                    return [
+                        'total' => $totalCount,
+                        'has_read' => $hasReadCount,
+                        'unread' => $totalCount - $hasReadCount,
+                    ];
+                };
+
+                /* @var $query Query */
+                $items = $query
+                    ->select(['id'])
+                    ->offset(null)
+                    ->limit(null)
+                    ->where('')
+                    ->orderBy([])
+                    ->all();
+
+                return [
+                    'current' => $statFunc($models),
+                    'all' => $statFunc($items),
+                ];
+            },
             'sort' => [
                 'defaultOrder' => ['id' => SORT_DESC],
             ]
@@ -40,6 +79,14 @@ class NoticeSearch extends Notice
             'category_id' => $this->category_id,
             'enabled' => $this->enabled,
         ]);
+
+        if (($read = strtolower($this->read)) && in_array($read, ['y', 'n'])) {
+            $query->andWhere([$read == 'y' ? "IN" : "NOT IN", 'id', (new Query())
+                ->select('notice_id')
+                ->from('{{%notice_view}}')
+                ->where(['member_id' => \Yii::$app->getUser()->getId()])
+            ]);
+        }
 
         $query->andFilterWhere(['LIKE', 'title', $this->title]);
 

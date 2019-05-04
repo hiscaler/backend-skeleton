@@ -2,9 +2,9 @@
 
 namespace app\modules\admin\modules\notice\models;
 
-use app\models\BaseActiveRecord;
 use app\models\Constant;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\StringHelper;
 
@@ -26,7 +26,7 @@ use yii\helpers\StringHelper;
  * @property int $updated_at 更新时间
  * @property int $updated_by 更新人
  */
-class Notice extends BaseActiveRecord
+class Notice extends ActiveRecord
 {
 
     /**
@@ -52,7 +52,7 @@ class Notice extends BaseActiveRecord
     public function transactions()
     {
         return [
-            self::SCENARIO_DELETE => self::OP_DELETE,
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 
@@ -139,6 +139,16 @@ class Notice extends BaseActiveRecord
         ];
     }
 
+    /**
+     * 阅读数据
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRead()
+    {
+        return $this->hasOne(NoticeView::class, ['notice_id' => 'id']);
+    }
+
     // Events
 
     /**
@@ -216,11 +226,15 @@ class Notice extends BaseActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
+        $cmd = \Yii::$app->getDb()->createCommand();
         if ($this->view_permission == self::VIEW_PERMISSION_SPECIAL) {
-            \Yii::$app->getDb()->createCommand()->delete('{{%notice_permission}}', [
+            $cmd->delete('{{%notice_permission}}', [
                 'notice_id' => $this->id
             ])->execute();
         }
+        $cmd->delete('{{%notice_view}}', [
+            'notice_id' => $this->id
+        ])->execute();
     }
 
 }
