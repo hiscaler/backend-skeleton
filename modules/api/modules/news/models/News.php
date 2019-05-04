@@ -136,7 +136,7 @@ class News extends BaseActiveRecord
             'keywords',
             'description',
             'is_picture_news',
-            'picturePath' => function () {
+            'picture_path' => function () {
                 return UtilsHelper::fixStaticAssetUrl($this->picture_path);
             },
             'enabled_comment',
