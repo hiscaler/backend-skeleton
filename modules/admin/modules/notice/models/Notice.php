@@ -2,9 +2,8 @@
 
 namespace app\modules\admin\modules\notice\models;
 
+use app\models\BaseActiveRecord;
 use app\models\Constant;
-use Yii;
-use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\StringHelper;
 
@@ -26,7 +25,7 @@ use yii\helpers\StringHelper;
  * @property int $updated_at 更新时间
  * @property int $updated_by 更新人
  */
-class Notice extends ActiveRecord
+class Notice extends BaseActiveRecord
 {
 
     /**
@@ -74,7 +73,6 @@ class Notice extends ActiveRecord
             ['clicks_count', 'default', 'value' => 0],
             ['enabled', 'boolean'],
             ['enabled', 'default', 'value' => Constant::BOOLEAN_TRUE],
-            ['published_at', 'datetime', 'format' => 'php:Y-m-d H:i:s', 'timestampAttribute' => 'published_at'],
             ['view_member_id_list', 'string'],
             ['view_member_id_list', 'trim'],
             ['view_member_id_list', 'required', 'when' => function ($model) {
@@ -150,18 +148,6 @@ class Notice extends ActiveRecord
     }
 
     // Events
-
-    /**
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\db\Exception
-     */
-    public function afterFind()
-    {
-        parent::afterFind();
-        if (!$this->isNewRecord) {
-            $this->published_at = Yii::$app->getFormatter()->asDatetime($this->published_at);
-        }
-    }
 
     /**
      * @param $insert
