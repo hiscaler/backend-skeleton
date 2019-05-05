@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yadjet\validators\ZipCodeValidator;
+
 /**
  * This is the model class for table "{{%member_profile}}".
  *
@@ -39,9 +41,11 @@ class BaseMemberProfile extends \yii\db\ActiveRecord
             [['member_id', 'status'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => array_keys(self::statusOptions())],
+            [['tel', 'address', 'zip_code'], 'trim'],
             [['tel'], 'string', 'max' => 30],
             [['address'], 'string', 'max' => 100],
             [['zip_code'], 'string', 'max' => 6],
+            ['zip_code', ZipCodeValidator::class],
             [['member_id'], 'unique'],
         ];
     }
