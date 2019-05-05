@@ -50,8 +50,6 @@ use yii\web\IdentityInterface;
 class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
 {
 
-    const SCENARIO_DELETE = 'DELETE';
-
     /**
      * 会员类型
      */
@@ -82,7 +80,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public function transactions()
     {
         return [
-            self::SCENARIO_DELETE => self::OP_DELETE,
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 
