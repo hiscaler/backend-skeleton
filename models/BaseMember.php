@@ -685,11 +685,9 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
 
         // 清理相关数据
         $cmd = \Yii::$app->getDb()->createCommand();
-        $tables = ['member_credit_log', 'wechat_member'];
+        $tables = ['member_credit_log', 'wechat_member', 'member_profile'];
         foreach ($tables as $table) {
-            $cmd->delete("{{%$table}}", [
-                'member_id' => $this->id
-            ])->execute();
+            $cmd->delete("{{%$table}}", ['member_id' => $this->id])->execute();
         }
     }
 
