@@ -481,14 +481,14 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         }
 
         $types = ApplicationHelper::getConfigValue('member.types', []);
-        if (ArrayHelper::isIndexed($types)) {
+        if ($types && ArrayHelper::isIndexed($types)) {
             foreach ($types as $key => $value) {
-                if ($key == 1) {
+                if ($key == self::TYPE_ADMINISTRATOR) {
                     unset($types[$key]);
                 }
             }
+            $types && $options = array_replace($options, $types);
         }
-        $types && $options = array_replace($options, $types);
 
         return $options;
     }
