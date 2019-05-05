@@ -36,6 +36,14 @@ class Module extends \yii\base\Module
                 'enableSession' => false,
                 'loginUrl' => null,
             ],
+            'request' => [
+                'class' => 'yii\web\Request',
+                'cookieValidationKey' => '#$%^&*()PFVK:"PVR&F:PO()_H)HN',
+                'parsers' => [
+                    'application/json' => 'yii\web\JsonParser',
+                    'multipart/form-data' => 'yii\web\MultipartFormDataParser',
+                ],
+            ],
             'response' => [
                 'class' => 'yii\web\Response',
                 'formatters' => [
