@@ -44,6 +44,12 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
                 <?= $form->field($model, 'view_permission')->dropDownList(\app\modules\admin\modules\notice\models\Notice::viewPermissionOptions()) ?>
             </div>
+            <div id="view_member_username_list" class="entry" style="display: none;">
+                <?= $form->field($model, 'view_member_username_list')->textarea(['rows' => 6]) ?>
+            </div>
+            <div id="view_member_type_list" class="entry" style="display: none;">
+                <?= $form->field($model, 'view_member_type_list')->checkboxList(\app\models\Member::typeOptions()) ?>
+            </div>
             <div class="entry">
                 <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
                 <?= UEditor::widget([
@@ -76,3 +82,39 @@ use yii\widgets\ActiveForm;
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+
+<?php \app\modules\admin\components\JsBlock::begin() ?>
+<script type="text/javascript">
+    function fnOperationInput(permission) {
+        switch (parseInt(permission))  {
+            case 1:
+                console.info("one")
+                $('#view_member_username_list').show();
+                $('#view_member_type_list').hide();
+                break;
+
+            case 2:
+                console.info("two")
+                $('#view_member_username_list').hide();
+                $('#view_member_type_list').show();
+                break;
+
+            default:
+                console.info("default")
+                $('#view_member_username_list').hide();
+                $('#view_member_type_list').hide();
+                break;
+        }
+    }
+    $(function () {
+        $('#notice-view_permission').change(function () {
+            fnOperationInput($(this).val())
+        });
+        <?php
+        if (!$model->getIsNewRecord() || $model->view_permission != \app\modules\admin\modules\notice\models\Notice::VIEW_PERMISSION_ALL) {
+            echo "fnOperationInput({$model->view_permission});";
+        }
+        ?>
+    });
+</script>
+<?php \app\modules\admin\components\JsBlock::end() ?>

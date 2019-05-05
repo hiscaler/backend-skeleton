@@ -3,6 +3,7 @@
 namespace app\modules\api\modules\notice\models;
 
 use app\modules\api\extensions\yii\data\ActiveWithStatisticsDataProvider;
+use app\modules\api\models\Member;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
 
@@ -30,7 +31,21 @@ class NoticeSearch extends Notice
      */
     public function search($params)
     {
-        $query = Notice::find()->with(['read']);
+        /* @var $member Member */
+        $member = \Yii::$app->getUser()->getIdentity();
+        $condition = [
+            'OR',
+            ['view_permission' => Notice::VIEW_PERMISSION_ALL],
+            "[[view_permission]] = :viewSpecialPermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :memberId)",
+            "[[view_permission]] = :viewMemberTypePermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :type)"
+        ];
+        $query = Notice::find()->with(['read'])
+            ->where($condition, [
+                ':viewSpecialPermission' => Notice::VIEW_PERMISSION_SPECIAL,
+                ':memberId' => $member->id,
+                ':viewMemberTypePermission' => Notice::VIEW_PERMISSION_BY_MEMBER_TYPE,
+                ':type' => $member->type,
+            ]);
 
         $dataProvider = new ActiveWithStatisticsDataProvider([
             'query' => $query,

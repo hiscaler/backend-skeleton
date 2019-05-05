@@ -15,9 +15,8 @@ class m190321_034101_create_notice_permission_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%notice_permission}}', [
-            'id' => $this->primaryKey(),
             'notice_id' => $this->integer()->notNull()->comment('通知'),
-            'member_id' => $this->integer()->notNull()->comment('会员'),
+            'xid' => $this->integer()->notNull()->comment('会员编号或等级'),
         ]);
     }
 

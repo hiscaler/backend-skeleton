@@ -4,6 +4,7 @@ namespace app\modules\admin\modules\notice\models;
 
 use app\models\BaseActiveRecord;
 use app\models\Constant;
+use app\models\Member;
 use yii\db\Query;
 use yii\helpers\StringHelper;
 
@@ -29,16 +30,21 @@ class Notice extends BaseActiveRecord
 {
 
     /**
-     * @var array 指定的会员
+     * @var string 指定的会员
      */
-    public $view_member_id_list = '';
+    public $view_member_username_list = '';
+
+    /**
+     * @var string 指定的会员等级
+     */
+    public $view_member_type_list = '';
 
     /**
      * 查看权限
      */
     const VIEW_PERMISSION_ALL = 0;
     const VIEW_PERMISSION_SPECIAL = 1;
-    const VIEW_PERMISSION_BY_MEMBER_LEVEL = 2;
+    const VIEW_PERMISSION_BY_MEMBER_TYPE = 2;
 
     /**
      * @inheritdoc
@@ -73,27 +79,63 @@ class Notice extends BaseActiveRecord
             ['clicks_count', 'default', 'value' => 0],
             ['enabled', 'boolean'],
             ['enabled', 'default', 'value' => Constant::BOOLEAN_TRUE],
-            ['view_member_id_list', 'string'],
-            ['view_member_id_list', 'trim'],
-            ['view_member_id_list', 'required', 'when' => function ($model) {
+            ['view_member_username_list', 'string'],
+            ['view_member_username_list', 'trim'],
+            ['view_member_username_list', 'required', 'when' => function ($model) {
                 return $model->view_permission == self::VIEW_PERMISSION_SPECIAL;
-            }],
-            ['view_member_id_list', function ($attribute, $params) {
+            }, 'whenClient' => "function (attribute, value) {
+            return $('#notice-view_permission').val() == 1;
+    }"],
+            ['view_member_username_list', function ($attribute, $params) {
                 if ($this->view_permission == self::VIEW_PERMISSION_SPECIAL) {
-                    $memberIds = array_filter(array_unique(explode(',', $this->view_member_id_list)));
-                    if ($memberIds) {
-                        $n = (new Query())->from('{{%member}}')
-                            ->where(['id' => $memberIds])
+                    $usernameList = array_filter(array_unique(explode(',', $this->view_member_username_list)));
+                    if ($usernameList) {
+                        $n = (new Query())
+                            ->from('{{%member}}')
+                            ->where(['username' => $usernameList])
                             ->count();
-                        $hasError = $n != count($memberIds);
+                        $hasError = $n != count($usernameList);
                     } else {
                         $hasError = true;
                     }
                     if ($hasError) {
                         $this->addError($attribute, '允许的会员数据有误。');
                     } else {
-                        $this->view_member_id_list = implode(',', $memberIds);
+                        $this->view_member_username_list = implode(',', $usernameList);
                     }
+                } else {
+                    $this->view_member_username_list = '';
+                }
+            }],
+            ['view_member_type_list', 'safe'],
+            ['view_member_type_list', 'required', 'when' => function ($model) {
+                return $model->view_permission == self::VIEW_PERMISSION_BY_MEMBER_TYPE;
+            }, 'whenClient' => "function (attribute, value) {
+            if ($('#notice-view_permission').val() == 2) {
+                return $('input[name=Notice\\\[view_member_type_list\\\]\\\[\\\]]:checked').length <= 0;
+            }
+            return false;
+    }"],
+            ['view_member_type_list', function ($attribute, $params) {
+                if ($this->view_permission == self::VIEW_PERMISSION_BY_MEMBER_TYPE) {
+                    $memberTypes = $this->view_member_type_list;
+                    if (is_array($memberTypes) && $memberTypes) {
+                        $validMemberTypes = Member::typeOptions();
+                        $hasError = false;
+                        foreach ($memberTypes as $type) {
+                            if (!isset($validMemberTypes[$type])) {
+                                $hasError = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        $hasError = true;
+                    }
+                    if ($hasError) {
+                        $this->addError($attribute, '允许的会员等级有误。');
+                    }
+                } else {
+                    $this->view_member_type_list = [];
                 }
             }],
         ]);
@@ -114,7 +156,8 @@ class Notice extends BaseActiveRecord
             'clicks_count' => '点击次数',
             'published_at' => '发布时间',
             'view_permission' => '查看权限',
-            'view_member_id_list' => '允许查看的人员',
+            'view_member_username_list' => '允许会员帐号',
+            'view_member_type_list' => '允许会员等级',
             'ordering' => '排序',
             'created_at' => '添加时间',
             'created_by' => '添加人',
@@ -133,7 +176,7 @@ class Notice extends BaseActiveRecord
         return [
             self::VIEW_PERMISSION_ALL => '所有人员',
             self::VIEW_PERMISSION_SPECIAL => '指定人员',
-            self::VIEW_PERMISSION_BY_MEMBER_LEVEL => '会员等级',
+            self::VIEW_PERMISSION_BY_MEMBER_TYPE => '会员等级',
         ];
     }
 
@@ -181,28 +224,44 @@ class Notice extends BaseActiveRecord
         // 允许查看的会员数据处理
         $db = \Yii::$app->getDb();
         $cmd = $db->createCommand();
-        $memberIds = $this->view_permission == self::VIEW_PERMISSION_SPECIAL ? explode(',', $this->view_member_id_list) : [];
+        switch ($this->view_permission) {
+            case self::VIEW_PERMISSION_SPECIAL:
+                $xids = (new Query())
+                    ->select(['id'])
+                    ->from('{{%member}}')
+                    ->where(['username' => explode(',', $this->view_member_username_list)])
+                    ->column();
+                break;
+
+            case self::VIEW_PERMISSION_BY_MEMBER_TYPE:
+                $xids = $this->view_member_type_list;
+                break;
+
+            default:
+                $xids = [];
+                break;
+        }
         if ($insert) {
-            $insertMemberIds = $memberIds;
-            $deleteIds = [];
+            $insertXids = $xids;
+            $deleteXids = [];
         } else {
-            $existMemberIds = $db->createCommand('SELECT [[member_id]] FROM {{%notice_permission}} WHERE [[notice_id]] = :noticeId', [
+            $existXids = $db->createCommand('SELECT [[xid]] FROM {{%notice_permission}} WHERE [[notice_id]] = :noticeId', [
                 ':noticeId' => $this->id,
             ])->queryColumn();
-            $insertMemberIds = array_diff($memberIds, $existMemberIds);
-            $deleteIds = array_diff($existMemberIds, $memberIds);
+            $insertXids = array_diff($xids, $existXids);
+            $deleteXids = array_diff($existXids, $xids);
         }
-        if ($insertMemberIds) {
+        if ($insertXids) {
             $rows = [];
-            foreach ($insertMemberIds as $memberId) {
+            foreach ($insertXids as $memberId) {
                 $rows[] = [
                     'notice_id' => $this->id,
-                    'member_id' => $memberId,
+                    'xid' => $memberId,
                 ];
             }
             $cmd->batchInsert('{{%notice_permission}}', array_keys($rows[0]), $rows)->execute();
         }
-        $deleteIds && $cmd->delete('{{%notice_permission}}', ['notice_id' => $this->id, 'member_id' => $deleteIds])->execute();
+        $deleteXids && $cmd->delete('{{%notice_permission}}', ['notice_id' => $this->id, 'xid' => $deleteXids])->execute();
     }
 
     /**

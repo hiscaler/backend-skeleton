@@ -133,6 +133,13 @@ class DefaultController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if ($model->view_permission == Notice::VIEW_PERMISSION_SPECIAL) {
+            $t = \Yii::$app->getDb()->createCommand('SELECT [[m.username]] FROM {{%notice_permission}} t LEFT JOIN {{%member}} AS m ON [[t.xid]] = [[m.id]] WHERE [[notice_id]] = :noticeId', [':noticeId' => $model->id])->queryColumn();
+            $model->view_member_username_list = implode(',', $t);
+        } elseif ($model->view_permission == Notice::VIEW_PERMISSION_BY_MEMBER_TYPE) {
+            $t = \Yii::$app->getDb()->createCommand('SELECT [[xid]] FROM {{%notice_permission}} WHERE [[notice_id]] = :noticeId', [':noticeId' => $model->id])->queryColumn();
+            $model->view_member_type_list = $t;
+        }
         $dynamicModel = new DynamicForm(Meta::getItems($model));
 
         $post = Yii::$app->getRequest()->post();
