@@ -12,7 +12,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 
 /**
- * Class AccountController
+ * 帐号管理
  *
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
@@ -25,7 +25,7 @@ class AccountController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        unset($actions['index'], $actions['create'], $actions['delete']);
+        unset($actions['index'], $actions['create'], $actions['delete'], $actions['update'], $actions['view']);
 
         return $actions;
     }
@@ -61,16 +61,15 @@ class AccountController extends ActiveController
     /**
      * 更新
      *
-     * @param $id
      * @return Member|MemberProfile
      * @throws NotFoundHttpException
      * @throws ServerErrorHttpException
      * @throws \yii\base\InvalidConfigException
      * @throws \Exception
      */
-    public function actionUpdate($id)
+    public function actionUpdate()
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel();
         /* @var $profileModel MemberProfile */
         $profileModel = $model->profile ?: new MemberProfile();
 
@@ -104,13 +103,23 @@ class AccountController extends ActiveController
     }
 
     /**
-     * @param $id
+     * 帐号详情
+     *
      * @return Member|null
      * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    public function actionView()
     {
-        $model = Member::findOne((int) $id);
+        return $this->findModel();
+    }
+
+    /**
+     * @return Member|null
+     * @throws NotFoundHttpException
+     */
+    protected function findModel()
+    {
+        $model = Member::findOne(\Yii::$app->getUser()->getId());
         if ($model === null) {
             throw new NotFoundHttpException('Not found');
         }
