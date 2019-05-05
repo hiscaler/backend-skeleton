@@ -70,10 +70,15 @@ class AccountController extends ActiveController
     public function actionUpdate()
     {
         $model = $this->findModel();
-        /* @var $profileModel MemberProfile */
-        $profileModel = $model->profile ?: new MemberProfile();
-
         $payload = Yii::$app->getRequest()->getBodyParams();
+        !isset($payload['profile']) && $payload['profile'] = [];
+        /* @var $profileModel MemberProfile */
+        if ($model->profile) {
+            $profileModel = $model->profile;
+        } else {
+            $payload['profile']['member_id'] = $model->id;
+            $profileModel = new MemberProfile();
+        }
         if ($model->load($payload, '')
             && $profileModel->load($payload, 'profile')
             && $model->validate()
