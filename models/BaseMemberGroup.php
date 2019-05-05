@@ -24,8 +24,6 @@ use yii\helpers\Inflector;
 class BaseMemberGroup extends \yii\db\ActiveRecord
 {
 
-    const SCENARIO_DELETE = 'DELETE';
-
     /**
      * 分组类型
      */
@@ -43,7 +41,7 @@ class BaseMemberGroup extends \yii\db\ActiveRecord
     public function transactions()
     {
         return [
-            self::SCENARIO_DELETE => self::OP_DELETE,
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 

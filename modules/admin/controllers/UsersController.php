@@ -147,9 +147,7 @@ class UsersController extends Controller
             throw new BadRequestHttpException("Can't remove itself.");
         }
 
-        $model = $this->findModel($id);
-        $model->setScenario($model::SCENARIO_DELETE);
-        $model->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }

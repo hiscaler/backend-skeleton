@@ -75,7 +75,7 @@ class BaseCategory extends BaseActiveRecord
     public function transactions()
     {
         return [
-            self::SCENARIO_DELETE => self::OP_DELETE,
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 

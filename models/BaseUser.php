@@ -40,8 +40,6 @@ class BaseUser extends ActiveRecord implements IdentityInterface
 
     use ActiveRecordHelperTrait;
 
-    const SCENARIO_DELETE = 'DELETE';
-
     /**
      * 用户状态
      */
@@ -75,7 +73,7 @@ class BaseUser extends ActiveRecord implements IdentityInterface
     public function transactions()
     {
         return [
-            self::SCENARIO_DELETE => self::OP_DELETE,
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 

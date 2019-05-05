@@ -141,7 +141,6 @@ class CategoriesController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->setScenario($model::SCENARIO_DELETE);
         $children = Category::hasChildren($model['id']);
         if ($children) {
             throw new InvalidCallException('该分类有下级分类，禁止删除。');

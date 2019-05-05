@@ -35,8 +35,6 @@ class BaseMeta extends ActiveRecord
 
     public $validatorsList;
 
-    const SCENARIO_DELETE = 'DELETE';
-
     /**
      * 数据输入方式
      */
@@ -66,7 +64,7 @@ class BaseMeta extends ActiveRecord
     public function transactions()
     {
         return [
-            self::SCENARIO_DELETE => self::OP_DELETE,
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 
