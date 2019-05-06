@@ -25,6 +25,11 @@ class BaseWechatMember extends \app\models\WechatMember
             'openid',
             'nickname',
             'sex',
+            'sex_formatted' => function ($model) {
+                $options = Option::sexes();
+
+                return isset($options[$model->sex]) ? $options[$model->sex] : null;
+            },
             'country',
             'province',
             'city',

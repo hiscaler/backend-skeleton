@@ -3,7 +3,7 @@
 namespace app\modules\api\models;
 
 use app\models\Meta;
-use Yii;
+use app\modules\api\extensions\UtilsHelper;
 
 /**
  * Class BaseMember
@@ -35,22 +35,7 @@ class BaseMember extends \app\models\Member
             'nickname',
             'real_name',
             'avatar' => function ($model) {
-                $avatar = $model->avatar;
-                if (!empty($avatar)) {
-                    $addUrl = true;
-                    foreach (['http', 'https', '//'] as $prefix) {
-                        if (strncasecmp($avatar, $prefix, strlen($prefix)) === 0) {
-                            $addUrl = false;
-                            break;
-                        }
-                    }
-
-                    if ($addUrl) {
-                        $avatar = Yii::$app->getRequest()->hostInfo . $avatar;
-                    }
-                }
-
-                return $avatar;
+                return UtilsHelper::fixStaticAssetUrl($model->avatar);
             },
             'email',
             'mobile_phone',
@@ -75,25 +60,57 @@ class BaseMember extends \app\models\Member
             'created_by',
             'updated_at',
             'updated_by',
-            'meta_items' => function ($model) {
-                $items = [];
-                $rawItems = \Yii::$app->getDb()->createCommand('SELECT [[m.key]], [[m.return_value_type]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} t LEFT JOIN {{%meta}} m ON [[t.meta_id]] = [[m.id]] WHERE [[t.object_id]] = :objectId AND [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName)', [
-                    ':objectId' => $model->id,
-                    ':tableName' => strtr(static::tableName(), ['{{%', '}}' => ''])
-                ])->queryAll();
-                foreach ($rawItems as $item) {
-                    $valueKey = Meta::parseReturnKey($item['return_value_type']);
-                    $items[$item['key']] = $item[$valueKey];
-                }
-
-                return $items;
-            }
         ];
+    }
+
+    /**
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public function getMetaItems()
+    {
+        $items = [];
+        $rawItems = \Yii::$app->getDb()->createCommand('SELECT [[m.key]], [[m.return_value_type]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} t LEFT JOIN {{%meta}} m ON [[t.meta_id]] = [[m.id]] WHERE [[t.object_id]] = :objectId AND [[meta_id]] IN (SELECT [[id]] FROM {{%meta}} WHERE [[table_name]] = :tableName)', [
+            ':objectId' => $this->id,
+            ':tableName' => strtr(static::tableName(), ['{{%', '}}' => ''])
+        ])->queryAll();
+        foreach ($rawItems as $item) {
+            $valueKey = Meta::parseReturnKey($item['return_value_type']);
+            $items[$item['key']] = $item[$valueKey];
+        }
+
+        return $items;
+    }
+
+    /**
+     * 会员资料
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProfile()
+    {
+        return $this->hasOne(MemberProfile::class, ['member_id' => 'id']);
+    }
+
+    /**
+     * 积分记录
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreditLogs()
+    {
+        return $this->hasMany(MemberCreditLog::class, ['member_id' => 'id'])
+            ->orderBy(['id' => SORT_DESC]);
     }
 
     public function extraFields()
     {
-        return ['wechat', 'profile', 'creditLogs'];
+        return [
+            'wechat',
+            'profile',
+            'credit_logs' => 'creditLogs',
+            'meta_items' => 'metaItems',
+        ];
     }
 
 }

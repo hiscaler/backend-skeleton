@@ -1,6 +1,7 @@
 <?php
 
 namespace app\modules\api\models;
+
 /**
  * Class Member
  *

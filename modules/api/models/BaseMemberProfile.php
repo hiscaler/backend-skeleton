@@ -21,6 +21,11 @@ class BaseMemberProfile extends MemberProfile
             'address',
             'zip_code',
             'status',
+            'status_formatted' => function ($model) {
+                $options = self::statusOptions();
+
+                return isset($options[$model->status]) ? $options[$model->status] : null;
+            }
         ];
     }
 

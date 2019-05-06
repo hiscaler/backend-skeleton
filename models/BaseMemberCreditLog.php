@@ -90,7 +90,6 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
             static::OPERATION_MANUAL => Yii::t('memberCreditLog', 'Manual'),
             static::OPERATION_FINANCE => '财务',
         ];
-        // 自定义积分类型 @todo 从语言文件中获取相应的定义
         $custom = ApplicationHelper::getConfigValue('member.creditOperations', []);
 
         return array_merge($custom, $default);
