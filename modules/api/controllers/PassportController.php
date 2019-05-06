@@ -7,6 +7,7 @@ use app\modules\api\extensions\ActiveController;
 use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\forms\MemberRegisterForm;
 use app\modules\api\models\Member;
+use app\modules\api\models\MemberProfile;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\AccessControl;
@@ -80,26 +81,47 @@ class PassportController extends ActiveController
      * 会员注册
      *
      * @param string $type
-     * @return MemberRegisterForm
+     * @return MemberRegisterForm|MemberProfile
      * @throws ServerErrorHttpException
-     * @throws \yii\base\Exception
      * @throws \yii\base\InvalidConfigException
-     * @throws \yii\db\Exception
+     * @throws \Exception
      */
     public function actionRegister($type = MemberRegisterForm::REGISTER_BY_USERNAME)
     {
+        $payload = Yii::$app->getRequest()->getBodyParams();
         $model = new MemberRegisterForm();
         $model->register_by = $type;
         $model->loadDefaultValues();
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-        if ($model->validate()) {
-            $model->setPassword($model->password);
-            $model->save();
-            Yii::$app->getResponse()->setStatusCode(201);
-            Yii::$app->getUser()->login($model, 0);
-            Member::afterLogin(null);
-        } elseif (!$model->hasErrors()) {
-            throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
+
+        $profileModel = new MemberProfile();
+        $profileModel->loadDefaultValues();
+
+        if ($model->load($payload, '')
+            && $profileModel->load($payload, 'profile')
+            && $model->validate()
+            && $profileModel->validate()
+        ) {
+            $transaction = Yii::$app->getDb()->beginTransaction();
+            try {
+                $model->save();
+                $model->saveProfile($profileModel);
+                Yii::$app->getResponse()->setStatusCode(201);
+                Yii::$app->getUser()->login($model, 0);
+                Member::afterLogin(null);
+                $transaction->commit();
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            }
+        } elseif (!$model->hasErrors() && !$profileModel->hasErrors()) {
+            throw new ServerErrorHttpException('Failed to update the object for unknown reason.');
+        }
+
+        if ($model->hasErrors()) {
+            return $model;
+        }
+        if ($profileModel->hasErrors()) {
+            return $profileModel;
         }
 
         return $model;
