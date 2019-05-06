@@ -4,6 +4,7 @@ namespace app\modules\api\extensions;
 
 use app\modules\api\components\ApplicationHelper;
 use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
+use app\modules\api\extensions\yii\rest\ListAction;
 use Yii;
 use yii\filters\ContentNegotiator;
 use yii\filters\Cors;
@@ -93,6 +94,18 @@ class ActiveController extends \yii\rest\ActiveController
         }
 
         return $behaviors;
+    }
+
+    public function actions()
+    {
+        $actions = parent::actions();
+        $actions['list'] = [
+            'class' => ListAction::class,
+            'modelClass' => $this->modelClass,
+            'checkAccess' => [$this, 'checkAccess'],
+        ];
+
+        return $actions;
     }
 
 }
