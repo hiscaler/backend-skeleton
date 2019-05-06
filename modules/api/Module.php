@@ -75,7 +75,7 @@ class Module extends \yii\base\Module
         $response = Yii::$app->getResponse();
         $response->format && $response->format = Response::FORMAT_JSON;
 
-        $modules = \app\models\Module::map();
+        $modules = $this->getDevelopmentModules();
         if (isset($modules['queue']) && class_exists('\yii\queue\db\Queue')) {
             \Yii::$app->setComponents([
                 'queue' => [
@@ -93,6 +93,24 @@ class Module extends \yii\base\Module
                 'class' => 'app\\modules\\api\\modules\\' . $alias . '\\Module',
             ]);
         }
+    }
+
+    /**
+     * 获取开发模块
+     *
+     * @return array
+     */
+    public function getDevelopmentModules()
+    {
+        $key = '__api.development.modules';
+        $cache = Yii::$app->getCache();
+        $modules = $cache->get($key);
+        if ($modules === false) {
+            $modules = \app\models\Module::map();
+            $cache->set($key, $modules, 3600);
+        }
+
+        return $modules;
     }
 
 }
