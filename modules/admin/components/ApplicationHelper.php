@@ -69,6 +69,7 @@ class ApplicationHelper
         $controllerId = $controller->id;
         $actionId = $controller->action->id;
         $moduleId = $controller->module->id;
+        $moduleFullId = $controller->module->getUniqueId();
         $item = [
             'label' => $module['name'],
             'url' => ['/admin/' . $module['alias'] . '/default/index'],
@@ -80,11 +81,18 @@ class ApplicationHelper
                 if (isset($menu['url'][0])) {
                     $active = false;
                     if (isset($menu['active'])) {
-                        $active = $moduleId == $module['alias'];
+                        $active = $moduleId == $module['alias'] || strpos($moduleFullId, $module['alias']) !== false;
                         if ($active) {
                             parse_str(trim($menu['active']), $conditions);
                             foreach ($conditions as $kk => $value) {
                                 switch ($kk) {
+                                    case 'moduleId':
+                                        if ($moduleId != $value) {
+                                            $active = false;
+                                            break 2;
+                                        }
+                                        break;
+
                                     case 'controllerId':
                                         if ($controllerId != $value) {
                                             $active = false;
