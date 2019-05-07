@@ -188,12 +188,12 @@ class FileController extends BaseController
             if ($success) {
                 $path = "$path/$filename";
                 $res = [
-                    'originalName' => $originalName,
-                    'realName' => $filename,
+                    'original_name' => $originalName,
+                    'real_name' => $filename,
                     'path' => $path,
-                    'fullPath' => $request->getHostInfo() . $path,
+                    'full_path' => $request->getHostInfo() . $path,
                     'size' => $fileSize,
-                    'mimeType' => $mimeType,
+                    'mime_type' => $mimeType,
                 ];
                 if ($this->type == self::TYPE_IMAGE) {
                     $imgBinary = fread(fopen($absoluteSavePath, "r"), filesize($absoluteSavePath));
