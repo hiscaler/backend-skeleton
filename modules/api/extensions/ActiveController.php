@@ -39,6 +39,7 @@ class ActiveController extends \yii\rest\ActiveController
     public $serializer = [
         'class' => '\yii\rest\Serializer',
         'collectionEnvelope' => 'items',
+        'expandParam' => 'expand',
     ];
 
     /**
