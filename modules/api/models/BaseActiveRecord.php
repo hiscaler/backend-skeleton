@@ -13,6 +13,4 @@ use yii\db\ActiveRecord;
 class BaseActiveRecord extends ActiveRecord
 {
 
-    const SCENARIO_DELETE = 'DELETE';
-
 }
