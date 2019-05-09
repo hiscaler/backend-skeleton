@@ -37,7 +37,6 @@ class BaseMemberProfile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['member_id'], 'required'],
             [['member_id', 'status'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => array_keys(self::statusOptions())],

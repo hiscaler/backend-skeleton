@@ -89,6 +89,9 @@ class PassportController extends ActiveController
     public function actionRegister($type = MemberRegisterForm::REGISTER_BY_USERNAME)
     {
         $payload = Yii::$app->getRequest()->getBodyParams();
+        if (!isset($payload['profile'])) {
+            $payload['profile'] = [];
+        }
         $model = new MemberRegisterForm();
         $model->register_by = $type;
         $model->loadDefaultValues();
@@ -103,6 +106,7 @@ class PassportController extends ActiveController
         ) {
             $transaction = Yii::$app->getDb()->beginTransaction();
             try {
+                $model->setPassword($model->password);
                 $model->save();
                 $model->saveProfile($profileModel);
                 Yii::$app->getResponse()->setStatusCode(201);
@@ -253,7 +257,7 @@ class PassportController extends ActiveController
                 $model = new ChangeMyPasswordForm();
                 $model->load(Yii::$app->getRequest()->getBodyParams(), '');
                 $member->setPassword($model->password);
-                if ($member->save(false) === false && !$model->hasErrors()) {
+                if ($model->validate() && $member->save(false) === false && !$model->hasErrors()) {
                     throw new ServerErrorHttpException('Failed to update the object for unknown reason.');
                 } else {
                     return $model;
