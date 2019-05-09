@@ -2,10 +2,10 @@
 
 namespace app\modules\admin\controllers;
 
+use app\helpers\Config;
 use app\models\Member;
 use app\models\MemberSearch;
 use app\models\Meta;
-use app\modules\admin\components\ApplicationHelper;
 use app\modules\admin\forms\ChangePasswordForm;
 use app\modules\admin\forms\CreateMemberForm;
 use app\modules\admin\forms\DynamicForm;
@@ -119,7 +119,7 @@ class MembersController extends Controller
         $model = new CreateMemberForm();
         $model->status = Member::STATUS_ACTIVE;
         $model->loadDefaultValues();
-        $expiryMinutes = ApplicationHelper::getConfigValue('member.register.expiryMinutes');
+        $expiryMinutes = Config::get('member.register.expiryMinutes');
         if ((int) $expiryMinutes) {
             $model->expired_datetime = Yii::$app->getFormatter()->asDatetime(time() + $expiryMinutes * 60);
         }

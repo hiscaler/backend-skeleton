@@ -2,8 +2,8 @@
 
 namespace app\modules\admin\extensions;
 
+use app\helpers\Config;
 use app\models\Lookup;
-use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\helpers\Inflector;
 use yii\web\Controller;
@@ -31,7 +31,7 @@ class BaseController extends Controller
     {
         if (parent::beforeAction($action)) {
             $user = \Yii::$app->getUser();
-            if (!$user->getIsGuest() && ApplicationHelper::getConfigValue('disableRepeatingLogin', false) && $user->getIdentity()->last_login_session != session_id()) {
+            if (!$user->getIsGuest() && Config::get('disableRepeatingLogin', false) && $user->getIdentity()->last_login_session != session_id()) {
                 \Yii::$app->getUser()->logout();
                 $this->goHome();
             }
@@ -45,7 +45,7 @@ class BaseController extends Controller
 
             $authManager = Yii::$app->getAuthManager();
             if ($authManager) {
-                $rbacConfig = ApplicationHelper::getConfigValue('rbac', []);
+                $rbacConfig = Config::get('rbac', []);
                 $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
                 if ($requireCheckAuth) {
                     $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];

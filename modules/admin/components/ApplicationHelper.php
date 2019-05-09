@@ -2,8 +2,8 @@
 
 namespace app\modules\admin\components;
 
+use app\helpers\Config;
 use Yii;
-use yii\helpers\ArrayHelper;
 
 /**
  * Class ApplicationHelper
@@ -34,7 +34,7 @@ class ApplicationHelper
     public static function hasRequireCheckAuth()
     {
         $user = Yii::$app->getUser();
-        $rbacConfig = ApplicationHelper::getConfigValue('rbac', []);
+        $rbacConfig = Config::get('rbac', []);
         $has = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
         if ($has) {
             $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
@@ -169,57 +169,6 @@ class ApplicationHelper
         }
 
         return $item;
-    }
-
-    /**
-     * 是否存在指定的配置项
-     *
-     * @param $key
-     * @return bool
-     */
-    public static function hasConfigKey($key)
-    {
-        $has = false;
-        $params = Yii::$app->params;
-        if (array_key_exists($key, $params)) {
-            $has = true;
-        } elseif (strpos($key, '.') !== false) {
-            $levels = explode('.', $key);
-            $n = count($levels) - 1;
-            foreach ($levels as $i => $level) {
-                if (array_key_exists($level, $params)) {
-                    $params = $params[$level];
-                    if ($i == $n) {
-                        $has = true;
-                    }
-                } else {
-                    break;
-                }
-            }
-        }
-
-        return $has;
-    }
-
-    /**
-     * 获取配置参数值
-     *
-     * @param $key
-     * @param null $defaultValue
-     * @return mixed|null
-     */
-    public static function getConfigValue($key, $defaultValue = null)
-    {
-        $params = Yii::$app->params;
-        if (isset($params[$key])) {
-            $value = $params[$key];
-        } elseif (strpos($key, '.') !== false) {
-            $value = ArrayHelper::getValue($params, $key, $defaultValue);
-        } else {
-            $value = $defaultValue;
-        }
-
-        return $value;
     }
 
 }

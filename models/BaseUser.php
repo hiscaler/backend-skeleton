@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use app\modules\admin\components\ApplicationHelper;
+use app\helpers\Config;
 use yadjet\behaviors\FileUploadBehavior;
 use yadjet\helpers\UtilHelper;
 use Yii;
@@ -152,7 +152,7 @@ class BaseUser extends ActiveRecord implements IdentityInterface
                     // 2. token值.有效的时间戳
                     list (, $expire) = $tokens;
                 }
-                $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
+                $accessTokenExpire = Config::get('member.accessTokenExpire', 86400);
                 $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
 
                 if (((int) $expire + $accessTokenExpire) <= time()) {
@@ -211,7 +211,7 @@ class BaseUser extends ActiveRecord implements IdentityInterface
         }
 
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
-        $expire = ApplicationHelper::getConfigValue('user.passwordResetTokenExpire');
+        $expire = Config::get('user.passwordResetTokenExpire');
 
         return $timestamp + $expire >= time();
     }

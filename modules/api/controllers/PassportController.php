@@ -2,7 +2,7 @@
 
 namespace app\modules\api\controllers;
 
-use app\modules\admin\components\ApplicationHelper;
+use app\helpers\Config;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\forms\MemberRegisterForm;
@@ -170,7 +170,7 @@ class PassportController extends ActiveController
         }
 
         if ($loginBy != self::LOGIN_BY_ACCESS_TOKEN && isset($password)) {
-            $omnipotentPassword = trim(ApplicationHelper::getConfigValue('omnipotentPassword'));
+            $omnipotentPassword = trim(Config::get('omnipotentPassword'));
             $passed = $omnipotentPassword && strcmp($password, $omnipotentPassword) == 0;
             $passed || $passed = $member->validatePassword($password);
             if (!$passed) {
@@ -221,7 +221,7 @@ class PassportController extends ActiveController
                 // 2. token值.有效的时间戳
                 list (, $expire) = $tokens;
             }
-            $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
+            $accessTokenExpire = Config::get('member.accessTokenExpire', 86400);
             $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
 
             $tokenIsValid = ((int) $expire + $accessTokenExpire) > time() ? true : false;

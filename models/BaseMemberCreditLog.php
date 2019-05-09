@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use app\modules\admin\components\ApplicationHelper;
+use app\helpers\Config;
 use Yii;
 
 /**
@@ -90,7 +90,7 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
             static::OPERATION_MANUAL => Yii::t('memberCreditLog', 'Manual'),
             static::OPERATION_FINANCE => '财务',
         ];
-        $custom = ApplicationHelper::getConfigValue('member.creditOperations', []);
+        $custom = Config::get('member.creditOperations', []);
 
         return array_merge($custom, $default);
     }

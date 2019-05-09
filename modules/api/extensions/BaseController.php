@@ -2,7 +2,7 @@
 
 namespace app\modules\api\extensions;
 
-use app\modules\api\components\ApplicationHelper;
+use app\helpers\Config;
 use Yii;
 use yii\filters\ContentNegotiator;
 use yii\filters\Cors;
@@ -43,7 +43,7 @@ class BaseController extends Controller
     public function init()
     {
         parent::init();
-        $dbCacheTime = ApplicationHelper::getConfigValue('api.dbCacheDuration');
+        $dbCacheTime = Config::get('api.dbCacheDuration');
         $this->dbCacheTime = $dbCacheTime === null ? null : (int) $dbCacheTime;
         $this->debug = strtolower(trim(Yii::$app->getRequest()->get('debug'))) == 'y';
     }

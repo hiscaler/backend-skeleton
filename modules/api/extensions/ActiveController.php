@@ -2,7 +2,7 @@
 
 namespace app\modules\api\extensions;
 
-use app\modules\api\components\ApplicationHelper;
+use app\helpers\Config;
 use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use app\modules\api\extensions\yii\rest\ListAction;
 use Yii;
@@ -48,7 +48,7 @@ class ActiveController extends \yii\rest\ActiveController
     public function init()
     {
         parent::init();
-        $dbCacheTime = ApplicationHelper::getConfigValue('api.dbCacheDuration');
+        $dbCacheTime = Config::get('api.dbCacheDuration');
         $this->dbCacheTime = $dbCacheTime === null ? null : (int) $dbCacheTime;
         $this->debug = strtolower(trim(Yii::$app->getRequest()->get('debug'))) == 'y';
     }

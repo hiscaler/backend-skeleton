@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\widgets;
 
+use app\helpers\Config;
 use app\models\Member;
 use app\models\MemberCreditLog;
 use app\models\Module;
@@ -27,7 +28,7 @@ class GlobalControlPanel extends Widget
     public function getItems()
     {
         $user = \Yii::$app->getUser();
-        $rbacConfig = ApplicationHelper::getConfigValue('rbac', []);
+        $rbacConfig = Config::get('rbac', []);
         $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
         if ($requireCheckAuth) {
             $identity = $user->getIdentity();
@@ -50,7 +51,7 @@ class GlobalControlPanel extends Widget
         }
         $items = [];
         $controllerId = Yii::$app->controller->id;
-        $builtinModules = ApplicationHelper::getConfigValue('modules', []);
+        $builtinModules = Config::get('modules', []);
 
         foreach ($builtinModules as $group => $ms) {
             $rawItems = [];

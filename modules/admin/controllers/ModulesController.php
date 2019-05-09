@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\helpers\Config;
 use app\models\Module;
 use app\modules\admin\components\ApplicationHelper;
 use cebe\markdown\GithubMarkdown;
@@ -413,7 +414,7 @@ class ModulesController extends Controller
         $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => $alias])->queryScalar();
         if ($moduleId) {
             try {
-                if (ApplicationHelper::getConfigValue('uninstall.module.after.droptable') === true) {
+                if (Config::get('uninstall.module.after.droptable') === true) {
                     $this->_migrate($alias, 'down');
                     // 清理掉模块使用过程中产生的相关数据
                     $files = FileHelper::findFiles("@app/modules/admin/modules/$alias/models");

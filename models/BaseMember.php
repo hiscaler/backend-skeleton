@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use app\modules\admin\components\ApplicationHelper;
+use app\helpers\Config;
 use yadjet\behaviors\ImageUploadBehavior;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
@@ -114,7 +114,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             [['access_token'], 'unique'],
             [['password_reset_token'], 'unique'],
             [['last_login_session'], 'string', 'max' => 128],
-            [['status'], 'default', 'value' => ApplicationHelper::getConfigValue('member.register.status', self::STATUS_PENDING)],
+            [['status'], 'default', 'value' => Config::get('member.register.status', self::STATUS_PENDING)],
             ['avatar', 'image',
                 'extensions' => 'jpg,gif,png,jpeg',
                 'minSize' => 1024,
@@ -123,12 +123,12 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         ];
 
         // 自定义验证规则
-        $requiredFields = ApplicationHelper::getConfigValue('member.register.rules.required');
+        $requiredFields = Config::get('member.register.rules.required');
         if ($requiredFields && is_array($requiredFields)) {
             $rules = array_merge($rules, [[$requiredFields, 'required']]);
         }
 
-        $uniqueFields = ApplicationHelper::getConfigValue('member.register.rules.unique');
+        $uniqueFields = Config::get('member.register.rules.unique');
         if ($uniqueFields && is_array($uniqueFields)) {
             $rules = array_merge($rules, [[$uniqueFields, 'unique']]);
         }
@@ -197,7 +197,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     {
         if ($member &&
             $member->expired_datetime &&
-            ApplicationHelper::getConfigValue('member.login.expiredAfter') != 'continue' &&
+            Config::get('member.login.expiredAfter') != 'continue' &&
             $member->expired_datetime <= time()
         ) {
             $member = null;
@@ -239,7 +239,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                     // 2. token值.有效的时间戳
                     list (, $expire) = $tokens;
                 }
-                $accessTokenExpire = ApplicationHelper::getConfigValue('member.accessTokenExpire', 86400);
+                $accessTokenExpire = Config::get('member.accessTokenExpire', 86400);
                 $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
 
                 if (((int) $expire + $accessTokenExpire) <= time()) {
@@ -357,7 +357,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         }
 
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
-        $expire = ApplicationHelper::getConfigValue('user.passwordResetTokenExpire');
+        $expire = Config::get('user.passwordResetTokenExpire');
 
         return $timestamp + $expire >= time();
     }
@@ -480,7 +480,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             $options[self::TYPE_ADMINISTRATOR] = '管理员';
         }
 
-        $types = ApplicationHelper::getConfigValue('member.types', []);
+        $types = Config::get('member.types', []);
         if ($types && ArrayHelper::isIndexed($types)) {
             foreach ($types as $key => $value) {
                 if ($key == self::TYPE_ADMINISTRATOR) {
@@ -644,12 +644,12 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->total_money = $this->available_money = 0;
                 $this->generateAuthKey();
                 $this->generateAccessToken();
-                $this->status = ApplicationHelper::getConfigValue('member.register.status', self::STATUS_PENDING);
+                $this->status = Config::get('member.register.status', self::STATUS_PENDING);
                 // @todo 需要检测唯一性
                 $this->invitation_code = \yadjet\helpers\StringHelper::generateRandomString(16);
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
                 if (!$this->expired_datetime) {
-                    $expiryMinutes = (int) ApplicationHelper::getConfigValue('member.register.expiryMinutes');
+                    $expiryMinutes = (int) Config::get('member.register.expiryMinutes');
                     if ($expiryMinutes) {
                         $this->expired_datetime = time() + $expiryMinutes * 60;
                     }

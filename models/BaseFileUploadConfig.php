@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use app\modules\admin\components\ApplicationHelper;
+use app\helpers\Config;
 use Yii;
 use yii\caching\DbDependency;
 use yii\helpers\Inflector;
@@ -196,7 +196,7 @@ class BaseFileUploadConfig extends BaseActiveRecord
     public static function validModelNames()
     {
         $names = [];
-        $contentModels = ApplicationHelper::getConfigValue('contentModules', []);
+        $contentModels = Config::get('contentModules', []);
         $rawData = Yii::$app->getDb()->createCommand('SELECT DISTINCT([[model_name]]) FROM ' . static::tableName())->queryColumn();
         foreach ($rawData as $name) {
             if (isset($contentModels[$name]['label'])) {

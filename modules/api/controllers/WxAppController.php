@@ -2,9 +2,9 @@
 
 namespace app\modules\api\controllers;
 
+use app\helpers\Config;
 use app\models\Lookup;
 use app\models\Meta;
-use app\modules\api\components\ApplicationHelper;
 use app\modules\api\extensions\BaseController;
 use app\modules\api\models\Constant;
 use app\modules\api\models\Member;
@@ -41,7 +41,7 @@ class WxAppController extends BaseController
     public function init()
     {
         parent::init();
-        $options = ApplicationHelper::getConfigValue('wechat', null);
+        $options = Config::get('wechat', null);
         if ($options === null || !is_array($options) || !isset($options['app_id']) || !isset($options['secret'])) {
             throw new InvalidConfigException('无效的微信参数配置（请在 params.php 中配置 wechat 项，并赋予 app_id 和 secret 正确值）。');
         }
@@ -298,7 +298,7 @@ class WxAppController extends BaseController
      */
     public function actionRefund($outTradeNo)
     {
-        $options = ApplicationHelper::getConfigValue('wechat', []);
+        $options = Config::get('wechat', []);
         if (!isset($options['app_id'], $options['secret'], $options['mch_id'], $options['mch_key'])) {
             throw new InvalidConfigException('无效的微信参数配置（请在 params.php 中配置 wechat 项，并赋予 app_id、secret、mch_id、mch_key 正确值）。');
         }

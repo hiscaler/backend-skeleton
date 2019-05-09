@@ -2,7 +2,7 @@
 
 namespace app\modules\api;
 
-use app\modules\api\components\ApplicationHelper;
+use app\helpers\Config;
 use app\modules\api\models\Member;
 use Yii;
 use yii\web\Response;
@@ -29,7 +29,7 @@ class Module extends \yii\base\Module
         \Yii::$app->setComponents([
             'user' => [
                 'class' => 'yii\web\User',
-                'identityClass' => ApplicationHelper::getConfigValue('api.user.identityClass', Member::class),
+                'identityClass' => Config::get('api.user.identityClass', Member::class),
                 'identityCookie' => ['name' => '_identity_api', 'httpOnly' => true],
                 'idParam' => '__id_api',
                 'enableAutoLogin' => true,

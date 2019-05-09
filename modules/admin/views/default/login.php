@@ -1,5 +1,6 @@
 <?php
 
+use app\helpers\Config;
 use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
 
@@ -39,7 +40,7 @@ $name = (\app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name) . 
             <?= $form->field($model, 'password', $fieldConfigs)->passwordInput(); ?>
 
             <?php
-            if (\app\modules\admin\components\ApplicationHelper::getConfigValue('hideCaptcha') === false) {
+            if (Config::get('hideCaptcha') === false) {
                 echo $form->field($model, 'verifyCode', $fieldConfigs)->widget(Captcha::class, [
                     'template' => '{input}{image}',
                     'captchaAction' => 'default/captcha',
