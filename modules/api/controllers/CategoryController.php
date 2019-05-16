@@ -84,29 +84,56 @@ class CategoryController extends ActiveController
      *
      * @param null|string $sign
      * @param int $level
-     * @param bool $flat
+     * @param string $flat
+     * @param string $fields
      * @return array
      * @throws \yii\db\Exception
      */
-    public function actionIndex($sign = null, $level = 0, $flat = true)
+    public function actionIndex($sign = null, $level = 0, $flat = 'y', $fields = '')
     {
         $items = [];
-        if ($sign) {
-            $parentId = \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $sign])->queryScalar();
-            if (!$parentId) {
-                return [];
+        if ($rawItems = Category::getChildren($sign, $level)) {
+            $fieldsValue = trim($fields);
+            if ($fieldsValue) {
+                $fields = [];
+                foreach (explode(',', $fieldsValue) as $str) {
+                    if (strpos($str, ':') === false) {
+                        $k = $v = $str;
+                    } else {
+                        list($k, $v) = explode(':', $str);
+                    }
+                    $fields[$k] = $v;
+                }
+                if (strtolower($flat) != 'y') {
+                    !isset($fields['id']) && $fields['id'] = 'id';
+                    !isset($fields['parent']) && $fields['parent'] = 'parent';
+                }
+            } else {
+                $fields = [];
             }
-        } else {
-            $parentId = 0;
-        }
-        $rawItems = Category::getChildren($parentId, $level);
-        if ($rawItems) {
+            $idKey = 'id';
+            $parentKey = 'parent';
             foreach ($rawItems as $item) {
                 $item['short_name'] = $item['shortName'];
                 unset($item['shortName']);
+                if ($fields) {
+                    foreach ($item as $k => $v) {
+                        if (!array_key_exists($k, $fields)) {
+                            unset($item[$k]);
+                        } else {
+                            if ($fields[$k] !== $k) {
+                                if (in_array($k, ['id', 'parent'])) {
+                                    $idKey = $fields[$k];
+                                }
+                                $item[$fields[$k]] = $v;
+                                unset($item[$k]);
+                            }
+                        }
+                    }
+                }
                 $items[] = $item;
             }
-            !$flat && $items = ArrayHelper::toTree($items, 'id', 'parent');
+            strtolower($flat) != 'y' && $items = ArrayHelper::toTree($items, $idKey, $parentKey);
         }
 
         return $items;
