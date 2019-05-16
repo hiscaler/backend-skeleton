@@ -84,7 +84,7 @@ $creditLogs = $model->creditLogs;
         <?php if ($profile): ?>
             <div class="tab-panel" id="tab-panel-profile" style="display: none;">
                 <?= DetailView::widget([
-                    'model' => $wechatModel,
+                    'model' => $profile,
                     'attributes' => [
                         'tel',
                         'address',
