@@ -32,20 +32,33 @@ class NoticeSearch extends Notice
     public function search($params)
     {
         /* @var $member Member */
-        $member = \Yii::$app->getUser()->getIdentity();
+        $member = \Yii::$app->getUser();
         $condition = [
             'OR',
             ['view_permission' => Notice::VIEW_PERMISSION_ALL],
-            "[[view_permission]] = :viewSpecialPermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :memberId)",
-            "[[view_permission]] = :viewMemberTypePermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :type)"
+
         ];
-        $query = Notice::find()->with(['read'])
-            ->where($condition, [
+        $bindParams = [];
+        $isGuest = $member->getIsGuest();
+        if (!$isGuest) {
+            $member = $member->getIdentity();
+            $condition[] = "[[view_permission]] = :viewSpecialPermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :memberId)";
+            $bindParams[':memberId'] = $member->id;
+            $bindParams = [
                 ':viewSpecialPermission' => Notice::VIEW_PERMISSION_SPECIAL,
                 ':memberId' => $member->id,
+            ];
+        }
+
+        if (!$isGuest && $member::className() instanceof Member) {
+            $condition[] = "[[view_permission]] = :viewMemberTypePermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :type)";
+            $bindParams = array_merge($bindParams, [
                 ':viewMemberTypePermission' => Notice::VIEW_PERMISSION_BY_MEMBER_TYPE,
                 ':type' => $member->type,
             ]);
+        }
+        $query = Notice::find()->with(['read'])
+            ->where($condition, $bindParams);
 
         $dataProvider = new ActiveWithStatisticsDataProvider([
             'query' => $query,

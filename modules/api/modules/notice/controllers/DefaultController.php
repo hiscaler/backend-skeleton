@@ -41,9 +41,14 @@ class DefaultController extends ActiveController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view', 'read'],
+                        'actions' => ['create', 'update'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index', 'view', 'read'],
+                        'allow' => true,
+                        'roles' => ['@', '?'],
                     ],
                 ],
             ],
