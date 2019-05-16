@@ -7,6 +7,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  * 配置参数读取
+ * 仅对 config/params 配置文件进行读取
  *
  * @package app\helpers
  * @author hiscaler <hiscaler@gmail.com>
