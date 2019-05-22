@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\helpers\Config;
 use yadjet\behaviors\ImageUploadBehavior;
+use yadjet\helpers\StringHelper;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -640,13 +641,14 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 empty($nickname) && $nickname = $this->username;
                 $this->nickname = $nickname;
             }
+            $userId = Yii::$app->getUser()->isGuest ? 0 : \Yii::$app->getUser()->getId();
             if ($insert) {
                 $this->total_money = $this->available_money = 0;
                 $this->generateAuthKey();
                 $this->generateAccessToken();
                 $this->status = Config::get('member.register.status', self::STATUS_PENDING);
                 // @todo 需要检测唯一性
-                $this->invitation_code = \yadjet\helpers\StringHelper::generateRandomString(16);
+                $this->invitation_code = StringHelper::generateRandomString(16);
                 $this->register_ip = Yii::$app->getRequest()->getUserIP();
                 if (!$this->expired_datetime) {
                     $expiryMinutes = (int) Config::get('member.register.expiryMinutes');
@@ -654,15 +656,11 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                         $this->expired_datetime = time() + $expiryMinutes * 60;
                     }
                 }
-                if (Yii::$app->getUser()->isGuest) {
-                    $this->created_by = $this->updated_by = 0;
-                } else {
-                    $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
-                }
+                $this->created_by = $this->updated_by = $userId;
                 $this->created_at = $this->updated_at = time();
             } else {
                 $this->updated_at = time();
-                $this->updated_by = Yii::$app->getUser()->getId();
+                $this->updated_by = $userId;
             }
 
             return true;
