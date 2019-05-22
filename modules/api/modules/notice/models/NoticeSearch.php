@@ -31,7 +31,7 @@ class NoticeSearch extends Notice
      */
     public function search($params)
     {
-        /* @var $member Member */
+        /* @var $member \yii\web\User */
         $member = \Yii::$app->getUser();
         $condition = [
             'OR',
@@ -48,15 +48,18 @@ class NoticeSearch extends Notice
                 ':viewSpecialPermission' => Notice::VIEW_PERMISSION_SPECIAL,
                 ':memberId' => $member->id,
             ];
+
+            // 查看会员等级处理
+            /* @var $member Member */
+            if ($member::className() instanceof Member) {
+                $condition[] = "[[view_permission]] = :viewMemberTypePermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :type)";
+                $bindParams = array_merge($bindParams, [
+                    ':viewMemberTypePermission' => Notice::VIEW_PERMISSION_BY_MEMBER_TYPE,
+                    ':type' => $member->type,
+                ]);
+            }
         }
 
-        if (!$isGuest && $member::className() instanceof Member) {
-            $condition[] = "[[view_permission]] = :viewMemberTypePermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :type)";
-            $bindParams = array_merge($bindParams, [
-                ':viewMemberTypePermission' => Notice::VIEW_PERMISSION_BY_MEMBER_TYPE,
-                ':type' => $member->type,
-            ]);
-        }
         $query = Notice::find()->with(['read'])
             ->where($condition, $bindParams);
 
