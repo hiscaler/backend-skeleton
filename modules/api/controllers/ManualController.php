@@ -6,7 +6,9 @@ use app\modules\api\classes\Release;
 use app\modules\api\classes\Releases;
 use app\modules\api\extensions\BaseController;
 use cebe\markdown\GithubMarkdown;
+use yadjet\helpers\ImageHelper;
 use Yii;
+use yii\helpers\FileHelper;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -64,16 +66,35 @@ class ManualController extends BaseController
      * @param null $file
      * @return array
      * @throws NotFoundHttpException
+     * @throws \yii\base\Exception
      */
     public function actionView($file = null)
     {
         $file || $file = 'readme';
         $path = Yii::getAlias('@app/docs/manual/' . str_replace('.', '/', $file)) . '.md';
         if (file_exists($path) && ($content = file_get_contents($path)) !== false) {
-            $article = (new GithubMarkdown())->parse($content);
+            $content = (new GithubMarkdown())->parse($content);
+            $images = ImageHelper::parseImages($content);
+            if ($images) {
+                $pairs = [];
+                $destDir = Yii::getAlias('@webroot/manual-images');
+                if (!file_exists($destDir)) {
+                    FileHelper::createDirectory($destDir);
+                }
+                $sourceDir = Yii::getAlias('@app/docs/manual');
+                $url = Yii::$app->getRequest()->getHostInfo();
+                foreach ($images as $image) {
+                    $sourceImage = FileHelper::normalizePath($sourceDir . '/' . trim($image, "/."), '/');
+                    $extension = ImageHelper::getExtension($sourceImage);
+                    $destFilename = md5($image) . '.' . $extension;
+                    copy($sourceImage, $destDir . '/' . $destFilename);
+                    $pairs[$image] = "$url/manual-images/$destFilename";
+                }
+                $content = strtr($content, $pairs);
+            }
 
             return [
-                'content' => $article,
+                'content' => $content,
             ];
         } else {
             throw new NotFoundHttpException("`$file` 文件不存在。");
