@@ -669,6 +669,22 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         }
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        // 会员业务逻辑处理
+        $business = Config::get('member.business', []);
+        foreach ($business as $class) {
+            if (class_exists($class)) {
+                try {
+                    call_user_func([new $class(), 'process'], $this, $insert, $changedAttributes);
+                } catch (\Exception $e) {
+                    Yii::error($class . ':' . $e->getMessage(), 'member.business');
+                }
+            }
+        }
+    }
+
     /**
      * @throws \yii\db\Exception
      */
