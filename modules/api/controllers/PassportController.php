@@ -73,6 +73,9 @@ class PassportController extends ActiveController
                 ],
             ],
         ]);
+        if (in_array($this->action->id, ['login', 'logout'])) {
+            unset($behaviors['authenticator']);
+        }
 
         return $behaviors;
     }
