@@ -18,9 +18,9 @@ class SmsCaptchaBusiness extends SmsBusinessAbstract
         $captcha = mt_rand((int) str_pad("1", $length, "0"), (int) str_pad("9", $length, "9"));
         $this->setContent('您的验证码为${code},该验证码5分钟有效！')
             ->setData('code', $captcha)
-            ->setCached(true)
+            ->setUseCache(true)
             ->setCacheValue($captcha)
-            ->setCacheDuration(10 * 60);
+            ->setCacheDuration(30 * 60);
 
         return $this;
     }

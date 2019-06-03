@@ -110,11 +110,11 @@ class SmsForm extends Model
             $easySms = new EasySms($smsConfig);
             try {
                 $easySms->send($this->mobile_phone, $sendMessage);
-                if ($payload->isCached()) {
+                if ($payload->useCache()) {
                     Yii::$app->getCache()->set(self::CACHE_PREFIX . $this->mobile_phone, [
                         'value' => $payload->getCacheValue(),
                         'expired_datetime' => time() + $payload->getCacheDuration(),
-                    ], time() + $payload->getCacheDuration());
+                    ], $payload->getCacheDuration());
                 }
             } catch (InvalidArgumentException $e) {
                 $this->addError('mobile_phone', $e->getMessage());

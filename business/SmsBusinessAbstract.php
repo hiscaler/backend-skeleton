@@ -26,7 +26,7 @@ abstract class SmsBusinessAbstract
     /**
      * @var bool 是否缓存
      */
-    private $cached = false;
+    private $useCache = false;
 
     /**
      * @var mixed 缓存值
@@ -80,18 +80,18 @@ abstract class SmsBusinessAbstract
     /**
      * @return bool
      */
-    public function isCached()
+    public function useCache()
     {
-        return $this->cached ? true : false;
+        return boolval($this->useCache);
     }
 
     /**
-     * @param bool $cached
+     * @param bool $use
      * @return SmsBusinessAbstract
      */
-    public function setCached($cached)
+    public function setUseCache($use)
     {
-        $this->cached = $cached;
+        $this->useCache = $use;
 
         return $this;
     }
@@ -147,7 +147,7 @@ abstract class SmsBusinessAbstract
      */
     public function getPayload()
     {
-        if ($this->isCached()) {
+        if ($this->useCache()) {
             if ($this->getCacheDuration() <= 0) {
                 throw new Exception("业务逻辑处理缓存时间无效。");
             }
