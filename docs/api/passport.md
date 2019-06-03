@@ -22,8 +22,12 @@ POST /api/passport/login
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |---|:---:|:---:|:---:|---|
-| username | string | 是 | null | 用户名 |
-| password | string | 是 | null | 密码 |
+| type | string | 是 | account | 类型(account: 帐号登录，mobile_phone: 手机登录，access_token: 令牌登录) |
+| username | string | 否 | null | 用户名（type 为 account 时必须提供） |
+| password | string | 否 | null | 密码（type 为 account 时必须提供） |
+| mobile_phone | string | 否 | null | 手机号码（type 为 mobile_phone 时必须提供） |
+| captcha | string | 否 | null | 验证码（type 为 mobile_phone 时必须提供） |
+| access_token | string | 否 | null | 令牌（type 为 access_token 时必须提供） |
 
 ### 返回值
 ```json
