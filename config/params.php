@@ -112,6 +112,7 @@ return [
     // 微信公众号设置
     'wechat' => require(__DIR__ . '/wechat.php'),
     'module' => require(__DIR__ . '/module.php'),
+    'sms' => require(__DIR__ . '/sms.php'),
     'modules' => [
         /**
          *'app-models-Article' => [
