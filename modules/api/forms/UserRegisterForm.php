@@ -3,10 +3,12 @@
 namespace app\modules\api\forms;
 
 use app\modules\api\models\User;
+use Yii;
 
 /**
  * 用户注册
  *
+ * @package app\modules\api\forms
  * @author hiscaler <hiscaler@gmail.com>
  */
 class UserRegisterForm extends User
@@ -33,8 +35,8 @@ class UserRegisterForm extends User
     public function attributeLabels()
     {
         return array_merge(parent::attributeLabels(), [
-            'password' => \Yii::t('member', 'Password'),
-            'confirm_password' => \Yii::t('member', 'Confirm Password'),
+            'password' => Yii::t('member', 'Password'),
+            'confirm_password' => Yii::t('member', 'Confirm Password'),
         ]);
     }
 

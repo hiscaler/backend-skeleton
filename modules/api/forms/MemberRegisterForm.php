@@ -7,6 +7,7 @@ use app\modules\api\models\Member;
 /**
  * 会员注册
  *
+ * @package app\modules\api\forms
  * @author hiscaler <hiscaler@gmail.com>
  */
 class MemberRegisterForm extends Member

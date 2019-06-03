@@ -3,6 +3,7 @@
 namespace app\modules\api\forms;
 
 use app\modules\api\models\Member;
+use Yii;
 use yii\base\Model;
 
 /**
@@ -10,6 +11,7 @@ use yii\base\Model;
  * 微信会员绑定
  *
  * @package app\modules\api\forms
+ * @author hiscaler <hiscaler@gmail.com>
  */
 class WechatMemberBindForm extends Model
 {
@@ -50,7 +52,7 @@ class WechatMemberBindForm extends Model
                     if (!$member->validatePassword($this->password)) {
                         $this->addError('password', '密码错误。');
                     } else {
-                        $id = \Yii::$app->getDb()->createCommand("SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[{$this->xid_field}]] = :xid", [
+                        $id = Yii::$app->getDb()->createCommand("SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[{$this->xid_field}]] = :xid", [
                             ':xid' => $this->xid
                         ])->queryScalar();
                         if ($id === false) {
@@ -75,7 +77,7 @@ class WechatMemberBindForm extends Model
      */
     public function bind()
     {
-        \Yii::$app->getDb()->createCommand()->update("{{%wechat_member}}", ['member_id' => $this->_member_id], [$this->xid_field => $this->xid])->execute();
+        Yii::$app->getDb()->createCommand()->update("{{%wechat_member}}", ['member_id' => $this->_member_id], [$this->xid_field => $this->xid])->execute();
     }
 
 }

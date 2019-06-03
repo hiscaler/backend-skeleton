@@ -3,6 +3,7 @@
 namespace app\modules\api\forms;
 
 use app\modules\api\models\Member;
+use Yii;
 use yii\base\Model;
 
 /**
@@ -41,7 +42,7 @@ class ChangeMyPasswordForm extends Model
     {
         if (!$this->hasErrors()) {
             $ok = false;
-            if ($user = \Yii::$app->getUser()) {
+            if ($user = Yii::$app->getUser()) {
                 /* @var $identity Member */
                 $identity = $user->getIdentity();
                 $ok = $identity->validatePassword($this->old_password);
