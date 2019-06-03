@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 use app\helpers\Config;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\forms\ChangeMyPasswordForm;
+use app\modules\api\forms\MemberLoginForm;
 use app\modules\api\forms\MemberRegisterForm;
 use app\modules\api\models\Member;
 use app\modules\api\models\MemberProfile;
@@ -13,7 +14,6 @@ use yii\base\InvalidArgumentException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
-use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
 
 /**
@@ -137,54 +137,24 @@ class PassportController extends ActiveController
     /**
      * 登录认证
      *
-     * @return \yii\web\IdentityInterface|\yii\web\User
-     * @throws BadRequestHttpException
-     * @throws \yii\db\Exception
+     * @return MemberLoginForm|\yii\web\IdentityInterface
+     * @throws ServerErrorHttpException
      * @throws \Throwable
+     * @throws \yii\db\Exception
      */
     public function actionLogin()
     {
-        $request = \Yii::$app->getRequest();
-        $token = $request->getQueryParam($this->_token_param);
-        if ($token) {
-            $loginBy = self::LOGIN_BY_ACCESS_TOKEN;
-            $member = Member::findIdentityByAccessToken($token);
-        } else {
-            $mobilePhone = $request->post('mobile_phone');
-            $username = $request->post('username');
-            $password = $request->post('password');
-            if ($mobilePhone) {
-                $loginBy = self::LOGIN_BY_MOBILE_PHONE;
-                if (empty($mobilePhone) || empty($password)) {
-                    throw new HttpException('无效的 mobile_phone 或 password 参数。');
-                }
-                $member = Member::findByMobilePhone($mobilePhone);
-            } else {
-                $loginBy = self::LOGIN_BY_USERNAME;
-                if (empty($username) || empty($password)) {
-                    throw new HttpException('无效的 username 或 password 参数。');
-                }
-                $member = Member::findByUsername($username);
-            }
+        $model = new MemberLoginForm();
+        $model->load(Yii::$app->getRequest()->getQueryParams(), '');
+        if ($model->validate() && $model->login()) {
+            Member::afterLogin(null);
+
+            return Yii::$app->getUser()->getIdentity();
+        } elseif (!$model->hasErrors()) {
+            throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
         }
 
-        if ($member === null) {
-            throw new BadRequestHttpException($loginBy == self::LOGIN_BY_ACCESS_TOKEN ? "无效的 $this->_token_param 值。" : '无效的登录帐号。');
-        }
-
-        if ($loginBy != self::LOGIN_BY_ACCESS_TOKEN && isset($password)) {
-            $omnipotentPassword = trim(Config::get('omnipotentPassword'));
-            $passed = $omnipotentPassword && strcmp($password, $omnipotentPassword) == 0;
-            $passed || $passed = $member->validatePassword($password);
-            if (!$passed) {
-                throw new BadRequestHttpException('密码错误。');
-            }
-        }
-
-        Yii::$app->getUser()->login($member, 0);
-        Member::afterLogin(null);
-
-        return \Yii::$app->getUser()->getIdentity();
+        return $model;
     }
 
     /**
@@ -197,10 +167,10 @@ class PassportController extends ActiveController
      */
     public function actionRefreshToken()
     {
-        $request = \Yii::$app->getRequest();
+        $request = Yii::$app->getRequest();
         $token = $request->getQueryParam($this->_token_param);
         if (empty($token)) {
-            $headers = \Yii::$app->getRequest()->getHeaders();
+            $headers = Yii::$app->getRequest()->getHeaders();
             $token = $headers->has($this->_token_param) ? $headers->get($this->_token_param) : null;
         }
         if (empty($token)) {
@@ -233,7 +203,7 @@ class PassportController extends ActiveController
         if ($tokenIsValid) {
             $member->generateAccessToken();
             $newToken = $member->access_token;
-            \Yii::$app->getDb()->createCommand()->update('{{%member}}', ['access_token' => $newToken], ['id' => $member->id])->execute();
+            Yii::$app->getDb()->createCommand()->update('{{%member}}', ['access_token' => $newToken], ['id' => $member->id])->execute();
 
             return [
                 'id' => $member->id,
@@ -253,7 +223,7 @@ class PassportController extends ActiveController
      */
     public function actionChangePassword()
     {
-        $token = \Yii::$app->getRequest()->get($this->_token_param);
+        $token = Yii::$app->getRequest()->get($this->_token_param);
         if ($token) {
             $member = Member::findIdentityByAccessToken($token);
             if ($member) {
