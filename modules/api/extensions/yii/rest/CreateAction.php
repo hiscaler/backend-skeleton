@@ -19,9 +19,6 @@ class CreateAction extends \yii\rest\Action
      * @var string the scenario to be assigned to the new model before it is validated and saved.
      */
     public $scenario = Model::SCENARIO_DEFAULT;
-    /**
-     * @var string the name of the view action. This property is needed to create the URL when the model is successfully created.
-     */
 
     /**
      * Creates a new model.
