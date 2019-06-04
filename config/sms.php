@@ -28,7 +28,7 @@ return [
      */
     'gateways' => [
         'errorlog' => [
-            'file' => '/tmp/easy-sms.log',
+            'file' => \yii\helpers\FileHelper::normalizePath(__DIR__ . '/../runtime/logs/easy-sms.log'),
         ],
         'aliyun' => [
             'access_key_id' => '',
