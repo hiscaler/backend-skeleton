@@ -31,6 +31,16 @@ class QuestionBank extends \app\modules\admin\modules\exam\models\QuestionBank
         ];
     }
 
+    /**
+     * 试题
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuestions()
+    {
+        return $this->hasMany(Question::class, ['question_bank_id' => 'id']);
+    }
+
     public function extraFields()
     {
         return ['questions'];
