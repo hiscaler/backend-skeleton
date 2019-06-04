@@ -39,7 +39,7 @@ return [
     'log' => [
         'level' => 'debug',
         'permission' => 0777,
-        'file' => \yii\helpers\FileHelper::normalizePath(__DIR__ . '/../runtime/logs/easywechat.log'),
+        'file' => \yii\helpers\FileHelper::normalizePath(__DIR__ . '/../runtime/logs/easy-wechat.log'),
     ],
 
     /**
