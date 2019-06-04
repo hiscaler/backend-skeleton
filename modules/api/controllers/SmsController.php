@@ -44,7 +44,7 @@ class SmsController extends BaseController
     public function actionSend()
     {
         $model = new SmsForm();
-        $model->load(Yii::$app->getRequest()->getBodyParams(),'');
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         if ($model->validate() && $model->send()) {
             $response = Yii::$app->getResponse();
             $response->setStatusCode(201);
