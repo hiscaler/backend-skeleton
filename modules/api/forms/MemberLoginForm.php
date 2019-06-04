@@ -74,7 +74,7 @@ class MemberLoginForm extends Model
             [['username', 'password'], 'required', 'when' => function ($model) {
                 return $model->type == self::TYPE_ACCOUNT;
             }],
-            ['username', function ($model, $attribute) {
+            ['username', function ($attribute, $params) {
                 if (!$this->hasErrors()) {
                     $member = $this->getMember();
                     if (!$member ||
@@ -129,6 +129,7 @@ class MemberLoginForm extends Model
             'type' => '登录类型',
             'username' => '用户名',
             'password' => '密码',
+            'mobile_phone' => '手机号码',
             'captcha' => '验证码',
             'access_token' => '访问令牌',
         ];
