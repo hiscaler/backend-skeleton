@@ -1,0 +1,29 @@
+{
+    "name": "试题管理",
+    "author": "hiscaler",
+    "version": "0.0.1",
+    "description": "试题管理模块",
+    "url": "http://www.github.com/hiscaler",
+    "menus": [
+        {
+            "label": "菜单 1",
+            "url": [
+                "example/default/index",
+                {
+                    "key": "1"
+                }
+            ],
+            "active": "controllerId=default&actionId=index&&key=1"
+        },
+        {
+            "label": "菜单 2",
+            "url": [
+                "example/default/index",
+                {
+                    "key": "2"
+                }
+            ]
+        }
+    ],
+    "depends": []
+}
