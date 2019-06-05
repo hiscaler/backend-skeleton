@@ -72,7 +72,11 @@ abstract class SmsBusinessAbstract
      */
     public function setData($key, $value)
     {
-        $this->data[(string) $key] = $value;
+        if (empty($key)) {
+            $this->data[] = $value;
+        } else {
+            $this->data[(string) $key] = $value;
+        }
 
         return $this;
     }
