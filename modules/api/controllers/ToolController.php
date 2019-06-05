@@ -24,7 +24,7 @@ class ToolController extends BaseController
      * 清理 runtime 目录
      *
      * @param null $dir
-     * @return stdClass
+     * @return void
      * @throws \yii\base\ErrorException
      */
     public function actionFlushRuntime($dir = null)
@@ -51,7 +51,7 @@ class ToolController extends BaseController
             FileHelper::removeDirectory($dir);
         }
 
-        return new stdClass();
+        Yii::$app->getResponse()->setStatusCode(200);
     }
 
     /**

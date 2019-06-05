@@ -106,7 +106,7 @@ class DefaultController extends Controller
             ':end' => $end,
         ])->queryAll();
         if (version_compare(phpversion(), '7.1', '>=')) {
-            ini_set( 'serialize_precision', 10 );
+            ini_set('serialize_precision', 10);
         }
         foreach ($rows as $row) {
             $day = date('Y-m-d', $row['created_at']);
