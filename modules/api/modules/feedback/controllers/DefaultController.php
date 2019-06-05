@@ -16,6 +16,7 @@ use yii\web\NotFoundHttpException;
 /**
  * /api/feedback/default
  *
+ * @package app\modules\api\modules\feedback\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends Controller
@@ -58,11 +59,11 @@ class DefaultController extends Controller
     /**
      * 列表（带翻页）
      *
-     * @api GET /api/feedback/default?fields=:fields&category=:category&page=:page&pageSize=:pageSize
      * @param null $category
      * @param int $page
      * @param int $pageSize
      * @return ActiveDataProvider
+     * @api GET /api/feedback/default?fields=:fields&category=:category&page=:page&pageSize=:pageSize
      */
     public function actionIndex($category = null, $page = 1, $pageSize = 20)
     {
@@ -78,12 +79,12 @@ class DefaultController extends Controller
     /**
      * 列表（不带翻页）
      *
-     * @api GET /api/feedback/default/list?fields=:fields&category=:category&offset=:offset&limit=:limit
      * @param null $fields
      * @param null $category
      * @param int $offset
      * @param int $limit
      * @return ActiveDataProvider
+     * @api GET /api/feedback/default/list?fields=:fields&category=:category&offset=:offset&limit=:limit
      */
     public function actionList($fields = null, $category = null, $offset = 0, $limit = 10)
     {
@@ -96,10 +97,10 @@ class DefaultController extends Controller
     /**
      * 详情
      *
-     * @api GET /api/feedback/default/view?id=:id
      * @param $id
      * @return null|static
      * @throws NotFoundHttpException
+     * @api GET /api/feedback/default/view?id=:id
      */
     public function actionView($id)
     {
@@ -111,10 +112,9 @@ class DefaultController extends Controller
     /**
      * 提交留言反馈
      *
-     * @api POST /api/feedback/default/submit
      * @return Feedback|array
      * @throws \yii\base\ErrorException
-     * @throws \yii\db\Exception
+     * @api POST /api/feedback/default/submit
      */
     public function actionSubmit()
     {

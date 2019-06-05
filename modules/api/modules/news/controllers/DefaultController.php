@@ -24,6 +24,7 @@ use yii\web\NotFoundHttpException;
 /**
  * /api/news/default
  *
+ * @package app\modules\api\modules\news\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends BaseController

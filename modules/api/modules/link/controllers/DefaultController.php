@@ -9,6 +9,7 @@ use app\modules\api\modules\link\models\LinkSearch;
 /**
  * /api/link/default
  *
+ * @package app\modules\api\modules\link\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends ActiveController

@@ -9,6 +9,7 @@ use app\modules\api\modules\slide\models\SlideSearch;
 /**
  * /api/slide/default
  *
+ * @package app\modules\api\modules\slide\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
 class DefaultController extends ActiveController

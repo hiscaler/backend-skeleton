@@ -3,8 +3,9 @@
 namespace app\modules\api\modules\example;
 
 /**
- * `example` 模块接口
+ * `example` 模块
  *
+ * @package app\modules\api\modules\example
  * @author hiscaler <hiscaler@gmail.com>
  */
 class Module extends \app\modules\api\Module
@@ -22,4 +23,5 @@ class Module extends \app\modules\api\Module
     {
         parent::init();
     }
+
 }

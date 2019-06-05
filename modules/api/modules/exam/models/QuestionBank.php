@@ -17,7 +17,9 @@ class QuestionBank extends \app\modules\admin\modules\exam\models\QuestionBank
             'id',
             'name',
             'description',
-            'icon',
+            'icon' => function ($model) use ($formatter) {
+                return $formatter->asAssetFullPath($model->icon);
+            },
             'questions_count',
             'participation_times',
             'status',
