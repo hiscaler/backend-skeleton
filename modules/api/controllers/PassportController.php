@@ -114,7 +114,6 @@ class PassportController extends ActiveController
                 $model->saveProfile($profileModel);
                 Yii::$app->getResponse()->setStatusCode(201);
                 Yii::$app->getUser()->login($model, 0);
-                Member::afterLogin(null);
                 $transaction->commit();
             } catch (\Exception $e) {
                 $transaction->rollBack();
@@ -140,15 +139,12 @@ class PassportController extends ActiveController
      * @return MemberLoginForm|\yii\web\IdentityInterface
      * @throws ServerErrorHttpException
      * @throws \Throwable
-     * @throws \yii\db\Exception
      */
     public function actionLogin()
     {
         $model = new MemberLoginForm();
         $model->load(Yii::$app->getRequest()->getQueryParams(), '');
         if ($model->validate() && $model->login()) {
-            Member::afterLogin(null);
-
             return Yii::$app->getUser()->getIdentity();
         } elseif (!$model->hasErrors()) {
             throw new ServerErrorHttpException('Failed to create the object for unknown reason.');

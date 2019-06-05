@@ -90,12 +90,11 @@ class UserController extends ActiveController
      *
      * @return \yii\web\IdentityInterface|\yii\web\User
      * @throws BadRequestHttpException
-     * @throws \yii\db\Exception
      * @throws \Throwable
      */
     public function actionLogin()
     {
-        $request = \Yii::$app->getRequest();
+        $request = Yii::$app->getRequest();
 
         $username = $request->post('username');
         $password = $request->post('password');
@@ -113,9 +112,8 @@ class UserController extends ActiveController
         }
 
         Yii::$app->getUser()->login($user, 0);
-        User::afterLogin(null);
 
-        return \Yii::$app->getUser()->getIdentity();
+        return Yii::$app->getUser()->getIdentity();
     }
 
     /**
@@ -127,7 +125,7 @@ class UserController extends ActiveController
      */
     public function actionChangePassword()
     {
-        $request = \Yii::$app->getRequest();
+        $request = Yii::$app->getRequest();
         $token = $request->get($this->_token_param);
         if ($token) {
             $member = User::findIdentityByAccessToken($token);

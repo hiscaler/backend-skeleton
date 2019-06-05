@@ -26,15 +26,17 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        \Yii::$app->setComponents([
+        $identityClass = Config::get('api.user.identityClass', Member::class);
+        Yii::$app->setComponents([
             'user' => [
                 'class' => 'yii\web\User',
-                'identityClass' => Config::get('api.user.identityClass', Member::class),
+                'identityClass' => $identityClass,
                 'identityCookie' => ['name' => '_identity_api', 'httpOnly' => true],
                 'idParam' => '__id_api',
                 'enableAutoLogin' => true,
                 'enableSession' => false,
                 'loginUrl' => null,
+                'on afterLogin' => [$identityClass, 'afterLogin'],
             ],
             'request' => [
                 'class' => 'yii\web\Request',
@@ -77,7 +79,7 @@ class Module extends \yii\base\Module
 
         $modules = $this->getDevelopmentModules();
         if (isset($modules['queue']) && class_exists('\yii\queue\db\Queue')) {
-            \Yii::$app->setComponents([
+            Yii::$app->setComponents([
                 'queue' => [
                     'class' => \yii\queue\db\Queue::class,
                     'mutex' => \yii\mutex\MysqlMutex::class,
