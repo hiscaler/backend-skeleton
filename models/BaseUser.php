@@ -408,8 +408,8 @@ class BaseUser extends ActiveRecord implements IdentityInterface
     {
         $ip = Yii::$app->getRequest()->getUserIP();
         $now = time();
-        $userId = \Yii::$app->getUser()->getId();
-        $db = \Yii::$app->getDb();
+        $userId = Yii::$app->getUser()->getId();
+        $db = Yii::$app->getDb();
         $db->createCommand()->insert('{{%user_login_log}}', [
             'user_id' => $userId,
             'login_ip' => $ip,
@@ -511,7 +511,7 @@ class BaseUser extends ActiveRecord implements IdentityInterface
         }
 
         // 删除关联数据
-        $cmd = \Yii::$app->getDb()->createCommand();
+        $cmd = Yii::$app->getDb()->createCommand();
         $tables = ['user_auth_category', 'grid_column_config', 'user_login_log'];
         foreach ($tables as $table) {
             $cmd->delete("{{%$table}}", ['user_id' => $this->id])->execute();

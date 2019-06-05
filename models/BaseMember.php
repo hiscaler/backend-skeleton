@@ -302,7 +302,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function findByWechatOpenId($openid)
     {
-        $memberId = \Yii::$app->getDb()->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
+        $memberId = Yii::$app->getDb()->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[openid]] = :openid', [':openid' => $openid])->queryScalar();
         if ($memberId) {
             return static::findIdentity($memberId);
         } else {
@@ -319,7 +319,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function findByWechatUnionId($unionid)
     {
-        $memberId = \Yii::$app->getDb()->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[unionid]] = :unionid', [':unionid' => $unionid])->queryScalar();
+        $memberId = Yii::$app->getDb()->createCommand('SELECT [[member_id]] FROM {{%wechat_member}} WHERE [[unionid]] = :unionid', [':unionid' => $unionid])->queryScalar();
         if ($memberId) {
             return static::findIdentity($memberId);
         } else {
@@ -477,7 +477,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             self::TYPE_NONE => '普通会员',
         ];
 
-        if (\Yii::$app->getUser()->identityClass == Member::class) {
+        if (Yii::$app->getUser()->identityClass == Member::class) {
             $options[self::TYPE_ADMINISTRATOR] = '管理员';
         }
 
@@ -518,7 +518,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public static function map()
     {
         $members = [];
-        $rawMembers = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[username]] FROM {{%member}}')->queryAll();
+        $rawMembers = Yii::$app->getDb()->createCommand('SELECT [[id]], [[username]] FROM {{%member}}')->queryAll();
         foreach ($rawMembers as $member) {
             $members[$member['id']] = $member['username'];
         }
@@ -614,9 +614,9 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function afterLogin($event)
     {
-        $user = \Yii::$app->getUser();
+        $user = Yii::$app->getUser();
         if (!$user->getIsGuest()) {
-            \Yii::$app->getDb()->createCommand('UPDATE {{%member}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime, [[last_login_session]] = :lastLoginSession WHERE [[id]] = :id', [
+            Yii::$app->getDb()->createCommand('UPDATE {{%member}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime, [[last_login_session]] = :lastLoginSession WHERE [[id]] = :id', [
                 ':loginIp' => Yii::$app->getRequest()->getUserIP(),
                 ':loginTime' => time(),
                 ':lastLoginSession' => session_id(),
@@ -641,7 +641,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 empty($nickname) && $nickname = $this->username;
                 $this->nickname = $nickname;
             }
-            $userId = Yii::$app->getUser()->isGuest ? 0 : \Yii::$app->getUser()->getId();
+            $userId = Yii::$app->getUser()->isGuest ? 0 : Yii::$app->getUser()->getId();
             if ($insert) {
                 $this->total_money = $this->available_money = 0;
                 $this->generateAuthKey();
@@ -698,7 +698,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         }
 
         // 清理相关数据
-        $cmd = \Yii::$app->getDb()->createCommand();
+        $cmd = Yii::$app->getDb()->createCommand();
         $tables = ['member_credit_log', 'wechat_member', 'member_profile'];
         foreach ($tables as $table) {
             $cmd->delete("{{%$table}}", ['member_id' => $this->id])->execute();
