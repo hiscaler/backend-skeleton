@@ -77,7 +77,7 @@ class WechatMemberBindForm extends Model
      */
     public function bind()
     {
-        Yii::$app->getDb()->createCommand()->update("{{%wechat_member}}", ['member_id' => $this->_member_id], [$this->xid_field => $this->xid])->execute();
+        return Yii::$app->getDb()->createCommand()->update("{{%wechat_member}}", ['member_id' => $this->_member_id], [$this->xid_field => $this->xid])->execute() ? true : false;
     }
 
 }
