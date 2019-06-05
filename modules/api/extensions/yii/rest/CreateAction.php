@@ -40,8 +40,7 @@ class CreateAction extends \yii\rest\Action
 
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         if ($model->save()) {
-            $response = Yii::$app->getResponse();
-            $response->setStatusCode(201);
+            Yii::$app->getResponse()->setStatusCode(201);
         } elseif (!$model->hasErrors()) {
             throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
         }
