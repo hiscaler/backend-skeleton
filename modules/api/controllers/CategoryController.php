@@ -85,7 +85,7 @@ class CategoryController extends ActiveController
      * @param null|string $sign
      * @param int $level
      * @param string $flat
-     * @param string $fields
+     * @param string $fields id:id,name:newName
      * @return array
      * @throws \yii\db\Exception
      */

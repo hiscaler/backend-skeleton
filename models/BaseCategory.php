@@ -44,6 +44,7 @@ class BaseCategory extends BaseActiveRecord
      * 仅分配给个人的
      */
     const RETURN_TYPE_PRIVATE = 'private';
+
     /**
      * 公有的
      */
