@@ -7,11 +7,13 @@ POST /api/passport/register
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |---|:---:|:---:|:---:|---|
-| username | string | 是 | null | 用户名 |
-| password | string | 是 | null | 密码 |
-| confirm_password | string | 是 | null | 密码 |
+| register_by | string | 是 | account | 注册方式（account: 帐号注册，mobile_phone: 手机注册） |
+| username | string | 否 | null | 用户名（注册方式为 account 时必填） |
+| password | string | 否 | null | 密码（注册方式为 account 时必填） |
+| confirm_password | string | 否 | null | 密码（注册方式为 account 时必填） |
+| mobile_phone | string | 否 | null | 手机号码（注册方式为 mobile_phone 时必填） |
+| captcha | string | 否 | null | 验证码（注册方式为 mobile_phone 时必填） |
 | type | int | 是 | null | 会员类型 |
-| mobile_phone | string | 是 | null | 手机号码 |
 
 ## 登录
 POST /api/passport/login
@@ -23,11 +25,11 @@ POST /api/passport/login
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |---|:---:|:---:|:---:|---|
 | type | string | 是 | account | 类型(account: 帐号登录，mobile_phone: 手机登录，access_token: 令牌登录) |
-| username | string | 否 | null | 用户名（type 为 account 时必须提供） |
-| password | string | 否 | null | 密码（type 为 account 时必须提供） |
-| mobile_phone | string | 否 | null | 手机号码（type 为 mobile_phone 时必须提供） |
-| captcha | string | 否 | null | 验证码（type 为 mobile_phone 时必须提供） |
-| access_token | string | 否 | null | 令牌（type 为 access_token 时必须提供） |
+| username | string | 否 | null | 用户名（type 为 account 时必填） |
+| password | string | 否 | null | 密码（type 为 account 时必填） |
+| mobile_phone | string | 否 | null | 手机号码（type 为 mobile_phone 时必填） |
+| captcha | string | 否 | null | 验证码（type 为 mobile_phone 时必填） |
+| access_token | string | 否 | null | 令牌（type 为 access_token 时必填） |
 
 ### 返回值
 ```json
