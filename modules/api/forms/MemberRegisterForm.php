@@ -3,6 +3,7 @@
 namespace app\modules\api\forms;
 
 use app\modules\api\models\Member;
+use Yii;
 
 /**
  * 会员注册
@@ -14,43 +15,100 @@ class MemberRegisterForm extends Member
 {
 
     /**
-     * 注册方式
+     * 会员注册方式
      */
-    const REGISTER_BY_USERNAME = 'username';
-    const REGISTER_BY_MOBILE_PHONE = 'mobile_phone';
+    const REGISTER_TYPE_ACCOUNT = 'account';
+    const REGISTER_TYPE_MOBILE_PHONE = 'mobile_phone';
 
-    public $register_by = self::REGISTER_BY_USERNAME;
+    /**
+     * @var string 注册方式
+     */
+    public $register_type = self::REGISTER_TYPE_ACCOUNT;
+
+    /**
+     * @var string 密码
+     */
     public $password;
+
+    /**
+     * @var string 确认密码
+     */
     public $confirm_password;
+
+    /**
+     * @var string 验证码
+     */
+    public $captcha;
+
+    /**
+     * @var string 邀请码
+     */
+    public $parent_invite_code;
 
     /**
      * @inheritdoc
      */
     public function rules()
     {
-        $rules = parent::rules();
-        $rules[] = ['register_by', 'string'];
-        if ($this->register_by != self::REGISTER_BY_USERNAME) {
-            unset($rules['registerByUsername']);
+        $parentRules = parent::rules();
+        $rules = [
+            ['register_type', 'string'],
+            ['register_type', 'trim'],
+            ['register_type', 'default', 'value' => self::REGISTER_TYPE_ACCOUNT],
+            ['register_type', 'in', 'range' => [self::REGISTER_TYPE_ACCOUNT, self::REGISTER_TYPE_MOBILE_PHONE]],
+        ];
+        if ($this->register_type != self::REGISTER_TYPE_ACCOUNT) {
+            unset($parentRules['registerByUsername']);
+            $rules = array_merge($rules, [
+                [['password', 'confirm_password'], 'required'],
+                [['password', 'confirm_password'], 'trim'],
+                [['password', 'confirm_password'], 'string', 'min' => 6, 'max' => 12],
+                ['confirm_password', 'compare', 'compareAttribute' => 'password',
+                    'message' => '两次输入的密码不一致，请重新输入。'
+                ],
+            ]);
+        } else {
+            $rules = array_merge($rules, [
+                ['captcha', 'required'],
+                ['captcha', 'string'],
+                ['captcha', 'trim'],
+                ['captcha', function ($attribute, $params) {
+                    if (!$this->hasErrors()) {
+                        $cache = Yii::$app->getCache()->get(SmsForm::CACHE_PREFIX . $this->mobile_phone);
+                        if ($cache === false || $cache['expired_datetime'] <= time() || $cache['value'] != $this->captcha) {
+                            $this->addError($attribute, '无效的验证码。');
+                        }
+                    }
+                }],
+            ]);
         }
 
         $rules = array_merge($rules, [
-            [['password', 'confirm_password'], 'required'],
-            [['password', 'confirm_password', 'email'], 'trim'],
-            [['password', 'confirm_password'], 'string', 'min' => 6, 'max' => 12],
-            ['confirm_password', 'compare', 'compareAttribute' => 'password',
-                'message' => '两次输入的密码不一致，请重新输入。'
-            ],
+            ['parent_invite_code', 'string'],
+            ['parent_invite_code', function ($attribute, $params) {
+                if ($this->parent_invite_code) {
+                    $memberId = Yii::$app->getDb()->createCommand("SELECT [[id]] FROM {{%member}} WHERE [[invitation_code]] = :inviteCode", [
+                        ':inviteCode' => $this->parent_invite_code,
+                    ])->queryScalar();
+                    if ($memberId) {
+                        $this->parent_id = $memberId;
+                    } else {
+                        $this->addError($attribute, '请填写正确的邀请码。');
+                    }
+                }
+            }],
         ]);
 
-        return $rules;
+        return array_merge($parentRules, $rules);
     }
 
     public function attributeLabels()
     {
         return array_merge(parent::attributeLabels(), [
-            'password' => \Yii::t('member', 'Password'),
-            'confirm_password' => \Yii::t('member', 'Confirm Password'),
+            'register_type' => '注册方式',
+            'password' => Yii::t('member', 'Password'),
+            'confirm_password' => Yii::t('member', 'Confirm Password'),
+            'captcha' => '验证码',
         ]);
     }
 
@@ -58,7 +116,7 @@ class MemberRegisterForm extends Member
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if ($this->register_by == self::REGISTER_BY_MOBILE_PHONE) {
+            if ($this->register_type == self::REGISTER_TYPE_MOBILE_PHONE) {
                 $this->username = $this->mobile_phone;
             }
 

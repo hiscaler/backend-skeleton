@@ -83,20 +83,18 @@ class PassportController extends ActiveController
     /**
      * 会员注册
      *
-     * @param string $type
      * @return MemberRegisterForm|MemberProfile
      * @throws ServerErrorHttpException
      * @throws \yii\base\InvalidConfigException
      * @throws \Exception
      */
-    public function actionRegister($type = MemberRegisterForm::REGISTER_BY_USERNAME)
+    public function actionRegister()
     {
         $payload = Yii::$app->getRequest()->getBodyParams();
         if (!isset($payload['profile'])) {
             $payload['profile'] = [];
         }
         $model = new MemberRegisterForm();
-        $model->register_by = $type;
         $model->loadDefaultValues();
 
         $profileModel = new MemberProfile();
