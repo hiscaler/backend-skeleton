@@ -141,7 +141,7 @@ class PassportController extends ActiveController
     public function actionLogin()
     {
         $model = new MemberLoginForm();
-        $model->load(Yii::$app->getRequest()->getQueryParams(), '');
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         if ($model->validate() && $model->login()) {
             return Yii::$app->getUser()->getIdentity();
         } elseif (!$model->hasErrors()) {

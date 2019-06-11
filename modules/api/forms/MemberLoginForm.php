@@ -68,6 +68,7 @@ class MemberLoginForm extends Model
     {
         return [
             [['type'], 'required'],
+            [['type'], 'string'],
             [['type', 'username', 'password', 'mobile_phone', 'captcha', 'access_token'], 'trim'],
             ['type', 'default', 'value' => self::TYPE_ACCOUNT],
             ['type', 'in', 'range' => array_keys(self::typeOptions())],
