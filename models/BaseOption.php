@@ -115,7 +115,7 @@ class BaseOption
      */
     public static function coreTables($withPrefix = true)
     {
-        $tables = ['category', 'entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'member', 'meta', 'meta_validator', 'meta_value', 'migration', 'module', 'user', 'user_auth_category', 'member_credit_log', 'member_group', 'user_login_log', 'wechat_member'];
+        $tables = ['category', 'entity_label', 'file_upload_config', 'grid_column_config', 'label', 'lookup', 'member', 'meta', 'meta_validator', 'meta_value', 'migration', 'module', 'set', 'user', 'user_auth_category', 'member_credit_log', 'member_group', 'user_login_log', 'wechat_member'];
         if ($withPrefix && $tablePrefix = \Yii::$app->getDb()->tablePrefix) {
             foreach ($tables as &$table) {
                 $table = $tablePrefix . $table;
