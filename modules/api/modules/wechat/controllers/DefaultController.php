@@ -2,8 +2,12 @@
 
 namespace app\modules\api\modules\wechat\controllers;
 
+use app\helpers\Config;
 use app\modules\api\models\Constant;
 use app\modules\api\modules\wechat\models\Response;
+use EasyWeChat\Foundation\Application;
+use EasyWeChat\Support\Collection;
+use Exception;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -22,11 +26,12 @@ class DefaultController extends Controller
     /**
      * @throws \EasyWeChat\Core\Exceptions\InvalidArgumentException
      * @throws \EasyWeChat\Server\BadRequestException
+     * @throws \EasyWeChat\Core\Exceptions\InvalidArgumentException
+     * @throws \yii\base\ExitException
      */
     public function actionIndex()
     {
         $server = $this->wxApplication->server;
-
         $server->setMessageHandler(function ($message) {
             $this->_message = $message;
             switch (strtolower($message->MsgType)) {
@@ -34,10 +39,12 @@ class DefaultController extends Controller
                     switch (strtolower($message->Event)) {
                         case 'subscribe':
                             $this->subscribeEvent();
+                            $this->processHandlers('event.subscribe', $message, $this->wxApplication);
                             break;
 
                         case 'unsubscribe':
                             $this->unsubscribeEvent();
+                            $this->processHandlers('event.unsubscribe', $message, $this->wxApplication);
                             break;
 
                         default:
@@ -53,6 +60,10 @@ class DefaultController extends Controller
 
                     break;
 
+                case 'scan':
+                    $this->processHandlers('scan', $message, $this->wxApplication);
+                    break;
+
                 default:
                     return self::DEFAULT_RETURN_MESSAGE;
                     break;
@@ -61,7 +72,8 @@ class DefaultController extends Controller
 
         $response = $server->serve();
 
-        $response->send();
+        $response->sendContent();
+        Yii::$app->end();
     }
 
     /**
@@ -131,6 +143,22 @@ class DefaultController extends Controller
                 $db->createCommand()->delete('{{%wechat_member}}', ['id' => $wechatMemberId])->execute();
             } else {
                 $db->createCommand()->update('{{%wechat_member}}', ['subscribe' => Constant::BOOLEAN_FALSE], ['id' => $wechatMemberId])->execute();
+            }
+        }
+    }
+
+    private function processHandlers($key, Collection $collection, Application $application)
+    {
+        $handlers = Config::get("wechat.messageHandlers.$key", []);
+        if ($handlers && is_array($handlers)) {
+            foreach ($handlers as $handler) {
+                if (class_exists($handler)) {
+                    try {
+                        call_user_func([new $handler(), 'process'], $collection, $application);
+                    } catch (Exception $e) {
+                        Yii::error($handler . ':' . $e->getMessage(), 'wechat.message.handlers');
+                    }
+                }
             }
         }
     }
