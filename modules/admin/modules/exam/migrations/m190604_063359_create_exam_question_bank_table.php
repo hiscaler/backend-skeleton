@@ -20,7 +20,7 @@ class m190604_063359_create_exam_question_bank_table extends Migration
             'icon' => $this->string(100)->comment('题库图标'),
             'questions_count' => $this->smallInteger()->notNull()->defaultValue(0)->comment('试题数量'),
             'participation_times' => $this->smallInteger()->notNull()->defaultValue(0)->comment('参与次数'),
-            'status' => $this->boolean()->notNull()->defaultValue(0)->comment('状态'),
+            'status' => $this->boolean()->notNull()->defaultValue(1)->comment('状态'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'created_by' => $this->integer()->notNull()->comment('添加人'),
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),

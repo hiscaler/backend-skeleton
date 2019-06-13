@@ -77,7 +77,7 @@ class QuestionBank extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => '编号',
             'name' => '题库名称',
             'description' => '题库说明',
             'icon' => '题库图标',
@@ -104,11 +104,16 @@ class QuestionBank extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function getItems()
+    /**
+     * 题库列表
+     *
+     * @return array
+     */
+    public static function map()
     {
         return (new Query())
             ->select('name')
-            ->from('{{%question_bank}}')
+            ->from('{{%exam_question_bank}}')
             ->indexBy('id')
             ->column();
     }

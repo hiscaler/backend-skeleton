@@ -7,7 +7,6 @@ use app\modules\api\modules\exam\models\Question;
 use app\modules\api\modules\exam\models\QuestionBank;
 use app\modules\api\modules\exam\models\QuestionSearch;
 use Yii;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
 /**
@@ -43,16 +42,16 @@ class QuestionController extends Controller
                     '*' => ['GET'],
                 ],
             ],
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['index', 'create', 'view', 'delete', 'update', 'random'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
+//            'access' => [
+//                'class' => AccessControl::class,
+//                'rules' => [
+//                    [
+//                        'actions' => ['index', 'create', 'view', 'delete', 'update', 'random'],
+//                        'allow' => true,
+//                        'roles' => ['@'],
+//                    ],
+//                ],
+//            ],
         ]);
 
         return $behaviors;
@@ -80,9 +79,9 @@ class QuestionController extends Controller
         $items = [];
         $condition = []; // bankId => size
         $defaultCount = 10;
-        if (ctype_digit($filter)) {
+        if (ctype_digit((string) $filter)) {
             $n = (int) $filter;
-            $n <= 0 || $n = $defaultCount;
+            $n <= 0 && $n = $defaultCount;
             $condition = [0 => $n];
         } else {
             // 1.2,2.3 表示从题库 1 中调取 2 个试题，从题库 2 中调取 3 个试题
@@ -107,7 +106,7 @@ class QuestionController extends Controller
             if ($bankId) {
                 $where .= ' AND [[question_bank_id]] = ' . (int) $bankId;
             }
-            $t = $db->createCommand("SELECT [[id]], [[type]], [[content]], [[options]], [[resolve]], [[answer]] FROM {{%exam_question}} WHERE [[id]] >= ((SELECT MAX([[id]]) FROM {{%exam_question}} WHERE $where) - (SELECT MIN([[id]]) FROM {{%exam_question}} WHERE $where)) * RAND() + (SELECT MIN([[id]]) FROM {{%exam_question}} WHERE $where) LIMIT :limit", [':limit' => $size])->queryAll();
+            $t = $db->createCommand("SELECT [[t1.id]], [[type]], [[content]], [[options]], [[resolve]], [[answer]] FROM {{%exam_question}} AS t1 JOIN (SELECT ROUND(RAND() * (SELECT MAX([[id]]) FROM {{%exam_question}} WHERE $where)) AS id) AS t2 WHERE t1.id >= t2.id AND $where ORDER BY t1.id ASC LIMIT :limit", [':limit' => $size])->queryAll();
             $items = array_merge($items, $t);
         }
 

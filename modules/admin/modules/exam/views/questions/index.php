@@ -42,7 +42,7 @@ $this->params['menus'] = [
             'resolve:ntext',
             [
                 'class' => 'yii\grid\ActionColumn',
-                'headerOptions' => ['class' => 'btn-3 last'],
+                'headerOptions' => ['class' => 'buttons-3 last'],
             ],
         ],
     ]);

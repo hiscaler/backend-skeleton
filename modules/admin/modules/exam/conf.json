@@ -1,28 +1,23 @@
 {
-    "name": "试题管理",
+    "name": "题库管理",
     "author": "hiscaler",
     "version": "0.0.1",
-    "description": "试题管理模块",
+    "description": "题库管理模块",
     "url": "http://www.github.com/hiscaler",
     "menus": [
         {
-            "label": "菜单 1",
+            "label": "题库管理",
             "url": [
-                "example/default/index",
-                {
-                    "key": "1"
-                }
+                "exam/question-banks/index"
             ],
-            "active": "controllerId=default&actionId=index&&key=1"
+            "active": "controllerId=question-banks"
         },
         {
-            "label": "菜单 2",
+            "label": "试题管理",
             "url": [
-                "example/default/index",
-                {
-                    "key": "2"
-                }
-            ]
+                "exam/questions/index"
+            ],
+            "active": "controllerId=questions"
         }
     ],
     "depends": []
