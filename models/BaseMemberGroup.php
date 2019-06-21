@@ -2,9 +2,9 @@
 
 namespace app\models;
 
+use Overtrue\Pinyin\Pinyin;
 use Yii;
 use yii\db\Query;
-use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "{{%member_group}}".
@@ -147,7 +147,7 @@ class BaseMemberGroup extends \yii\db\ActiveRecord
                 $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
             } else {
                 if (empty($this->alias) && !empty($this->name)) {
-                    $this->alias = Inflector::slug($this->name);
+                    $this->alias = $this->alias = (new Pinyin())->abbr($this->name);
                 }
                 $this->updated_at = time();
                 $this->updated_by = Yii::$app->getUser()->getId();

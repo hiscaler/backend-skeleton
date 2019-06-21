@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Overtrue\Pinyin\Pinyin;
 use Yii;
 use yii\db\Query;
 use yii\helpers\Inflector;
@@ -183,11 +184,7 @@ class BaseLabel extends BaseActiveRecord
                 $this->frequency = 0;
             }
             if (empty($this->alias) && !empty($this->name)) {
-                $alias = [];
-                foreach (explode('-', Inflector::slug($this->name)) as $slug) {
-                    $alias[] = $slug[0];
-                }
-                $this->alias = implode('', $alias);
+                $this->alias = $this->alias = (new Pinyin())->abbr($this->name);
             }
 
             return true;

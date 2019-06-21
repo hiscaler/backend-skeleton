@@ -2,13 +2,13 @@
 
 namespace app\models;
 
+use Overtrue\Pinyin\Pinyin;
 use yadjet\behaviors\FileUploadBehavior;
 use yadjet\helpers\ArrayHelper;
 use yadjet\helpers\TreeFormatHelper;
 use Yii;
 use yii\caching\DbDependency;
 use yii\helpers\FileHelper;
-use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "{{%category}}".
@@ -531,11 +531,7 @@ class BaseCategory extends BaseActiveRecord
     {
         if (parent::beforeValidate()) {
             if (empty($this->alias) && !empty($this->name)) {
-                $alias = [];
-                foreach (explode('-', Inflector::slug($this->name)) as $slug) {
-                    $alias[] = $slug[0];
-                }
-                $this->alias = implode('', $alias);
+                $this->alias = (new Pinyin())->abbr($this->name);
             }
             $level = 0;
             if ($this->parent_id) {
