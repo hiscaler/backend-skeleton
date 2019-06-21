@@ -57,19 +57,29 @@ class Set extends \yii\db\ActiveRecord
      *
      * @param string $key
      * @param string $value
+     * @param bool $valueUnique
      * @return bool
+     * @throws Exception
      */
-    public static function add($key, $value)
+    public static function add($key, $value, $valueUnique = false)
     {
         $key = trim($key);
         if (is_string($key) && empty($key) || is_null($key)) {
             return false;
         }
+        $db = Yii::$app->getDb();
+        if ($valueUnique) {
+            $k = $db->createCommand("SELECT [[key]] FROM {{%set}} WHERE [[value]] = :value", [':value' => $value])->queryScalar();
+            if ($k !== false) {
+                // Update
+                return $db->createCommand()->update("{{%set}}", ['key' => $key], ['key' => $k])->execute() ? true : false;
+            }
+        }
 
         try {
-            return Yii::$app->getDb()->createCommand()->upsert("{{%set}}", ['key' => $key, 'value' => $value])->execute() ? true : false;
+            return $db->createCommand()->insert("{{%set}}", ['key' => $key, 'value' => $value])->execute() ? true : false;
         } catch (Exception $e) {
-            throw new $e;
+            return false;
         }
     }
 
@@ -83,7 +93,9 @@ class Set extends \yii\db\ActiveRecord
      */
     public static function get($key, $defaultValue = null)
     {
-        return Yii::$app->getDb()->createCommand("SELECT [[value]] FROM {{%set}} WHERE [[key]] = :key", [':key' => trim($key)])->queryScalar() !== false ?: $defaultValue;
+        $value = Yii::$app->getDb()->createCommand("SELECT [[value]] FROM {{%set}} WHERE [[key]] = :key", [':key' => trim($key)])->queryScalar();
+
+        return $value !== false ? $value : $defaultValue;
     }
 
     /**
