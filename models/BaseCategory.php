@@ -198,7 +198,7 @@ class BaseCategory extends BaseActiveRecord
     {
         $tree = [];
         $signOrId = trim($signOrId);
-        $db = \Yii::$app->getDb();
+        $db = Yii::$app->getDb();
         if (is_numeric($signOrId)) {
             $parentId = (int) $signOrId;
         } elseif (is_string($signOrId) && $signOrId) {
@@ -349,7 +349,7 @@ class BaseCategory extends BaseActiveRecord
         if (is_numeric($signOrId)) {
             $id = (int) $signOrId;
         } elseif (is_string($signOrId) && $signOrId) {
-            $id = \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
+            $id = Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
             if (!$id) {
                 return [];
             }
@@ -392,7 +392,7 @@ class BaseCategory extends BaseActiveRecord
         if (is_numeric($signOrId)) {
             $id = (int) $signOrId;
         } elseif (is_string($signOrId) && $signOrId) {
-            $id = \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
+            $id = Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => $signOrId])->queryScalar();
             if (!$id) {
                 return [];
             }
@@ -415,7 +415,7 @@ class BaseCategory extends BaseActiveRecord
      */
     public static function hasChildren($id)
     {
-        return \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%category}} WHERE [[parent_id]] = :parentId', [':parentId' => (int) $id])->queryScalar() ? true : false;
+        return Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%category}} WHERE [[parent_id]] = :parentId', [':parentId' => (int) $id])->queryScalar() ? true : false;
     }
 
     /**
@@ -427,7 +427,7 @@ class BaseCategory extends BaseActiveRecord
      */
     public static function getIdBySign($sign)
     {
-        return \Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => trim($sign)])->queryScalar();
+        return Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => trim($sign)])->queryScalar();
     }
 
     /**
@@ -578,7 +578,7 @@ class BaseCategory extends BaseActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $db = \Yii::$app->getDb();
+        $db = Yii::$app->getDb();
         $cmd = $db->createCommand();
         if (!$insert && ($this->_alias != $this->alias)) {
             // 更新子栏目别名数据
@@ -587,7 +587,7 @@ class BaseCategory extends BaseActiveRecord
                 foreach ($children as $child) {
                     $childAlias = explode('/', $child['alias']);
                     foreach (explode('/', $this->alias) as $key => $value) {
-                        $childAlias[$key] = $value;
+                        $value && $childAlias[$key] = $value;
                     }
                     $alias = implode('/', $childAlias);
                     $cmd->update('{{%category}}', ['alias' => $alias], ['id' => $child['id']])->execute();
@@ -635,7 +635,7 @@ class BaseCategory extends BaseActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        \Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['category_id' => $this->id])->execute();
+        Yii::$app->getDb()->createCommand()->delete('{{%user_auth_category}}', ['category_id' => $this->id])->execute();
         if ($icon = $this->icon) {
             $icon = Yii::getAlias('@webroot' . $icon);
             file_exists($icon) && FileHelper::unlink($icon);
