@@ -25,7 +25,7 @@ class DefaultController extends Controller
                         'roles' => ['@'],
                     ],
                 ],
-            ],
+            ]
         ];
     }
 

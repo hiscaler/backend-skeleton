@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\modules\exam\models\QuestionBank;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -23,7 +24,7 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'icon')->fileInput() ?>
 
-        <?= $form->field($model, 'status')->dropDownList(\app\models\QuestionBank::statusOptions()) ?>
+        <?= $form->field($model, 'status')->dropDownList(QuestionBank::statusOptions()) ?>
         <div class="form-group buttons">
             <?= Html::submitButton($model->isNewRecord ? '添加' : '更新', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>

@@ -58,20 +58,20 @@ $this->params['menus'] = [
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {questions} {to-word} {update} {delete}',
+                'template' => '{view} {questions} {update} {delete}',
                 'buttons' => [
                     'questions' => function ($url, $model, $key) {
-                        $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-add-training-log"]);
+                        $icon = Html::tag('span', '试题', ['class' => "glyphicon glyphicon-add-training-log"]);
 
-                        return Html::a($icon, ['questions/index', 'questionBankId' => $model->id]);
+                        return Html::a($icon, ['questions/index', 'questionBankId' => $model->id], ['data-pjax' => 0]);
                     },
-                    'to-word' => function ($url, $model, $key) {
-                        $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-save"]);
-
-                        return Html::a($icon, ['to-word', 'id' => $model->id], ['title' => '导出为 Word 文件', 'target' => '_blank', 'data-pjax' => 0]);
-                    }
+//                    'to-word' => function ($url, $model, $key) {
+//                        $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-save"]);
+//
+//                        return Html::a($icon, ['to-word', 'id' => $model->id], ['title' => '导出为 Word 文件', 'target' => '_blank', 'data-pjax' => 0]);
+//                    }
                 ],
-                'headerOptions' => ['class' => 'btn-5 last'],
+                'headerOptions' => ['class' => 'buttons-4 last'],
             ],
         ],
     ]);

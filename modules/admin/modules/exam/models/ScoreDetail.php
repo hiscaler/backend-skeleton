@@ -33,6 +33,8 @@ class ScoreDetail extends \yii\db\ActiveRecord
         return [
             [['score_id', 'question_id'], 'required'],
             [['score_id', 'bank_id', 'question_id', 'answer_datetime', 'status', 'score'], 'integer'],
+            ['status', 'default', 'value' => Score::STATUS_FINISHED],
+            ['bank_id', 'default', 'value' => 0],
             [['answer'], 'string', 'max' => 10],
         ];
     }
@@ -58,8 +60,7 @@ class ScoreDetail extends \yii\db\ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             if ($insert) {
-                $this->status = Score::STATUS_PENDING;
-                $this->score = 0;
+                $this->answer_datetime = time();
             }
 
             return true;

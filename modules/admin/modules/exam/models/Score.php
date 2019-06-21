@@ -38,14 +38,24 @@ class Score extends \yii\db\ActiveRecord
         return '{{%exam_score}}';
     }
 
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['begin_datetime', 'questions_count', 'member_id'], 'required'],
-            [['begin_datetime', 'end_datetime', 'questions_count', 'last_answer_datetime', 'status', 'score', 'member_id'], 'integer'],
+            [['begin_datetime'], 'required'],
+            [['end_datetime', 'questions_count', 'last_answer_datetime', 'status', 'score', 'member_id'], 'integer'],
+            ['begin_datetime', 'datetime', 'format' => 'php:Y-m-d H:i:s', 'timestampAttribute' => 'begin_datetime'],
+            [['questions_count', 'score'], 'default', 'value' => 0],
+            [['flag'], 'trim'],
             [['flag'], 'string', 'max' => 30],
         ];
     }
@@ -100,9 +110,10 @@ class Score extends \yii\db\ActiveRecord
         if (parent::beforeSave($insert)) {
             if ($insert) {
                 $this->questions_count = 0;
+                $this->last_answer_datetime = $this->end_datetime = time();
                 $this->score = 0;
                 $this->status = self::STATUS_PENDING;
-                $this->member_id = Yii::$app->getUser()->getId();
+                $this->member_id = Yii::$app->getUser()->getId() ?: 0;
             }
 
             return true;

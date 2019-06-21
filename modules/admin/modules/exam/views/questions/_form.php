@@ -1,5 +1,7 @@
 <?php
 
+use app\modules\admin\modules\exam\models\Question;
+use app\modules\admin\modules\exam\models\QuestionBank;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -15,11 +17,11 @@ use yii\widgets\ActiveForm;
         ]);
         ?>
 
-        <?= $form->field($model, 'question_bank_id')->dropDownList(\app\models\QuestionBank::getItems()) ?>
+        <?= $form->field($model, 'question_bank_id')->dropDownList(QuestionBank::map()) ?>
 
-        <?= $form->field($model, 'type')->dropDownList(\app\models\Question::typeOptions()) ?>
+        <?= $form->field($model, 'type')->dropDownList(Question::typeOptions()) ?>
 
-        <?= $form->field($model, 'status')->dropDownList(\app\models\Question::statusOptions()) ?>
+        <?= $form->field($model, 'status')->dropDownList(Question::statusOptions()) ?>
 
         <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 

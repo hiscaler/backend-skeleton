@@ -60,7 +60,7 @@ class Question extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => '编号',
             'question_bank_id' => '所属题库',
             'type' => '试题类型',
             'status' => '试题状态',
