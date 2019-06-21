@@ -2,6 +2,7 @@
 
 namespace app\modules\api\modules\wechat\controllers;
 
+use app\helpers\Config;
 use app\modules\api\extensions\BaseController;
 use EasyWeChat\Foundation\Application;
 use EasyWeChat\Material\Temporary;
@@ -24,6 +25,13 @@ use yii\helpers\Url;
 class Controller extends BaseController
 {
 
+    /**
+     * 登录类型
+     */
+    const LOGIN_BY_WX = "wx";
+    const LOGIN_BY_WXAPP = "wxapp";
+    const LOGIN_BY_OPEN = "open";
+
     const DEFAULT_RETURN_MESSAGE = '';
 
     protected $wxConfig;
@@ -45,12 +53,35 @@ class Controller extends BaseController
     public function init()
     {
         parent::init();
-        if (!isset(Yii::$app->params['wechat']) || !Yii::$app->params['wechat'] || !isset(Yii::$app->params['wechat']['app_id'], Yii::$app->params['wechat']['secret'])) {
+        if (!isset(Yii::$app->params['wechat']) || !Yii::$app->params['wechat']) {
             throw new InvalidConfigException('无效的微信配置。');
         }
-        $this->wxConfig = Yii::$app->params['wechat'];
-        if (isset($this->wxConfig['enableThirdPartyLogin']) && $this->wxConfig['enableThirdPartyLogin']
-        ) {
+        $loginBy = strtolower(Yii::$app->getRequest()->get('_loginBy', self::LOGIN_BY_WX));
+        switch ($loginBy) {
+            case self::LOGIN_BY_WX:
+                $appIdKey = 'wechat.app_id';
+                $appSecretKey = 'wechat.secret';
+                break;
+
+            case self::LOGIN_BY_WXAPP:
+                $appIdKey = 'wechat.wxapp.app_id';
+                $appSecretKey = 'wechat.wxapp.secret';
+                break;
+
+            default:
+                $appIdKey = 'wechat.thirdPartyLogin.app_id';
+                $appSecretKey = 'wechat.thirdPartyLogin.secret';
+                break;
+        }
+
+        $config = Yii::$app->params['wechat'];
+        $config['app_id'] = Config::get($appIdKey);
+        $config['secret'] = Config::get($appSecretKey);
+        if (!$config['app_id'] || !$config['secret']) {
+            throw new InvalidConfigException('请设置有效的 appid 和 secret。');
+        }
+        $this->wxConfig = $config;
+        if (isset($this->wxConfig['enableThirdPartyLogin']) && $this->wxConfig['enableThirdPartyLogin']) {
             if (!isset($this->wxConfig['thirdPartyLogin'], $this->wxConfig['thirdPartyLogin']['app_id'], $this->wxConfig['thirdPartyLogin']['secret'])) {
                 throw new InvalidConfigException('无效的微信第三方登录配置。');
             } else {

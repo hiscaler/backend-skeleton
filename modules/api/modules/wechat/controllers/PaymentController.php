@@ -52,6 +52,7 @@ class PaymentController extends Controller
     {
         $model = new PrepareOrder();
         $model->notify_url = $this->_notify_url;
+        $model->appid = $this->wxConfig['app_id'];
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         $model->out_trade_no || $model->generateOutTradeNo();
         if ($model->validate()) {
@@ -98,7 +99,7 @@ class PaymentController extends Controller
                         break;
 
                     default:
-                        $config = $this->wxService->configForPayment($prepayId, true);
+                        $config = $this->wxService->configForPayment($prepayId, false);
                         break;
                 }
 

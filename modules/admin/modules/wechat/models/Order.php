@@ -270,7 +270,6 @@ class Order extends \yii\db\ActiveRecord
         if (parent::beforeSave($insert)) {
             if ($insert) {
                 $wechatOptions = Yii::$app->params['wechat'];
-                $this->appid = $wechatOptions['app_id'];
                 $this->mch_id = $wechatOptions['payment']['merchant_id'];
                 $this->time_start = time();
                 $this->spbill_create_ip = Yii::$app->getRequest()->getUserIP();
