@@ -5,7 +5,7 @@ namespace app\modules\api\modules\notice\controllers;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\modules\notice\models\Notice;
 use app\modules\api\modules\notice\models\NoticeSearch;
-use stdClass;
+use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -74,35 +74,33 @@ class DefaultController extends ActiveController
     {
         $search = new NoticeSearch();
 
-        return $search->search(\Yii::$app->getRequest()->getQueryParams());
+        return $search->search(Yii::$app->getRequest()->getQueryParams());
     }
 
     /**
      * 设置为已读状态
      *
      * @param $id
-     * @return stdClass
      * @throws NotFoundHttpException
      * @throws \yii\db\Exception
      */
     public function actionRead($id)
     {
         $model = $this->findModel($id);
-        $memberId = \Yii::$app->getUser()->getId();
-        $db = \Yii::$app->getDb();
-        $exist = $db->createCommand('SELECT COUNT(*) FROM {{%notice_view}} WHERE [[notice_id]] = :noticeId AND [[member_id]] = :memberId', [
+        $memberId = Yii::$app->getUser()->getId();
+        $db = Yii::$app->getDb();
+        $n = $db->createCommand('SELECT COUNT(*) FROM {{%notice_view}} WHERE [[notice_id]] = :noticeId AND [[member_id]] = :memberId', [
             ':noticeId' => $model->id,
             ':memberId' => $memberId,
         ])->queryScalar();
-        if (!$exist) {
+        if (!$n) {
             $db->createCommand()->insert('{{%notice_view}}', [
                 'notice_id' => $model->id,
                 'member_id' => $memberId,
                 'view_datetime' => time(),
             ])->execute();
         }
-
-        return new stdClass();
+        Yii::$app->getResponse()->setStatusCode(200);
     }
 
     /**
