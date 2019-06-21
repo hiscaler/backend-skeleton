@@ -32,6 +32,7 @@
         "yiisoft/yii2-imagine": "~2.1.0",
         "phpoffice/phpexcel": "^1.8",
         "overtrue/easy-sms": "^1.1"
+        "overtrue/pinyin": "~4.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
