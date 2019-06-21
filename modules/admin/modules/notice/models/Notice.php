@@ -187,7 +187,9 @@ class Notice extends BaseActiveRecord
      */
     public function getRead()
     {
-        return $this->hasOne(NoticeView::class, ['notice_id' => 'id']);
+        return $this->hasOne(NoticeView::class, ['notice_id' => 'id'])->where([
+            'member_id' => \Yii::$app->getUser()->getId(),
+        ]);
     }
 
     // Events
