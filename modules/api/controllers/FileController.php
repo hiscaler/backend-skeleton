@@ -2,9 +2,9 @@
 
 namespace app\modules\api\controllers;
 
-use app\modules\api\extensions\BaseController;
+use app\helpers\Uploader;
+use app\modules\api\extensions\AuthController;
 use RuntimeException;
-use stdClass;
 use yadjet\helpers\ImageHelper;
 use yadjet\helpers\StringHelper;
 use Yii;
@@ -24,7 +24,7 @@ use yii\web\UploadedFile;
  * @package app\modules\api\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class FileController extends BaseController
+class FileController extends AuthController
 {
 
     const TYPE_IMAGE = 'image';
@@ -38,7 +38,7 @@ class FileController extends BaseController
     public function init()
     {
         parent::init();
-        if (!isset(Yii::$app->params['uploading'])) {
+        if (!isset(Yii::$app->params['upload'])) {
             throw new InvalidConfigException('无效的上传配置。');
         }
     }
@@ -90,9 +90,9 @@ class FileController extends BaseController
      */
     public function actionUploading($key = 'file', $single = true)
     {
-        $config = Yii::$app->params['uploading'];
+        $config = Yii::$app->params['upload'];
         if (!isset($config[$this->type])) {
-            throw new InvalidConfigException("无效的 $this->type 上传配置。");
+            throw new InvalidConfigException("无效的 upload.$this->type 上传配置。");
         }
 
         $request = Yii::$app->getRequest();
@@ -147,14 +147,12 @@ class FileController extends BaseController
         }
 
         $successRes = [];
+        $uploader = new Uploader();
         foreach ($models as $i => $model) {
             /* @var $model DynamicModel */
             /* @var $file \yii\web\UploadedFile */
             $attr = $key . '_' . $i;
             $file = $model->$attr;
-            $path = $request->getBaseUrl() . '/' . trim($config['path'], '/') . '/' . date('Ymd');
-            $absolutePath = FileHelper::normalizePath(Yii::getAlias('@webroot') . $path);
-            !file_exists($absolutePath) && FileHelper::createDirectory($absolutePath);
             $originalName = null;
             $extensionName = null;
             if ($validator == 'string') {
@@ -176,27 +174,25 @@ class FileController extends BaseController
                 $mimeType = FileHelper::getMimeTypeByExtension($extensionName);
             }
             empty($extensionName) && $extensionName = 'jpg';
-            $filename = $this->generateUniqueFilename() . '.' . $extensionName;
-            $absoluteSavePath = $absolutePath . DIRECTORY_SEPARATOR . $filename;
+            $uploader->setFilename(null, $extensionName);
             if ($validator == 'string') {
-                $success = file_put_contents($absoluteSavePath, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file)));
-                $fileSize = filesize($absoluteSavePath);
+                $success = file_put_contents($uploader->getPath(), base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file)));
+                $fileSize = filesize($uploader->getPath());
             } else {
-                $success = $file->saveAs($absoluteSavePath);
+                $success = $file->saveAs($uploader->getPath());
             }
 
             if ($success) {
-                $path = "$path/$filename";
                 $res = [
                     'original_name' => $originalName,
-                    'real_name' => $filename,
-                    'path' => $path,
-                    'full_path' => $request->getHostInfo() . $path,
+                    'real_name' => $uploader->getFilename(),
+                    'path' => $uploader->getUrl(),
+                    'full_path' => $request->getHostInfo() . $uploader->getUrl(),
                     'size' => $fileSize,
                     'mime_type' => $mimeType,
                 ];
                 if ($this->type == self::TYPE_IMAGE) {
-                    $imgBinary = fread(fopen($absoluteSavePath, "r"), filesize($absoluteSavePath));
+                    $imgBinary = fread(fopen($uploader->getPath(), "r"), filesize($uploader->getPath()));
                     $imageBase64 = 'data:image/' . $mimeType . ';base64,' . base64_encode($imgBinary);
                     $res['base64'] = $imageBase64;
                 }
@@ -225,7 +221,6 @@ class FileController extends BaseController
      * 删除文件
      *
      * @param $url
-     * @return string
      * @throws NotFoundHttpException
      * @todo 需要判断文件所有者权限
      */
@@ -233,12 +228,10 @@ class FileController extends BaseController
     {
         $url = parse_url($url);
         $file = $url['path'];
-        $config = Yii::$app->params['uploading'];
-        $dir = isset($config['dir']) ? $config['dir'] : "uploads";
-        $path = Yii::getAlias("@webroot/$dir/" . ltrim($file, '\/'));
+        $path = Yii::getAlias("@webroot" . '/' . ltrim($file, '\/'));
         if (file_exists($path)) {
             if (FileHelper::unlink($path)) {
-                return new stdClass();
+                Yii::$app->getResponse()->setStatusCode(200);
             } else {
                 $error = error_get_last();
                 if ($error !== null) {

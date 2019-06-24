@@ -2,10 +2,10 @@
 
 namespace app\modules\admin\controllers;
 
+use app\helpers\Uploader;
 use app\models\Constant;
 use app\models\Lookup;
 use app\models\LookupSearch;
-use yadjet\helpers\StringHelper;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -69,15 +69,11 @@ class LookupsController extends Controller
             foreach ($postData as $key => $value) {
                 $file = UploadedFile::getInstanceByName($key);
                 if ($file) {
+                    $uploader = new Uploader();
+                    $uploader->setFilename(null, $file->getExtension());
                     $originalValue = $value;
-                    $path = '/uploads/' . date('Ymd');
-                    $value = $path . '/' . StringHelper::generateRandomString() . '.' . $file->getExtension();
-                    $dir = Yii::getAlias('@webroot') . $path;
-                    if (!file_exists($dir)) {
-                        FileHelper::createDirectory($dir);
-                    }
-
-                    $file->saveAs(Yii::getAlias('@webroot') . $value);
+                    $value = $uploader->getUrl();
+                    $file->saveAs($uploader->getPath());
                     $originalValue && FileHelper::unlink(Yii::getAlias('@webroot') . $originalValue);
                 }
 

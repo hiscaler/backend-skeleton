@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\helpers\Uploader;
 use Yii;
 use yii\base\ErrorException;
 use yii\db\ActiveRecord;
@@ -412,14 +413,10 @@ class BaseMeta extends ActiveRecord
                 if ($isFile) {
                     $file = UploadedFile::getInstance($dynamicModel, $key);
                     if ($file) {
-                        $directory = Yii::getAlias('@webroot');
-                        $path = '/uploads/' . date('Ymd');
-                        if (!is_dir($directory . $path)) {
-                            FileHelper::createDirectory($directory . $path);
-                        }
-                        $filename = Yii::$app->getSecurity()->generateRandomString() . '.' . $file->getExtension();
-                        $file->saveAs($directory . $path . '/' . $filename);
-                        $value = $path . '/' . $filename;
+                        $uploader = new Uploader();
+                        $uploader->setFilename(null, $file->getExtension());
+                        $file->saveAs($uploader->getPath());
+                        $value = $uploader->getUrl();
                     } else {
                         if ($activeRecord->isNewRecord) {
                             continue;
