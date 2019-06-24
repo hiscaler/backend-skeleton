@@ -21,4 +21,4 @@ DELETE /api/ticket/default/delete?id=:id&accessToken=:accessToken
 | 机密信息 | confidential_information | string | | | 否 | |
 | 手机号码 | mobile_phone | string | | | 否 | |
 | 邮箱 | email | string | | | 否 | |
-| 附件 | attachment_list | array | | | 否 | |
+| 附件 | attachment_list | array | | | 否 | 多个文件上传多项或者应上传文件的路径列表 |

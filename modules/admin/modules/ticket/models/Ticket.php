@@ -2,11 +2,11 @@
 
 namespace app\modules\admin\modules\ticket\models;
 
+use app\helpers\Uploader;
 use app\models\Category;
 use app\models\Member;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
-use yii\helpers\FileHelper;
 use yii\helpers\StringHelper;
 use yii\web\UploadedFile;
 
@@ -157,10 +157,10 @@ class Ticket extends \yii\db\ActiveRecord
             if ($insert) {
                 $this->status = self::STATUS_PENDING;
                 $this->created_at = $this->updated_at = time();
-                $this->created_by = $this->updated_by = \Yii::$app->getUser()->getId();
+                $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
             } else {
                 $this->updated_at = time();
-                $this->updated_by = \Yii::$app->getUser()->getId();
+                $this->updated_by = Yii::$app->getUser()->getId();
             }
 
             $this->title = StringHelper::truncate($this->description, 100, '');
@@ -181,30 +181,38 @@ class Ticket extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        if ($insert) {
-            $files = UploadedFile::getInstancesByName('attachment_list');
-            if ($files) {
-                $rows = [];
-                $url = '/uploads/' . date('Ymd');
-                $saveDir = Yii::getAlias('@webroot') . $url;
-                if (!file_exists($saveDir)) {
-                    FileHelper::createDirectory($saveDir);
-                }
-                foreach ($files as $file) {
-                    if ($file) {
-                        $path = $url . '/' . \yadjet\helpers\StringHelper::generateRandomString() . '.' . $file->getExtension();
-                        if ($file->saveAs($path)) {
-                            $rows[] = [
-                                'ticket_id' => $this->id,
-                                'path' => $path,
-                            ];
-                        }
+        $rows = [];
+        $files = UploadedFile::getInstancesByName('attachment_list');
+        // 同步上传的文件列表
+        if ($files) {
+            $uploader = new Uploader();
+            foreach ($files as $file) {
+                if ($file) {
+                    $uploader->setFilename(null, $file->getExtension());
+                    if ($file->saveAs($uploader->getPath())) {
+                        $rows[] = [
+                            'ticket_id' => $this->id,
+                            'path' => $uploader->getUrl(),
+                        ];
                     }
                 }
-                if ($rows) {
-                    \Yii::$app->getDb()->createCommand()->batchInsert('{{%ticket_attachment}}', array_keys($rows[0]), $rows)->execute();
+            }
+        } else {
+            // 文件已经通过其他途径上传，传递的是路径列表
+            $attachmentList = $this->attachment_list;
+            if (is_array($attachmentList) && $attachmentList) {
+                foreach ($attachmentList as $path) {
+                    if (is_string($path)) {
+                        $rows[] = [
+                            'ticket_id' => $this->id,
+                            'path' => $path,
+                        ];
+                    }
                 }
             }
+        }
+        if ($rows) {
+            Yii::$app->getDb()->createCommand()->batchInsert('{{%ticket_attachment}}', array_keys($rows[0]), $rows)->execute();
         }
     }
 

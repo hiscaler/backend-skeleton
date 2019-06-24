@@ -51,7 +51,7 @@ class TicketAttachment extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        FileHelper::unlink(Yii::getAlias('@webroot/uploads') . $this->path);
+        FileHelper::unlink(Yii::getAlias('@webroot') . $this->path);
     }
 
 }
