@@ -3,6 +3,7 @@
 namespace app\modules\admin\modules\ticket\models;
 
 use app\models\Category;
+use app\models\Member;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
 use yii\helpers\FileHelper;
@@ -78,6 +79,7 @@ class Ticket extends \yii\db\ActiveRecord
         return [
             'id' => '编号',
             'category_id' => '问题类型',
+            'category.name' => '问题类型',
             'title' => '标题',
             'description' => '问题描述',
             'confidential_information' => '机密信息',
@@ -86,6 +88,7 @@ class Ticket extends \yii\db\ActiveRecord
             'status' => '状态',
             'created_at' => '添加时间',
             'created_by' => '添加人',
+            'creater.nickname' => '添加人',
             'updated_at' => '更新时间',
             'updated_by' => '更新人',
         ];
@@ -114,6 +117,16 @@ class Ticket extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Category::class, ['id' => 'category_id'])
             ->select(['id', 'alias', 'name', 'short_name', 'icon', 'description']);
+    }
+
+    /**
+     * 添加人
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreater()
+    {
+        return $this->hasOne(Member::class, ['id' => 'created_by']);
     }
 
     /**

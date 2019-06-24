@@ -53,6 +53,10 @@ $baseUrl = \Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'datetime'],
             ],
             [
+                'attribute' => 'creater.nickname',
+                'contentOptions' => ['class' => 'username'],
+            ],
+            [
                 'attribute' => 'updated_at',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime'],
@@ -62,7 +66,7 @@ $baseUrl = \Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'template' => '{view} {messages} {update} {delete}',
                 'buttons' => [
                     'messages' => function ($url, $model, $key) use ($baseUrl) {
-                        return Html::a(Html::img($baseUrl . '/images/messages.png'), ['messages/index', 'ticketId' => $model->id], ['title' => Yii::t('app', 'Change Password')]);
+                        return Html::a(Html::img($baseUrl . '/images/messages.png'), ['messages/index', 'ticketId' => $model->id], ['title' => '回复日志']);
                     },
                 ],
                 'headerOptions' => ['class' => 'buttons-4 last'],

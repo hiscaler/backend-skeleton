@@ -7,7 +7,6 @@ use app\modules\admin\modules\ticket\models\TicketSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -102,6 +101,8 @@ class TicketsController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -126,4 +127,5 @@ class TicketsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }
