@@ -68,8 +68,8 @@ return [
         'admin@example.com' => 'you name',
     ],
     // 文件上传设置
-    'uploading' => [
-        'path' => 'uploads',
+    'upload' => [
+        'dir' => 'uploads', // 文件保存目录（相对于根目录而言，请不要填写绝对路径）
         // 请参考 \yii\web\ImageValidator 类属性进行设置
         'image' => [
             'minSize' => 1024,
