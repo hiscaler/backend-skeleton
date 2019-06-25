@@ -2,11 +2,9 @@
 
 namespace app\modules\api\modules\wechat\controllers;
 
-use yadjet\helpers\StringHelper;
-use Yii;
+use app\helpers\Uploader;
 use yii\base\DynamicModel;
 use yii\base\Model;
-use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
 
 /**
@@ -53,7 +51,7 @@ class MaterialController extends Controller
         switch ($type) {
             case self::TYPE_IMAGE:
                 $options = [
-                    'extensions' => 'bmp,png,jpeg,jpeg,gif',
+                    'extensions' => 'bmp, png, jpeg, jpeg, gif',
                     'minSize' => 1024,
                     'maxSize' => 1024 * 1024,
                 ];
@@ -62,7 +60,7 @@ class MaterialController extends Controller
 
             case self::TYPE_VOICE:
                 $options = [
-                    'extensions' => 'mp3,wma,wav,amr',
+                    'extensions' => 'mp3, wma, wav, amr',
                     'minSize' => 1024,
                     'maxSize' => 1024 * 2018,
                 ];
@@ -87,15 +85,11 @@ class MaterialController extends Controller
         }
         $model->addRule('file', $validator, $options);
         if ($model->validate()) {
-            $dir = Yii::getAlias('@webroot/uploads/wx-materials/' . $type . '/' . date('YmdHis'));
-            if (file_exists($dir)) {
-                FileHelper::createDirectory($dir);
-            }
-            $filename = StringHelper::generateRandomString() . '.' . $file->getExtension();
-            $path = "$dir/$filename";
-            $success = $file->saveAs($path);
+            $uploader = new Uploader();
+            $uploader->setFilename(null, $file->getExtension());
+            $success = $file->saveAs($uploader->getPath());
             if ($success) {
-                $model->path = $path;
+                $model->path = $uploader->getPath();
             } else {
                 $model->addError('file', '接口端文件存储失败。');
             }
