@@ -84,8 +84,8 @@ class Notice extends BaseActiveRecord
             ['view_member_username_list', 'required', 'when' => function ($model) {
                 return $model->view_permission == self::VIEW_PERMISSION_SPECIAL;
             }, 'whenClient' => "function (attribute, value) {
-            return $('#notice-view_permission').val() == 1;
-    }"],
+                return $('#notice-view_permission').val() == 1;
+            }"],
             ['view_member_username_list', function ($attribute, $params) {
                 if ($this->view_permission == self::VIEW_PERMISSION_SPECIAL) {
                     $usernameList = array_filter(array_unique(explode(',', $this->view_member_username_list)));
@@ -111,11 +111,12 @@ class Notice extends BaseActiveRecord
             ['view_member_type_list', 'required', 'when' => function ($model) {
                 return $model->view_permission == self::VIEW_PERMISSION_BY_MEMBER_TYPE;
             }, 'whenClient' => "function (attribute, value) {
-            if ($('#notice-view_permission').val() == 2) {
-                return $('input[name=Notice\\\[view_member_type_list\\\]\\\[\\\]]:checked').length <= 0;
-            }
-            return false;
-    }"],
+                if ($('#notice-view_permission').val() == 2) {
+                    return $('input[name=Notice\\\[view_member_type_list\\\]\\\[\\\]]:checked').length <= 0;
+                }
+
+                return false;
+            }"],
             ['view_member_type_list', function ($attribute, $params) {
                 if ($this->view_permission == self::VIEW_PERMISSION_BY_MEMBER_TYPE) {
                     $memberTypes = $this->view_member_type_list;

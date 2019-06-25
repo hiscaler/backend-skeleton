@@ -25,7 +25,7 @@ class Notice extends \app\modules\admin\modules\notice\models\Notice
                 return isset($options[$model->view_permission]) ? $options[$model->view_permission] : null;
             },
             'has_read' => function ($model) {
-                return $model->read ? true : false;
+                return boolval($model->read);
             },
             'ordering',
             'created_at',
