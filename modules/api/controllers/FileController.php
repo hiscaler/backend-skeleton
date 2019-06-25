@@ -4,6 +4,8 @@ namespace app\modules\api\controllers;
 
 use app\helpers\Uploader;
 use app\modules\api\extensions\AuthController;
+use app\modules\api\models\Constant;
+use Imagine\Image\ManipulatorInterface;
 use RuntimeException;
 use yadjet\helpers\ImageHelper;
 use yadjet\helpers\StringHelper;
@@ -13,6 +15,7 @@ use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\FileHelper;
+use yii\imagine\Image;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
@@ -111,13 +114,17 @@ class FileController extends AuthController
             }
         }
         if (empty($files)) {
-            throw new BadRequestHttpException("未检测到 $key 参数数据。");
+            throw new BadRequestHttpException("未检测到表单元素名称为`$key`提交的数据。");
         }
 
         $models = [];
         foreach ($files as $i => $file) {
             $attr = $key . '_' . $i;
-            $model = new DynamicModel([$attr]);
+            $model = new DynamicModel([$attr, 'type', 'generate_thumbnail', 'thumbnail_size', 'thumbnail_mode']);
+            $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+            $model->type = $this->type;
+            $model->addRule('type', 'string');
+            $model->addRule('type', 'in', ['range' => ['file', 'image']]);
             $model->$attr = $file;
             switch ($validator) {
                 case 'file':
@@ -139,6 +146,38 @@ class FileController extends AuthController
                         }
                     });
                     break;
+            }
+            if ($this->type == self::TYPE_IMAGE) {
+                // 缩略图相关设置验证规则
+                $model->addRule('generate_thumbnail', 'boolean');
+                $model->addRule('generate_thumbnail', 'default', ['value' => Constant::BOOLEAN_TRUE]);
+                $model->addRule('thumbnail_size', 'string', ['min' => 3]);
+                $model->addRule('thumbnail_size', 'trim');
+                $model->addRule('thumbnail_size', 'default', ['value' => '100x200']);
+                $model->addRule('thumbnail_size', 'required');
+                $model->addRule('thumbnail_size', function ($attribute, $params) use ($model) {
+                    $hasError = false;
+                    $model->$attribute = strtolower($model->$attribute);
+                    if (stripos($model->$attribute, 'x') === false) {
+                        $hasError = true;
+                    } else {
+                        list($width, $height) = explode('x', $model->$attribute);
+                        if (!ctype_digit($width) || !ctype_digit($height) || $width <= 0 || $height <= 0) {
+                            $hasError = true;
+                        }
+                    }
+                    if ($hasError) {
+                        $model->addError($attribute, '无效的缩略图设置（例如：100x200）。');
+                    }
+                });
+                $model->addRule('thumbnail_mode', 'string', ['min' => 1]);
+                $model->addRule('thumbnail_mode', 'trim');
+                $model->addRule('thumbnail_mode', 'default', ['value' => 'outbound']);
+                $model->addRule('thumbnail_mode', 'required');
+                $model->addRule('thumbnail_mode', 'in', ['range' => [
+                    ManipulatorInterface::THUMBNAIL_INSET,
+                    ManipulatorInterface::THUMBNAIL_OUTBOUND,
+                ]]);
             }
             if (!$model->validate()) {
                 return $model;
@@ -191,10 +230,26 @@ class FileController extends AuthController
                     'size' => $fileSize,
                     'mime_type' => $mimeType,
                 ];
-                if ($this->type == self::TYPE_IMAGE) {
-                    $imgBinary = fread(fopen($uploader->getPath(), "r"), filesize($uploader->getPath()));
-                    $imageBase64 = 'data:image/' . $mimeType . ';base64,' . base64_encode($imgBinary);
-                    $res['base64'] = $imageBase64;
+                if ($model->type == self::TYPE_IMAGE) {
+                    if ($model->generate_thumbnail) {
+                        list($width, $height) = explode('x', $model->thumbnail_size);
+                        $thumb = Image::thumbnail($uploader->getPath(), $width, $height, $model->thumbnail_mode);
+                        $thumbnailFilename = ImageHelper::generateThumbnailFilename($uploader->getFilename());
+                        if ($thumbnailFilename) {
+                            $uploader->setFilename($thumbnailFilename);
+                        } else {
+                            $uploader->setFilename(null, $extensionName);
+                        }
+                        $thumb->save($uploader->getPath());
+                        $res['thumbnail'] = [
+                            'real_name' => $uploader->getFilename(),
+                            'path' => $uploader->getUrl(),
+                            'full_path' => $request->getHostInfo() . $uploader->getUrl(),
+                            'base64' => ImageHelper::base64Encode($uploader->getPath(), $mimeType),
+                        ];
+                    } else {
+                        $res['base64'] = ImageHelper::base64Encode($uploader->getPath(), $mimeType);
+                    }
                 }
 
                 $successRes[$attr] = $res;
