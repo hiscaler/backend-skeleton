@@ -20,7 +20,7 @@ class SmsCaptchaBusiness extends SmsBusinessAbstract
             ->setData('code', $captcha)
             ->setUseCache(true)
             ->setCacheValue($captcha)
-            ->setCacheDuration(30 * 60);
+            ->setCacheDuration(600);
 
         return $this;
     }
