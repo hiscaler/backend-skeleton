@@ -162,7 +162,7 @@ class FileController extends AuthController
                         $hasError = true;
                     } else {
                         list($width, $height) = explode('x', $model->$attribute);
-                        if (!ctype_digit($width) || !ctype_digit($height) || $width <= 0 || $height <= 0) {
+                        if (!filter_var($width, FILTER_VALIDATE_INT) || !filter_var($height, FILTER_VALIDATE_INT) || $width <= 0 || $height <= 0) {
                             $hasError = true;
                         }
                     }
@@ -215,7 +215,7 @@ class FileController extends AuthController
             empty($extensionName) && $extensionName = 'jpg';
             $uploader->setFilename(null, $extensionName);
             if ($validator == 'string') {
-                $success = file_put_contents($uploader->getPath(), base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file)));
+                $success = file_put_contents($uploader->getPath(), ImageHelper::base64Decode($file));
                 $fileSize = filesize($uploader->getPath());
             } else {
                 $success = $file->saveAs($uploader->getPath());
