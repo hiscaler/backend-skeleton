@@ -25,7 +25,10 @@ $creditLogs = $model->creditLogs;
     <ul class="tabs-common">
         <li class="active"><a href="javascript:;" data-toggle="tab-panel-basic">基本资料</a></li>
         <?php if ($profile): ?>
-            <li><a href="javascript:;" data-toggle="tab-panel-profile">扩展资料</a></li>
+            <li><a href="javascript:;" data-toggle="tab-panel-profile">附加资料</a></li>
+        <?php endif; ?>
+        <?php if ($metaItems): ?>
+            <li><a href="javascript:;" data-toggle="tab-panel-meta">扩展资料</a></li>
         <?php endif; ?>
         <?php if ($wechatModel): ?>
             <li><a href="javascript:;" data-toggle="tab-panel-wehcat">微信资料</a></li>
@@ -91,6 +94,34 @@ $creditLogs = $model->creditLogs;
                         'zip_code',
                     ],
                 ]) ?>
+            </div>
+        <?php endif; ?>
+        <?php if ($metaItems): ?>
+            <div class="tab-panel" id="tab-panel-meta" style="display: none;">
+                <div class="grid-view">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>标签</th>
+                            <th class="last">值</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $i = 0;
+                        foreach ($metaItems as $item):
+                            $i++;
+                            ?>
+                            <tr>
+                                <td class="serial-number"><?= $i ?></td>
+                                <td style="width: 120px;"><?= $item['label'] ?></td>
+                                <td><?= $item['value'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         <?php endif; ?>
         <?php if ($wechatModel): ?>

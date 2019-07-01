@@ -100,8 +100,11 @@ class MembersController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'metaItems' => Meta::getItems($model),
         ]);
     }
 
@@ -112,7 +115,6 @@ class MembersController extends Controller
      * @return mixed
      * @throws \yii\base\ErrorException
      * @throws \yii\base\Exception
-     * @throws \yii\db\Exception
      */
     public function actionCreate()
     {
