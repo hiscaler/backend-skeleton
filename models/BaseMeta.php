@@ -80,7 +80,7 @@ class BaseMeta extends ActiveRecord
             ['return_value_type', 'default', 'value' => self::RETURN_VALUE_TYPE_STRING],
             ['enabled', 'boolean'],
             [['table_name'], 'string', 'max' => 60],
-            [['key'], 'string', 'max' => 30],
+            [['key'], 'string', 'max' => 60],
             [['key'], 'trim'],
             [['label', 'description'], 'string', 'max' => 255],
             [['input_type', 'default_value'], 'string', 'max' => 16],
@@ -178,7 +178,7 @@ class BaseMeta extends ActiveRecord
                 ])
                 ->all();
             foreach ($rawValues as $item) {
-                $key = $item['meta_id'] . $item['object_id'];
+                $key = $item['meta_id'] . '.' . $item['object_id'];
                 switch ($rawData[$item['meta_id']]['return_value_type']) {
                     case self::RETURN_VALUE_TYPE_STRING:
                         $value = $item['string_value'];
@@ -527,7 +527,7 @@ class BaseMeta extends ActiveRecord
      *
      * @param $values
      * @param int $returnValueType
-     * @return null
+     * @return null|int|float|string
      */
     public static function parseReturnValue($values, $returnValueType = self::RETURN_VALUE_TYPE_STRING)
     {
@@ -549,18 +549,25 @@ class BaseMeta extends ActiveRecord
                 break;
         }
 
-        return isset($values["{$key}_value"]) ? $values["{$key}_value"] : null;
+        $value = isset($values["{$key}_value"]) ? $values["{$key}_value"] : null;
+        if ($returnValueType == self::RETURN_VALUE_TYPE_INTEGER) {
+            $value = intval($value);
+        } elseif ($returnValueType == self::RETURN_VALUE_TYPE_DECIMAL) {
+            $value = floatval($value);
+        }
+
+        return $value;
     }
 
     /**
-     * 获取自定义字段内容值
+     * 根据表名称、数据 id 获取指定自定义字段内容值
      *
      * @param $tableName
      * @param $objectId
      * @param $keys
      * @return mixed
      */
-    public static function getValues($tableName, $objectId, $keys)
+    public static function getValuesByKey($tableName, $objectId, $keys)
     {
         $values = [];
         if (!is_array($keys)) {
@@ -576,12 +583,7 @@ class BaseMeta extends ActiveRecord
                 $k = $key;
                 $v = $value;
             }
-            $values[$k] = [
-                'id' => null,
-                'label' => null,
-                'description' => null,
-                'value' => $v,
-            ];
+            $values[$k] = $v;
         }
 
         $where = [
@@ -598,40 +600,35 @@ class BaseMeta extends ActiveRecord
             ->andWhere(['IN', 't.meta_id', (new Query())->select(['id'])->from('{{%meta}}')->where($where)])
             ->all();
         foreach ($rawValues as $data) {
-            switch ($data['returnValueType']) {
+            switch ($data['return_value_type']) {
                 case self::RETURN_VALUE_TYPE_STRING:
-                    $value = $data['string_value'];
+                    $value = (string) $data['string_value'];
                     break;
 
                 case self::RETURN_VALUE_TYPE_TEXT:
-                    $value = $data['text_value'];
+                    $value = (string) $data['text_value'];
                     break;
 
                 case self::RETURN_VALUE_TYPE_INTEGER:
-                    $value = $data['integer_value'];
+                    $value = intval($data['integer_value']);
                     break;
 
                 case self::RETURN_VALUE_TYPE_DECIMAL:
-                    $value = $data['decimal_value'];
+                    $value = floatval($data['decimal_value']);
                     break;
 
                 default:
-                    $value = $data['string_value'];
+                    $value = (string) $data['string_value'];
                     break;
             }
-            $values[$data['key']] = [
-                'id' => $data['id'],
-                'label' => $data['label'],
-                'description' => $data['description'],
-                'value' => $value,
-            ];
+            $values[$data['key']] = $value;
         }
 
         return $values;
     }
 
     /**
-     * 获取值
+     * 获取单个或者多个值
      *
      * @param $tableName
      * @param $objectId
@@ -640,34 +637,40 @@ class BaseMeta extends ActiveRecord
      * @return array|false|null
      * @throws \yii\db\Exception
      */
-    public static function getValue($tableName, $objectId, $key, $defaultValue = null)
+    public static function getValuesById($tableName, $objectId, $key, $defaultValue = null)
     {
-        $value = null;
-        $db = Yii::$app->getDb();
-        $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
-        if ($meta) {
-            if (is_array($objectId)) {
-                $rawValues = $db->createCommand('SELECT [[object_id]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] IN (' . implode(', ', $objectId) . ')', [':metaId' => $meta['id']])->queryAll();
-                if ($rawValues) {
-                    $values = [];
-                    foreach ($rawValues as $item) {
-                        $values[$item['object_id']] = self::parseReturnValue($item, $meta['return_value_type']);
+        if (!is_array($objectId)) {
+            $returnSingleValue = true;
+            $objectIds = [$objectId];
+        } else {
+            $returnSingleValue = false;
+            $objectIds = $objectId;
+        }
+        $values = [];
+        $isEmpty = true;
+        foreach ($objectIds as $id) {
+            if ($id) {
+                $isEmpty = false;
+            }
+            $values[$id] = $defaultValue;
+        }
+        if (!$isEmpty) {
+            $db = Yii::$app->getDb();
+            $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
+            if ($meta) {
+                if ($objectIds) {
+                    $rows = $db->createCommand('SELECT [[object_id]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] IN (' . implode(', ', $objectIds) . ')', [':metaId' => $meta['id']])->queryAll();
+                    foreach ($rows as $row) {
+                        $values[$row['object_id']] = self::parseReturnValue($row, $meta['return_value_type']);
                     }
-
-                    return $values;
-                }
-            } else {
-                $values = $db->createCommand('SELECT [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [':metaId' => $meta['id'], ':objectId' => (int) $objectId])->queryOne();
-                if ($values) {
-                    return self::parseReturnValue($values, $meta['return_value_type']);
                 }
             }
         }
 
-        if (is_array($objectId)) {
-            return [];
+        if ($returnSingleValue) {
+            return isset($values[$objectId]) ? $values[$objectId] : $defaultValue;
         } else {
-            return $value == null ? $defaultValue : $value;
+            return $values;
         }
     }
 
@@ -831,7 +834,7 @@ class BaseMeta extends ActiveRecord
                 $this->updated_by = Yii::$app->getUser()->getId();
             }
 
-            if ($this->input_type == self::INPUT_TYPE_TEXT || $this->input_type == self::INPUT_TYPE_FILE) {
+            if ($this->input_type == self::INPUT_TYPE_FILE) {
                 $this->return_value_type = self::RETURN_VALUE_TYPE_STRING;
             } elseif ($this->input_type == self::INPUT_TYPE_TEXTAREA) {
                 $this->return_value_type = self::RETURN_VALUE_TYPE_TEXT;
