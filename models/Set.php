@@ -53,6 +53,17 @@ class Set extends \yii\db\ActiveRecord
     }
 
     /**
+     * 生成唯一的 key 值
+     *
+     * @param string $prefix
+     * @return string
+     */
+    public static function key($prefix = '')
+    {
+        return $prefix . md5(uniqid($prefix, true) . mt_rand());
+    }
+
+    /**
      * 保存（添加或者更新）
      *
      * @param string $key
