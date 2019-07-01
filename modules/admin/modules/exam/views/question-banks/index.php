@@ -15,6 +15,8 @@ $this->params['menus'] = [
     ['label' => '列表', 'url' => ['index']],
     ['label' => '添加', 'url' => ['create']],
 ];
+
+$baseUrl = \Yii::$app->getRequest()->getBaseUrl() . '/admin'
 ?>
 <div class="question-bank-index">
     <?php // echo $this->render('_search', ['model' => $searchModel]);  ?>
@@ -60,8 +62,8 @@ $this->params['menus'] = [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {questions} {update} {delete}',
                 'buttons' => [
-                    'questions' => function ($url, $model, $key) {
-                        $icon = Html::tag('span', '试题', ['class' => "glyphicon glyphicon-add-training-log"]);
+                    'questions' => function ($url, $model, $key) use ($baseUrl) {
+                        $icon = Html::img($baseUrl . '/images/questions.png');
 
                         return Html::a($icon, ['questions/index', 'questionBankId' => $model->id], ['data-pjax' => 0]);
                     },

@@ -11,13 +11,6 @@
                 "exam/question-banks/index"
             ],
             "active": "controllerId=question-banks"
-        },
-        {
-            "label": "试题管理",
-            "url": [
-                "exam/questions/index"
-            ],
-            "active": "controllerId=questions"
         }
     ],
     "depends": []
