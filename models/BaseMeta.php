@@ -181,19 +181,19 @@ class BaseMeta extends ActiveRecord
                 $key = $item['meta_id'] . '.' . $item['object_id'];
                 switch ($rawData[$item['meta_id']]['return_value_type']) {
                     case self::RETURN_VALUE_TYPE_STRING:
-                        $value = $item['string_value'];
+                        $value = (string) $item['string_value'];
                         break;
 
                     case self::RETURN_VALUE_TYPE_TEXT:
-                        $value = $item['text_value'];
+                        $value = (string) $item['text_value'];
                         break;
 
                     case self::RETURN_VALUE_TYPE_INTEGER:
-                        $value = $item['integer_value'];
+                        $value = intval($item['integer_value']);
                         break;
 
                     case self::RETURN_VALUE_TYPE_DECIMAL:
-                        $value = $item['decimal_value'];
+                        $value = floatval($item['decimal_value']);
                         break;
 
                     default:
@@ -672,6 +672,34 @@ class BaseMeta extends ActiveRecord
         } else {
             return $values;
         }
+    }
+
+    /**
+     * 获取单个值
+     *
+     * @param $tableName
+     * @param $objectId
+     * @param $key
+     * @param null $defaultValue
+     * @return mixed|null
+     * @throws \yii\db\Exception
+     */
+    public static function getValue($tableName, $objectId, $key, $defaultValue = null)
+    {
+        $value = $defaultValue;
+        $db = Yii::$app->getDb();
+        $meta = $db->createCommand('SELECT [[id]], [[return_value_type]] FROM {{%meta}} WHERE [[table_name]] = :tableName AND [[key]] = :key', [':tableName' => self::_fixTableName($tableName), ':key' => trim($key)])->queryOne();
+        if ($meta) {
+            $row = $db->createCommand('SELECT [[object_id]], [[string_value]], [[text_value]], [[integer_value]], [[decimal_value]] FROM {{%meta_value}} WHERE [[meta_id]] = :metaId AND [[object_id]] = :objectId', [
+                ':metaId' => $meta['id'],
+                ':objectId' => (int) $objectId
+            ])->queryOne();
+            if ($row) {
+                $value = self::parseReturnValue($row, $meta['return_value_type']);
+            }
+        }
+
+        return $value;
     }
 
     /**
