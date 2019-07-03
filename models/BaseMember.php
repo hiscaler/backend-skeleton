@@ -438,6 +438,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * 生成 access_token 值
+     *
      * @throws \yii\base\Exception
      */
     public function generateAccessToken()

@@ -1,7 +1,8 @@
 <?php
 
+use app\models\Member;
+use app\modules\admin\components\GridView;
 use app\modules\admin\components\MessageBox;
-use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 
@@ -15,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
+    ['label' => Yii::t('app', 'Grid Column Config'), 'url' => ['grid-column-configs/index', 'name' => Member::class, 'id' => 'grid-view-members'], 'htmlOptions' => ['class' => 'grid-column-config', 'data-grid-id' => 'grid-view-members']],
 ];
 
 $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
@@ -33,6 +35,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
     Pjax::begin();
     echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'id' => 'grid-view-members',
         'columns' => [
             [
                 'class' => 'yii\grid\SerialColumn',
@@ -44,7 +47,10 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['class' => 'member-type'],
             ],
             [
-                'attribute' => 'category.name',
+                'attribute' => 'category_id',
+                'value' => function ($model) {
+                    return $model->category->name;
+                },
                 'contentOptions' => ['style' => 'width: 60px;'],
             ],
             [
@@ -131,7 +137,6 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             // 'created_by',
             // 'updated_at',
             // 'updated_by',
-
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {update} {change-password} {delete}',
