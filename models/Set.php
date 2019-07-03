@@ -83,13 +83,17 @@ class Set extends \yii\db\ActiveRecord
             $k = $db->createCommand("SELECT [[key]] FROM {{%set}} WHERE [[value]] = :value", [':value' => $value])->queryScalar();
             if ($k !== false) {
                 // Update
-                return $db->createCommand()->update("{{%set}}", ['key' => $key], ['key' => $k])->execute() ? true : false;
+                try {
+                    return $db->createCommand()->update("{{%set}}", ['key' => $key], ['key' => $k])->execute() ? true : false;
+                } catch (\Exception $e) {
+                    return false;
+                }
             }
         }
 
         try {
             return $db->createCommand()->insert("{{%set}}", ['key' => $key, 'value' => $value])->execute() ? true : false;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
