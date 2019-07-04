@@ -4,7 +4,7 @@ www_meta
 | :---: | --- | --- | :---: | :---: | :---: | --- | 
 |  1 | id                    | integer  | 11  |   |   | 自增主键 | 
 |  2 | table_name            | string   | 60  |   |   | 表名称 | 
-|  3 | key                   | string   | 30  |   |   | 键名 | 
+|  3 | key                   | string   | 60  |   |   | 键名 | 
 |  4 | label                 | string   | 255 |   |   | 显示名称 | 
 |  5 | description           | string   | 255 |   |   | 描述 | 
 |  6 | input_type            | string   | 16  |   |   | 输入类型 | 
