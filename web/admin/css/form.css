@@ -439,6 +439,10 @@ div.form .buttons {
     padding-left: 155px;
 }
 
+div.form .buttons .btn {
+    margin-right: 10px;
+}
+
 .form .btn {
     border: #ccc solid 1px;
     border-radius: 3px;
