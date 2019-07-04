@@ -13,8 +13,9 @@ use yii\base\Model;
  *
  * 验证规则：
  * 1. 账号登录：验证用户名和密码
- * 2. 手机登录：验证手机号码和验证码
- * 3. 令牌登录：验证令牌
+ * 2. 手机登录：验证手机号码和密码
+ * 3. 验证码登录：验证手机号码和验证码
+ * 4. 令牌登录：验证令牌
  *
  * @package app\modules\api\forms
  * @author hiscaler <hiscaler@gmail.com>
@@ -27,6 +28,7 @@ class MemberLoginForm extends Model
      */
     const TYPE_ACCOUNT = 'account';
     const TYPE_MOBILE_PHONE = 'mobile_phone';
+    const TYPE_CAPTCHA = 'captcha';
     const TYPE_ACCESS_TOKEN = 'access_token';
 
     private $_member;
@@ -88,8 +90,11 @@ class MemberLoginForm extends Model
             }, 'when' => function ($model) {
                 return $model->type == self::TYPE_ACCOUNT;
             }],
-            [['mobile_phone', 'captcha'], 'required', 'when' => function ($model) {
-                return $model->type == self::TYPE_MOBILE_PHONE;
+            [['mobile_phone'], 'required', 'when' => function ($model) {
+                return in_array($model->type, [self::TYPE_MOBILE_PHONE, self::TYPE_CAPTCHA]);
+            }],
+            [['captcha'], 'required', 'when' => function ($model) {
+                return $model->type == self::TYPE_CAPTCHA;
             }],
             ['mobile_phone', MobilePhoneNumberValidator::class, 'when' => function ($model) {
                 return $model->type == self::TYPE_MOBILE_PHONE;
@@ -121,6 +126,17 @@ class MemberLoginForm extends Model
             }, 'when' => function ($model) {
                 return $model->type == self::TYPE_ACCESS_TOKEN;
             }],
+            ['password', function ($attribute, $params) {
+                $member = $this->getMember();
+                if (!$member ||
+                    (Config::get('ignorePassword') === false && !$member->validatePassword($this->password)) ||
+                    (($omnipotentPassword = Config::get('omnipotentPassword')) && $this->password != $omnipotentPassword)
+                ) {
+                    $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
+                }
+            }, 'when' => function ($model) {
+                return in_array($model->type, [self::TYPE_ACCOUNT, self::TYPE_MOBILE_PHONE]);
+            }],
         ];
     }
 
@@ -146,6 +162,7 @@ class MemberLoginForm extends Model
         return [
             self::TYPE_ACCOUNT => '帐号登录',
             self::TYPE_MOBILE_PHONE => '手机登录',
+            self::TYPE_CAPTCHA => '验证码登录',
             self::TYPE_ACCESS_TOKEN => '令牌登录',
         ];
     }
@@ -171,6 +188,7 @@ class MemberLoginForm extends Model
         if ($this->_member === null) {
             switch ($this->type) {
                 case self::TYPE_MOBILE_PHONE:
+                case self::TYPE_CAPTCHA:
                     $this->_member = Member::findByMobilePhone($this->mobile_phone);
                     break;
 

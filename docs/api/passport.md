@@ -24,11 +24,11 @@ POST /api/passport/login
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |---|:---:|:---:|:---:|---|
-| type | string | 是 | account | 类型(account: 帐号登录，mobile_phone: 手机登录，access_token: 令牌登录) |
+| type | string | 是 | account | 类型(account: 帐号登录，mobile_phone: 手机登录，captcha: 验证码登录，access_token: 令牌登录) |
 | username | string | 否 | null | 用户名（type 为 account 时必填） |
-| password | string | 否 | null | 密码（type 为 account 时必填） |
-| mobile_phone | string | 否 | null | 手机号码（type 为 mobile_phone 时必填） |
-| captcha | string | 否 | null | 验证码（type 为 mobile_phone 时必填） |
+| password | string | 否 | null | 密码（type 为 account、mobile_phone 时必填） |
+| mobile_phone | string | 否 | null | 手机号码（type 为 mobile_phone、captcha 时必填） |
+| captcha | string | 否 | null | 验证码（type 为 captcha 时必填） |
 | access_token | string | 否 | null | 令牌（type 为 access_token 时必填） |
 
 ### 返回值
@@ -64,6 +64,6 @@ POST /api/passport/change-password
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |---|:---:|:---:|:---:|---|
 | username | string | 是 | null | 用户名 |
-| oldPassword | string | 是 | null | 旧密码 |
+| old_password | string | 是 | null | 旧密码 |
 | password | string | 是 | null | 新密码 |
-| confirmPassword | string | 是 | null | 确认密码 |
+| confirm_password | string | 是 | null | 确认密码 |
