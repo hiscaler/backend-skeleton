@@ -515,15 +515,20 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * 会员列表
      *
+     * @param null $field
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function map()
+    public static function map($field = null)
     {
         $members = [];
-        $rawMembers = Yii::$app->getDb()->createCommand('SELECT [[id]], [[username]] FROM {{%member}}')->queryAll();
+        $rawMembers = Yii::$app->getDb()->createCommand('SELECT [[id]], [[username]], [[nickname]], [[real_name]] FROM {{%member}}')->queryAll();
         foreach ($rawMembers as $member) {
-            $members[$member['id']] = $member['username'];
+            $value = $member['username'];
+            if ($field && isset($member[$field])) {
+                $value .= " [ " . $member[$field] . " ]";
+            }
+            $members[$member['id']] = $value;
         }
 
         return $members;
