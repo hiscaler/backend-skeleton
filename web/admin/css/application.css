@@ -922,7 +922,7 @@ ul.list li em {
 .widget-module .bd .misc {
     line-height: 30px;
     margin-left: 42px;
-    margin-bottom: 5px;
+    margin-bottom: 0;
 }
 
 .widget-module .bd .misc span {

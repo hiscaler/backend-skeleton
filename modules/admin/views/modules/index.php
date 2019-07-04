@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if ($installedModules): ?>
                 <ul>
                     <?php foreach ($installedModules as $i => $module): ?>
-                        <li id="module-<?= $module['alias'] ?>" class="widget-module">
+                        <li id="module-<?= $module['alias'] ?>" class="widget-module clearfix">
                             <div class="hd">
                                 <em class="<?= $module['error'] ? 'error' : null ?>"><?= $module['name'] ?></em>
                                 <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
