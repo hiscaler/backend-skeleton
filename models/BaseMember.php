@@ -153,7 +153,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => '编号',
             'type' => '会员类型',
             'category_id' => '分类',
             'group' => '分组',
@@ -178,6 +178,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             'login_count' => '登录次数',
             'last_login_ip' => '最后登录 IP',
             'last_login_time' => '最后登录时间',
+            'last_login_session' => '最后登录 session 值',
             'expired_datetime' => '有效期',
             'status' => '状态',
             'remark' => '备注',
