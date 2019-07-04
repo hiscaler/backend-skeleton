@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\modules\finance\models\Finance;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -17,14 +18,14 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
         <div class="entry">
-            <?= $form->field($model, 'type')->dropDownList(\app\modules\admin\modules\finance\models\Finance::typeOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'type')->dropDownList(Finance::typeOptions(), ['prompt' => '']) ?>
 
-            <?= $form->field($model, 'source')->dropDownList(\app\modules\admin\modules\finance\models\Finance::sourceOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'source')->dropDownList(Finance::sourceOptions(), ['prompt' => '']) ?>
         </div>
         <div class="entry">
             <?= $form->field($model, 'member_username') ?>
 
-            <?= $form->field($model, 'status')->dropDownList(\app\modules\admin\modules\finance\models\Finance::statusOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'status')->dropDownList(Finance::statusOptions(), ['prompt' => '']) ?>
         </div>
         <div class="form-group buttons">
             <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>

@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Member;
+use app\modules\admin\modules\finance\models\Finance;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -11,9 +13,9 @@ use yii\widgets\ActiveForm;
     <div class="form">
         <?php $form = ActiveForm::begin(); ?>
         <div class="entry">
-            <?= $form->field($model, 'type')->dropDownList(\app\modules\admin\modules\finance\models\Finance::typeOptions()) ?>
+            <?= $form->field($model, 'type')->dropDownList(Finance::typeOptions()) ?>
 
-            <?= $form->field($model, 'source')->dropDownList(\app\modules\admin\modules\finance\models\Finance::sourceOptions()) ?>
+            <?= $form->field($model, 'source')->dropDownList(Finance::sourceOptions()) ?>
         </div>
         <div class="entry">
             <?= $form->field($model, 'money')->textInput(['type' => 'number'])->hint('单位为：分') ?>
@@ -21,9 +23,9 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'remittance_slip')->fileInput() ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'member_id')->dropDownList(\app\models\Member::map(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'member_id')->dropDownList(Member::map('nickname'), ['prompt' => '']) ?>
 
-            <?= $form->field($model, 'status')->dropDownList(\app\modules\admin\modules\finance\models\Finance::statusOptions()) ?>
+            <?= $form->field($model, 'status')->dropDownList(Finance::statusOptions()) ?>
         </div>
         <div class="entry">
             <?= $form->field($model, 'remark')->textarea(['rows' => 6]) ?>
@@ -40,8 +42,8 @@ $this->registerJsFile($baseUrl . '/chosen/chosen.jquery.min.js', ['depends' => '
 $this->registerCssFile($baseUrl . '/chosen/chosen.min.css');
 $js = <<<EOT
 $('#finance-member_id').chosen({
-    no_results_text: '无匹配数据：',
-    placeholder_text_multiple: '点击此处，在空白框内输入或选择会员帐号',
+    no_results_text: '没有符合条件的会员：',
+    placeholder_text: '点击此处，在空白框内输入或选择会员帐号',
     width: '400px',
     search_contains: true,
     allow_single_deselect: true
