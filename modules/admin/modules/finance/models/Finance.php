@@ -7,6 +7,7 @@ use app\models\Member;
 use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 use yii\db\Expression;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "{{%finance}}".
@@ -64,7 +65,7 @@ class Finance extends \yii\db\ActiveRecord
      */
     const SOURCE_NONE = 0;
     const SOURCE_CASH = 1;
-    const SOURCE_WECHAT = 2;
+    const SOURCE_WXPAY = 2;
     const SOURCE_ALIPAY = 3;
     const SOURCE_BANK = 4;
     const SOURCE_OTHER = 100;
@@ -174,7 +175,7 @@ class Finance extends \yii\db\ActiveRecord
         return [
             self::SOURCE_NONE => '无',
             self::SOURCE_CASH => '现金',
-            self::SOURCE_WECHAT => '微信',
+            self::SOURCE_WXPAY => '微信',
             self::SOURCE_ALIPAY => '支付宝',
             self::SOURCE_OTHER => '其他',
         ];
@@ -211,7 +212,7 @@ class Finance extends \yii\db\ActiveRecord
             if ($this->type != self::TYPE_INCOME) {
                 $this->money = -$this->money;
             }
-            $userId = \Yii::$app->getUser()->getId() ?: 0;
+            $userId = Yii::$app->getUser()->getId() ?: 0;
             if ($insert) {
                 $this->balance = 0;
                 $this->created_by = $this->updated_by = $userId;
@@ -236,7 +237,7 @@ class Finance extends \yii\db\ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         if ($insert) {
-            $db = \Yii::$app->getDb();
+            $db = Yii::$app->getDb();
             $money = abs($this->money);
             $availableMoney = (int) $db->createCommand("SELECT [[available_money]] FROM {{%member}} WHERE [[id]] = :id", [':id' => $this->member_id])->queryScalar();
             $columns = [];
@@ -261,6 +262,16 @@ class Finance extends \yii\db\ActiveRecord
                 } catch (\Exception $e) {
                     Yii::error($e->getMessage());
                 }
+            }
+        }
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        if ($file = $this->remittance_slip) {
+            if (($file = Yii::getAlias('@webroot' . $file)) && file_exists($file)) {
+                FileHelper::unlink($file);
             }
         }
     }
