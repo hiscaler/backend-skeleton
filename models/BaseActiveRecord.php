@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\helpers\App;
 use yadjet\helpers\StringHelper;
 use yadjet\helpers\UtilHelper;
 use Yii;
@@ -207,7 +208,7 @@ class BaseActiveRecord extends ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $userId = \Yii::$app->getUser()->getId() ?: 0;
+            $userId = !App::isCli() && Yii::$app->getUser()->getId() ?: 0;
             $now = time();
             if ($insert) {
                 $this->hasAttribute('created_at') && $this->created_at = $now;

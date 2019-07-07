@@ -168,7 +168,7 @@ class BaseCategory extends BaseActiveRecord
         $cache = Yii::$app->getCache();
         $items = $cache->get($cacheKey);
         if ($items === false) {
-            $url = Yii::$app->getRequest()->getHostInfo();
+            $url = App::isCli() ? '' : Yii::$app->getRequest()->getHostInfo();
             $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[sign]], [[alias]], [[name]], [[short_name]] AS [[shortName]], [[description]], [[parent_id]] AS [[parent]], [[level]], [[icon]], [[enabled]] FROM {{%category}} ORDER BY [[ordering]] ASC')->queryAll();
             foreach ($items as $key => $item) {
                 $items[$key]['enabled'] = $item['enabled'] ? true : false;
