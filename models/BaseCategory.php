@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\helpers\App;
 use Overtrue\Pinyin\Pinyin;
 use yadjet\behaviors\FileUploadBehavior;
 use yadjet\helpers\ArrayHelper;
