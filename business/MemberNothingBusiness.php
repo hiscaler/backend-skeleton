@@ -16,9 +16,10 @@ class MemberNothingBusiness implements MemberBusinessInterface
     /**
      * @param Member $member
      * @param $insert
-     * @param $changedAttributes
+     * @param array $changedAttributes
+     * @param array $params
      */
-    public function process(Member $member, $insert, $changedAttributes)
+    public function process(Member $member, $insert, array $changedAttributes, array $params)
     {
         // @todo
     }
