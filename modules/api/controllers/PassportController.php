@@ -25,13 +25,6 @@ use yii\web\ServerErrorHttpException;
 class PassportController extends ActiveController
 {
 
-    /**
-     * 会员登录类型
-     */
-    const LOGIN_BY_USERNAME = 'username';
-    const LOGIN_BY_MOBILE_PHONE = 'mobilePhone';
-    const LOGIN_BY_ACCESS_TOKEN = 'accessToken';
-
     public $modelClass = Member::class;
 
     public function actions()
