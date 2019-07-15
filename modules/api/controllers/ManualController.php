@@ -87,7 +87,7 @@ class ManualController extends BaseController
                     $sourceImage = FileHelper::normalizePath($sourceDir . '/' . trim($image, "/."), '/');
                     $extension = ImageHelper::getExtension($sourceImage);
                     $destFilename = md5($image) . '.' . $extension;
-                    copy($sourceImage, $destDir . '/' . $destFilename);
+                    @copy($sourceImage, $destDir . '/' . $destFilename);
                     $pairs[$image] = "$url/manual-images/$destFilename";
                 }
                 $content = strtr($content, $pairs);
