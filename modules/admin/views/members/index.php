@@ -49,7 +49,7 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             [
                 'attribute' => 'category_id',
                 'value' => function ($model) {
-                    return $model->category->name;
+                    return $model->category ? $model->category->name : null;
                 },
                 'contentOptions' => ['style' => 'width: 60px;'],
             ],
