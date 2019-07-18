@@ -3,8 +3,13 @@
 namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\ActiveController;
+use app\modules\api\extensions\Formatter;
 use app\modules\api\models\Member;
 use app\modules\api\models\MemberSearch;
+use DateTime;
+use Exception;
+use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
@@ -17,6 +22,12 @@ use yii\filters\VerbFilter;
  */
 class MemberController extends ActiveController
 {
+
+    /**
+     * 统计类型
+     */
+    const STATISTICS_TYPE = 'date';
+    const STATISTICS_TYPE_MEMBER_TYPE = 'type';
 
     public $modelClass = Member::class;
 
@@ -36,9 +47,15 @@ class MemberController extends ActiveController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view', 'delete'],
+                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'statistics'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+
+                    [
+                        'actions' => ['statistics'],
+                        'allow' => true,
+                        'roles' => ['@', '?'],
                     ],
                 ],
             ],
@@ -63,7 +80,71 @@ class MemberController extends ActiveController
     {
         $search = new MemberSearch();
 
-        return $search->search(\Yii::$app->getRequest()->getQueryParams());
+        return $search->search(Yii::$app->getRequest()->getQueryParams());
+    }
+
+    /**
+     * 会员注册统计
+     *
+     * @param null $beginDate
+     * @param null $endDate
+     * @param string $type
+     * @return array
+     */
+    public function actionStatistics($beginDate = null, $endDate = null, $type = self::STATISTICS_TYPE)
+    {
+        $items = [];
+        $condition = [];
+        if ($beginDate && $endDate) {
+            try {
+                $beginDate = (new Datetime($beginDate))->getTimestamp();
+                $endDate = (new Datetime($endDate))->getTimestamp();
+                $condition = [
+                    'BETWEEN', 'created_at', $beginDate, $endDate,
+                ];
+            } catch (Exception $e) {
+            }
+        }
+
+        $q = (new Query())
+            ->select(['type', 'created_at'])
+            ->from('{{%member}}')
+            ->where($condition)
+            ->orderBy(['id' => SORT_ASC]);
+        switch (strtolower($type)) {
+            case self::STATISTICS_TYPE_MEMBER_TYPE:
+                /* @var $formatter Formatter */
+                $formatter = Yii::$app->getFormatter();
+                foreach ($q->each() as $row) {
+                    $key = $row['type'];
+                    if (!isset($items[$key])) {
+                        $items[$key] = [
+                            'name' => $formatter->asMemberType($row['type']),
+                            'value' => 1,
+                        ];
+                    } else {
+                        $items[$key]['value'] += 1;
+                    }
+                }
+                break;
+
+            default:
+                // 根据注册时间统计
+                foreach ($q->each() as $row) {
+                    $key = date('Y-m-d', $row['created_at']);
+                    if (!isset($items[$key])) {
+                        $items[$key] = [
+                            'name' => $key,
+                            'value' => 1,
+                        ];
+                    } else {
+                        $items[$key]['value'] += 1;
+                    }
+                }
+                break;
+        }
+
+        return array_values($items);
     }
 
 }

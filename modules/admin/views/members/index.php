@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
+    ['label' => '统计', 'url' => ['statistics']],
     ['label' => Yii::t('app', 'Grid Column Config'), 'url' => ['grid-column-configs/index', 'name' => Member::class, 'id' => 'grid-view-members'], 'htmlOptions' => ['class' => 'grid-column-config', 'data-grid-id' => 'grid-view-members']],
 ];
 

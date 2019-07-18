@@ -35,7 +35,7 @@ class MembersController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'change-password'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'change-password', 'statistics'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -152,7 +152,6 @@ class MembersController extends Controller
      * @return mixed
      * @throws NotFoundHttpException
      * @throws \yii\base\ErrorException
-     * @throws \yii\db\Exception
      */
     public function actionUpdate($id)
     {
@@ -217,6 +216,16 @@ class MembersController extends Controller
             'member' => $member,
             'model' => $model,
         ]);
+    }
+
+    /**
+     * 统计
+     *
+     * @return string
+     */
+    public function actionStatistics()
+    {
+        return $this->render('statistics');
     }
 
     /**

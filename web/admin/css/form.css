@@ -224,6 +224,13 @@ textarea,
     background: #FFF url(../images/calendar.png) no-repeat 90px center !important;
 }
 
+.h5-date-picker {
+    border: 1px solid #d5d5d5;
+    border-radius: 3px;
+    padding: 5px 5px;
+    width: 140px !important;
+}
+
 .datetime-picker {
     width: 160px !important;
     background: #FFF url(../images/calendar.png) no-repeat 150px center !important;
