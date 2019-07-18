@@ -4,6 +4,7 @@ namespace app\modules\api\models;
 
 use app\models\Meta;
 use app\modules\api\extensions\UtilsHelper;
+use Yii;
 
 /**
  * Class BaseMember
@@ -19,13 +20,14 @@ class BaseMember extends \app\models\Member
      */
     public function fields()
     {
+        /* @var $formatter Formatter */
+        $formatter = Yii::$app->getFormatter();
+
         return [
             'id',
             'type',
-            'type_formatted' => function ($model) {
-                $options = static::typeOptions();
-
-                return isset($options[$model->type]) ? $options[$model->type] : null;
+            'type_formatted' => function ($model) use ($formatter) {
+                return $formatter->asMemberType($model->type);
             },
             'category_id',
             'group',
@@ -50,10 +52,8 @@ class BaseMember extends \app\models\Member
             'last_login_time',
             'access_token',
             'status' => 'status',
-            'status_formatted' => function ($model) {
-                $options = static::statusOptions();
-
-                return isset($options[$model->status]) ? $options[$model->status] : null;
+            'status_formatted' => function ($model) use ($formatter) {
+                return $formatter->asMemberStatus($model->status);
             },
             'remark' => 'remark',
             'created_at',

@@ -19,8 +19,12 @@ class Finance extends \app\modules\admin\modules\finance\models\Finance
             'type_formatted' => function ($model) use ($formatter) {
                 return $formatter->asFinanceType($model->type);
             },
-            'money',
-            'balance',
+            'money' => function ($model) {
+                return $model->money / 100;
+            },
+            'balance' => function ($model) {
+                return $model->balance / 100;
+            },
             'source',
             'source_formatted' => function ($model) use ($formatter) {
                 return $formatter->asFinanceSource($model->source);
@@ -31,7 +35,7 @@ class Finance extends \app\modules\admin\modules\finance\models\Finance
             'related_key',
             'status',
             'status_formatted' => function ($model) use ($formatter) {
-                return $formatter->asFinanceStatus($model->source);
+                return $formatter->asFinanceStatus($model->status);
             },
             'remark',
             'member_id',
