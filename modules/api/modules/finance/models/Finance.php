@@ -19,11 +19,11 @@ class Finance extends \app\modules\admin\modules\finance\models\Finance
             'type_formatted' => function ($model) use ($formatter) {
                 return $formatter->asFinanceType($model->type);
             },
-            'money' => function ($model) {
-                return $model->money / 100;
+            'money' => function ($model) use ($formatter) {
+                return $formatter->asYuan($model->money);
             },
-            'balance' => function ($model) {
-                return $model->balance / 100;
+            'balance' => function ($model) use ($formatter) {
+                return $formatter->asYuan($model->balance);
             },
             'source',
             'source_formatted' => function ($model) use ($formatter) {

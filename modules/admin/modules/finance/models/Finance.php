@@ -107,7 +107,7 @@ class Finance extends \yii\db\ActiveRecord
             [['money', 'member_id'], 'required'],
             [['remark'], 'trim'],
             [['remark'], 'string'],
-            [['related_key'], 'string', 'max' => 32],
+            [['related_key'], 'string', 'max' => 60],
             ['remittance_slip', 'image',
                 'extensions' => $this->_fileUploadConfig['extensions'],
                 'minSize' => $this->_fileUploadConfig['size']['min'],
