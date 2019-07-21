@@ -257,6 +257,15 @@ Description: Grid view 样式
     text-align: center;
 }
 
+.grid-view table.table td.login-account {
+    width: 60px;
+}
+
+.grid-view table.table td.login-account a.member-type-administrator {
+    padding-left: 20px;
+    background: url("../images/member-type-administrator.png") no-repeat left center;
+}
+
 .grid-view table.table td.firstname {
     width: 60px;
 }

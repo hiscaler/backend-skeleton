@@ -66,9 +66,14 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'attribute' => 'username',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return Html::a($model['username'], ['view', 'id' => $model['id']]);
+                    $class = [];
+                    if ($model['type'] == Member::TYPE_ADMINISTRATOR) {
+                        $class['class'] = 'member-type-administrator';
+                    }
+
+                    return Html::a($model['username'], ['view', 'id' => $model['id']], $class);
                 },
-                'contentOptions' => ['class' => 'username'],
+                'contentOptions' => ['class' => 'login-account'],
             ],
             [
                 'attribute' => 'nickname',
