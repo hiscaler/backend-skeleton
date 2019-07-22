@@ -39,8 +39,7 @@ class Uploader
     {
         $dir = Config::get('upload.dir', 'uploads');
         $dir = trim($dir, "/\\\\"); // 移除头尾的 "/", "\"
-        $url = "/$dir/" . date('Y') . '/' . date('n') . '/' . date('j');
-        $url = FileHelper::normalizePath($url, '/');
+        $url = FileHelper::normalizePath("/$dir/" . date('Y') . '/' . date('n') . '/' . date('j'), '/');
         $this->url = $url;
 
         $this->path = Yii::getAlias('@webroot') . $url;
