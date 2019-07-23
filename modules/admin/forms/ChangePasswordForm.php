@@ -9,14 +9,14 @@ class ChangePasswordForm extends Model
 
     public $username;
     public $password;
-    public $confirmPassword;
+    public $confirm_password;
 
     public function rules()
     {
         return [
-            [['password', 'confirmPassword'], 'required'],
-            [['password', 'confirmPassword'], 'string', 'min' => 6, 'max' => 12],
-            ['confirmPassword', 'compare', 'operator' => '===', 'compareAttribute' => 'password',
+            [['password', 'confirm_password'], 'required'],
+            [['password', 'confirm_password'], 'string', 'min' => 6, 'max' => 12],
+            ['confirm_password', 'compare', 'operator' => '===', 'compareAttribute' => 'password',
                 'message' => '两次输入的密码不一致，请重新输入。'
             ],
         ];
@@ -30,7 +30,7 @@ class ChangePasswordForm extends Model
         return [
             'username' => '用户名',
             'password' => '新密码',
-            'confirmPassword' => '确认密码',
+            'confirm_password' => '确认密码',
         ];
     }
 

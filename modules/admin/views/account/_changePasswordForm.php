@@ -11,11 +11,11 @@ use yii\widgets\ActiveForm;
     <div class="form user-form">
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'oldPassword')->passwordInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'old_password')->passwordInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'confirmPassword')->passwordInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'confirm_password')->passwordInput(['maxlength' => true]) ?>
         <div class="form-group buttons">
             <?= Html::submitButton(Yii::t('app', 'Change Password'), ['class' => 'btn btn-primary']) ?>
         </div>

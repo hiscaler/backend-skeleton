@@ -2,24 +2,25 @@
 
 namespace app\modules\admin\forms;
 
+use Yii;
 use yii\base\Model;
 
 class ChangeMyPasswordForm extends Model
 {
 
-    public $oldPassword;
+    public $old_password;
     public $password;
-    public $confirmPassword;
+    public $confirm_password;
 
     public function rules()
     {
         return [
-            [['oldPassword', 'password', 'confirmPassword'], 'required'],
-            [['password', 'confirmPassword'], 'string', 'min' => 6, 'max' => 12],
-            ['confirmPassword', 'compare', 'operator' => '===', 'compareAttribute' => 'password',
+            [['old_password', 'password', 'confirm_password'], 'required'],
+            [['password', 'confirm_password'], 'string', 'min' => 6, 'max' => 12],
+            ['confirm_password', 'compare', 'operator' => '===', 'compareAttribute' => 'password',
                 'message' => '两次输入的密码不一致，请重新输入。'
             ],
-            ['oldPassword', 'checkOldPassword'],
+            ['old_password', 'checkOldPassword'],
         ];
     }
 
@@ -33,7 +34,7 @@ class ChangeMyPasswordForm extends Model
     public function checkOldPassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
-            $ok = \Yii::$app->getUser()->getIdentity()->validatePassword($this->oldPassword);
+            $ok = Yii::$app->getUser()->getIdentity()->validatePassword($this->old_password);
             if (!$ok) {
                 $this->addError($attribute, '旧密码无效。');
             }
@@ -46,9 +47,9 @@ class ChangeMyPasswordForm extends Model
     public function attributeLabels()
     {
         return [
-            'oldPassword' => '旧密码',
+            'old_password' => '旧密码',
             'password' => '新密码',
-            'confirmPassword' => '确认密码',
+            'confirm_password' => '确认密码',
         ];
     }
 

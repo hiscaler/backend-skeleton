@@ -132,9 +132,9 @@ class UserController extends ActiveController
             if ($member) {
                 $password = $request->post('password');
                 $payload = [
-                    'oldPassword' => $request->post('old_password'),
+                    'old_password' => $request->post('old_password'),
                     'password' => $password,
-                    'confirmPassword' => $request->post('confirm_password'),
+                    'confirm_password' => $request->post('confirm_password'),
                 ];
                 $model = new ChangeMyPasswordForm();
                 $model->load($payload, '');
