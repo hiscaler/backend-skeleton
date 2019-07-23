@@ -11,11 +11,19 @@ namespace app\modules\admin\modules\wechat\models;
 class Bill
 {
 
+    /**
+     * 账单类型
+     */
     const TYPE_ALL = 'ALL';
     const TYPE_SUCCESS = 'SUCCESS';
     const TYPE_REFUND = 'REFUND';
     const TYPE_REVOKED = 'REVOKED';
 
+    /**
+     * 账单类型选项
+     *
+     * @return array
+     */
     public static function typeOptions()
     {
         return [
@@ -25,4 +33,5 @@ class Bill
             self::TYPE_REVOKED => '撤销的订单',
         ];
     }
+
 }

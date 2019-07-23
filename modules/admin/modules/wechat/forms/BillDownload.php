@@ -2,8 +2,11 @@
 
 namespace app\modules\admin\modules\wechat\forms;
 
+use app\modules\admin\modules\wechat\models\Bill;
+use DateTime;
+
 /**
- * 对账单下载
+ * 对账单下载表单
  *
  * @package app\modules\admin\modules\wechat\forms
  * @author hiscaler <hiscaler@gmail.com>
@@ -11,14 +14,21 @@ namespace app\modules\admin\modules\wechat\forms;
 class BillDownload extends \yii\base\Model
 {
 
+    /**
+     * @var string 账单类型
+     */
     public $type;
+
+    /**
+     * @var string 账单日期
+     */
     public $date;
 
     public function init()
     {
         parent::init();
-        $this->type = \app\modules\admin\modules\wechat\models\Bill::TYPE_ALL;
-        $this->date = date('Ymd') - 1;
+        $this->type = Bill::TYPE_ALL;
+        $this->date = (new Datetime())->modify("-1 day")->format('Ymd');
     }
 
     public function rules()

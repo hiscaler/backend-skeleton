@@ -5,7 +5,9 @@ namespace app\modules\admin\modules\wechat\controllers;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\modules\wechat\forms\BillDownload;
 use EasyWeChat\Foundation\Application;
+use yadjet\helpers\IsHelper;
 use Yii;
+use yii\base\InvalidConfigException;
 
 /**
  * 对账单管理
@@ -19,10 +21,13 @@ class BillController extends BaseController
     /**
      * 对账单下载
      *
-     * @rbacDescription 微信支付对账单下载权限
      * @return string
+     * @throws InvalidConfigException
      * @throws \yii\base\ExitException
      * @throws \yii\web\RangeNotSatisfiableHttpException
+     * @todo 支持时间段选择合并处理
+     *
+     * @rbacDescription 微信支付对账单下载权限
      */
     public function actionIndex()
     {
@@ -34,9 +39,13 @@ class BillController extends BaseController
         if ($model->load(Yii::$app->getRequest()->post()) && $model->validate()) {
             $application = new Application(Yii::$app->params['wechat']);
             $payment = $application->payment;
-            $bill = $payment->downloadBill($model->date, $model->type)->getContents();
-            Yii::$app->getResponse()->sendContentAsFile($bill, 'bill-' . $model->date . '.csv');
-            Yii::$app->end();
+            $contents = $payment->downloadBill($model->date, $model->type)->getContents();
+            if ($contents && !IsHelper::xml($contents)) {
+                Yii::$app->getResponse()->sendContentAsFile($contents, 'bill-' . $model->date . '.csv');
+                Yii::$app->end();
+            } else {
+                $model->addError('date', '暂无对账数据。');
+            }
         }
 
         return $this->render('index', [

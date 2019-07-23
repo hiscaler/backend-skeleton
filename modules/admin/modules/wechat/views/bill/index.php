@@ -1,11 +1,10 @@
 <?php
 
+use app\modules\admin\modules\wechat\models\Bill;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\admin\modules\wechat\models\OrderSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = '对账单管理';
 $this->params['breadcrumbs'][] = $this->title;
@@ -26,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'date')->textInput() ?>
             </div>
             <div class="entry">
-                <?= $form->field($model, 'type')->dropDownList(\app\modules\admin\modules\wechat\models\Bill::typeOptions()) ?>
+                <?= $form->field($model, 'type')->dropDownList(Bill::typeOptions()) ?>
             </div>
             <div class="form-group buttons">
                 <?= Html::submitButton('下载对账单', ['class' => 'btn btn-primary']) ?>
