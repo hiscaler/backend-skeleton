@@ -21,6 +21,7 @@ $this->params['menus'] = [
 ];
 
 $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
+$defaultAvatar = $baseUrl . '/images/default-avatar.jpg';
 ?>
 <div class="member-index">
     <?= $this->render('_search', ['model' => $searchModel]); ?>
@@ -55,23 +56,12 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'contentOptions' => ['style' => 'width: 60px;'],
             ],
             [
-                'attribute' => 'avatar',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    return Html::a(Html::img($model['avatar'], ['class' => 'avatar']), ['view', 'id' => $model['id']]);
-                },
-                'contentOptions' => ['class' => 'avatar'],
-            ],
-            [
                 'attribute' => 'username',
                 'format' => 'raw',
-                'value' => function ($model) {
-                    $class = [];
-                    if ($model['type'] == Member::TYPE_ADMINISTRATOR) {
-                        $class['class'] = 'member-type-administrator';
-                    }
+                'value' => function ($model) use ($defaultAvatar) {
+                    $avatar = $model['avatar'] ?: $defaultAvatar;
 
-                    return Html::a($model['username'], ['view', 'id' => $model['id']], $class);
+                    return Html::img($avatar, ['class' => 'avatar']) . Html::a($model['username'], ['view', 'id' => $model['id']], ['class' => 'member-type-' . $model['type']]);
                 },
                 'contentOptions' => ['class' => 'login-account'],
             ],
@@ -120,6 +110,11 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
             ],
             // 'last_login_ip',
             [
+                'attribute' => 'created_at',
+                'format' => 'datetime',
+                'contentOptions' => ['class' => 'datetime'],
+            ],
+            [
                 'attribute' => 'last_login_time',
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime'],
@@ -129,16 +124,11 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                 'format' => 'datetime',
                 'contentOptions' => ['class' => 'datetime'],
             ],
+            // 'remark:ntext',
             [
                 'attribute' => 'status',
                 'format' => 'memberStatus',
                 'contentOptions' => ['class' => 'data-status'],
-            ],
-            // 'remark:ntext',
-            [
-                'attribute' => 'created_at',
-                'format' => 'datetime',
-                'contentOptions' => ['class' => 'datetime'],
             ],
             // 'created_by',
             // 'updated_at',

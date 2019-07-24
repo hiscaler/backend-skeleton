@@ -261,9 +261,9 @@ Description: Grid view 样式
     width: 60px;
 }
 
-.grid-view table.table td.login-account a.member-type-administrator {
-    padding-left: 20px;
-    background: url("../images/member-type-administrator.png") no-repeat left center;
+.grid-view table.table td.login-account a.member-type-1 {
+    color: #c60000;
+    font-weight: bold;
 }
 
 .grid-view table.table td.firstname {
@@ -278,21 +278,14 @@ Description: Grid view 样式
     width: 60px;
 }
 
-.grid-view table.table td.avatar {
-    width: 30px;
-    text-align: center;
-}
-
-.grid-view table.table td.avatar img {
-    width: 30px;
-    height: 30px;
+.grid-view table.table img.avatar {
+    width: 20px;
+    height: 20px;
     -webkit-border-radius: 30px;
     -moz-border-radius: 30px;
     border-radius: 30px;
-}
-
-.grid-view table.table td.avatar p {
-    line-height: 24px;
+    vertical-align: top;
+    margin-right: 5px;
 }
 
 .grid-view table.table td.user-role {
