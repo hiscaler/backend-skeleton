@@ -16,7 +16,7 @@ return [
         'register' => [
             'type' => 'wx', // 注册类型 normal: 常规表单注册, wx: 使用微信第三方注册
             'status' => 1, // 会员注册默认值（\app\models\Member::STATUS_ACTIVE）
-            'expiryMinutes' => 10, // 有效截止时间（单位为：分钟），如果为 0 表示无限制
+            'expiryMinutes' => 0, // 有效截止时间（单位为：分钟），如果为 0 表示无限制
             'rules' => [
                 'required' => ['mobile_phone'], // 必填的字段
                 'unique' => ['mobile_phone'], // 保持数据唯一性的字段
