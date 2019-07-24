@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
-    ['label' => Yii::t('app', 'Search'), 'url' => '#'],
+    ['label' => '导出为 Excel', 'url' => ['to-excel']],
 ];
 ?>
 <div class="order-index">
@@ -71,9 +71,7 @@ $this->params['menus'] = [
             ],
             [
                 'attribute' => 'refund_total_fee',
-                'value' => function ($model) {
-                    return $model['refund_total_fee'] / 100;
-                },
+                'format' => 'yuan',
                 'contentOptions' => ['class' => 'number'],
             ],
 //            [

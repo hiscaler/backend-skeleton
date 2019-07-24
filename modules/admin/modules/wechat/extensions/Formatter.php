@@ -4,10 +4,8 @@ namespace app\modules\admin\modules\wechat\extensions;
 
 use app\modules\admin\modules\wechat\models\Order;
 
-class Formatter extends \yii\i18n\Formatter
+class Formatter extends \app\modules\admin\extensions\Formatter
 {
-
-    public $nullDisplay = '';
 
     /**
      * 任务状态

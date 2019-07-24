@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\modules\wechat\models\Order;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -23,9 +24,23 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'out_trade_no') ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'trade_state')->dropDownList(\app\modules\admin\modules\wechat\models\Order::tradeStateOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'status')->dropDownList(Order::statusOptions(), ['prompt' => '']) ?>
 
-            <?= $form->field($model, 'status')->dropDownList(\app\modules\admin\modules\wechat\models\Order::statusOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'trade_state')->dropDownList(Order::tradeStateOptions(), ['prompt' => '']) ?>
+        </div>
+        <div class="entry">
+            <?= \yadjet\datePicker\my97\DatePicker::widget([
+                'form' => $form,
+                'model' => $model,
+                'attribute' => 'begin_date',
+                'pickerType' => 'date',
+            ]) ?>
+            <?= \yadjet\datePicker\my97\DatePicker::widget([
+                'form' => $form,
+                'model' => $model,
+                'attribute' => 'end_date',
+                'pickerType' => 'date',
+            ]) ?>
         </div>
         <div class="form-group buttons">
             <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>

@@ -3,14 +3,20 @@
 namespace app\modules\admin\modules\wechat\controllers;
 
 use app\models\Lookup;
+use app\modules\admin\components\QueryConditionCache;
 use app\modules\admin\extensions\BaseController;
+use app\modules\admin\modules\wechat\extensions\Formatter;
 use app\modules\admin\modules\wechat\models\Order;
 use app\modules\admin\modules\wechat\models\OrderSearch;
 use DateTime;
 use EasyWeChat\Foundation\Application;
 use Exception;
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -34,7 +40,7 @@ class OrdersController extends BaseController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'update', 'delete', 'query', 'refund', 'refund-query'],
+                        'actions' => ['index', 'view', 'update', 'delete', 'query', 'refund', 'refund-query', 'to-excel'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -51,10 +57,11 @@ class OrdersController extends BaseController
     }
 
     /**
-     * Lists all Order models.
+     * 微信订单
      *
      * @rbacDescription 微信订单列表数据查看权限
      * @return mixed
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -112,6 +119,8 @@ class OrdersController extends BaseController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -136,7 +145,7 @@ class OrdersController extends BaseController
             throw new InvalidConfigException('无效的微信参数配置。');
         }
 
-        $db = \Yii::$app->getDb();
+        $db = Yii::$app->getDb();
         $order = $db->createCommand('SELECT [[out_trade_no]], [[trade_state]] FROM {{%wechat_order}} WHERE [[id]] = :id', [':id' => (int) $id])->queryOne();
         if ($order) {
             try {
@@ -189,7 +198,7 @@ class OrdersController extends BaseController
             throw new InvalidConfigException('无效的微信参数配置。');
         }
 
-        $db = \Yii::$app->getDb();
+        $db = Yii::$app->getDb();
         $order = $db->createCommand('SELECT [[id]], [[total_fee]], [[sign]], [[sign_type]], [[out_trade_no]] FROM {{%wechat_order}} WHERE [[id]] = :id', [':id' => (int) $id])->queryOne();
         if ($order) {
             try {
@@ -221,7 +230,7 @@ class OrdersController extends BaseController
                                 'refund_fee' => $refundFee,
                                 'refund_account' => 'REFUND_SOURCE_RECHARGE_FUNDS',
                                 'created_at' => time(),
-                                'created_by' => \Yii::$app->getUser()->getId(),
+                                'created_by' => Yii::$app->getUser()->getId(),
                             ];
                             $db->createCommand()->insert('{{%wechat_refund_order}}', $columns)->execute();
                             $db->createCommand()->update('{{%wechat_order}}', ['trade_state' => Order::TRADE_STATE_REFUND], ['id' => $order['id']])->execute();
@@ -271,7 +280,7 @@ class OrdersController extends BaseController
             throw new InvalidConfigException('无效的微信参数配置。');
         }
 
-        $db = \Yii::$app->getDb();
+        $db = Yii::$app->getDb();
         $order = $db->createCommand('SELECT [[out_refund_no]] FROM {{%wechat_refund_order}} WHERE [[id]] = :id', [':id' => (int) $id])->queryOne();
         if ($order) {
             try {
@@ -294,12 +303,99 @@ class OrdersController extends BaseController
                         'data' => $response,
                     ]);
                 }
-            } catch (Exception $ex) {
-                echo $ex->getMessage();
+            } catch (Exception $e) {
+                echo $e->getMessage();
             }
         } else {
             throw new NotFoundHttpException('订单不存在。');
         }
+    }
+
+    /**
+     * @throws \PHPExcel_Exception
+     * @throws \PHPExcel_Reader_Exception
+     * @throws \PHPExcel_Writer_Exception
+     * @throws \yii\db\Exception
+     * @throws \yii\base\ExitException
+     * @throws InvalidConfigException
+     */
+    public function actionToExcel()
+    {
+        $q = QueryConditionCache::get(OrderSearch::QUERY_CONDITION_CACHE_KEY);
+        if ($q instanceof Query) {
+            $items = $q->all();
+        } else {
+            $items = Order::find()->all();
+        }
+        $phpExcel = new PHPExcel();
+        $phpExcel->getProperties()->setCreator("Microsoft")
+            ->setLastModifiedBy("Microsoft")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Test document for Office 2007 XLSX, generated using PHP 
+classes.")
+            ->setKeywords("office 2007 openxml php")
+            ->setCategory("data");
+        $phpExcel->setActiveSheetIndex(0);
+        $activeSheet = $phpExcel->getActiveSheet();
+        $phpExcel->getDefaultStyle()
+            ->getFont()->setSize(14);
+        $phpExcel->getDefaultStyle()->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $phpExcel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $activeSheet->getDefaultRowDimension()->setRowHeight(25);
+
+        $activeSheet->setCellValue('A1', '订单汇总')->mergeCells('A1:K1')->getStyle()->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+            ],
+            'alignment' => [
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            ],
+        ]);
+
+        $activeSheet
+            ->setCellValue("A2", '序号')
+            ->setCellValue("B2", '微信订单号')
+            ->setCellValue("C2", '商户订单号')
+            ->setCellValue("D2", '商品描述')
+            ->setCellValue("E2", '商品详情')
+            ->setCellValue("F2", '订单金额')
+            ->setCellValue("G2", '订单生成时间')
+            ->setCellValue("H2", '状态')
+            ->setCellValue("I2", '交易状态')
+            ->setCellValue("J2", '交易状态描述')
+            ->setCellValue("K2", '付款人');
+
+        $row = 3;
+        $i = 0;
+        /* @var $formatter Formatter */
+        $formatter = Yii::$app->getFormatter();
+        foreach ($items as $item) {
+            $i++;
+            $activeSheet->setCellValue("A{$row}", $i)
+                ->setCellValue("B{$row}", $item['transaction_id'])
+                ->setCellValue("C{$row}", $item['out_trade_no'])
+                ->setCellValue("D{$row}", $item['body'])
+                ->setCellValue("E{$row}", $item['detail'])
+                ->setCellValue("F{$row}", $formatter->asYuan($item['total_fee']))
+                ->setCellValue("G{$row}", $formatter->asDatetime($item['time_start']))
+                ->setCellValue("H{$row}", $formatter->asOrderStatus($item['status']))
+                ->setCellValue("I{$row}", $item['trade_state'])
+                ->setCellValue("J{$row}", $item['trade_state_desc'])
+                ->setCellValue("K{$row}", $item['member']['username']);
+            $row++;
+        }
+        $phpExcel->getActiveSheet()->setTitle('订单');
+        $phpExcel->setActiveSheetIndex(0);
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . 'abc' . '.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $objWriter = PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');
+        $objWriter->save('php://output', 'w');
+        Yii::$app->end();
     }
 
     /**
@@ -318,4 +414,5 @@ class OrdersController extends BaseController
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

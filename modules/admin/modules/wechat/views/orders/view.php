@@ -30,10 +30,7 @@ $this->params['menus'] = [
             'detail:ntext',
             'attach',
             'fee_type',
-            [
-                'attribute' => 'total_fee',
-                'value' => $model['total_fee'] / 100
-            ],
+            'total_fee:yuan',
             'spbill_create_ip',
             'time_start:datetime',
             'time_expire:datetime',
