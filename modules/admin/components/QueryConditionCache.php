@@ -65,7 +65,7 @@ class QueryConditionCache
      */
     private static function parseKey($key)
     {
-        return strtolower("cache.data.query.condition.{$key}." . \Yii::$app->getUser()->getId());
+        return strtolower("cache.data.query.condition.{$key}." . Yii::$app->getUser()->getId());
     }
 
 }
