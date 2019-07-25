@@ -40,13 +40,20 @@ Description: 表单样式
     line-height: 30px;
 }
 
-.entry,
-.form-layout-column .entry {
+.form .form-group {
+    background: transparent url(../images/dot.gif) repeat-x left bottom;
+}
+
+.entry, .form-layout-column .entry {
     clear: none;
     padding: 6px 0;
     display: block;
     width: 100%;
     background: transparent url(../images/dot.gif) repeat-x left bottom;
+}
+
+.entry .form-group {
+    background: none;
 }
 
 .form-outside .form fieldset .last {
