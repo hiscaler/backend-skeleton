@@ -3,6 +3,7 @@
 namespace app\modules\api\models;
 
 use app\models\Meta;
+use app\modules\api\extensions\Formatter;
 use app\modules\api\extensions\UtilsHelper;
 use Yii;
 
