@@ -104,12 +104,12 @@ class Module extends \yii\base\Module
      */
     public function getDevelopmentModules()
     {
-        $key = '__api.development.modules';
+        $key = 'api.module.getDevelopmentModules';
         $cache = Yii::$app->getCache();
         $modules = $cache->get($key);
         if ($modules === false) {
             $modules = \app\models\Module::map();
-            $cache->set($key, $modules, 3600);
+            $cache->set($key, $modules, 0);
         }
 
         return $modules;

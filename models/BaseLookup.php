@@ -182,7 +182,7 @@ class BaseLookup extends BaseActiveRecord
      */
     private static function getRawData()
     {
-        $cacheKey = 'cache.model.lookup.getRawData';
+        $cacheKey = 'app.models.Lookup.getRawData';
         $cache = Yii::$app->getCache();
         $keyValues = $cache->get($cacheKey);
         if ($keyValues === false) {

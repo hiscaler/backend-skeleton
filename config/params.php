@@ -189,6 +189,12 @@ return [
                 'url' => ['db/index'],
                 'forceEmbed' => false,
             ],
+            'cache' => [
+                'id' => 'cache',
+                'label' => 'Cache',
+                'url' => ['caches/index'],
+                'forceEmbed' => true,
+            ],
         ],
     ],
 ];

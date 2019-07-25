@@ -131,7 +131,7 @@ class BaseFileUploadConfig extends BaseActiveRecord
      */
     public static function getConfigs($pairs = [])
     {
-        $cacheKey = static::class . __FUNCTION__;
+        $cacheKey = 'app.models.FileUploadConfig.getConfigs';
         $cache = Yii::$app->getCache();
         $cacheData = $cache->get($cacheKey);
         if ($cacheData === false) {

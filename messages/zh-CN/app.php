@@ -83,6 +83,7 @@ return array(
     'Site Manage' => '站点管理',
     'Content Manage' => '内容管理',
     // Controllers
+    'Cache' => '缓存管理',
     'DB' => '数据库管理',
     'Labels' => '推送位管理',
     'Lookups' => '系统常规设定',

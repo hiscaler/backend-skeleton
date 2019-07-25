@@ -165,7 +165,7 @@ class BaseCategory extends BaseActiveRecord
      */
     private static function rawData($toTree = true)
     {
-        $cacheKey = 'app.models.category.rawData.' . (int) $toTree;
+        $cacheKey = 'app.models.Category.rawData.' . (int) $toTree;
         $cache = Yii::$app->getCache();
         $items = $cache->get($cacheKey);
         if ($items === false) {
