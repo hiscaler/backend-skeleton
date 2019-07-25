@@ -2,11 +2,17 @@
 
 namespace app\modules\api\modules\wechat\models;
 
+use app\modules\admin\modules\wechat\extensions\Formatter;
+use Yii;
+
 class Order extends \app\modules\admin\modules\wechat\models\Order
 {
 
     public function fields()
     {
+        /* @var $formatter Formatter */
+        $formatter = Yii::$app->getFormatter();
+
         return [
             'id',
             'appid',
@@ -22,6 +28,9 @@ class Order extends \app\modules\admin\modules\wechat\models\Order
             'attach',
             'fee_type',
             'total_fee',
+            'total_fee_formatted' => function ($model) use ($formatter) {
+                return $formatter->asYuan($model['total_fee']);
+            },
             'spbill_create_ip',
             'time_start',
             'time_expire',
@@ -34,10 +43,8 @@ class Order extends \app\modules\admin\modules\wechat\models\Order
             'trade_state',
             'trade_state_desc',
             'status',
-            'status_formatted' => function ($model) {
-                $options = self::statusOptions();
-
-                return isset($options[$model->status]) ? $options[$model->status] : null;
+            'status_formatted' => function ($model) use ($formatter) {
+                return $formatter->asOrderStatus($model['status']);
             },
             'member_id',
         ];
