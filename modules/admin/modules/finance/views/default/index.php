@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\modules\finance\models\Finance;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 
@@ -23,15 +24,15 @@ $this->params['menus'] = [
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             switch ($model->type) {
-                case \app\modules\admin\modules\finance\models\Finance::TYPE_INCOME:
+                case Finance::TYPE_INCOME:
                     $class = 'type-income';
                     break;
 
-                case \app\modules\admin\modules\finance\models\Finance::TYPE_DISBURSE:
+                case Finance::TYPE_DISBURSE:
                     $class = 'type-disburse';
                     break;
 
-                case \app\modules\admin\modules\finance\models\Finance::TYPE_REFUND:
+                case Finance::TYPE_REFUND:
                     $class = 'type-refund';
                     break;
 

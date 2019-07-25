@@ -4,6 +4,7 @@ namespace app\modules\admin\modules\finance\controllers;
 
 use app\modules\admin\modules\finance\models\Finance;
 use app\modules\admin\modules\finance\models\FinanceSearch;
+use DateTime;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -47,10 +48,14 @@ class DefaultController extends Controller
      * Lists all Finance models.
      *
      * @return mixed
+     * @throws \Exception
      */
     public function actionIndex()
     {
         $searchModel = new FinanceSearch();
+        $date = new DateTime();
+        $searchModel->end_date = $date->format('Y-m-d');
+        $searchModel->begin_date = $date->modify("-1 week")->format('Y-m-d');
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
 
         return $this->render('index', [
@@ -90,27 +95,6 @@ class DefaultController extends Controller
         }
 
         return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing Finance model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
             'model' => $model,
         ]);
     }

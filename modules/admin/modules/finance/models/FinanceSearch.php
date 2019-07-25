@@ -2,6 +2,8 @@
 
 namespace app\modules\admin\modules\finance\models;
 
+use app\modules\admin\components\QueryConditionCache;
+use DateTime;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
@@ -12,7 +14,22 @@ use yii\db\Query;
 class FinanceSearch extends Finance
 {
 
+    const QUERY_CONDITION_CACHE_KEY = self::class;
+
+    /**
+     * @var string 会员帐号
+     */
     public $member_username;
+
+    /**
+     * @var string 开始时间
+     */
+    public $begin_date;
+
+    /**
+     * @var string 结束时间
+     */
+    public $end_date;
 
     /**
      * {@inheritdoc}
@@ -20,10 +37,11 @@ class FinanceSearch extends Finance
     public function rules()
     {
         return [
-            [['id', 'type', 'source', 'status', 'member_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'source', 'status', 'member_id'], 'integer'],
             [['related_key'], 'safe'],
             ['member_username', 'trim'],
             ['member_username', 'string'],
+            [['begin_date', 'end_date'], 'date', 'format' => 'php:Y-m-d'],
         ];
     }
 
@@ -42,6 +60,7 @@ class FinanceSearch extends Finance
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws \Exception
      */
     public function search($params)
     {
@@ -68,15 +87,10 @@ class FinanceSearch extends Finance
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
             'type' => $this->type,
             'source' => $this->source,
             'status' => $this->status,
             'member_id' => $this->member_id,
-            'created_at' => $this->created_at,
-            'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
         ]);
 
         $query->andFilterWhere(['like', 'remark', $this->remark]);
@@ -89,6 +103,17 @@ class FinanceSearch extends Finance
             ]);
         }
 
+        if ($this->begin_date && $this->end_date) {
+            $query->andWhere([
+                'BETWEEN',
+                'created_at',
+                (new DateTime($this->begin_date))->getTimestamp(),
+                (new DateTime($this->end_date))->setTime(23, 59, 59)->getTimestamp(),
+            ]);
+        }
+
+        QueryConditionCache::set(self::QUERY_CONDITION_CACHE_KEY, $query);
+
         return $dataProvider;
     }
 
@@ -96,6 +121,8 @@ class FinanceSearch extends Finance
     {
         return array_merge(parent::attributeLabels(), [
             'member_username' => '会员帐号',
+            'begin_date' => '开始时间',
+            'end_date' => '结束时间',
         ]);
     }
 
