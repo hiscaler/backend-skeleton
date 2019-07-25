@@ -33,7 +33,7 @@ EOT;
      * @throws \yii\base\Exception
      * @throws \yii\db\Exception
      */
-    private function _initAdminUser()
+    private function _initUser()
     {
         $username = 'admin';
         $db = Yii::$app->getDb();
@@ -67,6 +67,31 @@ EOT;
         }
 
         return $this->_userId;
+    }
+
+    /**
+     * 初始化会员用户
+     *
+     * @return void
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     */
+    private function _initMember()
+    {
+        $username = 'tmp';
+        $userId = Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%member}} WHERE username = :username', [':username' => $username])->queryScalar();
+        if (!$userId) {
+            $security = new Security;
+            $member = new Member();
+            $member->username = $username;
+            $member->setPassword($security->generateRandomString());
+            $member->mobile_phone = "15800000000";
+            if ($member->save()) {
+                $this->stdout("Create `$username` member successful.");
+            }
+        } else {
+            $this->stdout("Member `$username` is exists." . PHP_EOL);
+        }
     }
 
     /**
@@ -258,7 +283,8 @@ EOT;
      */
     public function actionIndex()
     {
-        $this->_initAdminUser();
+        $this->_initUser();
+        $this->_initMember();
         $this->_initLookupRecords();
     }
 

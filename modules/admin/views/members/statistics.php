@@ -51,7 +51,7 @@ $this->params['menus'] = [
 <script type="text/javascript">
     yadjet.urls = {
         member: {
-            statistics: '<?= Url::toRoute(['/api/member/statistics']) ?>'
+            statistics: '<?= Url::toRoute(['/api/member/statistics', 'accessToken' => $accessToken]) ?>'
         }
     };
 

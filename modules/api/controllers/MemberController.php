@@ -51,12 +51,6 @@ class MemberController extends ActiveController
                         'allow' => true,
                         'roles' => ['@'],
                     ],
-
-                    [
-                        'actions' => ['statistics'],
-                        'allow' => true,
-                        'roles' => ['@', '?'],
-                    ],
                 ],
             ],
         ]);

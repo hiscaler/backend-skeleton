@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\helpers\App;
 use app\helpers\Config;
 use app\models\Member;
 use app\models\MemberSearch;
@@ -222,10 +223,13 @@ class MembersController extends Controller
      * 统计
      *
      * @return string
+     * @throws \yii\db\Exception
      */
     public function actionStatistics()
     {
-        return $this->render('statistics');
+        return $this->render('statistics', [
+            'accessToken' => App::getFakeMemberAccessToken(),
+        ]);
     }
 
     /**

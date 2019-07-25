@@ -4,6 +4,10 @@ return [
     'adminEmail' => 'admin@example.com',
     'user.passwordResetTokenExpire' => 1800, // 密码重置有效时间
     'member.accessTokenExpire' => 86400, // 会员 Access Token 有效期（单位为秒，默认 24 小时）
+    // 系统用户
+    'user' => [
+        'fakeMember' => 'tmp', // 后台发起 api 请求模拟的用户
+    ],
     // 会员
     'member' => [
         /**
