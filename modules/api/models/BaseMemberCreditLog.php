@@ -2,6 +2,9 @@
 
 namespace app\modules\api\models;
 
+use app\modules\api\extensions\Formatter;
+use Yii;
+
 /**
  * Class BaseMemberCreditLog
  *
@@ -13,14 +16,15 @@ class BaseMemberCreditLog extends \app\models\MemberCreditLog
 
     public function fields()
     {
+        /* @var $formatter Formatter */
+        $formatter = Yii::$app->getFormatter();
+
         return [
             'id',
             'member_id',
             'operation',
-            'operation_formatted' => function ($model) {
-                $options = MemberCreditLog::operationOptions();
-
-                return isset($options[$model->operation]) ? $options[$model->operation] : null;
+            'operation_formatted' => function ($model) use ($formatter) {
+                return $formatter->asMemberCreditOperation($model->operation);
             },
             'related_key',
             'credits',

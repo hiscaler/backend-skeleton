@@ -2,9 +2,9 @@
 
 namespace app\models;
 
-use app\helpers\App;
 use app\helpers\Config;
 use yadjet\behaviors\ImageUploadBehavior;
+use yadjet\helpers\IsHelper;
 use yadjet\helpers\StringHelper;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
@@ -481,7 +481,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             self::TYPE_NONE => '普通会员',
         ];
 
-        if (App::notCli() && Yii::$app->getUser()->identityClass == Member::class) {
+        if (!IsHelper::cli() && Yii::$app->getUser()->identityClass == Member::class) {
             $options[self::TYPE_ADMINISTRATOR] = '管理员';
         }
 
@@ -650,7 +650,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 empty($nickname) && $nickname = $this->username;
                 $this->nickname = $nickname;
             }
-            $userId = App::isCli() || Yii::$app->getUser()->isGuest ? 0 : Yii::$app->getUser()->getId();
+            $userId = IsHelper::cli() || Yii::$app->getUser()->isGuest ? 0 : Yii::$app->getUser()->getId();
             if ($insert) {
                 $this->total_money = $this->available_money = 0;
                 $this->generateAuthKey();
@@ -658,7 +658,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->status = Config::get('member.register.status', self::STATUS_PENDING);
                 // @todo 需要检测唯一性
                 $this->invitation_code = StringHelper::generateRandomString(16);
-                $this->register_ip = App::isCli() ? '::1' : Yii::$app->getRequest()->getUserIP();
+                $this->register_ip = IsHelper::cli() ? '::1' : Yii::$app->getRequest()->getUserIP();
                 if (!$this->expired_datetime) {
                     $expiryMinutes = (int) Config::get('member.register.expiryMinutes');
                     if ($expiryMinutes) {

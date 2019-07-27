@@ -2,6 +2,8 @@
 
 namespace app\modules\api\models;
 
+use app\modules\api\extensions\UtilsHelper;
+
 /**
  * Class BaseModule
  *
@@ -20,7 +22,7 @@ class BaseModule extends \app\models\Module
             'author',
             'version',
             'icon' => function ($model) {
-                return $model->icon ? \Yii::$app->getRequest()->getBaseUrl() . $model->icon : null;
+                return UtilsHelper::fixStaticAssetUrl($model->icon);
             },
             'url',
             'description',

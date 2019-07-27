@@ -2,6 +2,8 @@
 
 namespace app\modules\api\models;
 
+use app\modules\api\extensions\UtilsHelper;
+
 /**
  * Class BaseCategory
  *
@@ -24,12 +26,7 @@ class BaseCategory extends \app\models\Category
             'id_path',
             'name_path',
             'icon' => function ($model) {
-                $icon = $model->icon;
-                if ($icon) {
-                    $icon = \Yii::$app->getRequest()->getHostInfo() . $icon;
-                }
-
-                return $icon;
+                return UtilsHelper::fixStaticAssetUrl($model->icon);
             },
             'description',
             'enabled' => function ($model) {
