@@ -14,7 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
-    ['label' => Yii::t('app', 'Search'), 'url' => '#'],
 ];
 ?>
 <div class="meta-index">
@@ -45,7 +44,7 @@ $this->params['menus'] = [
                 'contentOptions' => ['class' => 'meta-key'],
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return "<span class=\"pk\">[ {$model['id']} ]</span>" . '<a href="javascript:;" class="btn-copy" data-clipboard-target="#meta-key-' . $model['id'] . '" title="复制">&nbsp;</a>' . \yii\helpers\Html::a($model['key'], ['update', 'id' => $model['id']], ['id' => 'meta-key-' . $model['id']]);
+                    return '<a href="javascript:;" class="btn-copy" data-clipboard-target="#meta-key-' . $model['id'] . '" title="复制">&nbsp;</a>' . \yii\helpers\Html::a($model['key'], ['update', 'id' => $model['id']], ['id' => 'meta-key-' . $model['id']]);
                 }
             ],
             [

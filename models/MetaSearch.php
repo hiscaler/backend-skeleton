@@ -64,11 +64,11 @@ class MetaSearch extends Meta
 
         // grid filtering conditions
         $query->andFilterWhere([
+            'table_name' => $this->table_name,
             'enabled' => $this->enabled,
         ]);
 
-        $query->andFilterWhere(['like', 'table_name', $this->table_name])
-            ->andFilterWhere(['like', 'key', $this->key])
+        $query->andFilterWhere(['like', 'key', $this->key])
             ->andFilterWhere(['like', 'label', $this->label]);
 
         return $dataProvider;
