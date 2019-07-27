@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Option;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -7,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\modules\admin\modules\notice\models\NoticeSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-<div class="form-outside form-search form-layout-column" style="display: none">
+<div class="form-outside form-search form-layout-column">
     <div class="notice-search form">
         <?php $form = ActiveForm::begin([
             'action' => ['index'],
@@ -25,9 +26,7 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'title') ?>
         </div>
-        <?= $form->field($model, 'enabled')->dropDownList(\app\models\Option::boolean(), ['prompt' => '']) ?>
-
-        <?php // echo $form->field($model, 'published_at') ?>
+        <?= $form->field($model, 'enabled')->dropDownList(Option::boolean(), ['prompt' => '']) ?>
         <div class="form-group buttons">
             <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>
             <?= Html::resetButton('重置', ['class' => 'btn btn-default']) ?>

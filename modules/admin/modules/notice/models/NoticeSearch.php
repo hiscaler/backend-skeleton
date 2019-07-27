@@ -17,7 +17,7 @@ class NoticeSearch extends Notice
     public function rules()
     {
         return [
-            [['id', 'category_id', 'enabled', 'published_at'], 'integer'],
+            [['category_id', 'enabled'], 'integer'],
             [['title'], 'safe'],
         ];
     }
@@ -58,10 +58,8 @@ class NoticeSearch extends Notice
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
             'category_id' => $this->category_id,
             'enabled' => $this->enabled,
-            'published_at' => $this->published_at,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title]);

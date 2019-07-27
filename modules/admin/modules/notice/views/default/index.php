@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\helpers\Inflector;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
-    ['label' => Yii::t('app', 'Search'), 'url' => '#'],
 ];
 
 $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
@@ -110,7 +109,6 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
-
 <?php \app\modules\admin\components\JsBlock::begin() ?>
     <script type="text/javascript">
         $(function () {
