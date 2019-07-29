@@ -56,7 +56,7 @@ class DefaultController extends Controller
         $date = new DateTime();
         $searchModel->end_date = $date->format('Y-m-d');
         $searchModel->begin_date = $date->modify("-1 week")->format('Y-m-d');
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,

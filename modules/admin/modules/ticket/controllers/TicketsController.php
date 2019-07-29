@@ -51,7 +51,7 @@ class TicketsController extends Controller
     public function actionIndex()
     {
         $searchModel = new TicketSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,

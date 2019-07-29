@@ -53,7 +53,7 @@ class MessagesController extends Controller
     {
         $searchModel = new TicketMessageSearch();
         $searchModel->ticket_id = $ticketId;
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'ticketId' => $ticketId,

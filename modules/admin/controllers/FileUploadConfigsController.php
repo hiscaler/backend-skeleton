@@ -51,7 +51,7 @@ class FileUploadConfigsController extends Controller
     public function actionIndex()
     {
         $searchModel = new FileUploadConfigSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -139,4 +139,5 @@ class FileUploadConfigsController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

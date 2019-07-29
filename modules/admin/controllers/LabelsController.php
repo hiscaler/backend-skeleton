@@ -54,7 +54,7 @@ class LabelsController extends Controller
     public function actionIndex()
     {
         $searchModel = new LabelSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,

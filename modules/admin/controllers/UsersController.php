@@ -60,7 +60,7 @@ class UsersController extends Controller
     public function actionIndex()
     {
         $searchModel = new UserSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
         $hasCategoryData = \Yii::$app->getDb()->createCommand('SELECT COUNT(*) FROM {{%category}}')->queryScalar();
 
         return $this->render('index', [

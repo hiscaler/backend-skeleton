@@ -67,7 +67,7 @@ class MembersController extends Controller
         }
         if ($view == 'index') {
             $searchModel = new MemberSearch();
-            $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+            $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
             return $this->render('index', [
                 'searchModel' => $searchModel,
@@ -75,7 +75,7 @@ class MembersController extends Controller
             ]);
         } else {
             $members = [];
-            $rawMembers = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[parent_id]], [[username]], [[real_name]] FROM {{%member}} ORDER BY [[parent_id]] ASC')->queryAll();
+            $rawMembers = Yii::$app->getDb()->createCommand('SELECT [[id]], [[parent_id]], [[username]], [[real_name]] FROM {{%member}} ORDER BY [[parent_id]] ASC')->queryAll();
             foreach ($rawMembers as $member) {
                 $members[] = [
                     'id' => $member['id'],
