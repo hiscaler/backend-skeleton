@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\helpers\Config;
 use yadjet\behaviors\FileUploadBehavior;
+use yadjet\helpers\IsHelper;
 use yadjet\helpers\UtilHelper;
 use Yii;
 use yii\db\ActiveRecord;
@@ -37,8 +38,6 @@ use yii\web\IdentityInterface;
  */
 class BaseUser extends ActiveRecord implements IdentityInterface
 {
-
-    use ActiveRecordHelperTrait;
 
     /**
      * 用户状态
@@ -446,15 +445,17 @@ class BaseUser extends ActiveRecord implements IdentityInterface
             if (empty($this->nickname)) {
                 $this->nickname = $this->username;
             }
+            $isCli = IsHelper::cli();
+            $userId = $isCli || Yii::$app->getUser()->getIsGuest() ? 0 : Yii::$app->getUser()->getId();
             if ($insert) {
                 $this->generateAuthKey();
                 $this->generateAccessToken();
-                $this->register_ip = Yii::$app->getRequest()->getUserIP();
-                $this->created_by = $this->updated_by = Yii::$app->getUser()->getId();
+                $this->register_ip = $isCli ? '::1' : Yii::$app->getRequest()->getUserIP();
+                $this->created_by = $this->updated_by = $userId;
                 $this->created_at = $this->updated_at = time();
             } else {
                 $this->updated_at = time();
-                $this->updated_by = Yii::$app->getUser()->getId();
+                $this->updated_by = $userId;
             }
 
             return true;

@@ -2,20 +2,19 @@
 
 namespace app\models;
 
-use app\helpers\App;
 use yadjet\helpers\IsHelper;
 use yadjet\helpers\StringHelper;
 use yadjet\helpers\UtilHelper;
 use Yii;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
-use yii\db\Exception;
-use yii\db\Expression;
-use yii\web\HttpException;
 
 /**
  * @property string $keywords
- * @property string $entityLabels
+ * @property int $created_at
+ * @property int $created_by
+ * @property int $updated_at
+ * @property int $updated_by
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
@@ -27,8 +26,6 @@ class BaseActiveRecord extends ActiveRecord
      */
     const DEFAULT_ORDERING_VALUE = 10000;
 
-    private $_oldEntityLabels = [];
-    public $entityLabels = [];
     public $content_image_number = 1; // 从文本内容中获取第几章图片作为缩略图
 
     /**
@@ -50,7 +47,6 @@ class BaseActiveRecord extends ActiveRecord
     public function rules()
     {
         $rules = [
-            [['entityLabels'], 'safe'],
             ['content_image_number', 'safe']
         ];
 
@@ -84,38 +80,6 @@ class BaseActiveRecord extends ActiveRecord
             }
             $this->$attribute = $value;
         }
-    }
-
-    /**
-     * 数据关联的推送位
-     *
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getRelatedLabels()
-    {
-        return $this->hasMany(Label::class, ['id' => 'label_id'])
-            ->select(['id', 'name'])
-            ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
-                /* @var $query yii\db\Query */
-                $query->where(['model_name' => static::class]);
-            });
-    }
-
-    /**
-     * 自定义推送位数据
-     *
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getCustomLabels()
-    {
-        return $this->hasMany(Label::class, ['id' => 'label_id'])
-            ->select(['id', 'name'])
-            ->viaTable('{{%entity_label}}', ['entity_id' => 'id'], function ($query) {
-                /* @var $query yii\db\Query */
-                $query->where(['model_name' => static::class]);
-            });
     }
 
     /**
@@ -186,30 +150,15 @@ class BaseActiveRecord extends ActiveRecord
             'updated_at' => Yii::t('app', 'Updated At'),
             'deleted_by' => Yii::t('app', 'Deleted By'),
             'deleted_at' => Yii::t('app', 'Deleted At'),
-            'entityLabels' => Yii::t('app', 'Entity Labels'),
             'model_name' => Yii::t('app', 'Model Name'),
             'content_image_number' => Yii::t('app', 'Content Image Number'),
         ];
     }
 
-    // Events
-
-    /**
-     * @throws Exception
-     */
-    public function afterFind()
-    {
-        parent::afterFind();
-        if (!$this->isNewRecord) {
-            $this->entityLabels = Label::getEntityLabelIds($this->getPrimaryKey(), static::class);
-            $this->_oldEntityLabels = $this->entityLabels;
-        }
-    }
-
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $userId = !IsHelper::cli() && Yii::$app->getUser()->getId() ?: 0;
+            $userId = IsHelper::cli() || Yii::$app->getUser()->getIsGuest() ? 0 : Yii::$app->getUser()->getId();
             $now = time();
             if ($insert) {
                 $this->hasAttribute('created_at') && $this->created_at = $now;
@@ -222,104 +171,6 @@ class BaseActiveRecord extends ActiveRecord
         } else {
             return false;
         }
-    }
-
-    /**
-     * @param $insert
-     * @param $changedAttributes
-     * @throws HttpException
-     */
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        // Entity labels
-        $entityLabels = $this->entityLabels;
-        if (!is_array($this->_oldEntityLabels)) {
-            $this->_oldEntityLabels = [];
-        }
-        if (!is_array($entityLabels)) {
-            $entityLabels = [];
-        }
-
-        if ($insert) {
-            $insertLabels = $entityLabels;
-            $deleteLabels = [];
-        } else {
-            if ($entityLabels) {
-                $insertLabels = array_diff($entityLabels, $this->_oldEntityLabels);
-                $deleteLabels = array_diff($this->_oldEntityLabels, $entityLabels);
-            } else {
-                $insertLabels = [];
-                $deleteLabels = $this->_oldEntityLabels;
-            }
-        }
-
-        if ($insertLabels || $deleteLabels) {
-            $db = Yii::$app->getDb();
-            $cmd = $db->createCommand();
-            $transaction = $db->beginTransaction();
-            try {
-                $primaryKeyValue = $this->getPrimaryKey();
-                // Insert data
-                if ($insertLabels) {
-                    $rows = [];
-                    $userId = Yii::$app->getUser()->getId() ?: 0;
-                    $now = time();
-                    foreach ($insertLabels as $labelId) {
-                        $rows[] = [$primaryKeyValue, static::class, $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
-                    }
-                    if ($rows) {
-                        $cmd->batchInsert('{{%entity_label}}', ['entity_id', 'model_name', 'label_id', 'enabled', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], $rows)->execute();
-                        $cmd->update('{{%label}}', [
-                            'frequency' => new Expression('frequency + 1')
-                        ], ['id' => $insertLabels])->execute();
-                    }
-                }
-                // Delete data
-                if ($deleteLabels) {
-                    $cmd->delete('{{%entity_label}}', [
-                        'entity_id' => $primaryKeyValue,
-                        'model_name' => static::class,
-                        'label_id' => $deleteLabels
-                    ])->execute();
-                    $cmd->update('{{%label}}', [
-                        'frequency' => new Expression('frequency - 1')
-                    ], ['id' => $deleteLabels])->execute();
-                }
-                $transaction->commit();
-            } catch (Exception $e) {
-                $transaction->rollback();
-                throw new HttpException('500', $e->getMessage());
-            }
-        }
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function afterDelete()
-    {
-        parent::afterDelete();
-        // Delete label relation data and update label frequency value
-        Yii::$app->getDb()->transaction(function ($db) {
-            /* @var $db \yii\db\Connection */
-            $labels = $db->createCommand('SELECT [[id]], [[label_id]] FROM {{%entity_label}} WHERE [[entity_id]] = :entityId AND [[model_name]] = :modelName', [
-                ':entityId' => $this->getPrimaryKey(),
-                ':modelName' => static::class
-            ])->queryAll();
-            if ($labels) {
-                $ids = $labelIds = [];
-                foreach ($labels as $label) {
-                    $ids[] = $label['id'];
-                    $labelIds[] = $label['label_id'];
-                }
-                $cmd = $db->createCommand();
-                $cmd->delete('{{%entity_label}}', ['id' => $ids])->execute();
-                $cmd->update('{{%label}}', [
-                    'frequency' => new Expression('frequency - 1')
-                ], ['id' => $labelIds])->execute();
-            }
-        });
     }
 
 }

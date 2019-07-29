@@ -109,6 +109,11 @@ class BaseLookup extends BaseActiveRecord
         ]);
     }
 
+    /**
+     * 类型选项
+     *
+     * @return array
+     */
     public static function getTypeOptions()
     {
         return [
@@ -162,6 +167,11 @@ class BaseLookup extends BaseActiveRecord
         return isset($options[$this->return_type]) ? $options[$this->return_type] : null;
     }
 
+    /**
+     * 输入方式选项
+     *
+     * @return array
+     */
     public static function inputMethodOptions()
     {
         return [
