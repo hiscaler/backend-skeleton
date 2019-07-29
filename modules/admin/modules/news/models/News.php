@@ -2,7 +2,7 @@
 
 namespace app\modules\admin\modules\news\models;
 
-use app\models\BaseActiveRecord;
+use app\models\BaseWithLabelActiveRecord;
 use app\models\Constant;
 use app\models\FileUploadConfig;
 use yadjet\behaviors\ImageUploadBehavior;
@@ -33,7 +33,7 @@ use yii\web\UploadedFile;
  * @property int $updated_at 更新时间
  * @property int $updated_by 更新人
  */
-class News extends BaseActiveRecord
+class News extends BaseWithLabelActiveRecord
 {
 
     /**
