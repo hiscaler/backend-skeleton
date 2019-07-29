@@ -2,7 +2,7 @@
 
 namespace app\modules\admin\modules\notice\models;
 
-use app\models\BaseActiveRecord;
+use app\models\BaseWithLabelActiveRecord;
 use app\models\Constant;
 use app\models\Member;
 use yii\db\Query;
@@ -26,7 +26,7 @@ use yii\helpers\StringHelper;
  * @property int $updated_at 更新时间
  * @property int $updated_by 更新人
  */
-class Notice extends BaseActiveRecord
+class Notice extends BaseWithLabelActiveRecord
 {
 
     /**
