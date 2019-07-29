@@ -2,6 +2,8 @@
 
 namespace app\modules\api\modules\finance;
 
+use Yii;
+
 /**
  * `finance` 模块接口
  *
@@ -22,7 +24,7 @@ class Module extends \app\modules\api\Module
     public function init()
     {
         parent::init();
-        \Yii::$app->setComponents([
+        Yii::$app->setComponents([
             'formatter' => [
                 'class' => 'app\modules\api\modules\finance\extensions\Formatter',
             ],
