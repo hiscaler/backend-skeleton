@@ -179,7 +179,7 @@ class News extends BaseWithLabelActiveRecord
 
     /**
      * @throws \yii\base\InvalidConfigException
-     * @throws \yii\db\Exception
+     * @throws \Exception
      */
     public function afterFind()
     {
