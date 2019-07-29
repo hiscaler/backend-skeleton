@@ -23,6 +23,8 @@ Backend Skeleton 旨在提供一个通用的后台管理程序，方便用于基
 最低要求 PHP>=5.5.9 版本
 
 ## 安装
+
+### 第一步：安裝第三方扩展
 > 推荐使用[阿里源](https://developer.aliyun.com/composer)
 >
 > 全局配置：
@@ -33,12 +35,20 @@ Backend Skeleton 旨在提供一个通用的后台管理程序，方便用于基
 >
 > composer config -g --unset repos.packagist
 ```bash
-composer update -vvv
+composer install -vvv
 ```
 
-## 执行核心数据表迁移操作
+### 第二步：创建数据库，并修改数据库配置信息
+`config/db.php`
+
+### 第三步 执行核心数据表迁移操作
 ```bash
 yii migrate --migrationPath=@app/migrations
+```
+
+### 第四步：初始化数据
+```bash
+yii init
 ```
 
 ## 创建模块
