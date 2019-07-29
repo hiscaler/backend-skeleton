@@ -16,6 +16,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  * 短信
+ * 短信数据验证以及发送处理
  *
  * @package app\models
  * @author hiscaler <hiscaler@gmail.com>
@@ -26,7 +27,7 @@ class Sms extends Model
     const CACHE_PREFIX = '_SMS_MODEL_';
 
     /**
-     * @var string 发送短信类型
+     * @var string 发送短信类型（场景）
      */
     public $type;
 
@@ -47,7 +48,7 @@ class Sms extends Model
             ['type', 'string', 'min' => 1],
             ['type', 'match', 'pattern' => '/^[a-z]{1,19}[a-z]$/'], // 20 位长度字符串
             ['type', function ($attribute, $params) {
-                $class = ArrayHelper::getValue(Config::get('sms', []), "private.business.{$this->type}");
+                $class = Config::get("sms.private.business.{$this->type}");
                 if (!$class || !class_exists($class)) {
                     $this->addError($attribute, '请在 sms.private.business 项中设置发送业务处理类。');
                 }
@@ -71,15 +72,6 @@ class Sms extends Model
             }],
             ['content', 'string', 'min' => 1, 'max' => 140],
         ];
-    }
-
-    public function beforeValidate()
-    {
-        if (parent::beforeValidate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**
