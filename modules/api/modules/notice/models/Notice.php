@@ -2,11 +2,17 @@
 
 namespace app\modules\api\modules\notice\models;
 
+use app\modules\api\modules\notice\extensions\Formatter;
+use Yii;
+
 class Notice extends \app\modules\admin\modules\notice\models\Notice
 {
 
     public function fields()
     {
+        /* @var $formatter Formatter */
+        $formatter = Yii::$app->getFormatter();
+
         return [
             'id',
             'category_id',
@@ -19,10 +25,8 @@ class Notice extends \app\modules\admin\modules\notice\models\Notice
             'clicks_count',
             'published_at',
             'view_permission',
-            'view_permission_formatted' => function ($model) {
-                $options = Notice::viewPermissionOptions();
-
-                return isset($options[$model->view_permission]) ? $options[$model->view_permission] : null;
+            'view_permission_formatted' => function ($model) use ($formatter) {
+                return $formatter->asNoticeViewPermission($model->view_permission);
             },
             'has_read' => function ($model) {
                 return boolval($model->read);
