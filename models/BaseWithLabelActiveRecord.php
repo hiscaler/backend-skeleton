@@ -89,7 +89,6 @@ class BaseWithLabelActiveRecord extends BaseActiveRecord
      * @param $insert
      * @param $changedAttributes
      * @throws HttpException
-     * @throws \yii\db\Exception
      */
     public function afterSave($insert, $changedAttributes)
     {
@@ -104,49 +103,57 @@ class BaseWithLabelActiveRecord extends BaseActiveRecord
         }
 
         if ($insert) {
-            $insertLabels = $entityLabels;
-            $deleteLabels = [];
+            $insertLabelIds = $entityLabels;
+            $deleteLabelIds = [];
         } else {
             if ($entityLabels) {
-                $insertLabels = array_diff($entityLabels, $this->_oldEntityLabels);
-                $deleteLabels = array_diff($this->_oldEntityLabels, $entityLabels);
+                $insertLabelIds = array_diff($entityLabels, $this->_oldEntityLabels);
+                $deleteLabelIds = array_diff($this->_oldEntityLabels, $entityLabels);
             } else {
-                $insertLabels = [];
-                $deleteLabels = $this->_oldEntityLabels;
+                $insertLabelIds = [];
+                $deleteLabelIds = $this->_oldEntityLabels;
             }
         }
 
-        if ($insertLabels || $deleteLabels) {
+        if ($insertLabelIds || $deleteLabelIds) {
             $db = Yii::$app->getDb();
             $cmd = $db->createCommand();
             $transaction = $db->beginTransaction();
             try {
                 $primaryKeyValue = $this->getPrimaryKey();
                 // Insert data
-                if ($insertLabels) {
+                if ($insertLabelIds) {
                     $rows = [];
                     $userId = Yii::$app->getUser()->getId() ?: 0;
                     $now = time();
-                    foreach ($insertLabels as $labelId) {
-                        $rows[] = [$primaryKeyValue, static::class, $labelId, Constant::BOOLEAN_TRUE, static::DEFAULT_ORDERING_VALUE, $userId, $now, $userId, $now];
+                    foreach ($insertLabelIds as $labelId) {
+                        $rows[] = [
+                            'entity_id' => $primaryKeyValue,
+                            'model_name' => static::class,
+                            'label_id' => $labelId,
+                            'enabled' => Constant::BOOLEAN_TRUE,
+                            'ordering' => static::DEFAULT_ORDERING_VALUE,
+                            'created_by' => $userId,
+                            'created_at' => $now,
+                            'updated_by' => $userId,
+                            'updated_at' => $now,
+                        ];
                     }
-                    if ($rows) {
-                        $cmd->batchInsert('{{%entity_label}}', ['entity_id', 'model_name', 'label_id', 'enabled', 'ordering', 'created_by', 'created_at', 'updated_by', 'updated_at'], $rows)->execute();
-                        $cmd->update('{{%label}}', [
-                            'frequency' => new Expression('frequency + 1')
-                        ], ['id' => $insertLabels])->execute();
-                    }
+                    $cmd->batchInsert('{{%entity_label}}', array_keys($rows[0]), $rows)->execute();
+                    $cmd->update('{{%label}}', [
+                        'frequency' => new Expression('frequency + 1')
+                    ], ['id' => $insertLabelIds])->execute();
                 }
                 // Delete data
-                if ($deleteLabels) {
+                if ($deleteLabelIds) {
                     $cmd->delete('{{%entity_label}}', [
                         'entity_id' => $primaryKeyValue,
                         'model_name' => static::class,
-                        'label_id' => $deleteLabels
+                        'label_id' => $deleteLabelIds
                     ])->execute();
                     $cmd->update('{{%label}}', [
                         'frequency' => new Expression('frequency - 1')
-                    ], ['id' => $deleteLabels])->execute();
+                    ], ['id' => $deleteLabelIds])->execute();
                 }
                 $transaction->commit();
             } catch (Exception $e) {
