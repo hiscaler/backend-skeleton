@@ -1,5 +1,8 @@
 <?php
 $this->context->layout = false;
+
+use yii\helpers\Url;
+
 ?>
 <!doctype html>
 <html lang="zh-CN">
@@ -20,13 +23,13 @@ $this->context->layout = false;
 <header id="header" class="wrapper">
     <div id="header-inner" class="inner">
         <h1 id="logo-wrap">
-            <a href="<?= \yii\helpers\Url::toRoute(['help/index']) ?>" id="logo">帮助文档</a>
+            <a href="<?= Url::toRoute(['help/index']) ?>" id="logo">帮助文档</a>
         </h1>
         <nav id="main-nav">
-            <a href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => 'db-dict']) ?>" class="main-nav-link<?= $type == 'db-dict' ? ' main-nav-link-active' : '' ?>">数据词典</a>
-            <a href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => 'api']) ?>" class="main-nav-link<?= $type == 'api' ? ' main-nav-link-active' : '' ?>">接口文档</a>
-            <a href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => 'guide']) ?>" class="main-nav-link<?= $type == 'guide' ? ' main-nav-link-active' : '' ?>">开发手册</a>
-            <a target="_blank" href="<?= \yii\helpers\Url::toRoute(['/api/default/index']) ?>" class="main-nav-link">API</a>
+            <a href="<?= Url::toRoute(['help/index', 'type' => 'db-dict']) ?>" class="main-nav-link<?= $type == 'db-dict' ? ' main-nav-link-active' : '' ?>">数据词典</a>
+            <a href="<?= Url::toRoute(['help/index', 'type' => 'api']) ?>" class="main-nav-link<?= $type == 'api' ? ' main-nav-link-active' : '' ?>">接口文档</a>
+            <a href="<?= Url::toRoute(['help/index', 'type' => 'guide']) ?>" class="main-nav-link<?= $type == 'guide' ? ' main-nav-link-active' : '' ?>">开发手册</a>
+            <a target="_blank" href="<?= Url::toRoute(['/api/default/index']) ?>" class="main-nav-link">API</a>
         </nav>
     </div>
 </header>
@@ -52,7 +55,7 @@ $this->context->layout = false;
                                     $name = "$key.$name";
                                 }
                                 ?>
-                                <a class="sidebar-link<?= $name == $file ? ' current' : '' ?>" href="<?= \yii\helpers\Url::toRoute(['help/index', 'type' => $type, 'file' => $name]) ?>"><?= $title ?></a>
+                                <a class="sidebar-link<?= $name == $file ? ' current' : '' ?>" href="<?= Url::toRoute(['help/index', 'type' => $type, 'file' => $name]) ?>"><?= $title ?></a>
                             <?php endforeach; ?>
                         <?php endforeach; ?>
                     </div>

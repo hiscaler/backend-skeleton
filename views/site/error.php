@@ -6,6 +6,7 @@
 /* @var $exception Exception */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 $this->title = $name;
 ?>
@@ -19,7 +20,7 @@ $this->title = $name;
     </div>
     <div class="weui-msg__opr-area">
         <p class="weui-btn-area">
-            <a href="<?= \yii\helpers\Url::toRoute(['/site/index']) ?>" class="weui-btn weui-btn_primary">·µ»ØÊ×Ò³</a>
+            <a href="<?= Url::toRoute(['/site/index']) ?>" class="weui-btn weui-btn_primary">è¿”å›žé¦–é¡µ</a>
         </p>
     </div>
 </div>
