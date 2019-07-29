@@ -70,7 +70,7 @@ class Link extends BaseActiveRecord
     public function transactions()
     {
         return [
-            self::SCENARIO_DELETE => self::OP_DELETE,
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 
@@ -138,16 +138,16 @@ class Link extends BaseActiveRecord
     public static function typeOptions()
     {
         return [
-            self::TYPE_TEXT => Yii::t('link.model', 'Text'),
-            self::TYPE_PICTURE => Yii::t('link.model', 'Picture'),
+            self::TYPE_TEXT => Yii::t('link', 'Text'),
+            self::TYPE_PICTURE => Yii::t('link', 'Picture'),
         ];
     }
 
     public static function urlOpenTargetOptions()
     {
         return [
-            self::URL_OPEN_TARGET_SELF => Yii::t('link.model', 'Self'),
-            self::URL_OPEN_TARGET_BLANK => Yii::t('link.model', 'Blank')
+            self::URL_OPEN_TARGET_SELF => Yii::t('link', 'Self'),
+            self::URL_OPEN_TARGET_BLANK => Yii::t('link', 'Blank')
         ];
     }
 

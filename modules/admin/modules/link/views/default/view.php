@@ -21,7 +21,7 @@ $this->params['menus'] = [
         'attributes' => [
             'id',
             'category.name',
-            'type',
+            'type:linkType',
             'title',
             'description',
             'url:url',

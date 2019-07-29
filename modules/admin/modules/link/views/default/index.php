@@ -1,6 +1,8 @@
 <?php
 
+use app\modules\admin\components\JsBlock;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
@@ -38,12 +40,16 @@ $this->params['menus'] = [
             ],
             [
                 'attribute' => 'type',
-                'format' => 'type',
+                'format' => 'linkType',
                 'contentOptions' => ['style' => 'width: 60px; text-align: center']
             ],
-            'title',
-            'description',
-            'url:url',
+            [
+                'attribute' => 'title',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Html::a($model['title'], $model['url'], ['title' => $model['description']]);
+                },
+            ],
             //'url_open_target:url',
             //'logo',
             [
@@ -84,8 +90,8 @@ $this->params['menus'] = [
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
-<?php \app\modules\admin\components\JsBlock::begin() ?>
+<?php JsBlock::begin() ?>
 <script type="text/javascript">
-    yadjet.actions.toggle("table td.boolean-handler img", "<?= Url::toRoute('toggle') ?>");
+  yadjet.actions.toggle("table td.boolean-handler img", "<?= Url::toRoute('toggle') ?>");
 </script>
-<?php \app\modules\admin\components\JsBlock::end() ?>
+<?php JsBlock::end() ?>

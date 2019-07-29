@@ -7,15 +7,13 @@ use app\modules\admin\modules\link\models\Link;
 class Formatter extends \app\modules\admin\extensions\Formatter
 {
 
-    public $nullDisplay = '';
-
     /**
-     * 任务状态
+     * 链接类型
      *
      * @param integer $value
      * @return mixed
      */
-    public function asType($value)
+    public function asLinkType($value)
     {
         if ($value === null) {
             return $this->nullDisplay;
