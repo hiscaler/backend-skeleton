@@ -29,6 +29,7 @@ class BaseFileUploadConfig extends BaseActiveRecord
 
     public $model_attribute;
 
+    const CACHE_KEY = 'app.models.FileUploadConfig.getConfigs';
     /**
      * Upload file types
      */
@@ -54,7 +55,12 @@ class BaseFileUploadConfig extends BaseActiveRecord
         return array_merge(parent::rules(), [
             [['type', 'model_attribute', 'extensions', 'min_size', 'max_size'], 'required'],
             ['model_name', 'match', 'pattern' => '/^[a-zA-Z\\\]+$/'],
-            ['extensions', 'match', 'pattern' => '/^[a-z0-9,]+$/'],
+            ['extensions', 'trim'],
+            ['extensions', 'match', 'pattern' => '/^[a-z0-9,]+$/', 'when' => function ($model) {
+                return $model->extensions != '*';
+            }, 'whenClient' => "function (attribute, value) {
+                return value !== '*';
+            }"],
             ['attribute', 'match', 'pattern' => '/^[a-zA-Z0-9_]+$/'],
             [['model_name', 'attribute'], 'unique', 'targetAttribute' => ['model_name', 'attribute']],
             [['type', 'min_size', 'max_size', 'thumb_width', 'thumb_height', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
@@ -131,9 +137,8 @@ class BaseFileUploadConfig extends BaseActiveRecord
      */
     public static function getConfigs($pairs = [])
     {
-        $cacheKey = 'app.models.FileUploadConfig.getConfigs';
         $cache = Yii::$app->getCache();
-        $cacheData = $cache->get($cacheKey);
+        $cacheData = $cache->get(self::CACHE_KEY);
         if ($cacheData === false) {
             $configs = [];
             foreach ($pairs as $key => $value) {
@@ -161,7 +166,7 @@ class BaseFileUploadConfig extends BaseActiveRecord
                 }
             }
 
-            $cache->set($cacheKey, $configs, 0, new DbDependency([
+            $cache->set(self::CACHE_KEY, $configs, 0, new DbDependency([
                 'sql' => 'SELECT MAX(updated_at) FROM {{%file_upload_config}}',
             ]));
 
@@ -298,6 +303,20 @@ class BaseFileUploadConfig extends BaseActiveRecord
         } else {
             return false;
         }
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if (!$insert && $changedAttributes) {
+            Yii::$app->getCache()->delete(self::CACHE_KEY);
+        }
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        Yii::$app->getCache()->delete(self::CACHE_KEY);
     }
 
 }
