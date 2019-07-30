@@ -33,7 +33,6 @@ class ApplicationHelper
      */
     public static function hasRequireCheckAuth()
     {
-        $user = Yii::$app->getUser();
         $rbacConfig = Config::get('rbac', []);
         $has = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
         if ($has) {
@@ -42,6 +41,7 @@ class ApplicationHelper
                 $ignoreUsers = [];
             }
             if ($ignoreUsers) {
+                $user = Yii::$app->getUser();
                 if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
                     $has = false;
                 }
@@ -134,6 +134,10 @@ class ApplicationHelper
             }
             $item['items'] = $moduleMenus;
             $item['url'] = $moduleMenus[0]['url'];
+        }
+
+        if (!isset($item['items'][1])) {
+            $item['items'] = [];
         }
 
         if ($requireCheckAuth) {

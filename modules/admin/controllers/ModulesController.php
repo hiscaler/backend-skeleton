@@ -368,14 +368,16 @@ class ModulesController extends Controller
                     $success = true;
                     $item = ApplicationHelper::generateControlPanelModuleItem($column);
                     if ($item) {
-                        $html = '<li class="clearfix"><a id="control-panel-module-' . $column['alias'] . '" href="' . Url::toRoute($item['url']) . '"></a>';
-                        $html .= \yii\widgets\Menu::widget([
-                            'items' => [$item],
-                            'itemOptions' => ['class' => 'clearfix'],
-                            'firstItemCssClass' => 'first',
-                            'lastItemCssClass' => 'last',
-                            'activateParents' => true,
-                        ]);
+                        $html = '<li class="clearfix"><a id="control-panel-module-' . $column['alias'] . '" href="' . Url::toRoute($item['url']) . '">' . ($item['items'] ? '' : $item['label']) . '</a>';
+                        if ($item['items']) {
+                            $html .= \yii\widgets\Menu::widget([
+                                'items' => [$item],
+                                'itemOptions' => ['class' => 'clearfix'],
+                                'firstItemCssClass' => 'first',
+                                'lastItemCssClass' => 'last',
+                                'activateParents' => true,
+                            ]);
+                        }
                         $html .= '</li>';
                     }
                 } catch (\Exception $ex) {
@@ -448,12 +450,12 @@ class ModulesController extends Controller
     /**
      * 更新模块
      *
-     * @todo 数据及文件的处理
-     *
-     * @rbacDescription 模块更新权限
      * @param $alias
      * @return Response
      * @throws \yii\db\Exception
+     * @todo 数据及文件的处理
+     *
+     * @rbacDescription 模块更新权限
      */
     public function actionUpgrade($alias)
     {

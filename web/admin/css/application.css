@@ -877,17 +877,21 @@ ul.list li em {
     display: inline-block;
 }
 
+.widget-module .hd em {
+    font-weight: bold;
+}
+
 .widget-module .hd span.icon {
     float: left;
-    width: 32px;
-    height: 32px;
-    margin: 4px 10px 0 0;
+    width: 20px;
+    height: 20px;
+    margin: 10px 10px 0 0;
     background: none;
 }
 
 .widget-module .hd span.icon img {
-    width: 32px;
-    height: 32px;
+    width: 20px;
+    height: 20px;
 }
 
 .widget-module .hd span.buttons {
