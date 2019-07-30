@@ -2,6 +2,8 @@
 
 namespace app\modules\admin\modules\rbac;
 
+use Yii;
+
 /**
  * `rbac` 子模块
  *
@@ -21,7 +23,7 @@ class Module extends \app\modules\admin\Module
     public function init()
     {
         parent::init();
-        \Yii::$app->setComponents([
+        Yii::$app->setComponents([
             'formatter' => [
                 'class' => 'app\modules\admin\modules\rbac\extensions\Formatter',
             ],

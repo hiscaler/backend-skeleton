@@ -20,6 +20,9 @@ class Controller extends \yii\rest\Controller
     /** @var \yii\rbac\DbManager $auth */
     protected $auth;
 
+    /**
+     * @throws Exception
+     */
     public function init()
     {
         parent::init();

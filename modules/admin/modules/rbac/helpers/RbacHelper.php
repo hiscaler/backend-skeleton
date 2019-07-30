@@ -2,8 +2,7 @@
 
 namespace app\modules\admin\modules\rbac\helpers;
 
-use app\modules\admin\components\ApplicationHelper;
-use Yii;
+use app\helpers\Config;
 
 trait RbacHelper
 {
@@ -46,7 +45,7 @@ trait RbacHelper
         if ($this instanceof \yii\web\Controller) {
             $options = property_exists($this->module, 'options') ? $this->module->options : [];
 
-            $defaultModuleOptions = ApplicationHelper::getConfigValue('rbac', $this->defaultModuleOptions);
+            $defaultModuleOptions = Config::get('rbac', $this->defaultModuleOptions);
             if ($defaultModuleOptions) {
                 $options = \yii\helpers\ArrayHelper::merge($defaultModuleOptions, $options);
             }
