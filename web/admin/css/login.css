@@ -5,7 +5,7 @@ Author     : hiscaler <hiscaler@gmail.com>
 Description: 登录样式
 */
 body {
-    background: #cadff0 url(../images/login/bg1.jpg) no-repeat;
+    background: #cadff0 url(../images/login/body.jpg) no-repeat;
     font: 13px/1.5 \5FAE\8F6F\96C5\9ED1, tahoma, arial, \5b8b\4f53, sans-serif;
     margin: 0;
     padding: 0;
@@ -18,7 +18,7 @@ li {
 }
 
 #logo {
-    margin: 100px auto 0 auto;
+    margin: 10% auto 0 auto;
     text-align: center;
     color: #FFFFFF;
     font-size: 3em;
@@ -26,14 +26,14 @@ li {
 }
 
 #in {
-    background: url(../images/login/bg1.gif) no-repeat;
+    background: url(../images/login/form.png) no-repeat;
     height: 282px;
     margin: 0 auto;
     width: 633px;
 }
 
 #left {
-    background: url(../images/login/soft.jpg) no-repeat;
+    background: url(../images/login/logo.png) no-repeat;
     display: inline;
     float: left;
     height: 143px;
@@ -47,6 +47,10 @@ li {
     width: 350px;
 }
 
+#right .no-verify-code {
+    padding-top: 32px;
+}
+
 #right ul {
     _margin-top: 40px;
     margin-top: 50px;
@@ -58,21 +62,33 @@ li {
     display: block;
 }
 
-#right li.field-loginform-verifycode #loginform-verifycode-image {
+#right li.has-error input {
+    border-color: #c60000;
+}
+
+#right li.field-loginform-verify_code #loginform-verify_code-image {
     position: absolute;
-    margin-top: 0px;
+    margin-top: 0;
 }
 
 #right label {
     display: block;
     float: left;
-    width: 66px;
+    width: 60px;
     height: 30px;
     line-height: 30px;
 }
 
-#right .field-loginform-rememberme label {
+#right .field-loginform-remember_me {
+    display: inline-block;
+}
+
+#right .field-loginform-remember_me label {
     width: 100px;
+}
+
+#right .field-loginform-remember_me label input {
+    vertical-align: middle;
 }
 
 #right .button {
@@ -81,7 +97,7 @@ li {
     height: 30px;
     width: 90px;
     cursor: pointer;
-    margin-left: 66px;
+    margin-left: 60px;
 }
 
 #right input.form-control {
@@ -94,9 +110,9 @@ li {
     border-radius: 4px;
 }
 
-#right input#loginform-verifycode {
+#right input#loginform-verify_code {
     width: 66px;
-    margin-right: 10px;
+    margin-right: 0;
     text-align: center;
 }
 
@@ -105,8 +121,8 @@ li {
 }
 
 .help-block {
-    color: #F57D0B;
-    padding-left: 68px;
+    color: #c60000;
+    padding-left: 62px;
     margin-top: 5px;
 }
 

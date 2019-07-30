@@ -15,7 +15,7 @@ $name = Lookup::getValue('custom.site.name') ?: Yii::$app->name;
     <meta name="robots" content="none" />
     <meta HTTP-EQUIV="pragma" CONTENT="no-cache" />
     <meta name="language" content="en" />
-    <link rel="stylesheet" type="text/css" href="<?= Yii::$app->getRequest()->baseUrl . '/admin/css/login.css' ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= Yii::$app->getRequest()->getBaseUrl() . '/admin/css/login.css' ?>" />
     <title>后台管理登录 - <?= $name ?></title>
 </head>
 <body>
@@ -33,6 +33,9 @@ $name = Lookup::getValue('custom.site.name') ?: Yii::$app->name;
         $form = ActiveForm::begin([
             'id' => 'login-form',
             'enableAjaxValidation' => false,
+            'options' => [
+                'class' => Config::get('hideCaptcha') ? 'no-verify-code' : '',
+            ]
         ]);
         ?>
         <ul>
@@ -50,7 +53,7 @@ $name = Lookup::getValue('custom.site.name') ?: Yii::$app->name;
             ?>
             <li>
                 <input type="submit" name="bt_login" id="bt_login" value="" class="button" />
-                <?= $form->field($model, 'remember_me', ['options' => ['style' => 'display: inline-block;']])->checkbox(); ?>
+                <?= $form->field($model, 'remember_me')->checkbox(); ?>
             </li>
         </ul>
         <?php ActiveForm::end(); ?>
