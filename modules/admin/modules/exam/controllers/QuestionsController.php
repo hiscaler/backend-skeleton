@@ -55,7 +55,7 @@ class QuestionsController extends Controller
     {
         $searchModel = new QuestionSearch();
         $searchModel['question_bank_id'] = (int) $questionBankId;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'questionBankId' => $questionBankId,
@@ -91,11 +91,11 @@ class QuestionsController extends Controller
         $model->question_bank_id = (int) $questionBankId;
         $model->loadDefaultValues();
 
-        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
+        if (Yii::$app->getRequest()->isAjax && $model->load(Yii::$app->getRequest()->post())) {
+            Yii::$app->getResponse()->format = Response::FORMAT_JSON;
 
             return ActiveForm::validate($model);
-        } elseif ($model->load(Yii::$app->request->post()) && $model->save()) {
+        } elseif ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -117,11 +117,11 @@ class QuestionsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
+        if (Yii::$app->getRequest()->isAjax && $model->load(Yii::$app->getRequest()->post())) {
+            Yii::$app->getResponse()->format = Response::FORMAT_JSON;
 
             return ActiveForm::validate($model);
-        } elseif ($model->load(Yii::$app->request->post()) && $model->save()) {
+        } elseif ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [

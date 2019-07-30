@@ -54,7 +54,7 @@ class QuestionBanksController extends Controller
     public function actionIndex()
     {
         $searchModel = new QuestionBankSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -86,7 +86,7 @@ class QuestionBanksController extends Controller
         $model = new QuestionBank();
         $model->loadDefaultValues();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -107,7 +107,7 @@ class QuestionBanksController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [

@@ -4,6 +4,12 @@ namespace app\modules\admin\modules\link\extensions;
 
 use app\modules\admin\modules\link\models\Link;
 
+/**
+ * Class Formatter
+ *
+ * @package app\modules\admin\modules\link\extensions
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class Formatter extends \app\modules\admin\extensions\Formatter
 {
 
