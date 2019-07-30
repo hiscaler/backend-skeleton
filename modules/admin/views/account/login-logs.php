@@ -4,7 +4,9 @@ use yii\helpers\Html;
 
 $formatter = Yii::$app->getFormatter();
 
-$this->params['breadcrumbs'][] = Yii::t('app', 'Login Logs');
+$this->title = Yii::t('app', 'Login Logs');
+$this->params['breadcrumbs'][] = ['label' => '帐户管理', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="widget-user-login-logs">
     <div class="bd">

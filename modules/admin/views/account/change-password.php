@@ -2,8 +2,9 @@
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
 
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Users'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Change Password');
+$this->title = Yii::t('app', 'Change Password');
+$this->params['breadcrumbs'][] = ['label' => '帐户管理', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 
 $session = Yii::$app->getSession();
 if ($session->hasFlash('notice')):

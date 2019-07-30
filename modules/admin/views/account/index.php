@@ -7,7 +7,9 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\User */
 /* @var $form yii\widgets\ActiveForm */
 
-$this->params['breadcrumbs'][] = '帐号资料';
+$this->title = '帐号资料';
+$this->params['breadcrumbs'][] = ['label' => '帐户管理', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 
 $session = Yii::$app->getSession();
 if ($session->hasFlash('notice')):
