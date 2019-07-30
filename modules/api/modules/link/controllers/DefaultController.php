@@ -5,6 +5,7 @@ namespace app\modules\api\modules\link\controllers;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\modules\link\models\Link;
 use app\modules\api\modules\link\models\LinkSearch;
+use Yii;
 
 /**
  * /api/link/default
@@ -33,7 +34,7 @@ class DefaultController extends ActiveController
     {
         $search = new LinkSearch();
 
-        return $search->search(\Yii::$app->getRequest()->getQueryParams());
+        return $search->search(Yii::$app->getRequest()->getQueryParams());
     }
 
 }

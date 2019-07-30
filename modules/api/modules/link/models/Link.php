@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\link\models;
 
-use Yii;
+use app\modules\api\extensions\UtilsHelper;
 
 class Link extends \app\modules\admin\modules\link\models\Link
 {
@@ -11,17 +11,19 @@ class Link extends \app\modules\admin\modules\link\models\Link
     {
         return [
             'id',
-            'category_id' => '',
+            'category_id',
             'type',
             'title',
             'description',
             'url',
             'url_open_target',
             'logo' => function ($model) {
-                return $model->logo ? (Yii::$app->getRequest()->getHostInfo() . $model->logo) : null;
+                return UtilsHelper::fixStaticAssetUrl($model['logo']);
             },
             'ordering',
-            'enabled',
+            'enabled' => function ($model) {
+                return boolval($model['enabled']);
+            },
             'created_at',
             'created_by',
             'updated_at',
