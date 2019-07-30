@@ -10,6 +10,7 @@ use app\models\Meta;
 use app\modules\admin\forms\ChangePasswordForm;
 use app\modules\admin\forms\CreateMemberForm;
 use app\modules\admin\forms\DynamicForm;
+use DateTime;
 use yadjet\helpers\ArrayHelper;
 use Yii;
 use yii\filters\AccessControl;
@@ -227,7 +228,13 @@ class MembersController extends Controller
      */
     public function actionStatistics()
     {
+        $datetime = new DateTime();
+        $endDate = $datetime->format('Y-m-d');
+        $beginDate = $datetime->modify("-10 days")->format('Y-m-d');
+
         return $this->render('statistics', [
+            'beginDate' => $beginDate,
+            'endDate' => $endDate,
             'accessToken' => App::getFakeMemberAccessToken(),
         ]);
     }

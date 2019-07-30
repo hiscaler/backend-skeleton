@@ -33,9 +33,9 @@ $this->params['menus'] = [
             </div>
             <div class="form-group field-membersearch-type has-success">
                 <label class="control-label" for="beginDate">起始时间</label>
-                <input class="h5-date-picker form-control" type="date" id="beginDate" name="beginDate" />
+                <input class="h5-date-picker form-control" type="date" id="beginDate" name="beginDate" value="<?= $beginDate ?>" />
                 -
-                <input class="h5-date-picker form-control" type="date" id="endDate" name="endDate" />
+                <input class="h5-date-picker form-control" type="date" id="endDate" name="endDate" value="<?= $endDate ?>" />
             </div>
         </div>
         <div class="form-group buttons">
@@ -57,25 +57,23 @@ $this->params['menus'] = [
 
     let myChart = echarts.init(document.getElementById('chart'));
     $('#btn-statistics').on('click', function () {
-        const beginDate = $('#beginDate').val();
-        const endDate = $('#endDate').val();
-        const type = $('#type').val();
-        statistic(beginDate, endDate, type);
+        statistic();
     });
 
     $(function () {
         statistic();
     });
 
-    function statistic(beginDate = null, endDate = null, type = 'date') {
+    function statistic() {
+        const beginDate = $('#beginDate').val();
+        const endDate = $('#endDate').val();
         let params = {
-            type: type
+            type: $('#type').val()
         };
         if (beginDate && endDate) {
             params.beginDate = beginDate;
             params.endDate = endDate;
         }
-        console.info(params);
         axios.get(yadjet.urls.member.statistics, {
             params: params,
         }).then(function (response) {
