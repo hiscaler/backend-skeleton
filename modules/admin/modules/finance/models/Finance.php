@@ -5,6 +5,7 @@ namespace app\modules\admin\modules\finance\models;
 use app\helpers\Config;
 use app\models\FileUploadConfig;
 use app\models\Member;
+use Exception;
 use yadjet\behaviors\ImageUploadBehavior;
 use Yii;
 use yii\db\Expression;
@@ -259,7 +260,7 @@ class Finance extends \yii\db\ActiveRecord
             if ($this->call_business_process && ($class = Config::get("module.finance.business.class")) && class_exists($class)) {
                 try {
                     call_user_func_array([new $class(), 'process'], [$insert, $changedAttributes, $this]);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Yii::error($e->getMessage());
                 }
             }
