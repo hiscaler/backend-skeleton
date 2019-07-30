@@ -15,8 +15,8 @@ class LoginForm extends Model
 
     public $username;
     public $password;
-    public $rememberMe = true;
-    public $verifyCode;
+    public $remember_me = true;
+    public $verify_code;
     private $_user = false;
 
     /**
@@ -27,14 +27,14 @@ class LoginForm extends Model
         $rules = [
             // username and password are both required
             [['username', 'password'], 'required'],
-            // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
+            // remember_me must be a boolean value
+            ['remember_me', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
 
         if (Config::get('hideCaptcha') === false) {
-            $rules[] = ['verifyCode', 'captcha', 'captchaAction' => '/admin/default/captcha'];
+            $rules[] = ['verify_code', 'captcha', 'captchaAction' => '/admin/default/captcha'];
         }
 
         return $rules;
@@ -70,7 +70,7 @@ class LoginForm extends Model
         if ($this->validate()) {
             $user = $this->getUser();
 
-            return Yii::$app->getUser()->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
+            return Yii::$app->getUser()->login($user, $this->remember_me ? 3600 * 24 * 30 : 0);
         } else {
             return false;
         }
@@ -98,8 +98,8 @@ class LoginForm extends Model
         return [
             'username' => '帐　号',
             'password' => '密　码',
-            'verifyCode' => '验证码',
-            'rememberMe' => '记住登录',
+            'verify_code' => '验证码',
+            'remember_me' => '记住登录',
         ];
     }
 
