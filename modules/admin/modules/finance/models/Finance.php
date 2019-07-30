@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\finance\models;
 
+use app\helpers\Config;
 use app\models\FileUploadConfig;
 use app\models\Member;
 use yadjet\behaviors\ImageUploadBehavior;
@@ -255,9 +256,8 @@ class Finance extends \yii\db\ActiveRecord
                 'balance' => $availableMoney
             ], ['id' => $this->id])->execute();
 
-            if ($this->call_business_process && isset(Yii::$app->params['module']['finance']['business']['class']) && class_exists(Yii::$app->params['module']['finance']['business']['class'])) {
+            if ($this->call_business_process && ($class = Config::get("module.finance.business.class")) && class_exists($class)) {
                 try {
-                    $class = Yii::$app->params['module']['finance']['business']['class'];
                     call_user_func_array([new $class(), 'process'], [$insert, $changedAttributes, $this]);
                 } catch (\Exception $e) {
                     Yii::error($e->getMessage());

@@ -2,9 +2,11 @@
 
 namespace app\modules\admin\modules\miniProgram\controllers;
 
+use app\helpers\Config;
 use app\modules\admin\extensions\BaseController;
 use EasyWeChat\Foundation\Application;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
 
 /**
@@ -15,10 +17,14 @@ use yii\filters\AccessControl;
 class DefaultController extends BaseController
 {
 
+    /**
+     *
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
-        if (!isset(Yii::$app->params['wechat']) || !is_array(Yii::$app->params['wechat'])) {
+        if (!Config::get("wechat")) {
             throw new InvalidConfigException('无效的微信参数配置。');
         }
     }
