@@ -23,7 +23,7 @@ class m180206_064203_create_feedback_table extends Migration
             'tel' => $this->string(20)->comment('电话号码'),
             'mobile_phone' => $this->string(11)->comment('手机号码'),
             'email' => $this->string(60)->comment('邮箱'),
-            'ip' => $this->integer()->notNull()->comment('IP 地址'),
+            'ip' => $this->string(39)->notNull()->comment('IP 地址'),
             'picture' => $this->string(100)->comment('图片'),
             'message' => $this->text()->notNull()->comment('内容'),
             'response_message' => $this->text()->comment('回复内容'),
@@ -45,4 +45,5 @@ class m180206_064203_create_feedback_table extends Migration
     {
         $this->dropTable('{{%feedback}}');
     }
+
 }

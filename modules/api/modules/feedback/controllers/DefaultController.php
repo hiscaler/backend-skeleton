@@ -4,14 +4,14 @@ namespace app\modules\api\modules\feedback\controllers;
 
 use app\models\Meta;
 use app\modules\admin\forms\DynamicForm;
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\yii\rest\CreateAction;
 use app\modules\api\modules\feedback\models\Feedback;
+use app\modules\api\modules\feedback\models\FeedbackSearch;
 use Yii;
 use yii\base\InvalidArgumentException;
-use yii\data\ActiveDataProvider;
-use yii\db\ActiveQuery;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\Inflector;
-use yii\web\NotFoundHttpException;
 
 /**
  * /api/feedback/default
@@ -22,91 +22,55 @@ use yii\web\NotFoundHttpException;
 class DefaultController extends Controller
 {
 
-    public $modelClass = 'app\modules\api\modules\feedback\models\Feedback';
+    public $modelClass = Feedback::class;
 
-    /**
-     * 搜索条件解析
-     *
-     * @param null $fields
-     * @param null $category
-     * @param null $offset
-     * @param null $limit
-     * @return \yii\db\Query
-     */
-    private function parseQuery($fields = null, $category = null, $offset = null, $limit = null)
+    public function actions()
     {
-        $where = [];
-        $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.username', 't.tel', 't.mobile_phone', 't.email', 't.ip', 't.picture', 't.message', 't.response_message', 't.response_datetime', 't.enabled', 't.created_at', 't.created_by', 't.updated_at', 't.updated_by'], $fields, ['category_name' => 't.category_id']);
-        $query = (new ActiveQuery(Feedback::class))
-            ->alias('t')
-            ->select($selectColumns);
+        $actions = parent::actions();
+        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
+        $actions['create']['class'] = CreateAction::class;
+        unset($actions['create']);
 
-        if (in_array('c.name AS category_name', $selectColumns)) {
-            $query->leftJoin('{{%category}} c', 't.category_id = c.id');
-        }
-
-        // 分类查询
-        if ($category) {
-            $where['t.category_id'] = (int) $category;
-        }
-
-        return $query->where($where)
-            ->offset($offset)
-            ->limit($limit)
-            ->orderBy(['t.created_at' => SORT_DESC]);
+        return $actions;
     }
 
     /**
-     * 列表（带翻页）
-     *
-     * @param null $category
-     * @param int $page
-     * @param int $pageSize
-     * @return ActiveDataProvider
-     * @api GET /api/feedback/default?fields=:fields&category=:category&page=:page&pageSize=:pageSize
+     * @return array
      */
-    public function actionIndex($category = null, $page = 1, $pageSize = 20)
+    public function behaviors()
     {
-        return new ActiveDataProvider([
-            'query' => $this->parseQuery(Yii::$app->getRequest()->get('fields'), $category, $page, $pageSize),
-            'pagination' => [
-                'page' => (int) $page - 1,
-                'pageSize' => (int) $pageSize ?: 20
-            ]
+        $behaviors = array_merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'create' => ['POST'],
+                    'delete' => ['POST'],
+                    '*' => ['GET'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'view', 'delete', 'update'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
         ]);
+
+        return $behaviors;
     }
 
     /**
-     * 列表（不带翻页）
-     *
-     * @param null $fields
-     * @param null $category
-     * @param int $offset
-     * @param int $limit
-     * @return ActiveDataProvider
-     * @api GET /api/feedback/default/list?fields=:fields&category=:category&offset=:offset&limit=:limit
+     * @return \yii\data\ActiveDataProvider
      */
-    public function actionList($fields = null, $category = null, $offset = 0, $limit = 10)
+    public function prepareDataProvider()
     {
-        return new ActiveDataProvider([
-            'query' => $this->parseQuery($fields, $category, $offset, $limit),
-            'pagination' => false
-        ]);
-    }
+        $search = new FeedbackSearch();
 
-    /**
-     * 详情
-     *
-     * @param $id
-     * @return null|static
-     * @throws NotFoundHttpException
-     * @api GET /api/feedback/default/view?id=:id
-     */
-    public function actionView($id)
-    {
-        $model = $this->findModel($id);
-
-        return $model;
+        return $search->search(Yii::$app->getRequest()->getQueryParams());
     }
 
     /**
@@ -116,7 +80,7 @@ class DefaultController extends Controller
      * @throws \yii\base\ErrorException
      * @api POST /api/feedback/default/submit
      */
-    public function actionSubmit()
+    public function actionCreate()
     {
         $model = new Feedback();
         $model->loadDefaultValues();
@@ -145,21 +109,6 @@ class DefaultController extends Controller
         } else {
             throw new InvalidArgumentException('未检测到提交的内容。');
         }
-    }
-
-    /**
-     * @param $id
-     * @return Feedback|null
-     * @throws NotFoundHttpException
-     */
-    public function findModel($id)
-    {
-        $model = Feedback::findOne($id);
-        if (!$model) {
-            throw new NotFoundHttpException('记录不存在。');
-        }
-
-        return $model;
     }
 
 }

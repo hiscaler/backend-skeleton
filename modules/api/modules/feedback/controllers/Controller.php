@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\feedback\controllers;
 
-use app\modules\api\extensions\BaseController;
+use app\modules\api\extensions\ActiveController;
 
 /**
  * 基类
@@ -10,7 +10,7 @@ use app\modules\api\extensions\BaseController;
  * @package app\modules\api\modules\feedback\controllers
  * @author hiscaler <hiscaler@gmail.com>
  */
-class Controller extends BaseController
+class Controller extends ActiveController
 {
 
 }

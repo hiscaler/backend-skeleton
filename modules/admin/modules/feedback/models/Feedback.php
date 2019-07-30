@@ -66,7 +66,8 @@ class Feedback extends BaseActiveRecord
     public function rules()
     {
         return [
-            [['category_id', 'ip', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['category_id', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['ip'], 'string', 'max' => 39],
             [['message'], 'required'],
             ['category_id', 'default', 'value' => 0],
             [['title', 'tel', 'mobile_phone', 'email', 'message', 'response_message'], 'trim'],
@@ -128,10 +129,10 @@ class Feedback extends BaseActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $user = \Yii::$app->getUser();
+            $user = Yii::$app->getUser();
             $userId = $user->getIsGuest() ? 0 : $user->getId();
             if ($insert) {
-                $this->ip = ip2long(Yii::$app->getRequest()->getUserIP());
+                $this->ip = Yii::$app->getRequest()->getUserIP();
                 $this->created_by = $this->updated_by = $userId;
                 $this->created_at = $this->updated_at = time();
             } else {
