@@ -6,7 +6,7 @@ use Yii;
 use yii\grid\DataColumn;
 
 /**
- * 根据项目需求改进后的 GridView，支持根据设定显示需要的列
+ * 改进后的 GridView，支持根据设定显示需要的列
  *
  * @author hiscaler <hiscaler@gmail.com>
  */
