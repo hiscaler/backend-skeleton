@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\modules\finance\business;
 
+use app\helpers\Config;
 use app\models\MemberCreditLog;
 use app\modules\admin\modules\finance\models\Finance;
 use Yii;
@@ -23,8 +24,8 @@ class CreditBusiness implements BusinessInterface
     public function process(bool $insert, array $changedAttributes, Finance $finance)
     {
         if ($insert) {
-            if (Yii::$app->params['module']['finance']['business']['exchangeRate']) {
-                $rate = Yii::$app->params['module']['finance']['business']['exchangeRate'];
+            $rate = Config::get('module.finance.business.exchangeRate');
+            if ($rate) {
                 if (stripos($rate, ':') === false) {
                     $rate = '1:1';
                 }
