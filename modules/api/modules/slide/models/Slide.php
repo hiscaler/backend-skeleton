@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\slide\models;
 
-use Yii;
+use app\modules\api\extensions\UtilsHelper;
 
 /**
  * This is the model class for table "{{%slide}}".
@@ -32,10 +32,12 @@ class Slide extends \app\modules\admin\modules\slide\models\Slide
             'url',
             'url_open_target',
             'picture_path' => function ($model) {
-                return $model->picture_path ? (Yii::$app->getRequest()->getHostInfo() . $model->picture_path) : null;
+                return UtilsHelper::fixStaticAssetUrl($model['picture_path']);
             },
             'ordering',
-            'enabled',
+            'enabled' => function ($model) {
+                return boolval($model['enabled']);
+            },
             'created_at',
             'created_by',
             'updated_at',
