@@ -5,6 +5,7 @@ namespace app\modules\admin\modules\feedback\models;
 use app\models\BaseActiveRecord;
 use app\models\FileUploadConfig;
 use yadjet\behaviors\ImageUploadBehavior;
+use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
 use yii\helpers\FileHelper;
 
@@ -69,12 +70,13 @@ class Feedback extends BaseActiveRecord
             [['message'], 'required'],
             ['category_id', 'default', 'value' => 0],
             [['title', 'tel', 'mobile_phone', 'email', 'message', 'response_message'], 'trim'],
-            ['email', 'email'],
             [['message', 'response_message'], 'string'],
             [['title'], 'string', 'max' => 100],
             [['username', 'tel'], 'string', 'max' => 20],
             [['mobile_phone'], 'string', 'max' => 11],
+            ['mobile_phone', MobilePhoneNumberValidator::class],
             [['email'], 'string', 'max' => 60],
+            ['email', 'email'],
             ['enabled', 'boolean'],
             ['picture', 'image',
                 'extensions' => $this->_fileUploadConfig['extensions'],
