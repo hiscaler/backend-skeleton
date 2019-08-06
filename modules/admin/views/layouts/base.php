@@ -45,7 +45,12 @@ $siteName = \app\models\Lookup::getValue('custom.site.name') ?: Yii::$app->name;
     </div>
     <div id="page-ft">
         <div id="footer">
-            Copyright &copy; <?= date('Y'); ?> by <?= $siteName ?> All Rights Reserved.
+            <span class="version">
+               当前版本：V<?= \app\models\Yad::getVersion() ?>
+            </span>
+            <span class="copyright">
+               Copyright &copy; <?= date('Y'); ?> by <?= $siteName ?> All Rights Reserved.
+           </span>
         </div>
     </div>
     <?php $this->endBody() ?>

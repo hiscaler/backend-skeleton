@@ -1066,9 +1066,19 @@ body .layer-fix .layui-layer-content {
  ******************************************************************************/
 #footer {
     margin: 0 auto;
-    text-align: right;
     color: #666666;
-    padding: 10px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 10px;
+}
+
+#footer span.version {
+    float: left;
+    color: forestgreen;
+}
+
+#footer span.copyright {
+    float: right;
 }
 
 #footer p {
