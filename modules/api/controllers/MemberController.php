@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 
+use app\helpers\Config;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\extensions\Formatter;
 use app\modules\api\models\Member;
@@ -12,6 +13,7 @@ use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * api/member/ 接口
@@ -84,6 +86,7 @@ class MemberController extends ActiveController
      * @param null $endDate
      * @param string $type
      * @return array
+     * @throws Exception
      */
     public function actionStatistics($beginDate = null, $endDate = null, $type = self::STATISTICS_TYPE)
     {
@@ -91,10 +94,10 @@ class MemberController extends ActiveController
         $condition = [];
         if ($beginDate && $endDate) {
             try {
-                $beginDate = (new Datetime($beginDate))->getTimestamp();
-                $endDate = (new Datetime($endDate))->getTimestamp();
+                $beginTimestamp = (new Datetime($beginDate))->setTime(0, 0, 0)->getTimestamp();
+                $endTimestamp = (new Datetime($endDate))->setTime(23, 59, 59)->getTimestamp();
                 $condition = [
-                    'BETWEEN', 'created_at', $beginDate, $endDate,
+                    'BETWEEN', 'created_at', $beginTimestamp, $endTimestamp,
                 ];
             } catch (Exception $e) {
             }
@@ -135,6 +138,30 @@ class MemberController extends ActiveController
                         $items[$key]['value'] += 1;
                     }
                 }
+
+                // 填充空白日期
+                reset($items);
+                $t = current($items);
+                $firstDay = $t['name'];
+                $t = end($items);
+                $lastDay = $t['name'];
+                if ($beginDate && $endDate) {
+                    $firstDay != $beginDate && $firstDay = $beginDate;
+                    $lastDay != $endDate && $lastDay = $endDate;
+                }
+                $datetime = new DateTime($firstDay);
+                $days = $datetime->diff(new DateTime($lastDay))->days;
+                for ($i = 0; $i <= $days; $i++) {
+                    $key = $datetime->format('Y-m-d');
+                    if (!isset($items[$key])) {
+                        $items[$key] = [
+                            'name' => $key,
+                            'value' => 0,
+                        ];
+                    }
+                    $datetime->modify('+1 day');
+                }
+                ArrayHelper::multisort($items, 'name', SORT_ASC);
                 break;
         }
 
