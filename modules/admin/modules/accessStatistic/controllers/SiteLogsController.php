@@ -54,7 +54,7 @@ class SiteLogsController extends Controller
     public function actionIndex()
     {
         $searchModel = new AccessStatisticSiteLogSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,

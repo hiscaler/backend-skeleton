@@ -51,7 +51,7 @@ class ConfigsController extends Controller
     public function actionIndex()
     {
         $searchModel = new SigninCreditConfigSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,

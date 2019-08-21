@@ -40,7 +40,7 @@ class WheelAwardsController extends Controller
         $wheel = $this->findWheelModel($wheelId);
         $searchModel = new WheelAwardSearch();
         $searchModel->wheel_id = (int) $wheelId;
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'wheel' => $wheel,

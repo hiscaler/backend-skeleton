@@ -58,7 +58,7 @@ class OptionsController extends Controller
         $vote = $this->findVoteModel($voteId);
         $searchModel = new VoteOptionSearch();
         $searchModel->vote_id = (int) $voteId;
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'vote' => $vote,

@@ -4,13 +4,13 @@ namespace app\modules\admin\modules\feedback\controllers;
 
 use app\models\Category;
 use app\modules\admin\modules\feedback\forms\ReplyForm;
-use Yii;
 use app\modules\admin\modules\feedback\models\Feedback;
 use app\modules\admin\modules\feedback\models\FeedbackSearch;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * 留言反馈数据管理
@@ -55,7 +55,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $searchModel = new FeedbackSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,

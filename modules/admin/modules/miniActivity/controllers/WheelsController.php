@@ -50,7 +50,7 @@ class WheelsController extends Controller
     public function actionIndex()
     {
         $searchModel = new WheelSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,

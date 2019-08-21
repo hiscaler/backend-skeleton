@@ -53,7 +53,7 @@ class DefaultController extends BaseController
     public function actionIndex()
     {
         $searchModel = new VoteSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,

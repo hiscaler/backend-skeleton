@@ -49,7 +49,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $searchModel = new SigninSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,

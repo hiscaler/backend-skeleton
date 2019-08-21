@@ -42,7 +42,7 @@ class WheelLogsController extends Controller
 
         $searchModel = new WheelLogSearch();
         $searchModel->wheel_id = $wheel->id;
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'wheel' => $wheel,

@@ -59,7 +59,7 @@ class DefaultController extends BaseController
     public function actionIndex()
     {
         $searchModel = new ClassicCaseSearch();
-        $dataProvider = $searchModel->search(Yii::$app->getRequest()->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
         return $this->render('index', [
             'searchModel' => $searchModel,
