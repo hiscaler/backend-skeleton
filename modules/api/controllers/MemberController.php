@@ -2,7 +2,6 @@
 
 namespace app\modules\api\controllers;
 
-use app\helpers\Config;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\extensions\Formatter;
 use app\modules\api\models\Member;
