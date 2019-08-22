@@ -29,32 +29,6 @@ class BaseYad
     }
 
     /**
-     * 获取文本内容中的所有图片路径
-     *
-     * @param string $content
-     * @param string|integer $order
-     * @return array|string|null
-     */
-    public static function getTextImages($content, $order = 'ALL')
-    {
-        $images = [];
-        if (!empty($content)) {
-            $pattern = "/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/";
-            preg_match_all($pattern, $content, $match);
-            if (isset($match[1]) && !empty($match[1])) {
-                if ($order === 'ALL') {
-                    $images = $match[1];
-                }
-                if (is_numeric($order) && isset($match[1][$order - 1])) {
-                    $images = $match[1][$order - 1];
-                }
-            }
-        }
-
-        return $images;
-    }
-
-    /**
      * 系统版本
      *
      * @return string

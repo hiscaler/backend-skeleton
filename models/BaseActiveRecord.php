@@ -26,24 +26,6 @@ class BaseActiveRecord extends ActiveRecord
      */
     const DEFAULT_ORDERING_VALUE = 10000;
 
-    public $content_image_number = 1; // 从文本内容中获取第几章图片作为缩略图
-
-    /**
-     * `app\model\Post` To `app-model-Post`
-     *
-     * @param string $className
-     * @return string
-     */
-
-    public static function className2Id($className = null)
-    {
-        if ($className === null) {
-            $className = static::class;
-        }
-
-        return str_replace('\\', '-', $className);
-    }
-
     public function rules()
     {
         $rules = [
