@@ -6,6 +6,7 @@ use app\models\BaseWithLabelActiveRecord;
 use app\models\Constant;
 use app\models\FileUploadConfig;
 use yadjet\behaviors\ImageUploadBehavior;
+use yadjet\helpers\ImageHelper;
 use Yii;
 use yii\web\UploadedFile;
 
@@ -61,6 +62,13 @@ class News extends BaseWithLabelActiveRecord
     public static function tableName()
     {
         return '{{%news}}';
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
     }
 
     /**
@@ -163,8 +171,8 @@ class News extends BaseWithLabelActiveRecord
      */
     public function processPicturePath($model)
     {
-        if (!(UploadedFile::getInstance($model, 'picture_path') instanceof UploadedFile) && $number = $model->content_image_number) {
-            $picturePath = Yad::getTextImages($model->newsContent->content, $number);
+        if (!(UploadedFile::getInstance($model, 'picture_path') instanceof UploadedFile)) {
+            $picturePath = ImageHelper::parseImages($model->newsContent->content, 1);
             if (!empty($picturePath)) {
                 Yii::$app->getDb()->createCommand()->update('{{%news}}', [
                     'is_picture_news' => Constant::BOOLEAN_TRUE,
@@ -212,7 +220,7 @@ class News extends BaseWithLabelActiveRecord
     {
         parent::afterDelete();
         // 清理资讯相关联数据
-        $db = \Yii::$app->getDb();
+        $db = Yii::$app->getDb();
         $cmd = $db->createCommand();
         $cmd->delete('{{%news_content}}', ['news_id' => $this->id])->execute();
 
