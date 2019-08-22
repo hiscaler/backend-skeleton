@@ -650,7 +650,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 empty($nickname) && $nickname = $this->username;
                 $this->nickname = $nickname;
             }
-            $userId = IsHelper::cli() || Yii::$app->getUser()->isGuest ? 0 : Yii::$app->getUser()->getId();
+            $userId = IsHelper::cli() || Yii::$app->getUser()->getIsGuest() ? 0 : Yii::$app->getUser()->getId();
             if ($insert) {
                 $this->total_money = $this->available_money = 0;
                 $this->generateAuthKey();
