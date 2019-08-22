@@ -6,6 +6,8 @@ use app\modules\api\extensions\yii\rest\CreateAction;
 use app\modules\api\modules\finance\models\Finance;
 use app\modules\api\modules\finance\models\FinanceSearch;
 use DateTime;
+use Exception;
+use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
@@ -65,7 +67,7 @@ class DefaultController extends Controller
     {
         $search = new FinanceSearch();
 
-        return $search->search(\Yii::$app->getRequest()->getQueryParams());
+        return $search->search(Yii::$app->getRequest()->getQueryParams());
     }
 
     /**
@@ -86,13 +88,9 @@ class DefaultController extends Controller
         }
         $begin = $end = null;
         try {
-            $beginDate = new DateTime($beginDate);
-            $beginDate->setTime(0, 0, 0);
-            $begin = $beginDate->getTimestamp();
-            $endDate = new DateTime($endDate);
-            $endDate->setTime(23, 59, 59);
-            $end = $endDate->getTimestamp();
-        } catch (\Exception $e) {
+            $begin = (new DateTime($beginDate))->setTime(0, 0, 0)->getTimestamp();
+            $end = (new DateTime($endDate))->setTime(23, 59, 59)->getTimestamp();
+        } catch (Exception $e) {
         }
         if (!$begin || !$end || $begin > $end) {
             // Default is today
@@ -100,7 +98,7 @@ class DefaultController extends Controller
             $begin = $datetime->setTime(0, 0, 0)->getTimestamp();
             $end = $datetime->setTime(23, 59, 59)->getTimestamp();
         }
-        $rows = \Yii::$app->getDb()->createCommand('SELECT * FROM {{%finance}} WHERE [[type]] = :type AND [[created_at]] BETWEEN :begin AND :end ORDER BY [[id]] ASC', [
+        $rows = Yii::$app->getDb()->createCommand('SELECT [[created_at]], [[money]] FROM {{%finance}} WHERE [[type]] = :type AND [[created_at]] BETWEEN :begin AND :end ORDER BY [[id]] ASC', [
             ':type' => $type,
             ':begin' => $begin,
             ':end' => $end,
