@@ -4,6 +4,7 @@ namespace app\modules\api\modules\notice\models;
 
 use app\modules\api\extensions\yii\data\ActiveWithStatisticsDataProvider;
 use app\modules\api\models\Member;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
 
@@ -32,15 +33,14 @@ class NoticeSearch extends Notice
     public function search($params)
     {
         /* @var $member \yii\web\User */
-        $member = \Yii::$app->getUser();
+        $member = Yii::$app->getUser();
         $condition = [
             'OR',
             ['view_permission' => Notice::VIEW_PERMISSION_ALL],
 
         ];
         $bindParams = [];
-        $isGuest = $member->getIsGuest();
-        if (!$isGuest) {
+        if (!$member->getIsGuest()) {
             $member = $member->getIdentity();
             $condition[] = "[[view_permission]] = :viewSpecialPermission AND [[id]] IN (SELECT [[notice_id]] FROM {{%notice_permission}} WHERE [[xid]] = :memberId)";
             $bindParams[':memberId'] = $member->id;
@@ -115,7 +115,7 @@ class NoticeSearch extends Notice
             $query->andWhere([$read == 'y' ? "IN" : "NOT IN", 'id', (new Query())
                 ->select('notice_id')
                 ->from('{{%notice_view}}')
-                ->where(['member_id' => \Yii::$app->getUser()->getId()])
+                ->where(['member_id' => Yii::$app->getUser()->getId()])
             ]);
         }
 
