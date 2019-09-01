@@ -4,6 +4,7 @@ namespace app\modules\api\extensions;
 
 use app\helpers\Config;
 use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
+use app\modules\api\extensions\yii\rest\CreateAction;
 use app\modules\api\extensions\yii\rest\ListAction;
 use Yii;
 use yii\filters\ContentNegotiator;
@@ -102,6 +103,11 @@ class ActiveController extends \yii\rest\ActiveController
         $actions = parent::actions();
         $actions['list'] = [
             'class' => ListAction::class,
+            'modelClass' => $this->modelClass,
+            'checkAccess' => [$this, 'checkAccess'],
+        ];
+        $actions['create'] = [
+            'class' => CreateAction::class,
             'modelClass' => $this->modelClass,
             'checkAccess' => [$this, 'checkAccess'],
         ];
