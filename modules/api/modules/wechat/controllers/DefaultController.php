@@ -44,7 +44,10 @@ class DefaultController extends Controller
 
                         case 'unsubscribe':
                             $this->unsubscribeEvent();
-                            $this->processHandlers('event.unsubscribe', $message, $this->wxApplication);
+                            break;
+
+                        case 'scan':
+                            $this->processHandlers('scan', $message, $this->wxApplication);
                             break;
 
                         default:
@@ -58,10 +61,6 @@ class DefaultController extends Controller
                 case 'location':
                     return call_user_func(Response::class . "::{$message->MsgType}", $message);
 
-                    break;
-
-                case 'scan':
-                    $this->processHandlers('scan', $message, $this->wxApplication);
                     break;
 
                 default:
