@@ -97,7 +97,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             'registerByUsername' => [['username'], 'required'],
             [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
-            ['invitation_code', 'string', 'max' => 16],
+            ['invitation_code', 'string', 'max' => 32],
             [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
             [['type'], 'default', 'value' => self::TYPE_NONE],
             [['type'], 'in', 'range' => array_keys(static::typeOptions())],
@@ -656,8 +656,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->generateAuthKey();
                 $this->generateAccessToken();
                 $this->status = Config::get('member.register.status', self::STATUS_PENDING);
-                // @todo 需要检测唯一性
-                $this->invitation_code = StringHelper::generateRandomString(16);
+                $this->invitation_code = md5(StringHelper::generateRandomString(32) . $this->username . time() . mt_rand(10000, 99999));
                 $this->register_ip = IsHelper::cli() ? '::1' : Yii::$app->getRequest()->getUserIP();
                 if (!$this->expired_datetime) {
                     $expiryMinutes = (int) Config::get('member.register.expiryMinutes');
