@@ -36,6 +36,7 @@ class Finance extends \yii\db\ActiveRecord
      * @var bool 是否处理后续的业务逻辑
      */
     public $call_business_process = true;
+
     /**
      * @var string 文件上传字段
      */
@@ -179,6 +180,7 @@ class Finance extends \yii\db\ActiveRecord
             self::SOURCE_CASH => '现金',
             self::SOURCE_WXPAY => '微信',
             self::SOURCE_ALIPAY => '支付宝',
+            self::SOURCE_BANK => '银行',
             self::SOURCE_OTHER => '其他',
         ];
     }
