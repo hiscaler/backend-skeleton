@@ -57,8 +57,7 @@ class MemberRegisterForm extends Member
             ['register_type', 'default', 'value' => self::REGISTER_TYPE_ACCOUNT],
             ['register_type', 'in', 'range' => [self::REGISTER_TYPE_ACCOUNT, self::REGISTER_TYPE_MOBILE_PHONE]],
         ];
-        if ($this->register_type != self::REGISTER_TYPE_ACCOUNT) {
-            unset($parentRules['registerByUsername']);
+        if ($this->register_type == self::REGISTER_TYPE_ACCOUNT) {
             $rules = array_merge($rules, [
                 [['password', 'confirm_password'], 'required'],
                 [['password', 'confirm_password'], 'trim'],
@@ -67,7 +66,9 @@ class MemberRegisterForm extends Member
                     'message' => '两次输入的密码不一致，请重新输入。'
                 ],
             ]);
-        } else {
+        } elseif ($this->register_type == self::REGISTER_TYPE_MOBILE_PHONE) {
+            unset($parentRules['registerByUsername']);
+            $this->username = $this->mobile_phone;
             $rules = array_merge($rules, [
                 ['captcha', 'required'],
                 ['captcha', 'string'],

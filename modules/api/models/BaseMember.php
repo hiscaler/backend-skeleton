@@ -52,6 +52,7 @@ class BaseMember extends \app\models\Member
             'last_login_ip',
             'last_login_time',
             'access_token',
+            'expired_datetime',
             'status' => 'status',
             'status_formatted' => function ($model) use ($formatter) {
                 return $formatter->asMemberStatus($model->status);
