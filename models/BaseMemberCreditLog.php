@@ -186,7 +186,7 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
         parent::afterSave($insert, $changedAttributes);
         if ($insert) {
             $credits = $this->credits;
-            $op = $credits ? ' + ' : ' - ';
+            $op = $credits > 0 ? ' + ' : ' - ';
             $credits = abs($credits);
             \Yii::$app->getDb()->createCommand("UPDATE {{%member}} SET [[total_credits]] = [[total_credits]] $op $credits, [[available_credits]] = [[available_credits]] $op $credits WHERE [[id]] = :id", [':id' => $this->member_id])->execute();
             Member::updateGroup($this->member_id);

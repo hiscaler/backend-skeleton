@@ -49,4 +49,17 @@ class BaseMemberCreditLog extends \app\models\MemberCreditLog
         return ['member'];
     }
 
+    public function beforeValidate()
+    {
+        if (parent::beforeValidate()) {
+            if ($this->getIsNewRecord()) {
+                $this->member_id = Yii::$app->getUser()->getId();
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

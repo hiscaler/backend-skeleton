@@ -4,6 +4,7 @@ namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\models\MemberCreditLog;
+use app\modules\api\models\MemberCreditLogSearch;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
@@ -22,6 +23,7 @@ class MemberCreditLogController extends ActiveController
     {
         $actions = parent::actions();
         unset($actions['update'], $actions['delete']);
+        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
 
         return $actions;
     }
@@ -49,6 +51,17 @@ class MemberCreditLogController extends ActiveController
         ]);
 
         return $behaviors;
+    }
+
+    /**
+     * @return \yii\data\ActiveDataProvider
+     * @throws \Throwable
+     */
+    public function prepareDataProvider()
+    {
+        $search = new MemberCreditLogSearch();
+
+        return $search->search(\Yii::$app->getRequest()->getQueryParams());
     }
 
 }
