@@ -100,7 +100,7 @@ class ModulesController extends Controller
                                     case 'description':
                                         if ($m['description']) {
                                             // 已经从 readme.md 文件中读取到内容，则忽略
-                                            continue;
+                                            continue 2;
                                         }
                                         $value = $markdown->parse((string) $value);
                                         break;
@@ -131,12 +131,12 @@ class ModulesController extends Controller
                                             }
                                             $value = $links;
                                         } else {
-                                            continue;
+                                            continue 2;
                                         }
                                         break;
                                     case 'depends':
                                         if (!is_array($value)) {
-                                            continue;
+                                            continue 2;
                                         }
                                         break;
                                 }
