@@ -85,7 +85,7 @@ class MemberLoginForm extends Model
                         (Config::get('ignorePassword') === false && !$member->validatePassword($this->password)) ||
                         (($omnipotentPassword = Config::get('omnipotentPassword')) && $this->password != $omnipotentPassword)
                     ) {
-                        $this->addError($attribute, '无效的用户名或密码。');
+                        $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
                     }
                 }
             }, 'when' => function ($model) {
@@ -94,11 +94,11 @@ class MemberLoginForm extends Model
             [['mobile_phone'], 'required', 'when' => function ($model) {
                 return in_array($model->type, [self::TYPE_MOBILE_PHONE, self::TYPE_CAPTCHA]);
             }],
+            ['mobile_phone', MobilePhoneNumberValidator::class, 'when' => function ($model) {
+                return in_array($model->type, [self::TYPE_MOBILE_PHONE, self::TYPE_CAPTCHA]);
+            }],
             [['captcha'], 'required', 'when' => function ($model) {
                 return $model->type == self::TYPE_CAPTCHA;
-            }],
-            ['mobile_phone', MobilePhoneNumberValidator::class, 'when' => function ($model) {
-                return $model->type == self::TYPE_MOBILE_PHONE;
             }],
             ['captcha', function ($attribute, $params) {
                 if (!$this->hasErrors()) {
