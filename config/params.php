@@ -78,13 +78,13 @@ return [
         'image' => [
             'minSize' => 1024,
             'maxSize' => 1024 * 1024 * 200,
-            'extensions' => 'png, gif, jpg, jpeg'
+            'extensions' => 'png,gif,jpg,jpeg'
         ],
         // 请参考 \yii\web\FileValidator 类属性进行设置
         'file' => [
             'minSize' => 1024,
             'maxSize' => 1024 * 1024 * 200,
-            'extensions' => 'zip, rar, pdf, doc, docx, xls, xlsx, ppt, pptx, wps, 7z, txt'
+            'extensions' => 'zip,rar,pdf,doc,docx,xls,xlsx,ppt,pptx,wps,7z,txt'
         ]
     ],
     // 权限认证设置
