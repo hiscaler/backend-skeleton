@@ -4,7 +4,7 @@ namespace app\modules\api\exceptions;
 
 /**
  * Class ActiveRecordRuleErrorException
- *ActiveRecord 规则错误
+ * ActiveRecord 规则错误
  *
  * @package app\modules\api\exceptions
  * @author hiscaler <hiscaler@gmail.com>
