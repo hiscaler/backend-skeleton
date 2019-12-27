@@ -20,7 +20,7 @@ class MemberProfileController extends ActiveController
 
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -41,8 +41,6 @@ class MemberProfileController extends ActiveController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
 }

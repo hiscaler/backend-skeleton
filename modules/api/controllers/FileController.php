@@ -8,7 +8,6 @@ use app\modules\api\models\Constant;
 use Imagine\Image\ManipulatorInterface;
 use RuntimeException;
 use yadjet\helpers\ImageHelper;
-use yadjet\helpers\StringHelper;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
@@ -33,7 +32,7 @@ class FileController extends AuthController
     const TYPE_IMAGE = 'image';
     const TYPE_FILE = 'file';
 
-    protected $type = 'file';
+    protected $type = self::TYPE_FILE;
 
     /**
      * @throws InvalidConfigException
@@ -48,7 +47,7 @@ class FileController extends AuthController
 
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -67,17 +66,6 @@ class FileController extends AuthController
                 ],
             ],
         ]);
-
-        return $behaviors;
-    }
-
-    /**
-     * @return string
-     * @throws \Exception
-     */
-    protected function generateUniqueFilename()
-    {
-        return StringHelper::generateRandomString();
     }
 
     /**

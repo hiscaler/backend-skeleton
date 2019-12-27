@@ -52,7 +52,7 @@ class UrlController extends BaseController
         $rules = [];
 
         if ($sign) {
-            $category = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => trim($sign)])->queryOne();
+            $category = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => trim($sign)])->queryOne();
             if (!$category) {
                 return [];
             }
@@ -60,7 +60,7 @@ class UrlController extends BaseController
             $replaceStr = $category['alias'];
         } else {
             $replaceStr = null;
-            $items = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]] FROM {{%category}}')->queryAll();
+            $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]] FROM {{%category}}')->queryAll();
         }
 
         foreach ($items as $item) {
@@ -94,7 +94,7 @@ class UrlController extends BaseController
         $rules = [];
 
         if ($sign) {
-            $category = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => trim($sign)])->queryOne();
+            $category = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]] FROM {{%category}} WHERE [[sign]] = :sign', [':sign' => trim($sign)])->queryOne();
             if (!$category) {
                 return [];
             }
@@ -102,7 +102,7 @@ class UrlController extends BaseController
             $replaceStr = $category['alias'];
         } else {
             $replaceStr = null;
-            $items = \Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]] FROM {{%category}}')->queryAll();
+            $items = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]] FROM {{%category}}')->queryAll();
         }
 
         foreach ($items as $item) {

@@ -21,7 +21,7 @@ class ModuleController extends ActiveController
 
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -42,8 +42,6 @@ class ModuleController extends ActiveController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
 }

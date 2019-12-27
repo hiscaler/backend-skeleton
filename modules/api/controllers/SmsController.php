@@ -22,7 +22,7 @@ class SmsController extends BaseController
      */
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -30,8 +30,6 @@ class SmsController extends BaseController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
     /**

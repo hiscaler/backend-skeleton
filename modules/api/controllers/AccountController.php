@@ -35,7 +35,7 @@ class AccountController extends ActiveController
      */
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -54,8 +54,6 @@ class AccountController extends ActiveController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
     /**
@@ -124,7 +122,7 @@ class AccountController extends ActiveController
      */
     protected function findModel()
     {
-        $model = Member::findOne(\Yii::$app->getUser()->getId());
+        $model = Member::findOne(Yii::$app->getUser()->getId());
         if ($model === null) {
             throw new NotFoundHttpException('Not found');
         }

@@ -20,7 +20,7 @@ class LookupController extends ActiveController
 
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -46,8 +46,6 @@ class LookupController extends ActiveController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
     /**

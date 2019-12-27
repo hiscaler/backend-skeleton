@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\models\Label;
 use app\modules\api\models\LabelSearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
@@ -22,7 +23,7 @@ class LabelController extends ActiveController
 
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -43,8 +44,6 @@ class LabelController extends ActiveController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
     public function actions()
@@ -63,7 +62,7 @@ class LabelController extends ActiveController
     {
         $search = new LabelSearch();
 
-        return $search->search(\Yii::$app->getRequest()->getQueryParams());
+        return $search->search(Yii::$app->getRequest()->getQueryParams());
     }
 
 }

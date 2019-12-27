@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\models\MemberCreditLog;
 use app\modules\api\models\MemberCreditLogSearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
@@ -33,7 +34,7 @@ class CreditController extends ActiveController
      */
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -52,8 +53,6 @@ class CreditController extends ActiveController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
     /**
@@ -64,7 +63,7 @@ class CreditController extends ActiveController
     {
         $search = new MemberCreditLogSearch();
 
-        return $search->search(\Yii::$app->getRequest()->getQueryParams());
+        return $search->search(Yii::$app->getRequest()->getQueryParams());
     }
 
 }

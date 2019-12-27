@@ -24,7 +24,7 @@ class ImageController extends FileController
 
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -44,8 +44,6 @@ class ImageController extends FileController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
     /**
@@ -75,10 +73,6 @@ class ImageController extends FileController
         switch ($imgType) {
             case IMAGETYPE_GIF:
                 $extensionName = 'gif';
-                break;
-
-            case IMAGETYPE_JPEG:
-                $extensionName = 'jpg';
                 break;
 
             case IMAGETYPE_PNG:

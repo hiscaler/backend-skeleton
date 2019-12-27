@@ -40,7 +40,7 @@ class CategoryController extends ActiveController
         }
         $timestamp = $cmd->queryScalar();
 
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             [
                 'class' => 'yii\filters\HttpCache',
                 'lastModified' => function () use ($timestamp) {
@@ -75,8 +75,6 @@ class CategoryController extends ActiveController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
     /**
