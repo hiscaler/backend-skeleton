@@ -29,7 +29,7 @@ class ImageController extends FileController
                 'class' => VerbFilter::class,
                 'actions' => [
                     'uploading' => ['POST'],
-                    'delete' => ['POST'],
+                    'delete' => ['DELETE'],
                     'processing' => ['POST'],
                 ],
             ],

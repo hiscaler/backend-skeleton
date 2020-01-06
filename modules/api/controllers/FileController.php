@@ -7,6 +7,7 @@ use app\modules\api\extensions\AuthController;
 use app\modules\api\models\Constant;
 use Imagine\Image\ManipulatorInterface;
 use RuntimeException;
+use stdClass;
 use yadjet\helpers\ImageHelper;
 use Yii;
 use yii\base\DynamicModel;
@@ -52,7 +53,7 @@ class FileController extends AuthController
                 'class' => VerbFilter::class,
                 'actions' => [
                     'uploading' => ['POST'],
-                    'delete' => ['POST'],
+                    'delete' => ['DELETE'],
                 ],
             ],
             'access' => [
@@ -264,17 +265,20 @@ class FileController extends AuthController
      * 删除文件
      *
      * @param $url
+     * @return stdClass
      * @throws NotFoundHttpException
      * @todo 需要判断文件所有者权限
      */
     public function actionDelete($url)
     {
-        $url = parse_url($url);
-        $file = $url['path'];
+        $parseUrl = parse_url($url);
+        $file = $parseUrl['path'];
         $path = Yii::getAlias("@webroot" . '/' . ltrim($file, '\/'));
         if (file_exists($path)) {
             if (FileHelper::unlink($path)) {
                 Yii::$app->getResponse()->setStatusCode(200);
+
+                return new stdClass();
             } else {
                 $error = error_get_last();
                 if ($error !== null) {
