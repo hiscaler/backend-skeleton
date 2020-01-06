@@ -178,4 +178,5 @@ class DefaultController extends BaseController
             'data' => $permissions,
         ]);
     }
+
 }
