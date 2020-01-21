@@ -38,7 +38,7 @@ class CreditBusiness implements BusinessInterface
             if ($v !== false) {
                 Yii::$app->getDb()->createCommand()->update('{{%finance}}', ['related_key' => $v], ['id' => $finance->id])->execute();
 
-                // 添加资金出账记录
+                // 添加资金入账记录
                 if ($finance->type == Finance::TYPE_INCOME) {
                     $financeLog = new Finance();
                     $financeLog->call_business_process = false;
