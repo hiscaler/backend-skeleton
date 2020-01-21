@@ -51,7 +51,7 @@ class Module extends \yii\base\Module
                 'formatters' => [
                     Response::FORMAT_JSON => [
                         'class' => 'yii\web\JsonResponseFormatter',
-                        'encodeOptions' => JSON_NUMERIC_CHECK + JSON_UNESCAPED_UNICODE,
+                        'encodeOptions' => JSON_UNESCAPED_UNICODE,
                         'prettyPrint' => YII_DEBUG,
                     ],
                 ],
@@ -102,7 +102,7 @@ class Module extends \yii\base\Module
      *
      * @return array
      */
-    public function getDevelopmentModules()
+    private function getDevelopmentModules()
     {
         $key = 'api.module.getDevelopmentModules';
         $cache = Yii::$app->getCache();

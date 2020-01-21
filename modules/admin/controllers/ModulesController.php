@@ -415,6 +415,7 @@ class ModulesController extends Controller
         $db = Yii::$app->getDb();
         $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => $alias])->queryScalar();
         if ($moduleId) {
+            $cmd = $db->createCommand();
             try {
                 if (Config::get('uninstall.module.after.droptable') === true) {
                     $this->_migrate($alias, 'down');
@@ -423,11 +424,11 @@ class ModulesController extends Controller
                     foreach ($files as $file) {
                         $class = "app\\modules\\admin\\modules\\$alias\\" . basename($file, 'php');
                         foreach (['entity_label', 'file_upload_config'] as $table) {
-                            $db->createCommand()->delete("{{%$table}}", ['model_name' => $class])->execute();
+                            $cmd->delete("{{%$table}}", ['model_name' => $class])->execute();
                         }
                     }
                 }
-                $db->createCommand()->delete('{{%module}}', ['id' => $moduleId])->execute();
+                $cmd->delete('{{%module}}', ['id' => $moduleId])->execute();
                 $success = true;
             } catch (\Exception $ex) {
                 $errorMessage = $ex->getMessage();
