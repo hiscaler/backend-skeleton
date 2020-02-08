@@ -12,7 +12,7 @@ return [
              * 如果您需要进行其他的业务处理，您也可以创建自有类，实现 \app\modules\admin\modules\finance\business\BusinessInterface 的 process() 方法，在其中实现自有的业务逻辑处理。
              */
             'class' => \app\modules\admin\modules\finance\business\CreditBusiness::class,
-            'exchangeRate' => '1:100', // 入账金额和积分兑换比例设置（几分钱:几个积分）
+            'exchangeRate' => '100:1', // 入账金额和积分兑换比例设置（几分钱:几个积分）
         ],
     ]
 ];

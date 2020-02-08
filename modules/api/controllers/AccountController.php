@@ -3,6 +3,7 @@
 namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\ActiveController;
+use app\modules\api\forms\RechargeForm;
 use app\modules\api\models\Member;
 use app\modules\api\models\MemberProfile;
 use Yii;
@@ -40,6 +41,7 @@ class AccountController extends ActiveController
                 'class' => VerbFilter::class,
                 'actions' => [
                     'update' => ['PUT', 'PATCH'],
+                    'recharge' => ['POST'],
                     '*' => ['GET'],
                 ],
             ],
@@ -47,7 +49,7 @@ class AccountController extends ActiveController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['update', 'view'],
+                        'actions' => ['update', 'view', 'recharge'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -114,6 +116,26 @@ class AccountController extends ActiveController
     public function actionView()
     {
         return $this->findModel();
+    }
+
+    /**
+     * 帐号充值
+     *
+     * @return RechargeForm
+     * @throws ServerErrorHttpException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function actionRecharge()
+    {
+        $model = new RechargeForm();
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+        if ($model->save()) {
+            Yii::$app->getResponse()->setStatusCode(201);
+        } elseif (!$model->hasErrors()) {
+            throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
+        }
+
+        return $model;
     }
 
     /**
