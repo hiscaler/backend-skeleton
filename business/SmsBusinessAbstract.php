@@ -43,7 +43,12 @@ abstract class SmsBusinessAbstract
      */
     public function getContent()
     {
-        return $this->content;
+        $pairs = [];
+        foreach ($this->getData() as $key => $value) {
+            $pairs["{{$key}}"] = $value;
+        }
+
+        return $pairs ? strtr($this->content, $pairs) : $this->content;
     }
 
     /**

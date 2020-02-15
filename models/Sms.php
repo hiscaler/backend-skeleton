@@ -66,7 +66,7 @@ class Sms extends Model
                             $msg && $msg .= ' ';
                             $msg .= "$s 秒";
                         }
-                        $this->addError($attribute, "短信内容尚未到期，{$msg}后方可重新发送。");
+                        $this->addError($attribute, "短信在有效期内，{$msg}后方可重新发送。");
                     }
                 }
             }],
