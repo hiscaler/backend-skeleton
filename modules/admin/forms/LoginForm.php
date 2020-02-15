@@ -3,9 +3,9 @@
 namespace app\modules\admin\forms;
 
 use app\helpers\Config;
-use app\models\User;
 use Yii;
 use yii\base\Model;
+use yii\web\IdentityInterface;
 
 /**
  * Login form
@@ -79,12 +79,14 @@ class LoginForm extends Model
     /**
      * Finds user by [[username]]
      *
-     * @return User|null
+     * @return bool
      */
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
+            /* @var $class IdentityInterface */
+            $class = Yii::$app->getUser()->identityClass;
+            $this->_user = $class::findByUsername($this->username);
         }
 
         return $this->_user;

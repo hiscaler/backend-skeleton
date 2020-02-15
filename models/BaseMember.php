@@ -374,6 +374,26 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Role
+     *
+     * @return null
+     */
+    public function getRole()
+    {
+        return null;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getAuthKey()

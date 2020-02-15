@@ -32,15 +32,16 @@ class Module extends \yii\base\Module
                 'basePath' => "@app/modules/admin/modules/$alias/messages",
             ];
         }
+        $userClass = \Yii::$app->getUser()->identityClass;
         \Yii::$app->setComponents([
             'user' => [
                 'class' => 'yii\web\User',
-                'identityClass' => 'app\models\User',
+                'identityClass' => $userClass,
                 'identityCookie' => ['name' => '_identity_admin', 'httpOnly' => true],
                 'idParam' => '__id_admin',
                 'enableAutoLogin' => true,
                 'loginUrl' => ['/admin/default/login'],
-                'on afterLogin' => ['app\models\User', 'afterLogin'],
+                'on afterLogin' => [$userClass, 'afterLogin'],
             ],
             'formatter' => [
                 'class' => 'app\modules\admin\extensions\Formatter',

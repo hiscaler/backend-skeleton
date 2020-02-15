@@ -4,7 +4,6 @@ namespace app\modules\admin\widgets;
 
 use app\helpers\Config;
 use app\models\Member;
-use app\models\MemberCreditLog;
 use app\models\Module;
 use app\models\User;
 use app\modules\admin\components\ApplicationHelper;
@@ -33,7 +32,7 @@ class GlobalControlPanel extends Widget
         if ($requireCheckAuth) {
             $identity = $user->getIdentity();
             /* @var $identity Member */
-            if ($user->identityClass != MemberCreditLog::class || $identity->type != Member::TYPE_ADMINISTRATOR) {
+            if ($user->identityClass != Member::class || $identity->type != Member::TYPE_ADMINISTRATOR) {
                 $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
                 if (!is_array($ignoreUsers)) {
                     $ignoreUsers = [];
