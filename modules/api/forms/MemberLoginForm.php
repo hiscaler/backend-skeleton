@@ -113,7 +113,7 @@ class MemberLoginForm extends Model
                     }
                 }
             }, 'when' => function ($model) {
-                return $model->type == self::TYPE_MOBILE_PHONE;
+                return in_array($model->type, [self::TYPE_MOBILE_PHONE, self::TYPE_CAPTCHA]);
             }],
             [['access_token'], 'required', 'when' => function ($model) {
                 return $model->type == self::TYPE_ACCESS_TOKEN;
