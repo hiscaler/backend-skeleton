@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\helpers\Config;
 use Yii;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "{{%member_credit_log}}".
@@ -105,6 +106,7 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
      * @param string $remark
      * @param integer $posterId
      * @return int|boolean
+     * @throws \yii\db\Exception
      * @throws \Exception
      */
     public static function add($memberId, $operation, $credits, $relatedKey = null, $remark = null, $posterId = null)
@@ -141,7 +143,11 @@ class BaseMemberCreditLog extends \yii\db\ActiveRecord
                     $result = $db->getLastInsertID();
                     $op = $credits > 0 ? ' + ' : ' - ';
                     $credits = abs($credits);
-                    $db->createCommand("UPDATE {{%member}} SET [[total_credits]] = [[total_credits]] $op $credits, [[available_credits]] = [[available_credits]] $op $credits WHERE [[id]] = :id", [':id' => $memberId])->execute();
+                    $columns = [
+                        'total_credits' => new Expression("[[total_credits]] + $credits"),
+                        'available_credits' => new Expression("[[available_credits]] $op $credits"),
+                    ];
+                    $db->createCommand()->update('{{%member}}', $columns, ['id' => $memberId])->execute();
                     Member::updateGroup($memberId);
                 }
                 $transaction->commit();
