@@ -31,7 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <p class="misc">
                                     <span><?= Yii::t('module', 'Author') ?>：<?= $module['author'] ?></span>
                                     <span><?= Yii::t('module', 'Version') ?>：<?= $module['version'] ?></span>
-                                    <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
+                                    <?php if ($module['url']): ?>
+                                        <span><?= Yii::t('module', 'Url') ?>：<a href="<?= $module['url'] ?>" target="_blank"><?= $module['url'] ?></a></span>
+                                    <?php endif; ?>
                                 </p>
                                 <?php if ($module['description']): ?>
                                     <div class="description">
@@ -84,11 +86,11 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         var installText = '<?= Yii::t('module', 'Install')?>',
             uninstallText = '<?= Yii::t('module', 'Uninstall')?>';
 
-        $('.install, .uninstall').on('click', function () {
+        $('.install, .uninstall').on('click', function() {
             var $t = $(this);
             if ($t.hasClass('install')) {
                 _doInstallUninstall($t);
@@ -96,10 +98,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 var droptableMessage = '<?= Config::get('uninstall.module.after.droptable') === true ? '卸载后将同步删除模块相关数据表！！！' : '' ?>';
                 layer.confirm('您是否确定卸载"' + $t.parent().parent().find('em').html() + '"模块？' + droptableMessage, {
                     btn: ['确定卸载', '取消'] //按钮
-                }, function (index) {
+                }, function(index) {
                     _doInstallUninstall($t);
                     layer.close(index);
-                }, function () {
+                }, function() {
                 });
             }
 
@@ -113,10 +115,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 type: 'POST',
                 url: url,
                 dataType: 'json',
-                beforeSend: function (xhr) {
+                beforeSend: function(xhr) {
                     $.fn.lock();
                 },
-                success: function (response) {
+                success: function(response) {
                     if (response.success) {
                         var isInstall = $t.hasClass('install'),
                             $obj = $('#module-' + $t.attr('data-key'));
@@ -173,18 +175,18 @@ $this->params['breadcrumbs'][] = $this->title;
         }
 
         // 模块信息更新
-        $('.upgrade').on('click', function () {
+        $('.upgrade').on('click', function() {
             var $t = $(this);
             $.ajax({
                 type: 'POST',
                 url: $t.attr('data-url'),
                 dataType: 'json',
-                beforeSend: function (xhr) {
+                beforeSend: function(xhr) {
                     $.fn.lock();
                 },
-                success: function (response) {
+                success: function(response) {
                     if (response.success) {
-                        layer.alert('"' + $t.attr('data-name') + '" 模块更新成功。', {icon: 1});
+                        layer.alert('"' + $t.attr('data-name') + '" 模块更新成功。', { icon: 1 });
                     } else {
                         layer.alert(response.error.message);
                     }
@@ -196,17 +198,17 @@ $this->params['breadcrumbs'][] = $this->title;
         });
 
         // 显示更多按钮操作
-        $('.more').on('click', function () {
-           var $this = $(this);
-           if ($this.hasClass('more-open')) {
-               $this.removeClass('more-open').addClass('more-close');
-               $this.parent().find('.inner').css({'max-height': '100%'});
-           } else {
-               $this.removeClass('more-close').addClass('more-open');
-               $this.parent().find('.inner').css({'max-height': '100px'});
-           }
+        $('.more').on('click', function() {
+            var $this = $(this);
+            if ($this.hasClass('more-open')) {
+                $this.removeClass('more-open').addClass('more-close');
+                $this.parent().find('.inner').css({ 'max-height': '100%' });
+            } else {
+                $this.removeClass('more-close').addClass('more-open');
+                $this.parent().find('.inner').css({ 'max-height': '100px' });
+            }
 
-           return false;
+            return false;
         });
     });
 </script>
