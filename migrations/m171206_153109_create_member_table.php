@@ -20,7 +20,7 @@ class m171206_153109_create_member_table extends Migration
             'category_id' => $this->integer()->notNull()->defaultValue(0)->comment('分类'),
             'type' => $this->smallInteger()->notNull()->defaultValue(0)->comment('会员类型'),
             'group' => $this->string(20)->comment('分组'),
-            'invitation_code' => $this->string(32)->notNull()->unique()->comment('邀请码'),
+            'unique_key' => $this->string(32)->notNull()->unique()->comment('唯一码'),
             'parent_id' => $this->integer()->notNull()->defaultValue(0)->comment('上级'),
             'username' => $this->string(20)->notNull()->unique()->comment('帐号'),
             'nickname' => $this->string(60)->notNull()->comment('昵称'),
@@ -59,4 +59,5 @@ class m171206_153109_create_member_table extends Migration
     {
         $this->dropTable('{{%member}}');
     }
+
 }

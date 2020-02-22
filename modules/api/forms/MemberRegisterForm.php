@@ -43,7 +43,7 @@ class MemberRegisterForm extends Member
     /**
      * @var string 邀请码
      */
-    public $parent_invite_code;
+    public $invitation_code;
 
     /**
      * @inheritdoc
@@ -85,11 +85,11 @@ class MemberRegisterForm extends Member
         }
 
         $rules = array_merge($rules, [
-            ['parent_invite_code', 'string'],
-            ['parent_invite_code', function ($attribute, $params) {
-                if ($this->parent_invite_code) {
-                    $memberId = Yii::$app->getDb()->createCommand("SELECT [[id]] FROM {{%member}} WHERE [[invitation_code]] = :inviteCode", [
-                        ':inviteCode' => $this->parent_invite_code,
+            ['invitation_code', 'string'],
+            ['invitation_code', function ($attribute, $params) {
+                if ($this->invitation_code) {
+                    $memberId = Yii::$app->getDb()->createCommand("SELECT [[id]] FROM {{%member}} WHERE [[unique_key]] = :uniqueKey", [
+                        ':uniqueKey' => $this->invitation_code,
                     ])->queryScalar();
                     if ($memberId) {
                         $this->parent_id = $memberId;

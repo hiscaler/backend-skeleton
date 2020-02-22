@@ -32,7 +32,7 @@ class BaseMember extends \app\models\Member
             },
             'category_id',
             'group',
-            'invitation_code',
+            'unique_key',
             'parent_id',
             'username',
             'nickname',

@@ -19,7 +19,7 @@ use yii\web\IdentityInterface;
  * @property integer $type
  * @property integer $category_id
  * @property string $group
- * @property string $invitation_code
+ * @property string $unique_key
  * @property integer $parent_id
  * @property string $username
  * @property string $nickname
@@ -96,8 +96,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             ['alarm_credits', 'default', 'value' => 0],
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             'registerByUsername' => [['username'], 'required'],
-            [['group', 'invitation_code', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
-            ['invitation_code', 'string', 'max' => 32],
+            [['group', 'unique_key', 'username', 'nickname', 'real_name', 'mobile_phone', 'email', 'remark'], 'trim'],
+            ['unique_key', 'string', 'max' => 32],
             [['register_ip', 'last_login_ip'], 'string', 'max' => 39],
             [['type'], 'default', 'value' => self::TYPE_NONE],
             [['type'], 'in', 'range' => array_keys(static::typeOptions())],
@@ -158,7 +158,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             'type' => '会员类型',
             'category_id' => '分类',
             'group' => '分组',
-            'invitation_code' => '邀请码',
+            'unique_key' => '邀请码',
             'parent_id' => '上级',
             'parent.username' => '上级',
             'username' => '帐号',
@@ -676,7 +676,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->generateAuthKey();
                 $this->generateAccessToken();
                 $this->status = Config::get('member.register.status', self::STATUS_PENDING);
-                $this->invitation_code = md5(StringHelper::generateRandomString(32) . $this->username . time() . mt_rand(10000, 99999));
+                $this->unique_key = md5(StringHelper::generateRandomString(32) . $this->username . time() . mt_rand(10000, 99999));
                 $this->register_ip = IsHelper::cli() ? '::1' : Yii::$app->getRequest()->getUserIP();
                 if (!$this->expired_datetime) {
                     $expiryMinutes = (int) Config::get('member.register.expiryMinutes');
