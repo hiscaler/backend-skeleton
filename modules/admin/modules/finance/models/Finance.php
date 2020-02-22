@@ -246,7 +246,7 @@ class Finance extends \yii\db\ActiveRecord
             $availableMoney = (int) $db->createCommand("SELECT [[available_money]] FROM {{%member}} WHERE [[id]] = :id", [':id' => $this->member_id])->queryScalar();
             $columns = [];
             if ($this->type == self::TYPE_INCOME) {
-                $columns['total_money'] = new Expression('[[total_money]] + ' . $money);
+                $columns['total_money'] = new Expression("[[total_money]] + $money");
                 $availableMoney = $availableMoney + $money;
             } else {
                 $availableMoney = $availableMoney - $money;
