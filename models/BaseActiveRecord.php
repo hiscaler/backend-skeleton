@@ -26,6 +26,16 @@ class BaseActiveRecord extends ActiveRecord
      */
     const DEFAULT_ORDERING_VALUE = 10000;
 
+    /**
+     * `app\model\Post` To `app-model-Post`
+     *
+     * @return string
+     */
+    public function className2Id()
+    {
+        return str_replace('\\', '-', static::class);
+    }
+
     public function rules()
     {
         $rules = [
