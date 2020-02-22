@@ -26,7 +26,7 @@ class DefaultController extends ActiveController
      */
     public function behaviors()
     {
-        $behaviors = array_merge(parent::behaviors(), [
+        return array_merge(parent::behaviors(), [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -53,8 +53,6 @@ class DefaultController extends ActiveController
                 ],
             ],
         ]);
-
-        return $behaviors;
     }
 
     public function actions()

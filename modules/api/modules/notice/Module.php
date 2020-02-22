@@ -23,7 +23,7 @@ class Module extends \app\modules\api\Module
         parent::init();
         Yii::$app->setComponents([
             'formatter' => [
-                'class' => 'app\modules\api\modules\finance\extensions\Formatter',
+                'class' => 'app\modules\api\modules\notice\extensions\Formatter',
             ],
         ]);
     }
