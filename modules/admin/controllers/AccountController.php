@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\Member;
 use app\models\User;
 use app\modules\admin\forms\ChangeMyPasswordForm;
 use Yii;
@@ -133,12 +134,14 @@ class AccountController extends Controller
     }
 
     /**
-     * @return User|null
+     * @return User|Member|null
      * @throws NotFoundHttpException
      */
     public function findCurrentUserModel()
     {
-        if (($model = User::findOne(Yii::$app->getUser()->getId())) !== null) {
+        /* @var $class User|Member */
+        $class = \Yii::$app->getUser()->identityClass;
+        if (($model = $class::findOne(Yii::$app->getUser()->getId())) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
