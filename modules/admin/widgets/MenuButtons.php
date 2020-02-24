@@ -2,7 +2,6 @@
 
 namespace app\modules\admin\widgets;
 
-use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
 
