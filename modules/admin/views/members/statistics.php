@@ -56,11 +56,11 @@ $this->params['menus'] = [
     };
 
     let myChart = echarts.init(document.getElementById('chart'));
-    $('#btn-statistics').on('click', function () {
+    $('#btn-statistics').on('click', function() {
         statistic();
     });
 
-    $(function () {
+    $(function() {
         statistic();
     });
 
@@ -76,7 +76,7 @@ $this->params['menus'] = [
         }
         axios.get(yadjet.urls.member.statistics, {
             params: params,
-        }).then(function (response) {
+        }).then(function(response) {
             let xData = [], yData = [];
             const items = response.data.data;
             for (let item of items) {
@@ -122,7 +122,7 @@ $this->params['menus'] = [
                 ]
             };
             myChart.setOption(option);
-        }).catch(function (error) {
+        }).catch(function(error) {
             console.log(error);
         });
     }

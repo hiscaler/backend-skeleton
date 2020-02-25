@@ -249,6 +249,22 @@ class Formatter extends \yii\i18n\Formatter
     }
 
     /**
+     * 会员使用范围
+     *
+     * @param $value
+     * @return string
+     */
+    public function asMemberUsableScope($value)
+    {
+        if ($value === null) {
+            return $this->nullDisplay;
+        }
+        $options = Member::usableScopeOptions();
+
+        return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
+    }
+
+    /**
      * 会员状态
      *
      * @param integer $value

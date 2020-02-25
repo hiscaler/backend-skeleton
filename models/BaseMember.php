@@ -43,6 +43,7 @@ use yii\web\IdentityInterface;
  * @property integer $last_login_time
  * @property string $last_login_session
  * @property integer $expired_datetime
+ * @property integer $usable_scope
  * @property integer $status
  * @property string $remark
  * @property integer $created_at
@@ -58,6 +59,13 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
      */
     const TYPE_NONE = 0;
     const TYPE_ADMINISTRATOR = 1;
+
+    /**
+     * 使用范围
+     */
+    const USABLE_SCOPE_ALL = 0;
+    const USABLE_SCOPE_FRONTEND = 1;
+    const USABLE_SCOPE_BACKEND = 2;
 
     /**
      * 用户状态
@@ -93,7 +101,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         $rules = [
-            [['type', 'category_id', 'parent_id', 'total_money', 'available_money', 'total_credits', 'available_credits', 'alarm_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['type', 'category_id', 'parent_id', 'total_money', 'available_money', 'total_credits', 'available_credits', 'alarm_credits', 'login_count', 'last_login_time', 'usable_scope', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             ['role', 'string', 'min' => 1, 'max' => 64],
             ['alarm_credits', 'default', 'value' => 0],
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
@@ -119,6 +127,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             [['password_reset_token'], 'unique'],
             [['last_login_session'], 'string', 'max' => 128],
             [['status'], 'default', 'value' => Config::get('member.register.status', self::STATUS_PENDING)],
+            [['usable_scope'], 'default', 'value' => self::USABLE_SCOPE_ALL],
+            [['usable_scope'], 'in', 'range' => array_keys(self::usableScopeOptions())],
             ['avatar', 'image',
                 'extensions' => 'jpg,gif,png,jpeg',
                 'minSize' => 1024,
@@ -551,6 +561,20 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             self::STATUS_ACTIVE => '激活',
             self::STATUS_LOCKED => '锁定',
             self::STATUS_DELETED => '删除',
+        ];
+    }
+
+    /**
+     * 使用范围选项
+     *
+     * @return array
+     */
+    public static function usableScopeOptions()
+    {
+        return [
+            self::USABLE_SCOPE_ALL => '全部',
+            self::USABLE_SCOPE_FRONTEND => '前端',
+            self::USABLE_SCOPE_BACKEND => '后端',
         ];
     }
 

@@ -61,6 +61,8 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'role')->dropDownList(Member::roleOptions()) ?>
 
+            <?= $form->field($model, 'usable_scope')->dropDownList(Member::usableScopeOptions()) ?>
+
             <?= $form->field($model, 'status')->dropDownList(Member::statusOptions()) ?>
 
             <?= $form->field($model, 'remark')->textarea(['rows' => 6]) ?>

@@ -46,6 +46,7 @@ $creditLogs = $model->creditLogs;
                         'id',
                         'type:memberType',
                         'role:memberRole',
+                        'usable_scope:memberUsableScope',
                         'parent.username',
                         'username',
                         'nickname',

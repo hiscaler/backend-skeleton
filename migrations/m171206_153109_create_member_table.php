@@ -44,6 +44,7 @@ class m171206_153109_create_member_table extends Migration
             'last_login_time' => $this->integer()->defaultValue(null)->comment('最后登录时间'),
             'last_login_session' => $this->string(128)->comment('最后登录 session 值'),
             'expired_datetime' => $this->integer()->defaultValue(null)->comment('有效期'),
+            'usable_scope' => $this->smallInteger()->notNull()->defaultValue(0)->comment('使用范围'),
             'status' => $this->smallInteger()->notNull()->defaultValue(0)->comment('状态'),
             'remark' => $this->text()->comment('备注'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
