@@ -10,6 +10,7 @@ return [
     'Grid Column Config' => '显示栏位',
     'Lookup' => '常规设定',
     'Member' => '会员',
+    'Member Login Log' => '会员登录日志',
     'Meta' => '扩展属性',
     'Module' => '模块管理',
     'User' => '用户',

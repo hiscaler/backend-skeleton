@@ -188,6 +188,12 @@ return [
                 'url' => ['members/index'],
                 'forceEmbed' => true,
             ],
+            'app-models-MemberLoginLog' => [
+                'id' => 'member-login-log',
+                'label' => 'Member Login Logs',
+                'url' => ['member-login-logs/index'],
+                'forceEmbed' => true,
+            ],
             'db' => [
                 'id' => 'db',
                 'label' => 'DB',

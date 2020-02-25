@@ -20,6 +20,7 @@ $formatter = Yii::$app->getFormatter();
 $wechatModel = $model->wechat;
 $profile = $model->profile;
 $creditLogs = $model->creditLogs;
+$loginLogs = $model->loginLogs;
 ?>
 <div>
     <ul class="tabs-common">
@@ -35,6 +36,9 @@ $creditLogs = $model->creditLogs;
         <?php endif; ?>
         <?php if ($creditLogs): ?>
             <li><a href="javascript:;" data-toggle="tab-panel-credit-logs">积分日志</a></li>
+        <?php endif; ?>
+        <?php if ($loginLogs): ?>
+            <li><a href="javascript:;" data-toggle="tab-panel-login-logs">登录日志</a></li>
         <?php endif; ?>
     </ul>
     <div class="panels">
@@ -175,6 +179,33 @@ $creditLogs = $model->creditLogs;
                                 <td class="number"><?= $log['credits'] ?></td>
                                 <td><?= $log['remark'] ?></td>
                                 <td class="datetime"><?= date('Y-m-d H:i:s', $log['created_at']) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($loginLogs): ?>
+            <div class="tab-panel" id="tab-panel-login-logs" style="display: none;">
+                <div class="grid-view">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>登录时间</th>
+                            <th>IP</th>
+                            <th class="last">客户端信息</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($loginLogs as $i => $log): ?>
+                            <tr>
+                                <td class="serial-number"><?= $i + 1 ?></td>
+                                <td class="datetime"><?= $formatter->asDatetime($log['login_at']) ?></td>
+                                <td class="ip-address"><?= $log['ip'] ?></td>
+                                <td><?= $log['client_information'] ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

@@ -6,6 +6,7 @@ use app\helpers\Config;
 use yadjet\behaviors\ImageUploadBehavior;
 use yadjet\helpers\IsHelper;
 use yadjet\helpers\StringHelper;
+use yadjet\helpers\UtilHelper;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -676,6 +677,17 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * 登录日志
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLoginLogs()
+    {
+        return $this->hasMany(MemberLoginLog::class, ['member_id' => 'id'])
+            ->orderBy(['id' => SORT_DESC]);
+    }
+
+    /**
      * 根据用户积分修正用户所在分组
      *
      * @param integer $memberId
@@ -714,11 +726,20 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $user = Yii::$app->getUser();
         if (!$user->getIsGuest()) {
-            Yii::$app->getDb()->createCommand('UPDATE {{%member}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime, [[last_login_session]] = :lastLoginSession WHERE [[id]] = :id', [
-                ':loginIp' => Yii::$app->getRequest()->getUserIP(),
-                ':loginTime' => time(),
+            $ip = Yii::$app->getRequest()->getUserIP();
+            $now = time();
+            $db = Yii::$app->getDb();
+            $db->createCommand('UPDATE {{%member}} SET [[login_count]] = [[login_count]] + 1, [[last_login_ip]] = :loginIp, [[last_login_time]] = :loginTime, [[last_login_session]] = :lastLoginSession WHERE [[id]] = :id', [
+                ':loginIp' => $ip,
+                ':loginTime' => $now,
                 ':lastLoginSession' => session_id(),
                 ':id' => $user->getId()
+            ])->execute();
+            $db->createCommand()->insert('{{%member_login_log}}', [
+                'member_id' => $user->getId(),
+                'ip' => $ip,
+                'login_at' => $now,
+                'client_information' => UtilHelper::getBrowserName(),
             ])->execute();
         }
     }
@@ -796,7 +817,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
 
         // 清理相关数据
         $cmd = Yii::$app->getDb()->createCommand();
-        $tables = ['member_credit_log', 'wechat_member', 'member_profile'];
+        $tables = ['member_credit_log', 'wechat_member', 'member_profile', 'member_login_log'];
         foreach ($tables as $table) {
             $cmd->delete("{{%$table}}", ['member_id' => $this->id])->execute();
         }
