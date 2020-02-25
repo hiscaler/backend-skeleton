@@ -167,6 +167,12 @@ class Formatter extends \yii\i18n\Formatter
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }
 
+    /**
+     * 用户角色
+     *
+     * @param $value
+     * @return mixed|string
+     */
     public function asUserRole($value)
     {
         if ($value === null) {
@@ -222,6 +228,22 @@ class Formatter extends \yii\i18n\Formatter
         }
 
         $options = Member::typeOptions();
+
+        return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
+    }
+
+    /**
+     * 会员角色
+     *
+     * @param $value
+     * @return string
+     */
+    public function asMemberRole($value)
+    {
+        if ($value === null) {
+            return $this->nullDisplay;
+        }
+        $options = Member::roleOptions();
 
         return isset($options[$value]) ? $options[$value] : $this->nullDisplay;
     }

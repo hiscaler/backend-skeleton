@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Member;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -18,10 +19,10 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
         <?= $form->errorSummary($model) ?>
         <div class="tab-panel" id="tab-panel-basic">
-            <?= $form->field($model, 'type')->dropDownList(\app\models\Member::typeOptions()) ?>
+            <?= $form->field($model, 'type')->dropDownList(Member::typeOptions()) ?>
             <?php
             if ($model->getIsNewRecord()) {
-                echo $form->field($model, 'parent_id')->dropDownList(\app\models\Member::map(), ['prompt' => '']);
+                echo $form->field($model, 'parent_id')->dropDownList(Member::map(), ['prompt' => '']);
             }
             ?>
             <?php
@@ -58,7 +59,9 @@ use yii\widgets\ActiveForm;
                 'pickerType' => 'datetime',
             ]) ?>
 
-            <?= $form->field($model, 'status')->dropDownList(\app\models\Member::statusOptions()) ?>
+            <?= $form->field($model, 'role')->dropDownList(Member::roleOptions()) ?>
+
+            <?= $form->field($model, 'status')->dropDownList(Member::statusOptions()) ?>
 
             <?= $form->field($model, 'remark')->textarea(['rows' => 6]) ?>
         </div>

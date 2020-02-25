@@ -49,6 +49,11 @@ $defaultAvatar = $baseUrl . '/images/default-avatar.jpg';
                 'contentOptions' => ['class' => 'member-type'],
             ],
             [
+                'attribute' => 'role',
+                'format' => 'memberRole',
+                'contentOptions' => ['class' => 'member-role'],
+            ],
+            [
                 'attribute' => 'category_id',
                 'value' => function ($model) {
                     return $model->category ? $model->category->name : null;

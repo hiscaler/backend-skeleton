@@ -45,6 +45,7 @@ $creditLogs = $model->creditLogs;
                     'attributes' => [
                         'id',
                         'type:memberType',
+                        'role:memberRole',
                         'parent.username',
                         'username',
                         'nickname',
