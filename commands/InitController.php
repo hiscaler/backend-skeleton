@@ -92,9 +92,9 @@ EOT;
                 $member->mobile_phone = "158" . str_repeat($i, 8);
                 if ($member->save()) {
                     if ($username == 'admin') {
-                        $this->_memberId = $db->getLastInsertID();
+                        $this->_memberId = $member->getId();
                     }
-                    $this->stdout("Create `$username` member successful.");
+                    $this->stdout("Create `$username` member successful." . PHP_EOL);
                 }
             } else {
                 $this->stdout("Member `$username` is exists." . PHP_EOL);
