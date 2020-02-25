@@ -7,6 +7,7 @@ use app\modules\api\extensions\ActiveController;
 use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\forms\MemberLoginForm;
 use app\modules\api\forms\MemberRegisterForm;
+use app\modules\api\models\FrontendMember;
 use app\modules\api\models\MemberProfile;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -24,11 +25,7 @@ use yii\web\ServerErrorHttpException;
 class PassportController extends ActiveController
 {
 
-    public function init()
-    {
-        parent::init();
-        $this->modelClass = $this->identityClass;
-    }
+    public $modelClass = FrontendMember::class;
 
     public function actions()
     {

@@ -4,6 +4,7 @@ namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\extensions\Formatter;
+use app\modules\api\models\FrontendMember;
 use app\modules\api\models\MemberSearch;
 use DateTime;
 use Exception;
@@ -23,17 +24,13 @@ use yii\helpers\ArrayHelper;
 class MemberController extends ActiveController
 {
 
+    public $modelClass = FrontendMember::class;
+
     /**
      * 统计类型
      */
     const STATISTICS_TYPE = 'date';
     const STATISTICS_TYPE_MEMBER_TYPE = 'type';
-
-    public function init()
-    {
-        parent::init();
-        $this->modelClass = $this->identityClass;
-    }
 
     public function behaviors()
     {
