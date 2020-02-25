@@ -88,7 +88,7 @@ class LoginForm extends Model
     {
         if ($this->_user === false) {
             /* @var $class IdentityInterface */
-            $class = Yii::$app->getUser()->identityClass;
+            $class = Config::get('identityClass.backend', Yii::$app->getUser()->identityClass);
             $this->_user = $class::findByUsername($this->username);
         }
 

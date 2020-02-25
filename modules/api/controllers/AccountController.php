@@ -9,6 +9,7 @@ use app\modules\api\models\MemberProfile;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\IdentityInterface;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 
@@ -21,7 +22,11 @@ use yii\web\ServerErrorHttpException;
 class AccountController extends ActiveController
 {
 
-    public $modelClass = Member::class;
+    public function init()
+    {
+        parent::init();
+        $this->modelClass = $this->identityClass;
+    }
 
     public function actions()
     {
@@ -139,12 +144,13 @@ class AccountController extends ActiveController
     }
 
     /**
-     * @return Member|null
+     * @return IdentityInterface|Member|null
      * @throws NotFoundHttpException
      */
     protected function findModel()
     {
-        $model = Member::findOne(Yii::$app->getUser()->getId());
+        $class = $this->identityClass;
+        $model = $class::findIdentity(Yii::$app->getUser()->getId());
         if ($model === null) {
             throw new NotFoundHttpException('Not found');
         }

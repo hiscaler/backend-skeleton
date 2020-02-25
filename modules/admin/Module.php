@@ -2,6 +2,9 @@
 
 namespace app\modules\admin;
 
+use app\helpers\Config;
+use Yii;
+
 /**
  * admin module definition class
  */
@@ -32,16 +35,16 @@ class Module extends \yii\base\Module
                 'basePath' => "@app/modules/admin/modules/$alias/messages",
             ];
         }
-        $userClass = \Yii::$app->getUser()->identityClass;
-        \Yii::$app->setComponents([
+        $identityClass = Config::get('identityClass.backend', Yii::$app->getUser()->identityClass);
+        Yii::$app->setComponents([
             'user' => [
                 'class' => 'yii\web\User',
-                'identityClass' => $userClass,
+                'identityClass' => $identityClass,
                 'identityCookie' => ['name' => '_identity_admin', 'httpOnly' => true],
                 'idParam' => '__id_admin',
                 'enableAutoLogin' => true,
                 'loginUrl' => ['/admin/default/login'],
-                'on afterLogin' => [$userClass, 'afterLogin'],
+                'on afterLogin' => [$identityClass, 'afterLogin'],
             ],
             'formatter' => [
                 'class' => 'app\modules\admin\extensions\Formatter',
@@ -66,14 +69,14 @@ class Module extends \yii\base\Module
             ],
         ]);
         if (isset($modules['rbac'])) {
-            \Yii::$app->setComponents([
+            Yii::$app->setComponents([
                 'authManager' => [
                     'class' => 'yii\rbac\DbManager',
                 ],
             ]);
         }
         if (isset($modules['queue']) && class_exists('\yii\queue\db\Queue')) {
-            \Yii::$app->setComponents([
+            Yii::$app->setComponents([
                 'queue' => [
                     'class' => \yii\queue\db\Queue::class,
                     'mutex' => \yii\mutex\MysqlMutex::class,
@@ -82,7 +85,7 @@ class Module extends \yii\base\Module
                 ],
             ]);
         }
-        \Yii::$app->getErrorHandler()->errorAction = '/admin/default/error';
+        Yii::$app->getErrorHandler()->errorAction = '/admin/default/error';
 
         // 载入安装的模块
         foreach ($modules as $alias => $name) {

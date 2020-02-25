@@ -9,6 +9,7 @@ use app\modules\api\extensions\yii\rest\ListAction;
 use Yii;
 use yii\filters\ContentNegotiator;
 use yii\filters\Cors;
+use yii\web\IdentityInterface;
 use yii\web\Response;
 
 /**
@@ -44,6 +45,11 @@ class ActiveController extends \yii\rest\ActiveController
     ];
 
     /**
+     * @var IdentityInterface
+     */
+    protected $identityClass;
+
+    /**
      * @throws \yii\base\InvalidConfigException
      */
     public function init()
@@ -52,6 +58,7 @@ class ActiveController extends \yii\rest\ActiveController
         $dbCacheTime = Config::get('api.dbCacheDuration');
         $this->dbCacheTime = $dbCacheTime === null ? null : (int) $dbCacheTime;
         $this->debug = strtolower(trim(Yii::$app->getRequest()->get('debug'))) == 'y';
+        $this->identityClass = Config::get('identityClass.frontend', Yii::$app->getUser()->identityClass);
     }
 
     /**

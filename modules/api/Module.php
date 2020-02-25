@@ -3,7 +3,6 @@
 namespace app\modules\api;
 
 use app\helpers\Config;
-use app\modules\api\models\Member;
 use Yii;
 use yii\web\Response;
 
@@ -26,7 +25,7 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        $identityClass = Config::get('api.user.identityClass', Member::class);
+        $identityClass = Config::get('identityClass.frontend', Yii::$app->getUser()->identityClass);
         Yii::$app->setComponents([
             'user' => [
                 'class' => 'yii\web\User',

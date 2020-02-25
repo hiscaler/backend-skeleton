@@ -7,7 +7,6 @@ use app\modules\api\extensions\ActiveController;
 use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\forms\MemberLoginForm;
 use app\modules\api\forms\MemberRegisterForm;
-use app\modules\api\models\Member;
 use app\modules\api\models\MemberProfile;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -25,7 +24,11 @@ use yii\web\ServerErrorHttpException;
 class PassportController extends ActiveController
 {
 
-    public $modelClass = Member::class;
+    public function init()
+    {
+        parent::init();
+        $this->modelClass = $this->identityClass;
+    }
 
     public function actions()
     {
@@ -163,7 +166,8 @@ class PassportController extends ActiveController
         if (empty($token)) {
             throw new BadRequestHttpException("无效的 $this->_token_param 值。");
         }
-        $member = Member::findIdentityByAccessToken($token);
+        $class = $this->identityClass;
+        $member = $class::findIdentityByAccessToken($token);
         if ($member === null) {
             throw new BadRequestHttpException("用户验证失败。");
         }
@@ -212,7 +216,8 @@ class PassportController extends ActiveController
     {
         $token = Yii::$app->getRequest()->get($this->_token_param);
         if ($token) {
-            $member = Member::findIdentityByAccessToken($token);
+            $class = $this->identityClass;
+            $member = $class::findIdentityByAccessToken($token);
             if ($member) {
                 $model = new ChangeMyPasswordForm();
                 $model->load(Yii::$app->getRequest()->getBodyParams(), '');

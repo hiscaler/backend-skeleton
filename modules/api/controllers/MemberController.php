@@ -4,7 +4,6 @@ namespace app\modules\api\controllers;
 
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\extensions\Formatter;
-use app\modules\api\models\Member;
 use app\modules\api\models\MemberSearch;
 use DateTime;
 use Exception;
@@ -30,7 +29,11 @@ class MemberController extends ActiveController
     const STATISTICS_TYPE = 'date';
     const STATISTICS_TYPE_MEMBER_TYPE = 'type';
 
-    public $modelClass = Member::class;
+    public function init()
+    {
+        parent::init();
+        $this->modelClass = $this->identityClass;
+    }
 
     public function behaviors()
     {

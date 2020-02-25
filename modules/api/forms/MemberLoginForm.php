@@ -3,7 +3,6 @@
 namespace app\modules\api\forms;
 
 use app\helpers\Config;
-use app\modules\api\models\Member;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
 use yii\base\Model;
@@ -187,18 +186,19 @@ class MemberLoginForm extends Model
     public function getMember()
     {
         if ($this->_member === null) {
+            $class = Config::get('identityClass.frontend', Yii::$app->getUser()->identityClass);
             switch ($this->type) {
                 case self::TYPE_MOBILE_PHONE:
                 case self::TYPE_CAPTCHA:
-                    $this->_member = Member::findByMobilePhone($this->mobile_phone);
+                    $this->_member = $class::findByMobilePhone($this->mobile_phone);
                     break;
 
                 case self::TYPE_ACCESS_TOKEN:
-                    $this->_member = Member::findIdentityByAccessToken($this->access_token);
+                    $this->_member = $class::findIdentityByAccessToken($this->access_token);
                     break;
 
                 default:
-                    $this->_member = Member::findByUsername($this->username);
+                    $this->_member = $class::findByUsername($this->username);
                     break;
             }
         }

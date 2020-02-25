@@ -8,6 +8,11 @@ return [
     'user' => [
         'fakeMember' => 'tmp', // 后台发起 api 请求模拟的用户
     ],
+    // 认证处理
+    'identityClass' => [
+        'backend' => 'app\models\BackendMember', // 后端认证处理类
+        'frontend' => 'app\modules\api\models\FrontendMember' // 前端认证处理类
+    ],
     // 会员
     'member' => [
         /**
