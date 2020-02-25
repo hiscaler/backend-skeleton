@@ -3,9 +3,7 @@
 namespace app\modules\admin\widgets;
 
 use app\helpers\Config;
-use app\models\Member;
 use app\models\Module;
-use app\models\User;
 use app\modules\admin\components\ApplicationHelper;
 use Yii;
 use yii\base\Widget;
@@ -30,22 +28,14 @@ class GlobalControlPanel extends Widget
         $rbacConfig = Config::get('rbac', []);
         $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
         if ($requireCheckAuth) {
-            $identity = $user->getIdentity();
-            /* @var $identity Member */
-            if ($user->identityClass != Member::class || $identity->type != Member::TYPE_ADMINISTRATOR) {
-                $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
-                if (!is_array($ignoreUsers)) {
-                    $ignoreUsers = [];
+            $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
+            if (!is_array($ignoreUsers)) {
+                $ignoreUsers = [];
+            }
+            if ($ignoreUsers) {
+                if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
+                    $requireCheckAuth = false;
                 }
-                if ($ignoreUsers) {
-                    /* @var $identity User */
-                    if (!$user->getIsGuest() && in_array($identity->getUsername(), $ignoreUsers)) {
-                        $requireCheckAuth = false;
-                    }
-                }
-            } else {
-                // 验证类为 Member 并且类型是系统管理员则不需要走权限认证处理
-                $requireCheckAuth = false;
             }
         }
         $items = [];

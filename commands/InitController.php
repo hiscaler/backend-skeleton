@@ -26,6 +26,8 @@ EOT;
 
     private $_userId = 0;
 
+    private $_memberId = 0;
+
     /**
      * 初始化默认管理用户
      *
@@ -78,19 +80,25 @@ EOT;
      */
     private function _initMember()
     {
-        $username = 'tmp';
-        $userId = Yii::$app->getDb()->createCommand('SELECT [[id]] FROM {{%member}} WHERE username = :username', [':username' => $username])->queryScalar();
-        if (!$userId) {
-            $security = new Security;
-            $member = new Member();
-            $member->username = $username;
-            $member->setPassword($security->generateRandomString());
-            $member->mobile_phone = "15800000000";
-            if ($member->save()) {
-                $this->stdout("Create `$username` member successful.");
+        $db = Yii::$app->getDb();
+        $usernames = ['admin', 'tmp'];
+        foreach ($usernames as $i => $username) {
+            $userId = $db->createCommand('SELECT [[id]] FROM {{%member}} WHERE username = :username', [':username' => $username])->queryScalar();
+            if (!$userId) {
+                $security = new Security;
+                $member = new Member();
+                $member->username = $username;
+                $member->setPassword('111111');
+                $member->mobile_phone = "158" . str_repeat($i, 8);
+                if ($member->save()) {
+                    if ($username == 'admin') {
+                        $this->_memberId = $db->getLastInsertID();
+                    }
+                    $this->stdout("Create `$username` member successful.");
+                }
+            } else {
+                $this->stdout("Member `$username` is exists." . PHP_EOL);
             }
-        } else {
-            $this->stdout("Member `$username` is exists." . PHP_EOL);
         }
     }
 
@@ -262,9 +270,9 @@ EOT;
                     'input_method' => isset($item['inputMethod']) ? $item['inputMethod'] : Lookup::INPUT_METHOD_TEXT,
                     'input_value' => isset($item['inputValue']) ? $item['inputValue'] : '',
                     'enabled' => Constant::BOOLEAN_TRUE,
-                    'created_by' => $this->_userId,
+                    'created_by' => $this->_memberId,
                     'created_at' => $now,
-                    'updated_by' => $this->_userId,
+                    'updated_by' => $this->_memberId,
                     'updated_at' => $now,
                 ];
                 $cmd->insert('{{%lookup}}', $columns)->execute();
