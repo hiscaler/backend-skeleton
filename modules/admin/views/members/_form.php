@@ -59,7 +59,7 @@ use yii\widgets\ActiveForm;
                 'pickerType' => 'datetime',
             ]) ?>
 
-            <?= $form->field($model, 'role')->dropDownList(Member::roleOptions()) ?>
+            <?= $form->field($model, 'role')->dropDownList(Member::roleOptions(), ['prompt' => '']) ?>
 
             <?= $form->field($model, 'usable_scope')->dropDownList(Member::usableScopeOptions()) ?>
 
