@@ -3,6 +3,7 @@
 namespace app\modules\admin\forms;
 
 use app\helpers\Config;
+use app\models\Member;
 use Yii;
 use yii\base\Model;
 use yii\web\IdentityInterface;
@@ -50,6 +51,7 @@ class LoginForm extends Model
     public function validatePassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
+            /* @var $user Member */
             $user = $this->getUser();
             if (!$user ||
                 (Config::get('ignorePassword') === false && !$user->validatePassword($this->password)) ||
