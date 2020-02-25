@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Member;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -19,8 +20,8 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'mobile_phone') ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'type')->dropDownList(\app\models\Member::typeOptions(), ['prompt' => '']) ?>
-            <?= $form->field($model, 'status')->dropDownList(\app\models\Member::statusOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'type')->dropDownList(Member::typeOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'status')->dropDownList(Member::statusOptions(), ['prompt' => '']) ?>
         </div>
         <div class="form-group buttons">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
