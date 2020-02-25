@@ -172,10 +172,11 @@ class BaseOption
                     $models[$table] = Yii::t('model', Inflector::camel2words($modelName));
                 }
             } else {
-                if (stripos($table, '_') === false) {
+                if (($index = stripos($table, '_')) === false) {
                     $moduleName = $modelName = $table;
                 } else {
-                    list($moduleName, $modelName) = explode('_', $table);
+                    $moduleName = substr($table, 0, $index);
+                    $modelName = substr($table, $index + 1);
                 }
                 $moduleName = strtolower($moduleName);
                 $modelName = Inflector::id2camel($modelName, '_');
@@ -183,7 +184,7 @@ class BaseOption
                     if ($namespace) {
                         $models[$table] = "app\\modules\\admin\\modules\\$moduleName\\models\\$modelName";
                     } else {
-                        $models[$table] = "$moduleName: " . Yii::t("$moduleName", Inflector::camel2words($modelName));
+                        $models[$table] = ucfirst($moduleName) . ': ' . Yii::t("$moduleName", Inflector::camel2words($modelName));
                     }
                 }
             }
