@@ -14,7 +14,7 @@ class BackendMember extends BaseMember
     private static function isBackend($member)
     {
         if ($member) {
-            if ($member->usable_scope != self::USABLE_SCOPE_BACKEND) {
+            if ($member->usable_scope != self::USABLE_SCOPE_BACKEND && $member->usable_scope != self::USABLE_SCOPE_ALL) {
                 $member = null;
             }
         }
