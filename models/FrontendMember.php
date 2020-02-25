@@ -14,7 +14,7 @@ class FrontendMember extends BaseMember
     private static function isFrontend($member)
     {
         if ($member) {
-            if ($member->usable_scope != self::USABLE_SCOPE_FRONTEND) {
+            if ($member->usable_scope != self::USABLE_SCOPE_FRONTEND && $member->usable_scope != self::USABLE_SCOPE_ALL) {
                 $member = null;
             }
         }
