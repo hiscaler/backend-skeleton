@@ -17,6 +17,7 @@ use yii\web\IdentityInterface;
  *
  * @property integer $id
  * @property integer $type
+ * @property string $role
  * @property integer $category_id
  * @property string $group
  * @property string $unique_key
@@ -93,6 +94,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $rules = [
             [['type', 'category_id', 'parent_id', 'total_money', 'available_money', 'total_credits', 'available_credits', 'alarm_credits', 'login_count', 'last_login_time', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            ['role', 'string', 'min' => 1, 'max' => 64],
             ['alarm_credits', 'default', 'value' => 0],
             ['expired_datetime', 'datetime', 'timestampAttribute' => 'expired_datetime'],
             'registerByUsername' => [['username'], 'required'],
@@ -156,6 +158,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             'id' => '编号',
             'type' => '会员类型',
+            'role' => '角色',
             'category_id' => '分类',
             'group' => '分组',
             'unique_key' => '邀请码',
@@ -366,6 +369,24 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * 用户角色选项
+     *
+     * @return array
+     */
+    public static function roleOptions()
+    {
+        $roles = [];
+        $authManager = Yii::$app->getAuthManager();
+        if ($authManager) {
+            foreach ($authManager->getRoles() as $role) {
+                $roles[$role->name] = $role->description ?: $role->name;
+            }
+        }
+
+        return $roles;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getId()
@@ -384,13 +405,13 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Role
+     * 角色
      *
      * @return null
      */
     public function getRole()
     {
-        return null;
+        return $this->role;
     }
 
     /**
@@ -536,18 +557,41 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * 会员列表
      *
-     * @param null $field
+     * @param null $role
+     * @param string $field
+     * @param null $extField
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function map($field = null)
+    public static function map($role = null, $field = 'username', $extField = null)
     {
         $members = [];
-        $rawMembers = Yii::$app->getDb()->createCommand('SELECT [[id]], [[username]], [[nickname]], [[real_name]] FROM {{%member}}')->queryAll();
+        $fields = [
+            'role', 'group', 'username', 'nickname', 'real_name', 'email', 'mobile_phone'
+        ];
+        $select = ['[[id]]', '[[username]]'];
+        if ($field && in_array($field, $fields)) {
+            $select[1] = "[[$field]]";
+        } else {
+            $field = 'username';
+        }
+        if ($extField && in_array($extField, $fields)) {
+            $select[] = "[[$extField]]";
+        } else {
+            $extField = null;
+        }
+        $sql = 'SELECT ' . implode(', ', $select) . ' FROM {{%member}}';
+        $params = [];
+        $role = trim($role);
+        if ($role) {
+            $sql .= ' WHERE [[role]] = :role';
+            $params[':role'] = $role;
+        }
+        $rawMembers = Yii::$app->getDb()->createCommand($sql, $params)->queryAll();
         foreach ($rawMembers as $member) {
-            $value = $member['username'];
-            if ($field && isset($member[$field])) {
-                $value .= " [ " . $member[$field] . " ]";
+            $value = $member[$field];
+            if ($extField && $member[$extField]) {
+                $value .= " [ {$member[$extField]} ]";
             }
             $members[$member['id']] = $value;
         }
