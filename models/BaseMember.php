@@ -194,6 +194,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             'last_login_time' => '最后登录时间',
             'last_login_session' => '最后登录 session 值',
             'expired_datetime' => '有效期',
+            'usable_scope' => '使用范围',
             'status' => '状态',
             'remark' => '备注',
             'created_at' => '注册时间',

@@ -85,8 +85,8 @@ EOT;
         foreach ($usernames as $i => $username) {
             $userId = $db->createCommand('SELECT [[id]] FROM {{%member}} WHERE username = :username', [':username' => $username])->queryScalar();
             if (!$userId) {
-                $security = new Security;
                 $member = new Member();
+                $member->usable_scope = Member::USABLE_SCOPE_ALL;
                 $member->username = $username;
                 $member->setPassword('111111');
                 $member->mobile_phone = "158" . str_repeat($i, 8);
