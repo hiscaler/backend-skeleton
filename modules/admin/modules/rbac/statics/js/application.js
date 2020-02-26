@@ -37,18 +37,18 @@ yadjet.rbac.urls = yadjet.rbac.urls || {
     }
 };
 
-axios.interceptors.request.use(function (config) {
+axios.interceptors.request.use(function(config) {
     $.fn.lock();
     return config;
-}, function (error) {
+}, function(error) {
     $.fn.unlock();
     return Promise.reject(error);
 });
 
-axios.interceptors.response.use(function (response) {
+axios.interceptors.response.use(function(response) {
     $.fn.unlock();
     return response;
-}, function (error) {
+}, function(error) {
     $.fn.unlock();
     return Promise.reject(error);
 });
@@ -80,15 +80,15 @@ var vm = new Vue({
         }
     },
     methods: {
-        isEmptyObject: function (e) {
+        isEmptyObject: function(e) {
             var t;
             for (t in e)
                 return !1;
             return !0
         },
-        userRolesByUserId: function (userId, index) {
+        userRolesByUserId: function(userId, index) {
             axios.get(yadjet.rbac.urls.user.roles.replace('_id', userId))
-                .then(function (response) {
+                .then(function(response) {
                     vm.user.roles = response.data;
                     vm.activeObject.userId = userId;
                     var $tr = $('#rbac-users > table tr:eq(' + (index + 1) + ')'),
@@ -99,24 +99,24 @@ var vm = new Vue({
                         top: offset.top + $tr.find('td').outerHeight()
                     });
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     vm.user.roles = [];
                     vm.activeObject.userId = undefined;
                 });
         },
         // 给用户授权
-        assign: function (roleName, index) {
-            axios.post(yadjet.rbac.urls.assign, {roleName: roleName, userId: vm.activeObject.userId})
-                .then(function (response) {
+        assign: function(roleName, index) {
+            axios.post(yadjet.rbac.urls.assign, { roleName: roleName, userId: vm.activeObject.userId })
+                .then(function(response) {
                     vm.user.roles.push(vm.roles[index]);
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                 });
         },
         // 撤销用户授权
-        revoke: function (roleName, index) {
-            axios.post(yadjet.rbac.urls.revoke, {roleName: roleName, userId: vm.activeObject.userId})
-                .then(function (response) {
+        revoke: function(roleName, index) {
+            axios.post(yadjet.rbac.urls.revoke, { roleName: roleName, userId: vm.activeObject.userId })
+                .then(function(response) {
                     for (var i in vm.user.roles) {
                         console.info(vm.user.roles[i].name);
                         if (vm.user.roles[i].name === roleName) {
@@ -125,11 +125,11 @@ var vm = new Vue({
                         }
                     }
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                 });
         },
         // 更新角色
-        roleUpdate: function (key) {
+        roleUpdate: function(key) {
             console.info(key);
             var role = vm.roles[key];
             $('#rbac-role-form input#name').val(role.name);
@@ -137,35 +137,35 @@ var vm = new Vue({
             vm.formVisible.role = true;
         },
         // 删除角色
-        roleDelete: function (roleName, index, event) {
-            layer.confirm('确定删除该角色？', {icon: 3, title: '提示'}, function (boxIndex) {
+        roleDelete: function(roleName, index, event) {
+            layer.confirm('确定删除该角色？', { icon: 3, title: '提示' }, function(boxIndex) {
                 axios.post(yadjet.rbac.urls.roles.delete.replace('_name', roleName))
-                    .then(function (response) {
+                    .then(function(response) {
                         vm.roles.splice(index, 1);
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                     });
 
                 layer.close(boxIndex);
             });
         },
         // 删除角色关联的所有权限
-        roleRemoveChildren: function (roleName) {
-            layer.confirm('删除该角色关联的所有权限？', {icon: 3, title: '提示'}, function (boxIndex) {
+        roleRemoveChildren: function(roleName) {
+            layer.confirm('删除该角色关联的所有权限？', { icon: 3, title: '提示' }, function(boxIndex) {
                 axios.post(yadjet.rbac.urls.roles.removeChildren.replace('_name', roleName))
-                    .then(function (response) {
+                    .then(function(response) {
                         vm.role.permissions = [];
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                     });
 
                 layer.close(boxIndex);
             });
         },
         // 根据角色获取关联的所有权限
-        permissionsByRole: function (roleName, index) {
+        permissionsByRole: function(roleName, index) {
             axios.get(yadjet.rbac.urls.roles.permissions.replace('_roleName', roleName))
-                .then(function (response) {
+                .then(function(response) {
                     vm.activeObject.role = roleName;
                     vm.role.permissions = response.data;
 
@@ -177,13 +177,13 @@ var vm = new Vue({
                         top: offset.top + $tr.find('td').outerHeight()
                     });
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                 });
         },
         // 分配权限给角色
-        roleAddChild: function (permissionName, index, event) {
+        roleAddChild: function(permissionName, index, event) {
             axios.post(yadjet.rbac.urls.roles.addChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName))
-                .then(function (response) {
+                .then(function(response) {
                     for (var i in vm.permissions) {
                         if (vm.permissions[i].name == permissionName) {
                             vm.role.permissions.push(vm.permissions[i]);
@@ -191,25 +191,25 @@ var vm = new Vue({
                         }
                     }
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                 });
         },
         // 添加所有权限至指定的角色
-        roleAddChildren: function (index, event) {
+        roleAddChildren: function(index, event) {
             axios.post(yadjet.rbac.urls.roles.addChildren.replace('_roleName', vm.activeObject.role))
-                .then(function (response) {
+                .then(function(response) {
                     for (var i in vm.permissions) {
                         vm.role.permissions.push(vm.permissions[i]);
                     }
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                 });
         },
         // 从角色中移除权限
-        roleRemoveChild: function (permissionName, index, event) {
-            layer.confirm('确定删除该权限？', {icon: 3, title: '提示'}, function (boxIndex) {
+        roleRemoveChild: function(permissionName, index, event) {
+            layer.confirm('确定删除该权限？', { icon: 3, title: '提示' }, function(boxIndex) {
                 axios.post(yadjet.rbac.urls.roles.removeChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName))
-                    .then(function (response) {
+                    .then(function(response) {
                         for (var i in vm.role.permissions) {
                             if (vm.role.permissions[i].name == permissionName) {
                                 vm.role.permissions.splice(i, 1);
@@ -217,33 +217,33 @@ var vm = new Vue({
                             }
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                     });
 
                 layer.close(boxIndex);
             });
         },
         // 切换添加表单是否可见
-        toggleFormVisible: function (formName) {
+        toggleFormVisible: function(formName) {
             vm.formVisible[formName] = !vm.formVisible[formName];
         },
         // 保存扫描的权限
-        permissionSave: function (name, description, index, event) {
-            axios.post(yadjet.rbac.urls.permissions.create, {name: name, description: description})
-                .then(function (response) {
+        permissionSave: function(name, description, index, event) {
+            axios.post(yadjet.rbac.urls.permissions.create, { name: name, description: description })
+                .then(function(response) {
                     if (response.data.success) {
                         vm.permissions.push(response.data.data);
                         vm.pendingPermissions[index].active = false;
                     }
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                 });
         },
         // 删除单个权限
-        permissionDelete: function (name, index, event) {
-            layer.confirm('确定删除该权限？', {icon: 3, title: '提示'}, function (boxIndex) {
+        permissionDelete: function(name, index, event) {
+            layer.confirm('确定删除该权限？', { icon: 3, title: '提示' }, function(boxIndex) {
                 axios.post(yadjet.rbac.urls.permissions.delete.replace('_name', name))
-                    .then(function (response) {
+                    .then(function(response) {
                         vm.permissions.splice(index, 1);
                         for (var i in vm.pendingPermissions) {
                             if (vm.pendingPermissions[i].name == name) {
@@ -252,21 +252,21 @@ var vm = new Vue({
                             }
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                     });
 
                 layer.close(boxIndex);
             });
         },
         // 关闭弹窗
-        closeWindow: function () {
+        closeWindow: function() {
             vm.activeObject.userId = 0;
             vm.activeObject.role = undefined;
         }
     },
     computed: {
         // 当前用户的角色
-        userRoles: function () {
+        userRoles: function() {
             var roles = [], role;
             for (var i in this.roles) {
                 role = clone(this.roles[i]);
@@ -283,7 +283,7 @@ var vm = new Vue({
             return roles;
         },
         // 当前操作角色关联的权限
-        rolePermissions: function () {
+        rolePermissions: function() {
             var permissions = [], permission;
             for (var i in this.permissions) {
                 permission = clone(this.permissions[i]);
@@ -302,8 +302,8 @@ var vm = new Vue({
     }
 });
 
-$(function () {
-    $('.rbac-tabs-common li a').on('click', function () {
+$(function() {
+    $('.rbac-tabs-common li a').on('click', function() {
         var $t = $(this);
         $t.parent().addClass('active').siblings().removeClass('active');
         $('#rbac-app .panel').hide();
@@ -314,13 +314,13 @@ $(function () {
     });
 
     // 角色提交表单
-    $('#rbac-submit-role').on('click', function () {
+    $('#rbac-submit-role').on('click', function() {
         $.ajax({
             type: 'POST',
             url: yadjet.rbac.urls.roles.save,
             data: $('#rbac-role-form form').serialize(),
             returnType: 'json',
-            success: function (response) {
+            success: function(response) {
                 if (response.success) {
                     // vm.roles[response.data.name] = response.data;
                     if (response.data.insert) {
@@ -336,7 +336,7 @@ $(function () {
                 } else {
                     layer.alert(response.error.message);
                 }
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }, error: function(XMLHttpRequest, textStatus, errorThrown) {
                 layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
             }
         });
@@ -344,19 +344,19 @@ $(function () {
         return false;
     });
 
-    $('#rbac-submit-permission').on('click', function () {
+    $('#rbac-submit-permission').on('click', function() {
         $.ajax({
             type: 'POST',
             url: yadjet.rbac.urls.permissions.create,
             data: $('#rbac-permission-form form').serialize(),
             returnType: 'json',
-            success: function (response) {
+            success: function(response) {
                 if (response.success) {
                     vm.permissions.push(response.data);
                 } else {
                     layer.alert(response.error.message);
                 }
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }, error: function(XMLHttpRequest, textStatus, errorThrown) {
                 layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
             }
         });
