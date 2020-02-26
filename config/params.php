@@ -92,37 +92,10 @@ return [
             'extensions' => 'zip,rar,7z,txt,pdf,doc,docx,xls,xlsx,ppt,pptx,wps'
         ]
     ],
-    // 权限认证设置
-    'rbac' => [
-        'debug' => false, // 是否开启调试模式（调试模式下不启用权限认证）
-        'ignoreUsers' => ['admin'], // 启用权限认证的情况下这些用户名登录的用户不受控制，可以使用全部的权限，方便调试。
-        'userTable' => [
-            'name' => '{{%member}}', // 查询的用户表
-            'columns' => [
-                'id' => 'id', // 用户的唯一主键
-                'username' => 'username', // 用户名
-                /**
-                 * 扩展字段（数据库字段名称 => 显示名称）
-                 *
-                 * 'extra' => [
-                 *     'nickname' => '昵称',
-                 *     'email' => '邮箱',
-                 * ]
-                 */
-                'extra' => [
-                    'nickname' => '昵称',
-                    'role' => '角色',
-                ],
-            ],
-            'where' => [], // 查询条件
-        ],
-        'disabledScanModules' => ['gii', 'debug', 'api'], // 禁止扫描的模块
-        'selfish' => true, // 是否只显示当前应用的相关数据
-    ],
-    // 微信公众号设置
-    'wechat' => require(__DIR__ . '/wechat.php'),
-    'module' => require(__DIR__ . '/module.php'),
-    'sms' => require(__DIR__ . '/sms.php'),
+    'rbac' => require(__DIR__ . '/rbac.php'),  // 权限认证设置
+    'wechat' => require(__DIR__ . '/wechat.php'),  // 微信公众号设置
+    'module' => require(__DIR__ . '/module.php'), // 模块设置
+    'sms' => require(__DIR__ . '/sms.php'), // 短信设置
     'modules' => [
         /**
          *'app-models-Article' => [
