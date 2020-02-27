@@ -3,5 +3,6 @@
     "author": "hiscaler",
     "version": "0.0.1",
     "description": "幻灯片图片资源管理模块",
-    "url": "http://www.github.com/hiscaler"
+    "url": "http://www.github.com/hiscaler",
+    "enabled_api": true
 }

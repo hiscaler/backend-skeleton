@@ -25,6 +25,7 @@ class m171207_031343_create_module_table extends Migration
             'url' => $this->string(100)->comment('URL'),
             'description' => $this->text()->comment('描述'),
             'menus' => $this->text()->comment('菜单配置'),
+            'enabled_api' => $this->boolean()->notNull()->defaultValue(0)->comment('启用 API'),
             'created_at' => $this->integer()->notNull()->comment('添加时间'),
             'created_by' => $this->integer()->notNull()->comment('添加人'),
             'updated_at' => $this->integer()->notNull()->comment('更新时间'),

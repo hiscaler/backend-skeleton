@@ -79,6 +79,7 @@ class ModulesController extends Controller
                     'icon' => $defaultIcon,
                     'description' => null,
                     'menus' => [],
+                    'enabled_api' => false,
                     'depends' => []
                 ];
                 if (file_exists($fullDirectory . DIRECTORY_SEPARATOR . 'conf.json')) {
@@ -134,11 +135,21 @@ class ModulesController extends Controller
                                             continue 2;
                                         }
                                         break;
+
+                                    case 'enabled_api':
+                                        $value = boolval($value);
+                                        break;
+
                                     case 'depends':
                                         if (!is_array($value)) {
                                             continue 2;
                                         }
                                         break;
+
+                                    default:
+                                        if (is_string($value)) {
+                                            $value = trim($value);
+                                        }
                                 }
                                 $m[$key] = $value;
                             }
@@ -296,7 +307,7 @@ class ModulesController extends Controller
     public function actionIndex()
     {
         $notInstalledModules = $this->_localModules;
-        $installedModules = Yii::$app->getDb()->createCommand('SELECT [[name]], [[alias]], [[icon]], [[author]], [[version]], [[url]], [[description]] FROM {{%module}} ORDER BY [[updated_at]] DESC')->queryAll();
+        $installedModules = Yii::$app->getDb()->createCommand('SELECT [[name]], [[alias]], [[icon]], [[author]], [[version]], [[url]], [[description]], [[enabled_api]] FROM {{%module}} ORDER BY [[updated_at]] DESC')->queryAll();
         if ($installedModules && !file_exists($this->_iconDestDirectory)) {
             FileHelper::createDirectory($this->_iconDestDirectory);
         }
@@ -356,6 +367,7 @@ class ModulesController extends Controller
                         'url' => $module['url'],
                         'description' => $module['description'],
                         'menus' => $module['menus'] ? json_encode($module['menus'], JSON_UNESCAPED_UNICODE + JSON_NUMERIC_CHECK) : null,
+                        'enabled_api' => $module['enabled_api'],
                         'created_at' => $now,
                         'created_by' => $userId,
                         'updated_at' => $now,
@@ -478,6 +490,7 @@ class ModulesController extends Controller
                         'url' => $module['url'],
                         'description' => $module['description'],
                         'menus' => $module['menus'] ? json_encode($module['menus'], JSON_UNESCAPED_UNICODE + JSON_NUMERIC_CHECK) : null,
+                        'enabled_api' => $module['enabled_api'],
                         'updated_at' => time(),
                         'updated_by' => Yii::$app->getUser()->getId(),
                     ], ['id' => $moduleId])->execute();

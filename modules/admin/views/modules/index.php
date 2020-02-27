@@ -7,6 +7,8 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Modules');
 $this->params['breadcrumbs'][] = $this->title;
+
+$iconAPI = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/api.png';
 ?>
 <div class="module-index">
     <ul class="tabs-common">
@@ -21,7 +23,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         <li id="module-<?= $module['alias'] ?>" class="widget-module clearfix">
                             <div class="hd">
                                 <em class="<?= $module['error'] ? 'error' : null ?>"><?= $module['name'] ?></em>
-                                <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
+                                <span class="icon">
+                                   <?= Html::img($module['icon'], ['alt' => $module['name']]) ?>
+                                   <?php if ($module['enabled_api']) {
+                                       echo Html::img($iconAPI, ['class' => 'api', 'title' => '启用 API']);
+                                   } ?>
+                                </span>
                                 <span class="buttons">
                                     <?= Html::a(Yii::t('module', 'Uninstall'), ['uninstall', 'alias' => $module['alias']], ['class' => 'uninstall', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['install', 'alias' => $module['alias']])]) ?>
                                     <?= Html::a(Yii::t('module', 'Upgrade'), ['upgrade', 'alias' => $module['alias']], ['class' => 'upgrade', 'data-key' => $module['alias'], 'data-name' => $module['name'], 'data-url' => \yii\helpers\Url::toRoute(['upgrade', 'alias' => $module['alias']])]) ?>
@@ -56,7 +63,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         <li id="module-<?= $module['alias'] ?>" class="widget-module">
                             <div class="hd">
                                 <em><?= $module['name'] ?></em>
-                                <span class="icon"><?= Html::img($module['icon'], ['src' => $module['name']]) ?></span>
+                                <span class="icon">
+                                    <?= Html::img($module['icon'], ['alt' => $module['name']]) ?>
+                                    <?php if ($module['enabled_api']) {
+                                        echo Html::img($iconAPI, ['class' => 'api', 'title' => '启用 API']);
+                                    } ?>
+                                </span>
                                 <span class="buttons">
                                     <?= Html::a(Yii::t('module', 'Install'), ['install', 'alias' => $module['alias']], ['class' => 'install', 'data-key' => $module['alias'], 'data-url' => \yii\helpers\Url::toRoute(['uninstall', 'alias' => $module['alias']])]) ?>
                                     <?= Html::a(Yii::t('module', 'Upgrade'), ['upgrade', 'alias' => $module['alias']], ['class' => 'upgrade', 'data-key' => $module['alias'], 'data-name' => $module['name'], 'data-url' => \yii\helpers\Url::toRoute(['upgrade', 'alias' => $module['alias']]), 'style' => 'display: none']) ?>

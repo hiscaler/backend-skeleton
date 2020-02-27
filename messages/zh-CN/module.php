@@ -7,6 +7,7 @@ return [
     'Icon' => '图标',
     'Url' => 'URL',
     'Description' => '描叙',
+    'Enabled API' => '启用 API',
     'Install' => '安装',
     'Uninstall' => '卸载',
     'Upgrade' => '更新',

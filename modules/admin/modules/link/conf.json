@@ -3,5 +3,6 @@
     "author": "hiscaler",
     "version": "0.0.1",
     "description": "友情链接管理模块",
-    "url": "http://www.github.com/hiscaler"
+    "url": "http://www.github.com/hiscaler",
+    "enabled_api": true
 }

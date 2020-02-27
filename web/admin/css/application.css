@@ -894,6 +894,14 @@ ul.list li em {
     height: 20px;
 }
 
+.widget-module .hd span .api {
+    position: absolute;
+    width: 16px !important;
+    height: 16px !important;
+    margin-top: -10px;
+    margin-left: -8px;
+}
+
 .widget-module .hd span.buttons {
     float: right;
 }

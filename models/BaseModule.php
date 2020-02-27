@@ -17,6 +17,7 @@ use yii\db\Query;
  * @property string $url
  * @property string $description
  * @property string $menus
+ * @property integer $enabled_api
  * @property integer $created_at
  * @property integer $created_by
  * @property integer $updated_at
@@ -53,6 +54,8 @@ class BaseModule extends \yii\db\ActiveRecord
             [['icon', 'url'], 'string', 'max' => 100],
             [['description'], 'string'],
             [['menus'], 'string'],
+            ['enabled_api', 'boolean'],
+            ['enabled_api', 'default', 'value' => Constant::BOOLEAN_FALSE],
             [['alias'], 'unique'],
         ];
     }
@@ -86,7 +89,7 @@ class BaseModule extends \yii\db\ActiveRecord
      */
     public static function getInstalledModules()
     {
-        return Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[menus]] FROM {{%module}}')->queryAll();
+        return Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[menus]], [[enabled_api]] FROM {{%module}}')->queryAll();
     }
 
     /**
