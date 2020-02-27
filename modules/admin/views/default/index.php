@@ -1,10 +1,11 @@
 <?php
 
+use app\modules\admin\widgets\MemberLoginLogs;
+
 /* @var $this yii\web\View */
 
 $this->title = '首页';
-
-use app\modules\admin\widgets\MemberLoginLogs; ?>
+?>
 <div class="blocks">
     <div class="left">
         <?php
