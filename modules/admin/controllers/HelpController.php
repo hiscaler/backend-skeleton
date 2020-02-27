@@ -83,6 +83,7 @@ class HelpController extends \yii\web\Controller
     /**
      * 文档查看
      *
+     * @rbacIgnore true
      * @param string $file
      * @return string
      * @throws NotFoundHttpException
@@ -128,4 +129,5 @@ class HelpController extends \yii\web\Controller
 
         throw new NotFoundHttpException("$file 文档不存在。");
     }
+
 }
