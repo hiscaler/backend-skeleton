@@ -48,6 +48,22 @@ class BaseController extends Controller
         $this->debug = strtolower(trim(Yii::$app->getRequest()->get('debug'))) == 'y';
     }
 
+    /**
+     * @param \yii\base\Action $action
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\UnauthorizedHttpException
+     */
+    public function beforeAction($action)
+    {
+        if (parent::beforeAction($action)) {
+            return UtilsHelper::checkRbacAuth($this->module->getUniqueId(), $action);
+        } else {
+            return false;
+        }
+    }
+
     public function behaviors()
     {
         return [

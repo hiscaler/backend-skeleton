@@ -2,8 +2,10 @@
 
 namespace app\modules\api\extensions;
 
+use app\helpers\Config;
 use Yii;
 use yii\helpers\Inflector;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * Class UtilsHelper
@@ -188,6 +190,45 @@ class UtilsHelper
         }
 
         return $result;
+    }
+
+    /**
+     * @param $moduleUniqueId
+     * @param $action
+     * @return bool
+     * @throws UnauthorizedHttpException
+     * @throws \Throwable
+     */
+    public static function checkRbacAuth($moduleUniqueId, $action)
+    {
+        $user = Yii::$app->getUser();
+        $authManager = Yii::$app->getAuthManager();
+        if ($authManager) {
+            $rbacConfig = Config::get('rbac', []);
+            $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
+            if ($requireCheckAuth) {
+                $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
+                if (!is_array($ignoreUsers)) {
+                    $ignoreUsers = [];
+                }
+                if ($ignoreUsers) {
+                    if (!$user->getIsGuest() && in_array($user->getIdentity()->getUsername(), $ignoreUsers)) {
+                        return true;
+                    }
+                }
+
+                $key = str_replace('/', '-', $moduleUniqueId);
+                $key && $key .= '-';
+                $key = $key . Inflector::camel2id(Yii::$app->controller->id) . '.' . Inflector::camel2id($action->id);
+                if (in_array($key, $rbacConfig['ignorePermissionNames']) || $user->can($key)) {
+                    return true;
+                } else {
+                    throw new UnauthorizedHttpException('对不起，您没有操作该动作的权限。');
+                }
+            }
+        }
+
+        return true;
     }
 
 }

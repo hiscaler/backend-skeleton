@@ -36,6 +36,7 @@ return [
         'admin-account.index',
         'admin-account.change-password',
         'admin-account.login-logs',
+        'api-default.index',
     ],
     'selfish' => true, // 是否只显示当前应用的相关数据
 ];

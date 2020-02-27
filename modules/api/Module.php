@@ -87,6 +87,13 @@ class Module extends \yii\base\Module
                 ],
             ]);
         }
+        if (isset($modules['rbac'])) {
+            Yii::$app->setComponents([
+                'authManager' => [
+                    'class' => 'yii\rbac\DbManager',
+                ],
+            ]);
+        }
 
         // 载入已经安装的模块
         foreach ($modules as $alias => $name) {
