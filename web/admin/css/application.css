@@ -778,16 +778,16 @@ ul.list li em {
 }
 
 /*******************************************************************************
- * 登陆日志
+ * 会员登录日志
  ******************************************************************************/
-.widget-user-login-logs {
+.widget-member-login-logs {
     margin: 10px;
     padding: 0 10px;
     border: #E9E9E9 solid 1px;
     border-radius: 5px;
 }
 
-.widget-user-login-logs .hd {
+.widget-member-login-logs .hd {
     height: 30px;
     line-height: 30px;
     font-weight: bold;
@@ -800,17 +800,17 @@ ul.list li em {
     background-color: #F5F5F5;
 }
 
-.widget-user-login-logs .bd {
+.widget-member-login-logs .bd {
 }
 
-.widget-user-login-logs .bd li {
+.widget-member-login-logs .bd li {
     padding-left: 10px;
 }
 
-.widget-user-login-logs .time-lines {
+.widget-member-login-logs .time-lines {
 }
 
-.widget-user-login-logs .time-lines .day {
+.widget-member-login-logs .time-lines .day {
     font-size: 16px;
     color: #4362BF;
     background: #FFF url(../images/timeline.png) no-repeat 0 50%;
@@ -818,15 +818,15 @@ ul.list li em {
     margin-left: -18px;
 }
 
-.widget-user-login-logs .time-lines .item {
+.widget-member-login-logs .time-lines .item {
     line-height: 32px;
     padding-left: 50px;
     color: #CCC;
     margin-left: -10px;
 }
 
-.widget-user-login-logs .time-lines .item .ip,
-.widget-user-login-logs .time-lines .item .client-information {
+.widget-member-login-logs .time-lines .item .ip,
+.widget-member-login-logs .time-lines .item .client-information {
     margin-left: 10px;
 }
 

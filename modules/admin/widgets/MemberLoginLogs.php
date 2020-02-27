@@ -6,9 +6,12 @@ use Yii;
 use yii\base\Widget;
 
 /**
- * 用户登录日志
+ * 会员登录日志
+ *
+ * @package app\modules\admin\widgets
+ * @author hiscaler <hiscaler@gmail.com>
  */
-class UserLoginLogs extends Widget
+class MemberLoginLogs extends Widget
 {
 
     /**
@@ -20,8 +23,8 @@ class UserLoginLogs extends Widget
     {
         $items = [];
         $formatter = Yii::$app->getFormatter();
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.login_ip]], [[t.client_information]], [[t.login_at]] FROM {{%user_login_log}} t WHERE [[t.user_id]] = :userId AND [[t.login_at]] >= :ts ORDER BY [[t.login_at]] DESC', [
-            ':userId' => Yii::$app->getUser()->getId(),
+        $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.ip]], [[t.client_information]], [[t.login_at]] FROM {{%member_login_log}} t WHERE [[t.member_id]] = :memberId AND [[t.login_at]] >= :ts ORDER BY [[t.login_at]] DESC', [
+            ':memberId' => Yii::$app->getUser()->getId(),
             ':ts' => strtotime('-2 months')
         ])->queryAll();
         $days = 7;
@@ -47,7 +50,7 @@ class UserLoginLogs extends Widget
      */
     public function run()
     {
-        return $this->render('UserLoginLogs', [
+        return $this->render('MemberLoginLogs', [
             'items' => $this->getItems(),
         ]);
     }

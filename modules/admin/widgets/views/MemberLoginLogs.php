@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 $formatter = Yii::$app->getFormatter();
 ?>
-<div class="widget-user-login-logs">
+<div class="widget-member-login-logs">
     <div class="hd">登录日志</div>
     <div class="bd">
         <ul class="time-lines">
@@ -14,7 +14,7 @@ $formatter = Yii::$app->getFormatter();
                 foreach ($item as $data):
                     ?>
                     <li class="item">
-                        <?= $formatter->asTime($data['login_at']) ?><em class="ip">[ <?= $data['login_ip'] ?> ]</em><em class="client-information"><?= $data['client_information'] ?></em>
+                        <?= $formatter->asTime($data['login_at']) ?><em class="ip">[ <?= $data['ip'] ?> ]</em><em class="client-information"><?= $data['client_information'] ?></em>
                     </li>
                 <?php
                 endforeach;
