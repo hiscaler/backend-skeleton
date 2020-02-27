@@ -221,8 +221,9 @@ class MembersController extends Controller
     }
 
     /**
-     * 统计
+     * 会员数据统计
      *
+     * @rbacDescription 查看会员数据统计
      * @return string
      * @throws \yii\db\Exception
      */

@@ -203,6 +203,7 @@ class EntityLabelsController extends Controller
     /**
      * 自定义属性关联的实体数据
      *
+     * @rbacDescription 查看自定义属性关联的实体数据权限
      * @param string $modelName
      * @param null $labelId
      * @return ActiveDataProvider

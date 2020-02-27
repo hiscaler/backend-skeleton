@@ -44,9 +44,11 @@ class MemberLoginLogsController extends Controller
     }
 
     /**
-     * Lists all MemberLoginLog models.
+     * 会员登录日志
      *
+     * @rbacDescription 查看会员登录日志
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -60,8 +62,9 @@ class MemberLoginLogsController extends Controller
     }
 
     /**
-     * Displays a single MemberLoginLog model.
+     * 查看会员登录日志详情
      *
+     * @rbacDescription 查看会员登录日志详情
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -74,9 +77,9 @@ class MemberLoginLogsController extends Controller
     }
 
     /**
-     * Deletes an existing MemberLoginLog model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 删除会员登录日志
      *
+     * @rbacDescription 删除会员登录日志
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -106,4 +109,5 @@ class MemberLoginLogsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

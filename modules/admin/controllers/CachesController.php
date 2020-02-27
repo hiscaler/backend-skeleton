@@ -44,6 +44,8 @@ class CachesController extends Controller
     /**
      * 缓存管理
      *
+     * @rbacDescription 缓存管理权限
+     *
      * @return string
      */
     public function actionIndex()

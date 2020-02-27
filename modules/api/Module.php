@@ -93,6 +93,7 @@ class Module extends \yii\base\Module
                     'class' => 'yii\rbac\DbManager',
                 ],
             ]);
+            unset($modules['rbac']);
         }
 
         // 载入已经安装的模块

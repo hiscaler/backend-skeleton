@@ -50,6 +50,7 @@ class GridColumnConfigsController extends Controller
     /**
      * Lists all GridColumnConfig models.
      *
+     * @rbacDescription 表格自定义栏位展示
      * @param $id
      * @param $name
      * @return mixed
@@ -122,6 +123,8 @@ class GridColumnConfigsController extends Controller
     }
 
     /**
+     * @rbacDescription 开启或关闭表格自定义栏位
+     *
      * @return Response
      * @throws \yii\db\Exception
      */

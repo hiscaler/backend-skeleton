@@ -46,8 +46,9 @@ class MemberGroupsController extends Controller
     }
 
     /**
-     * Lists all UserGroup models.
+     * 会员分组数据展示
      *
+     * @rbacDescription 会员分组数据展示
      * @return mixed
      */
     public function actionIndex()
@@ -78,9 +79,9 @@ class MemberGroupsController extends Controller
     }
 
     /**
-     * Creates a new UserGroup model.
-     * If creation is successful, the browser will be redirected to the 'index' page.
+     * 添加会员分组
      *
+     * @rbacDescription 添加会员分组
      * @return mixed
      */
     public function actionCreate()
@@ -98,9 +99,9 @@ class MemberGroupsController extends Controller
     }
 
     /**
-     * Updates an existing UserGroup model.
-     * If update is successful, the browser will be redirected to the 'index' page.
+     * 更新会员分组
      *
+     * @rbacDescription 更新会员分组
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
@@ -119,9 +120,9 @@ class MemberGroupsController extends Controller
     }
 
     /**
-     * Deletes an existing UserGroup model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 删除会员分组
      *
+     * @rbacDescription 删除会员分组
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
