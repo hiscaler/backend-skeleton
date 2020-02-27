@@ -25,7 +25,15 @@ else:
 
             <?= $form->field($model, 'username')->textInput(['maxlength' => true, 'disabled' => 'disabled', 'readonly' => 'readonly', 'class' => 'disabled']) ?>
 
-            <?= $form->field($model, 'avatar')->fileInput() ?>
+            <?php
+            $extra = null;
+            if (!$model->getIsNewRecord() && $model->avatar) {
+                $extra = Html::img($model->avatar, ['alt' => $model->username, 'style' => 'width: 30px; height: 30px; position: absolute;']);
+            }
+            echo $form->field($model, 'avatar', [
+                'template' => "{label}{input}$extra{error}",
+            ])->fileInput();
+            ?>
 
             <?= $form->field($model, 'real_name')->textInput(['maxlength' => true]) ?>
 
