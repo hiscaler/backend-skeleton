@@ -404,12 +404,19 @@ input {
     width: 96%;
 }
 
+#rbac-pending-permissions .pending-permissions-search {
+    width: 100%;
+    background: url("../images/icon-search.png") no-repeat 10px center;
+    background-size: 24px 24px;
+}
+
 #rbac-pending-permissions .pending-permissions-search input {
-    width: 90%;
+    width: 100%;
     border: none;
+    border-bottom: 1px #E9E9E9 solid;
     height: 30px;
     line-height: 30px;
-    padding-left: 20px;
+    margin-left: 40px;
 }
 
 .rbac-pop-window table {

@@ -184,7 +184,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div id="rbac-pending-permissions" class="panel" style="display: none;">
             <div class="pending-permissions-search">
-                <input v-model.trim="pendingPermissions.keyword" type="text" placeholder="请输入您要搜索的权限名称，回车开始检索" v-on:keyup.enter="pendingPermissionsFilter()" />
+                <input v-model.trim="pendingPermissions.keyword" type="text" placeholder="请输入您要搜索的权限名称" v-on:input="pendingPermissionsFilter()" />
             </div>
             <table class="table">
                 <thead>
