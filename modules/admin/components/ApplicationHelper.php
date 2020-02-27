@@ -141,7 +141,7 @@ class ApplicationHelper
         }
 
         if ($requireCheckAuth) {
-            if (isset($item['items'])) {
+            if (isset($item['items']) && $item['items']) {
                 // 有子菜单
                 $urls = [];
                 foreach ($item['items'] as $key => $moduleMenu) {

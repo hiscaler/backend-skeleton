@@ -53,7 +53,8 @@ class GlobalControlPanel extends Widget
                         if ($urlArray[0] == 'admin') {
                             array_shift($urlArray);
                         }
-                        if (!$user->can('admin-' . implode('.', $urlArray))) {
+                        $permissionName = 'admin-' . implode('.', $urlArray);
+                        if (!in_array($permissionName, $rbacConfig['ignorePermissionNames']) && !$user->can($permissionName)) {
                             continue;
                         }
                     }
