@@ -25,10 +25,10 @@ class WheelController extends Controller
     /**
      * 列表
      *
-     * @api /api/miniActivity/default/index
      * @param int $page
      * @param int $pageSize
      * @return ActiveDataProvider
+     * @api /api/miniActivity/default/index
      */
     public function actionIndex($page = 1, $pageSize = 20)
     {
@@ -46,11 +46,11 @@ class WheelController extends Controller
     /**
      * 详情
      *
-     * @api /api/miniActivity/wheel/default/view?id=1
-     *
      * @param $id
      * @return Wheel|array|null|\yii\db\ActiveRecord
      * @throws NotFoundHttpException
+     * @api /api/miniActivity/wheel/default/view?id=1
+     *
      */
     public function actionView($id)
     {

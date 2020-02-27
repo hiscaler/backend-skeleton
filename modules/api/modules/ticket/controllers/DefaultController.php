@@ -67,5 +67,5 @@ class DefaultController extends Controller
 
         return $search->search(\Yii::$app->getRequest()->getQueryParams());
     }
-    
+
 }

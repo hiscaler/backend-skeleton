@@ -4,7 +4,6 @@ namespace app\modules\api\modules\miniActivity\models;
 
 use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\Constant;
-use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%mini_activity_wheel}}".

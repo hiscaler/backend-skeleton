@@ -94,12 +94,12 @@ class DefaultController extends BaseController
     /**
      * 投票数据列表
      *
-     * @api /api/article/default/index
      * @param null $category
      * @param null $orderBy
      * @param int $page
      * @param int $pageSize
      * @return ActiveDataProvider
+     * @api /api/article/default/index
      */
     public function actionIndex($category = null, $orderBy = null, $page = 1, $pageSize = 20)
     {
