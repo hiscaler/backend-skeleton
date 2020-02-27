@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <ul>
             <li class="active"><a data-toggle="rbac-users" href="<?= \yii\helpers\Url::toRoute('users') ?>"><?= Yii::t('rbac', 'Users') ?><span class="badges">{{ users.items.length }}</span></a></li>
             <li><a data-toggle="rbac-roles" href="<?= \yii\helpers\Url::toRoute('roles') ?>"><?= Yii::t('rbac', 'Roles') ?><span class="badges">{{ roles.length }}</span></a></li>
-            <li><a data-toggle="rbac-permissions" href="<?= \yii\helpers\Url::toRoute('permissions') ?>"><?= Yii::t('rbac', 'Permissions') ?><span class="badges">{{ permissions.length }}</span></a></li>
+            <li><a data-toggle="rbac-permissions" href="<?= \yii\helpers\Url::toRoute('permissions') ?>"><?= Yii::t('rbac', 'Permissions') ?><span class="badges">{{ permissions.filtered.length }}</span></a></li>
             <li><a data-toggle="rbac-pending-permissions" href="<?= \yii\helpers\Url::toRoute('default/scan') ?>"><?= Yii::t('rbac', 'Permissions Scan') ?><span class="badges">{{ pendingPermissions.filtered.length }}</span></a></li>
         </ul>
     </div>
@@ -159,6 +159,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     </form>
                 </div>
             </fieldset>
+            <div class="permissions-search">
+                <input v-model.trim="permissions.keyword" type="text" placeholder="请输入您要搜索的权限名称" v-on:input="permissionsFilter()" />
+            </div>
             <table class="table">
                 <thead>
                 <tr>
@@ -170,7 +173,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="item in permissions">
+                <tr v-for="item in permissions.filtered">
                     <td class="permission-name">{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>{{ item.rule_name }}</td>
@@ -254,7 +257,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
         axios.get(yadjet.rbac.urls.permissions.list)
             .then(function(response) {
-                vm.permissions = response.data;
+                vm.permissions = {
+                    keyword: null,
+                    raw: response.data,
+                    filtered: response.data,
+                };
             })
             .catch(function(error) {
             });

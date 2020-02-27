@@ -72,7 +72,11 @@ var vm = new Vue({
         role: {
             permissions: {}
         },
-        permissions: [],
+        permissions: {
+            keyword: null,
+            raw: [],
+            filtered: [],
+        },
         pendingPermissions: {
             keyword: null,
             raw: [],
@@ -166,6 +170,22 @@ var vm = new Vue({
 
                 layer.close(boxIndex);
             });
+        },
+        permissionsFilter: function() {
+            var keyword = vm.permissions.keyword;
+            if (keyword) {
+                var items = vm.permissions.raw.filter(function(item) {
+                    return item.name.indexOf(keyword) !== -1;
+                });
+                vm.permissions = {
+                    ...vm.permissions,
+                    ...{
+                        filtered: items,
+                    }
+                }
+            } else {
+                vm.permissions.filtered = vm.permissions.raw;
+            }
         },
         pendingPermissionsFilter: function() {
             var keyword = vm.pendingPermissions.keyword;
@@ -306,8 +326,8 @@ var vm = new Vue({
         // 当前操作角色关联的权限
         rolePermissions: function() {
             var permissions = [], permission;
-            for (var i in this.permissions) {
-                permission = clone(this.permissions[i]);
+            for (var i in this.permissions.raw) {
+                permission = clone(this.permissions.raw[i]);
                 permission.active = false;
                 for (var j in this.role.permissions) {
                     if (permission.name == this.role.permissions[j].name) {

@@ -404,12 +404,15 @@ input {
     width: 96%;
 }
 
+#rbac-permissions .permissions-search,
 #rbac-pending-permissions .pending-permissions-search {
     width: 100%;
     background: url("../images/icon-search.png") no-repeat 10px center;
     background-size: 24px 24px;
+    overflow: hidden;
 }
 
+#rbac-permissions .permissions-search input,
 #rbac-pending-permissions .pending-permissions-search input {
     width: 100%;
     border: none;
