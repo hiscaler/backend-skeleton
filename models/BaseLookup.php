@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\caching\DbDependency;
 use yii\helpers\FileHelper;
 
 /**
@@ -245,9 +244,7 @@ class BaseLookup extends BaseActiveRecord
                 $keyValues[$data['key']] = $value;
             }
 
-            $cache->set($cacheKey, $keyValues, 0, new DbDependency([
-                'sql' => 'SELECT MAX([[updated_at]]) FROM {{%lookup}}'
-            ]));
+            $cache->set($cacheKey, $keyValues, 0);
         }
 
         return $keyValues;
