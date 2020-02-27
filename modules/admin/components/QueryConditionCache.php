@@ -7,6 +7,7 @@ use Yii;
 /**
  * Query Condition Cache class, Use Cache class to set, get or remove query conditions.
  *
+ * @package app\modules\admin\components
  * @author hiscaler <hiscaler@gmail.com>
  */
 class QueryConditionCache
@@ -58,7 +59,7 @@ class QueryConditionCache
     }
 
     /**
-     * Parse key, if key is not empty, then add 'query.condition.' prefix
+     * Parse key, if key is not empty, then add 'cache.data.query.condition.' prefix
      *
      * @param string $key
      * @return string
