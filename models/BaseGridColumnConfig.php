@@ -13,7 +13,7 @@ use yii\db\ActiveRecord;
  * @property string $attribute
  * @property string $css_class
  * @property integer $visible
- * @property integer $user_id
+ * @property integer $member_id
  */
 class BaseGridColumnConfig extends ActiveRecord
 {
@@ -34,7 +34,7 @@ class BaseGridColumnConfig extends ActiveRecord
         return [
             [['name', 'attribute', 'css_class'], 'trim'],
             [['name', 'attribute'], 'required'],
-            [['user_id'], 'integer'],
+            [['member_id'], 'integer'],
             [['visible'], 'boolean', 'default' => Constant::BOOLEAN_TRUE],
             [['name', 'attribute'], 'string', 'max' => 30],
             [['css_class'], 'string', 'max' => 120]
@@ -57,15 +57,15 @@ class BaseGridColumnConfig extends ActiveRecord
     /**
      * 获取指定表格（Grid View）的配置数据
      *
-     * @todo 数据应该缓存起来
      * @param string $name
      * @param null $visibleColumn
      * @return array
      * @throws \yii\db\Exception
+     * @todo 数据应该缓存起来
      */
     public static function getConfigs($name, $visibleColumn = null)
     {
-        $sql = 'SELECT [[name]], [[attribute]], [[css_class]], [[visible]] FROM {{%grid_column_config}} WHERE [[user_id]] = :userId AND [[name]] = :name';
+        $sql = 'SELECT [[name]], [[attribute]], [[css_class]], [[visible]] FROM {{%grid_column_config}} WHERE [[member_id]] = :userId AND [[name]] = :name';
         $bindValues = [
             ':userId' => Yii::$app->getUser()->getId(),
             ':name' => $name,
@@ -87,8 +87,8 @@ class BaseGridColumnConfig extends ActiveRecord
      */
     public static function getInvisibleColumns($name)
     {
-        return Yii::$app->getDb()->createCommand('SELECT [[attribute]] FROM {{%grid_column_config}} WHERE [[user_id]] = :userId AND [[name]] = :name AND [[visible]] = :visible')->bindValues([
-            ':userId' => Yii::$app->getUser()->getId(),
+        return Yii::$app->getDb()->createCommand('SELECT [[attribute]] FROM {{%grid_column_config}} WHERE [[member_id]] = :memberId AND [[name]] = :name AND [[visible]] = :visible')->bindValues([
+            ':memberId' => Yii::$app->getUser()->getId(),
             ':name' => $name,
             ':visible' => Constant::BOOLEAN_FALSE
         ])->queryColumn();
@@ -99,7 +99,7 @@ class BaseGridColumnConfig extends ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             if ($insert) {
-                $this->user_id = Yii::$app->getUser()->getId();
+                $this->member_id = Yii::$app->getUser()->getId();
             }
 
             return true;

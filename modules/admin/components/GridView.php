@@ -79,9 +79,9 @@ class GridView extends \yii\grid\GridView
      */
     private function getColumnConfigs()
     {
-        return Yii::$app->getDb()->createCommand('SELECT [[name]], [[attribute]], [[css_class]], [[visible]] FROM {{%grid_column_config}} WHERE [[name]] = :name AND [[user_id]] = :userId', [
+        return Yii::$app->getDb()->createCommand('SELECT [[name]], [[attribute]], [[css_class]], [[visible]] FROM {{%grid_column_config}} WHERE [[name]] = :name AND [[member_id]] = :memberId', [
             ':name' => $this->id,
-            ':userId' => Yii::$app->getUser()->getId(),
+            ':memberId' => Yii::$app->getUser()->getId(),
         ])->queryAll();
     }
 

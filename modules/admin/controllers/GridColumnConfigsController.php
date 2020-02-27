@@ -50,6 +50,7 @@ class GridColumnConfigsController extends Controller
     /**
      * Lists all GridColumnConfig models.
      *
+     * @rbacIgnore true
      * @rbacDescription 表格自定义栏位展示
      * @param $id
      * @param $name
@@ -123,8 +124,10 @@ class GridColumnConfigsController extends Controller
     }
 
     /**
-     * @rbacDescription 开启或关闭表格自定义栏位
      *
+     *
+     * @rbacIgnore true
+     * @rbacDescription 开启或关闭表格自定义栏位
      * @return Response
      * @throws \yii\db\Exception
      */
@@ -133,17 +136,17 @@ class GridColumnConfigsController extends Controller
         $request = Yii::$app->getRequest();
         $attribute = $request->post('id');
         $name = $request->post('name');
-        $userId = \Yii::$app->getUser()->getId();
+        $memberId = \Yii::$app->getUser()->getId();
         $db = Yii::$app->getDb();
-        $value = $db->createCommand('SELECT [[visible]] FROM {{%grid_column_config}} WHERE [[user_id]] = :userId AND [[name]] = :name AND [[attribute]] = :attribute', [
-            ':userId' => $userId,
+        $value = $db->createCommand('SELECT [[visible]] FROM {{%grid_column_config}} WHERE [[member_id]] = :memberId AND [[name]] = :name AND [[attribute]] = :attribute', [
+            ':memberId' => $memberId,
             ':name' => $name,
             ':attribute' => $attribute
         ])->queryScalar();
         if ($value !== false) {
             $value = $value ? Constant::BOOLEAN_FALSE : Constant::BOOLEAN_TRUE;
-            $db->createCommand()->update('{{%grid_column_config}}', ['visible' => $value], '[[user_id]] = :userId AND [[name]] = :name AND [[attribute]] = :attribute', [
-                ':userId' => $userId,
+            $db->createCommand()->update('{{%grid_column_config}}', ['visible' => $value], '[[member_id]] = :memberId AND [[name]] = :name AND [[attribute]] = :attribute', [
+                ':memberId' => $memberId,
                 ':name' => $name,
                 ':attribute' => $attribute
             ])->execute();
@@ -159,7 +162,7 @@ class GridColumnConfigsController extends Controller
                 'name' => $name,
                 'attribute' => $attribute,
                 'visible' => Constant::BOOLEAN_FALSE,
-                'user_id' => $userId,
+                'member_id' => $memberId,
             ])->execute();
 
             $responseBody = [

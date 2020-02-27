@@ -172,7 +172,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             'role' => '角色',
             'category_id' => '分类',
             'group' => '分组',
-            'unique_key' => '邀请码',
+            'unique_key' => '唯一码',
             'parent_id' => '上级',
             'parent.username' => '上级',
             'username' => '帐号',

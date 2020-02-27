@@ -28,6 +28,7 @@ return [
     'disabledScanModules' => ['gii', 'debug'], // 禁止扫描的模块
     // 以下地址的将忽略
     'ignorePermissionNames' => [
+        'admin-help.index',
         'admin-default.login',
         'admin-default.logout',
         'admin-default.error',
@@ -36,6 +37,8 @@ return [
         'admin-account.index',
         'admin-account.change-password',
         'admin-account.login-logs',
+        'admin-grid-column-configs.index',
+        'admin-grid-column-configs.toggle',
         'api-default.index',
     ],
     'selfish' => true, // 是否只显示当前应用的相关数据
