@@ -404,6 +404,14 @@ input {
     width: 96%;
 }
 
+#rbac-pending-permissions .pending-permissions-search input {
+    width: 90%;
+    border: none;
+    height: 30px;
+    line-height: 30px;
+    padding-left: 20px;
+}
+
 .rbac-pop-window table {
     border: #E9E9E9 solid 1px;
     border-radius: 0 0 6px 6px;

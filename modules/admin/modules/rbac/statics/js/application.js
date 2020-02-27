@@ -73,7 +73,12 @@ var vm = new Vue({
             permissions: {}
         },
         permissions: [],
-        pendingPermissions: {},
+        pendingPermissions: {
+            keyword: null,
+            raw: [],
+            filtered: [],
+        },
+        pendingPermissionName: null,
         formVisible: {
             role: false,
             permission: false
@@ -161,6 +166,22 @@ var vm = new Vue({
 
                 layer.close(boxIndex);
             });
+        },
+        pendingPermissionsFilter: function() {
+            var keyword = vm.pendingPermissions.keyword;
+            if (keyword) {
+                var items = vm.pendingPermissions.raw.filter(function(item) {
+                    return item.name.indexOf(keyword) !== -1;
+                });
+                vm.pendingPermissions = {
+                    ...vm.pendingPermissions,
+                    ...{
+                        filtered: items,
+                    }
+                }
+            } else {
+                vm.pendingPermissions.filtered = vm.pendingPermissions.raw;
+            }
         },
         // 根据角色获取关联的所有权限
         permissionsByRole: function(roleName, index) {

@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\components\JsBlock;
 use yii\helpers\Url;
 
 $this->title = '权限控制';
@@ -12,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <li class="active"><a data-toggle="rbac-users" href="<?= \yii\helpers\Url::toRoute('users') ?>"><?= Yii::t('rbac', 'Users') ?><span class="badges">{{ users.items.length }}</span></a></li>
             <li><a data-toggle="rbac-roles" href="<?= \yii\helpers\Url::toRoute('roles') ?>"><?= Yii::t('rbac', 'Roles') ?><span class="badges">{{ roles.length }}</span></a></li>
             <li><a data-toggle="rbac-permissions" href="<?= \yii\helpers\Url::toRoute('permissions') ?>"><?= Yii::t('rbac', 'Permissions') ?><span class="badges">{{ permissions.length }}</span></a></li>
-            <li><a data-toggle="rbac-pending-permissions" href="<?= \yii\helpers\Url::toRoute('default/scan') ?>"><?= Yii::t('rbac', 'Permissions Scan') ?><span class="badges">{{ pendingPermissions.length }}</span></a></li>
+            <li><a data-toggle="rbac-pending-permissions" href="<?= \yii\helpers\Url::toRoute('default/scan') ?>"><?= Yii::t('rbac', 'Permissions Scan') ?><span class="badges">{{ pendingPermissions.filtered.length }}</span></a></li>
         </ul>
     </div>
     <div id="rbac-panels" class="rbac-grid-view">
@@ -182,6 +183,9 @@ $this->params['breadcrumbs'][] = $this->title;
             </table>
         </div>
         <div id="rbac-pending-permissions" class="panel" style="display: none;">
+            <div class="pending-permissions-search">
+                <input v-model.trim="pendingPermissions.keyword" type="text" placeholder="请输入您要搜索的权限名称，回车开始检索" v-on:keyup.enter="pendingPermissionsFilter()" />
+            </div>
             <table class="table">
                 <thead>
                 <tr class="clear-border-top">
@@ -191,7 +195,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="item in pendingPermissions" v-bind:class="{ 'disabled': !item.active, 'enabled': item.active }">
+                <tr v-for="item in pendingPermissions.filtered" v-bind:class="{ 'disabled': !item.active, 'enabled': item.active }">
                     <td class="permission-name">{{ item.name }}</td>
                     <td><input type="text" name="description" :disabled="!item.active" :value="item.description" v-model="item.description" /></td>
                     <td class="btn-1">
@@ -203,7 +207,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
-<?php \app\modules\admin\components\JsBlock::begin() ?>
+<?php JsBlock::begin() ?>
     <script type="text/javascript">
         yadjet.rbac.urls = {
             assign: '<?= Url::toRoute(['users/assign']) ?>',
@@ -257,9 +261,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
         axios.get(yadjet.rbac.urls.permissions.scan)
             .then(function(response) {
-                vm.pendingPermissions = response.data;
+                vm.pendingPermissions = {
+                    keyword: null,
+                    raw: response.data,
+                    filtered: response.data,
+                };
             })
             .catch(function(error) {
             });
     </script>
-<?php \app\modules\admin\components\JsBlock::end() ?>
+<?php JsBlock::end() ?>
