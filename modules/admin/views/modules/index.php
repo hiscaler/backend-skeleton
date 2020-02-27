@@ -60,7 +60,7 @@ $iconAPI = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/api.png';
             <?php if ($notInstalledModules): ?>
                 <ul>
                     <?php foreach ($notInstalledModules as $i => $module): ?>
-                        <li id="module-<?= $module['alias'] ?>" class="widget-module">
+                        <li id="module-<?= $module['alias'] ?>" class="widget-module clearfix">
                             <div class="hd">
                                 <em><?= $module['name'] ?></em>
                                 <span class="icon">
