@@ -65,7 +65,7 @@ class CachesController extends Controller
                     Yii::$app->getCache()->flush();
                     break;
             }
-            Yii::$app->getSession()->setFlash('notice', "缓存清理完毕。" . Html::a('继续清理', ['index'], ['class' => 'button']));
+            Yii::$app->getSession()->setFlash('notice', "缓存清理完毕。" . ($model->type != $model::TYPE_ALL ? Html::a('继续清理', ['index'], ['class' => 'button']) : ''));
         }
 
         return $this->render('index', [

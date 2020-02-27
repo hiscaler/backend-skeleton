@@ -58,8 +58,6 @@ class AccountController extends Controller
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             Yii::$app->getSession()->setFlash('notice', Yii::t('app', 'User profile save successfully.'));
-
-            $this->refresh();
         }
 
         return $this->render('index', [
@@ -86,8 +84,6 @@ class AccountController extends Controller
             $user->setPassword($model->password);
             if ($user->save(false)) {
                 Yii::$app->getSession()->setFlash('notice', "您的密码修改成功，请下次登录使用新的密码。");
-
-                return $this->refresh();
             }
         }
 
