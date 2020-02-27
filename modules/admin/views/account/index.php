@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\components\MessageBox;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -13,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $session = Yii::$app->getSession();
 if ($session->hasFlash('notice')):
-    echo \app\modules\admin\components\MessageBox::widget([
+    echo MessageBox::widget([
         'message' => $session->getFlash('notice'),
     ]);
 else:
@@ -24,9 +25,17 @@ else:
 
             <?= $form->field($model, 'username')->textInput(['maxlength' => true, 'disabled' => 'disabled', 'readonly' => 'readonly', 'class' => 'disabled']) ?>
 
+            <?= $form->field($model, 'avatar')->fileInput() ?>
+
+            <?= $form->field($model, 'real_name')->textInput(['maxlength' => true]) ?>
+
             <?= $form->field($model, 'nickname')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+
+            <?= $form->field($model, 'mobile_phone')->textInput(['maxlength' => true]) ?>
+
+            <?= $form->field($model, 'remark')->textarea() ?>
             <div class="form-group buttons">
                 <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
             </div>

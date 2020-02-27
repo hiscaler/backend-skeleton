@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 foreach ($logs as $log):
                     ?>
                     <li class="item">
-                        <?= $formatter->asTime($log['login_at']) ?><em class="ip">[ <?= $log['login_ip'] ?> ]</em><em class="client-information"><?= $log['client_information'] ?></em>
+                        <?= $formatter->asTime($log['login_at']) ?><em class="ip">[ <?= $log['ip'] ?> ]</em><em class="client-information"><?= $log['client_information'] ?></em>
                     </li>
                 <?php
                 endforeach;

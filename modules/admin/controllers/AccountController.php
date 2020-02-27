@@ -110,8 +110,8 @@ class AccountController extends Controller
         $items = [];
         $formatter = Yii::$app->getFormatter();
         $query = (new Query())
-            ->from('{{%user_login_log}}')
-            ->where(['user_id' => \Yii::$app->getUser()->getId()]);
+            ->from('{{%member_login_log}}')
+            ->where(['member_id' => \Yii::$app->getUser()->getId()]);
 
         $countQuery = clone $query;
         $pagination = new Pagination([
@@ -119,7 +119,7 @@ class AccountController extends Controller
             'pageSize' => self::PAGE_SIZE,
         ]);
         $rawData = $query
-            ->select(['login_ip', 'client_information', 'login_at'])
+            ->select(['ip', 'client_information', 'login_at'])
             ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
