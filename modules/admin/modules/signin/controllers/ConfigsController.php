@@ -2,13 +2,13 @@
 
 namespace app\modules\admin\modules\signin\controllers;
 
-use Yii;
 use app\modules\admin\modules\signin\models\SigninCreditConfig;
 use app\modules\admin\modules\signin\models\SigninCreditConfigSearch;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * 签到积分管理

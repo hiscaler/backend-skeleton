@@ -1,8 +1,8 @@
 <?php
 
+use app\models\Lookup;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\models\Lookup;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Lookup */

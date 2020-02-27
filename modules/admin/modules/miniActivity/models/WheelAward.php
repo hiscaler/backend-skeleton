@@ -4,7 +4,6 @@ namespace app\modules\admin\modules\miniActivity\models;
 
 use app\modules\api\models\Constant;
 use yadjet\behaviors\ImageUploadBehavior;
-use Yii;
 
 /**
  * This is the model class for table "{{%mini_activity_wheel_award}}".

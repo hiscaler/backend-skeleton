@@ -27,5 +27,5 @@ class Module extends \app\modules\admin\Module
             ],
         ]);
     }
-    
+
 }

@@ -6,14 +6,14 @@ use app\models\Category;
 use app\models\Meta;
 use app\modules\admin\extensions\BaseController;
 use app\modules\admin\forms\DynamicForm;
-use Exception;
-use Yii;
 use app\modules\admin\modules\classicCase\models\ClassicCase;
 use app\modules\admin\modules\classicCase\models\ClassicCaseSearch;
+use Exception;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**

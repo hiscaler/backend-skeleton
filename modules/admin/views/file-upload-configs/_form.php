@@ -57,8 +57,8 @@ use yii\widgets\ActiveForm;
 </div>
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
-    $(function () {
-        $('#fileuploadconfig-type').change(function () {
+    $(function() {
+        $('#fileuploadconfig-type').change(function() {
             var type = $(this).val(),
                 fileType = <?= FileUploadConfig::TYPE_FILE ?>,
                 imageType = <?= FileUploadConfig::TYPE_IMAGE ?>;

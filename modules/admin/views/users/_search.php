@@ -1,6 +1,5 @@
 <?php
 
-use app\models\Option;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 

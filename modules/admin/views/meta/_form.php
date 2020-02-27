@@ -73,18 +73,18 @@ use yii\widgets\ActiveForm;
         }
     };
     axios.get(yadjet.urls.validators, {})
-        .then(function (response) {
+        .then(function(response) {
             vm.validators = response.data;
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.log(error)
             vm.validators = [];
         });
     axios.get(yadjet.urls.meta.validators, {})
-        .then(function (response) {
+        .then(function(response) {
             vm.meta.validators = response.data;
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.log(error)
             vm.meta.validators = [];
         });

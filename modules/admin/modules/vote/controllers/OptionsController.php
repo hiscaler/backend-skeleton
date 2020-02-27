@@ -3,13 +3,13 @@
 namespace app\modules\admin\modules\vote\controllers;
 
 use app\modules\admin\modules\vote\models\Vote;
-use Yii;
 use app\modules\admin\modules\vote\models\VoteOption;
 use app\modules\admin\modules\vote\models\VoteOptionSearch;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * 投票选项管理

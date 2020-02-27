@@ -2,13 +2,13 @@
 
 namespace app\modules\admin\modules\signin\controllers;
 
-use Yii;
 use app\modules\admin\modules\signin\models\Signin;
 use app\modules\admin\modules\signin\models\SigninSearch;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * DefaultController implements the CRUD actions for Signin model.

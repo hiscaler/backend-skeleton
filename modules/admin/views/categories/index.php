@@ -100,7 +100,7 @@ $this->registerJsFile($baseUrl . '/jquery.treetable.js', [
 \app\modules\admin\components\JsBlock::begin();
 ?>
 <script type="text/javascript">
-    yadjet.actions.toggle("table td.enabled-handler img", "<?= yii\helpers\Url::toRoute('toggle') ?>", function (response) {
+    yadjet.actions.toggle("table td.enabled-handler img", "<?= yii\helpers\Url::toRoute('toggle') ?>", function(response) {
         if (response.success) {
             var data = response.data,
                 ids = data.ids;
@@ -113,6 +113,6 @@ $this->registerJsFile($baseUrl . '/jquery.treetable.js', [
         }
     });
 
-    $("#grid-table-categories table.table").treetable({expandable: true, initialState: "expand"});
+    $("#grid-table-categories table.table").treetable({ expandable: true, initialState: "expand" });
 </script>
 <?php \app\modules\admin\components\JsBlock::end() ?>

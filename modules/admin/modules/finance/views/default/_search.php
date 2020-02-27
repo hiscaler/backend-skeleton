@@ -27,7 +27,6 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'status')->dropDownList(Finance::statusOptions(), ['prompt' => '']) ?>
         </div>
-
         <div class="entry">
             <?= \yadjet\datePicker\my97\DatePicker::widget([
                 'form' => $form,
@@ -42,7 +41,6 @@ use yii\widgets\ActiveForm;
                 'pickerType' => 'date',
             ]) ?>
         </div>
-
         <div class="form-group buttons">
             <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>
             <?= Html::resetButton('重置', ['class' => 'btn btn-outline-secondary']) ?>

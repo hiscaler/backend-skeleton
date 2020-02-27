@@ -40,13 +40,11 @@ use yii\widgets\ActiveForm;
                     ?>
                 </fieldset>
             <?php endif; ?>
-
             <div class="entry">
                 <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
                 <?= $form->field($model, 'keywords')->textInput(['maxlength' => true]) ?>
             </div>
-
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
             <?= UEditor::widget([
@@ -54,7 +52,6 @@ use yii\widgets\ActiveForm;
                 'model' => $model,
                 'attribute' => 'content',
             ]) ?>
-
             <div class="entry">
                 <?= $form->field($model, 'picture_path')->fileInput() ?>
 

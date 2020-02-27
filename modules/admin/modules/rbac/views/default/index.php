@@ -234,32 +234,32 @@ $this->params['breadcrumbs'][] = $this->title;
         };
         // 获取用户数据
         axios.get(yadjet.rbac.urls.users.list)
-            .then(function (response) {
+            .then(function(response) {
                 vm.users.items = response.data.items;
                 vm.users.extras = response.data.extras;
             })
-            .catch(function (error) {
+            .catch(function(error) {
             });
 
         axios.get(yadjet.rbac.urls.roles.list)
-            .then(function (response) {
+            .then(function(response) {
                 vm.roles = response.data;
             })
-            .catch(function (error) {
+            .catch(function(error) {
             });
 
         axios.get(yadjet.rbac.urls.permissions.list)
-            .then(function (response) {
+            .then(function(response) {
                 vm.permissions = response.data;
             })
-            .catch(function (error) {
+            .catch(function(error) {
             });
 
         axios.get(yadjet.rbac.urls.permissions.scan)
-            .then(function (response) {
+            .then(function(response) {
                 vm.pendingPermissions = response.data;
             })
-            .catch(function (error) {
+            .catch(function(error) {
             });
     </script>
 <?php \app\modules\admin\components\JsBlock::end() ?>

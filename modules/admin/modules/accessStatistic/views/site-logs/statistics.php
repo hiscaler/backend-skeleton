@@ -1,7 +1,6 @@
 <?php
 
 use yii\grid\GridView;
-use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteLogSearch */

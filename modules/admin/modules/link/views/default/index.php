@@ -92,6 +92,6 @@ $this->params['menus'] = [
 </div>
 <?php JsBlock::begin() ?>
 <script type="text/javascript">
-  yadjet.actions.toggle("table td.boolean-handler img", "<?= Url::toRoute('toggle') ?>");
+    yadjet.actions.toggle("table td.boolean-handler img", "<?= Url::toRoute('toggle') ?>");
 </script>
 <?php JsBlock::end() ?>

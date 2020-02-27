@@ -107,28 +107,28 @@ $this->params['menus'] = [
 
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         // 批量删除
-        $('.btn-batch-delete').on('click', function () {
+        $('.btn-batch-delete').on('click', function() {
             var ids = $('#grid-view-queues').yiiGridView('getSelectedRows'),
                 $this = $(this);
             if (ids.length) {
-                layer.confirm('确定删除勾选的数据?', {icon: 3, title: '提示'}, function (index) {
+                layer.confirm('确定删除勾选的数据?', { icon: 3, title: '提示' }, function(index) {
                     $.ajax({
                         type: 'POST',
                         url: $this.attr('href'),
-                        data: {ids: ids.toString()},
-                        beforeSend: function (xhr) {
+                        data: { ids: ids.toString() },
+                        beforeSend: function(xhr) {
                             $.fn.lock();
-                        }, success: function (response) {
+                        }, success: function(response) {
                             if (response.success) {
                                 window.location.reload(true);
                             } else {
                                 layer.alert(response.error.message);
                             }
                             $.fn.unlock();
-                        }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText, {icon: 2});
+                        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText, { icon: 2 });
                             $.fn.unlock();
                         }
                     });

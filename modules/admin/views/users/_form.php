@@ -1,8 +1,8 @@
 <?php
 
+use app\models\User;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
@@ -34,7 +34,6 @@ use app\models\User;
             <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'role')->dropDownList(User::roleOptions(), ['prompt' => '']) ?>
-
             <?php
             $template = '{label}{input}{thumb}{error}';
             $thumb = '';

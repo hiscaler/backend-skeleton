@@ -125,10 +125,10 @@ $this->params['menus'] = [
 </div>
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         // 微信商户平台订单查询
         var queryUrl = '<?= \yii\helpers\Url::toRoute(['orders/query', 'id' => '_id']) ?>';
-        $('.order-query').on('click', function () {
+        $('.order-query').on('click', function() {
             var $t = $(this);
             layer.open({
                 type: 2,
@@ -139,36 +139,36 @@ $this->params['menus'] = [
                 shadeClose: true,
                 content: queryUrl.replace('_id', $t.attr('data-key'))
             });
-            
+
             return false;
         });
 
         // 微信商户平台退款
         var refundUrl = '<?= \yii\helpers\Url::toRoute(['orders/refund', 'id' => '_id', 'refundFee' => '_refundFee']) ?>';
-        $('.order-refund').on('click', function () {
+        $('.order-refund').on('click', function() {
             var $t = $(this);
             layer.confirm('是否确认进行退款操作？', {
                 btn: ['确定', '取消'] //按钮
-            }, function () {
-                layer.prompt({title: '请确认退款金额', formType: 0, value: $t.attr('data-total-fee') / 100}, function (refundFee, index) {
+            }, function() {
+                layer.prompt({ title: '请确认退款金额', formType: 0, value: $t.attr('data-total-fee') / 100 }, function(refundFee, index) {
                     layer.close(index);
                     refundUrl = refundUrl.replace('_id', $t.attr('data-key')).replace('_refundFee', parseFloat(refundFee));
                     $.ajax({
                         type: "POST",
                         url: refundUrl,
                         dataType: "json",
-                        success: function (response) {
+                        success: function(response) {
                             if (response.success) {
                                 layer.msg('退款操作成功。');
                             } else {
                                 layer.alert(response.error.message);
                             }
-                        }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
                             layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText);
                         }
                     });
                 });
-            }, function () {
+            }, function() {
             });
 
             return false;

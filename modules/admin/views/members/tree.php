@@ -21,10 +21,10 @@ $this->registerJsFile($baseUrl . '/js/echarts.min.js');
             toolbox: {
                 show: true,
                 feature: {
-                    mark: {show: true},
-                    dataView: {show: false, readOnly: false},
-                    restore: {show: true},
-                    saveAsImage: {show: false}
+                    mark: { show: true },
+                    dataView: { show: false, readOnly: false },
+                    restore: { show: true },
+                    saveAsImage: { show: false }
                 }
             },
             series: [
@@ -32,7 +32,7 @@ $this->registerJsFile($baseUrl . '/js/echarts.min.js');
                     name: '会员层级图',
                     type: 'tree',
                     orient: 'vertical',  // vertical horizontal
-                    rootLocation: {x: 'center', y: 'center'}, // 根节点位置  {x: 100, y: 'center'}
+                    rootLocation: { x: 'center', y: 'center' }, // 根节点位置  {x: 100, y: 'center'}
                     nodePadding: 8,
                     layerPadding: 200,
                     hoverable: true,

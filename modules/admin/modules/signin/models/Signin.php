@@ -2,8 +2,6 @@
 
 namespace app\modules\admin\modules\signin\models;
 
-use Yii;
-
 /**
  * This is the model class for table "{{%signin}}".
  *

@@ -2,8 +2,6 @@
 
 namespace app\modules\admin\modules\vote\models;
 
-use Yii;
-
 /**
  * This is the model class for table "{{%vote_log}}".
  *

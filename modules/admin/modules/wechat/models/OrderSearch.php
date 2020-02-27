@@ -87,7 +87,7 @@ class OrderSearch extends Order
                 (new DateTime($this->end_date))->setTime(23, 59, 59)->getTimestamp(),
             ]);
         }
-        
+
         QueryConditionCache::set(self::QUERY_CONDITION_CACHE_KEY, $query);
 
         return $dataProvider;

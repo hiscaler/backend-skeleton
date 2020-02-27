@@ -49,29 +49,29 @@ if ($histories):
 <?php endif; ?>
 <?php \app\modules\admin\components\JsBlock::begin() ?>
     <script type="text/javascript">
-        $(function () {
-            $('.btn-db-clean').click(function () {
+        $(function() {
+            $('.btn-db-clean').click(function() {
                 var $this = $(this);
-                layer.confirm('是否确认清理掉所有备份？', {icon: 3, title: '提示'}, function (index) {
+                layer.confirm('是否确认清理掉所有备份？', { icon: 3, title: '提示' }, function(index) {
                     $.ajax({
                         type: 'POST',
                         url: $this.attr('href'),
-                        beforeSend: function (xhr) {
+                        beforeSend: function(xhr) {
                             $.fn.lock();
-                        }, success: function (response, textStatus, errorThrown) {
+                        }, success: function(response, textStatus, errorThrown) {
                             if (textStatus === 'success') {
                                 layer.msg('数据库备份清理成功。', {
                                     icon: 1,
                                     time: 6000,
                                     btn: ['关闭']
-                                }, function () {
+                                }, function() {
                                     window.document.location.href = '<?= \yii\helpers\Url::toRoute(['index']) ?>';
                                 });
                             } else {
                                 layer.alert('未知原因。');
                             }
                             $.fn.unlock();
-                        }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
                             layer.alert(XMLHttpRequest.responseText);
                             $.fn.unlock();
                         }
@@ -83,27 +83,27 @@ if ($histories):
                 return false;
             });
 
-            $('.btn-db-backup').click(function () {
+            $('.btn-db-backup').click(function() {
                 $.ajax({
                     type: 'POST',
                     url: $(this).attr('href'),
                     dataType: 'json',
-                    beforeSend: function (xhr) {
+                    beforeSend: function(xhr) {
                         $.fn.lock();
-                    }, success: function (response) {
+                    }, success: function(response) {
                         if (response.success) {
                             layer.msg('数据库备份成功。共操作 ' + response.data.processTablesCount + ' 个表，合计备份 ' + response.data.processRowsCount + ' 条数据。', {
                                 icon: 1,
                                 time: 6000,
                                 btn: ['关闭']
-                            }, function () {
+                            }, function() {
                                 window.document.location.href = '<?= \yii\helpers\Url::toRoute(['index']) ?>';
                             });
                         } else {
                             layer.alert(response.error.message);
                         }
                         $.fn.unlock();
-                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    }, error: function(XMLHttpRequest, textStatus, errorThrown) {
                         layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText);
                         $.fn.unlock();
                     }

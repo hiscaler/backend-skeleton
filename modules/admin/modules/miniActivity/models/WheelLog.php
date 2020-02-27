@@ -2,8 +2,6 @@
 
 namespace app\modules\admin\modules\miniActivity\models;
 
-use Yii;
-
 /**
  * This is the model class for table "{{%mini_activity_wheel_log}}".
  *

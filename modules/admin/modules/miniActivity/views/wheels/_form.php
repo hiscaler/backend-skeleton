@@ -18,7 +18,6 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
         <div class="entry">
             <?= $form->field($model, 'win_message')->textInput(['maxlength' => true]) ?>
-
             <?php // $form->field($model, 'get_award_message')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="entry">
@@ -44,7 +43,6 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'repeat_play_message')->textInput(['maxlength' => true]) ?>
         <div class="entry">
             <?= $form->field($model, 'background_image')->fileInput() ?>
-
             <?php // $form->field($model, 'background_image_repeat_type')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="entry">

@@ -113,17 +113,17 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
 
 <?php \app\modules\admin\components\JsBlock::begin() ?>
     <script type="text/javascript">
-        $(function () {
+        $(function() {
             yadjet.actions.toggle("table td.boolean-handler img", "<?= Url::toRoute('toggle') ?>");
 
-            jQuery(document).on('click', 'a.setting-entity-labels', function () {
+            jQuery(document).on('click', 'a.setting-entity-labels', function() {
                 var $this = $(this);
                 $.ajax({
                     type: 'GET',
                     url: $this.attr('href'),
-                    beforeSend: function (xhr) {
+                    beforeSend: function(xhr) {
                         $.fn.lock();
-                    }, success: function (response) {
+                    }, success: function(response) {
                         layer.open({
                             skin: 'layer-fix',
                             title: $this.attr('title'),
@@ -131,8 +131,8 @@ $baseUrl = Yii::$app->getRequest()->getBaseUrl() . '/admin';
                             move: false
                         });
                         $.fn.unlock();
-                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText, {icon: 2});
+                    }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText, { icon: 2 });
                         $.fn.unlock();
                     }
                 });

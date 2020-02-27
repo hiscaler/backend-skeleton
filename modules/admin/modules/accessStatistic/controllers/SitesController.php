@@ -2,12 +2,12 @@
 
 namespace app\modules\admin\modules\accessStatistic\controllers;
 
-use Yii;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSite;
 use app\modules\admin\modules\accessStatistic\models\AccessStatisticSiteSearch;
+use Yii;
 use yii\filters\AccessControl;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * SitesController implements the CRUD actions for AccessStatisticSite model.

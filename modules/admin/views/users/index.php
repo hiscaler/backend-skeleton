@@ -104,23 +104,23 @@ $title = Yii::t('app', 'Please choice this user can manager categories');
 \app\modules\admin\components\JsBlock::begin();
 ?>
 <script type="text/javascript">
-    $(function () {
-        jQuery(document).on('click', 'a.user-auth', function () {
+    $(function() {
+        jQuery(document).on('click', 'a.user-auth', function() {
             var t = $(this),
                 url = t.attr('href');
             $.ajax({
                 type: 'GET',
                 url: url,
-                beforeSend: function (xhr) {
+                beforeSend: function(xhr) {
                     $.fn.lock();
-                }, success: function (response) {
+                }, success: function(response) {
                     layer.open({
                         id: 'nodes-list',
                         title: "<?= $title ?>" + ' [ ' + t.attr('data-name') + ' ]',
                         content: response,
                         skin: 'layer-fix',
                         area: ['400px', '600px'],
-                        yes: function (index, layero) {
+                        yes: function(index, layero) {
                             var nodes = $.fn.zTree.getZTreeObj("__ztree__").getCheckedNodes(true),
                                 ids = [];
                             for (var i = 0, l = nodes.length; i < l; i++) {
@@ -130,16 +130,16 @@ $title = Yii::t('app', 'Please choice this user can manager categories');
                             $.ajax({
                                 type: 'POST',
                                 url: url,
-                                data: {choiceCategoryIds: ids.toString()},
+                                data: { choiceCategoryIds: ids.toString() },
                                 dataType: 'json',
-                                beforeSend: function (xhr) {
+                                beforeSend: function(xhr) {
                                     $.fn.lock();
-                                }, success: function (response) {
+                                }, success: function(response) {
                                     if (response.success === false) {
                                         layer.alert(response.error.message);
                                     }
                                     $.fn.unlock();
-                                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                }, error: function(XMLHttpRequest, textStatus, errorThrown) {
                                     layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText);
                                     $.fn.unlock();
                                 }
@@ -149,7 +149,7 @@ $title = Yii::t('app', 'Please choice this user can manager categories');
                         }
                     });
                     $.fn.unlock();
-                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                }, error: function(XMLHttpRequest, textStatus, errorThrown) {
                     layer.alert('[ ' + XMLHttpRequest.status + ' ] ' + XMLHttpRequest.responseText);
                     $.fn.unlock();
                 }

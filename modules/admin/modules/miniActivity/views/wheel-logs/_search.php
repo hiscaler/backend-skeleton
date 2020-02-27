@@ -7,9 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\modules\admin\modules\miniActivity\models\WheelLogSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-
 <div class="wheel-log-search">
-
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
@@ -39,12 +37,9 @@ use yii\widgets\ActiveForm;
     <?php // echo $form->field($model, 'get_datetime') ?>
 
     <?php // echo $form->field($model, 'remark') ?>
-
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton('Reset', ['class' => 'btn btn-default']) ?>
     </div>
-
     <?php ActiveForm::end(); ?>
-
 </div>

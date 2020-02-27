@@ -82,10 +82,10 @@ $this->params['menus'] = [
 </div>
 <?php \app\modules\admin\components\JsBlock::begin() ?>
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         // 微信商户平台订单查询
         var queryUrl = '<?= \yii\helpers\Url::toRoute(['orders/refund-query', 'id' => '_id']) ?>';
-        $('.order-query').on('click', function () {
+        $('.order-query').on('click', function() {
             var $t = $(this);
             layer.open({
                 type: 2,
@@ -96,7 +96,7 @@ $this->params['menus'] = [
                 shadeClose: true,
                 content: queryUrl.replace('_id', $t.attr('data-key'))
             });
-            
+
             return false;
         });
     });
