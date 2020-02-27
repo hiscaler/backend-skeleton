@@ -8,7 +8,7 @@ $this->title = Yii::t('app', 'Login Logs');
 $this->params['breadcrumbs'][] = ['label' => '帐户管理', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="widget-user-login-logs">
+<div class="widget-member-login-logs">
     <div class="bd">
         <ul class="time-lines">
             <?php
