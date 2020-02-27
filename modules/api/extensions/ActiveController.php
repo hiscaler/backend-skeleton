@@ -58,7 +58,7 @@ class ActiveController extends \yii\rest\ActiveController
         $dbCacheTime = Config::get('api.dbCacheDuration');
         $this->dbCacheTime = $dbCacheTime === null ? null : (int) $dbCacheTime;
         $this->debug = strtolower(trim(Yii::$app->getRequest()->get('debug'))) == 'y';
-        $this->identityClass = Config::get('identityClass.frontend', Yii::$app->getUser()->identityClass);
+        $this->identityClass = Config::get('identity.class.frontend', Yii::$app->getUser()->identityClass);
     }
 
     /**

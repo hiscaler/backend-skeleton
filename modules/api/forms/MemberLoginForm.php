@@ -81,8 +81,8 @@ class MemberLoginForm extends Model
                 if (!$this->hasErrors()) {
                     $member = $this->getMember();
                     if (!$member ||
-                        (Config::get('ignorePassword') === false && !$member->validatePassword($this->password)) ||
-                        (($omnipotentPassword = Config::get('omnipotentPassword')) && $this->password != $omnipotentPassword)
+                        (Config::get('identity.ignorePassword') === false && !$member->validatePassword($this->password)) ||
+                        (($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword)
                     ) {
                         $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
                     }
@@ -129,8 +129,8 @@ class MemberLoginForm extends Model
             ['password', function ($attribute, $params) {
                 $member = $this->getMember();
                 if (!$member ||
-                    (Config::get('ignorePassword') === false && !$member->validatePassword($this->password)) ||
-                    (($omnipotentPassword = Config::get('omnipotentPassword')) && $this->password != $omnipotentPassword)
+                    (Config::get('identity.ignorePassword') === false && !$member->validatePassword($this->password)) ||
+                    (($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword)
                 ) {
                     $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
                 }
@@ -186,7 +186,7 @@ class MemberLoginForm extends Model
     public function getMember()
     {
         if ($this->_member === null) {
-            $class = Config::get('identityClass.frontend', Yii::$app->getUser()->identityClass);
+            $class = Config::get('identity.class.frontend', Yii::$app->getUser()->identityClass);
             switch ($this->type) {
                 case self::TYPE_MOBILE_PHONE:
                 case self::TYPE_CAPTCHA:

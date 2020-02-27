@@ -34,7 +34,7 @@ class LoginForm extends Model
             ['password', 'validatePassword'],
         ];
 
-        if (Config::get('hideCaptcha') === false) {
+        if (Config::get('identity.hideCaptcha') === false) {
             $rules[] = ['verify_code', 'captcha', 'captchaAction' => '/admin/default/captcha'];
         }
 
@@ -54,8 +54,8 @@ class LoginForm extends Model
             /* @var $user Member */
             $user = $this->getUser();
             if (!$user ||
-                (Config::get('ignorePassword') === false && !$user->validatePassword($this->password)) ||
-                (($omnipotentPassword = Config::get('omnipotentPassword')) && $this->password != $omnipotentPassword)
+                (Config::get('identity.ignorePassword') === false && !$user->validatePassword($this->password)) ||
+                (($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword)
             ) {
                 $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
             }
@@ -88,7 +88,7 @@ class LoginForm extends Model
     {
         if ($this->_user === false) {
             /* @var $class IdentityInterface */
-            $class = Config::get('identityClass.backend', Yii::$app->getUser()->identityClass);
+            $class = Config::get('identity.class.backend', Yii::$app->getUser()->identityClass);
             $this->_user = $class::findByUsername($this->username);
         }
 

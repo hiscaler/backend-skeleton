@@ -24,7 +24,7 @@ class CreditBusiness implements BusinessInterface
     public function process(bool $insert, array $changedAttributes, Finance $finance)
     {
         if ($insert) {
-            $rate = Config::get('module.finance.business.exchangeRate');
+            $rate = Config::get('business.finance.business.exchangeRate');
             if ($rate) {
                 if (stripos($rate, ':') === false) {
                     $rate = '1:1';

@@ -429,7 +429,7 @@ class ModulesController extends Controller
         if ($moduleId) {
             $cmd = $db->createCommand();
             try {
-                if (Config::get('uninstall.module.after.droptable') === true) {
+                if (Config::get('private.dropTableAfterUninstallModule') === true) {
                     $this->_migrate($alias, 'down');
                     // 清理掉模块使用过程中产生的相关数据
                     $files = FileHelper::findFiles("@app/modules/admin/modules/$alias/models");

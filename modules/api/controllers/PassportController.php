@@ -182,7 +182,7 @@ class PassportController extends ActiveController
                 // 2. token值.有效的时间戳
                 list (, $expire) = $tokens;
             }
-            $accessTokenExpire = Config::get('member.accessTokenExpire', 86400);
+            $accessTokenExpire = Config::get('identity.accessTokenExpire', 86400);
             $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
 
             $tokenIsValid = ((int) $expire + $accessTokenExpire) > time() ? true : false;

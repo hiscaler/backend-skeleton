@@ -25,7 +25,7 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        $identityClass = Config::get('identityClass.frontend', Yii::$app->getUser()->identityClass);
+        $identityClass = Config::get('identity.class.frontend', Yii::$app->getUser()->identityClass);
         Yii::$app->setComponents([
             'user' => [
                 'class' => 'yii\web\User',

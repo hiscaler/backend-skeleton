@@ -151,7 +151,7 @@ class BaseUser extends ActiveRecord implements IdentityInterface
                     // 2. token值.有效的时间戳
                     list (, $expire) = $tokens;
                 }
-                $accessTokenExpire = Config::get('member.accessTokenExpire', 86400);
+                $accessTokenExpire = Config::get('identity.accessTokenExpire', 86400);
                 $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
 
                 if (((int) $expire + $accessTokenExpire) <= time()) {
@@ -210,7 +210,7 @@ class BaseUser extends ActiveRecord implements IdentityInterface
         }
 
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
-        $expire = Config::get('user.passwordResetTokenExpire');
+        $expire = Config::get('identity.passwordResetTokenExpire');
 
         return $timestamp + $expire >= time();
     }

@@ -87,7 +87,7 @@ class WechatController extends Controller
                 if ($memberId) {
                     $member = Member::findByWechatOpenId($openid);
                     $webUser->login($member, 3600 * 24 * 30);
-                    $accessTokenExpire = ApplicationHelper::getConfigValue('user.accessTokenExpire', 7200);
+                    $accessTokenExpire = ApplicationHelper::getConfigValue('identity.accessTokenExpire', 7200);
                     $accessTokenExpire = $accessTokenExpire ?: 7200;
                     $accessToken = Yii::$app->getSecurity()->generateRandomString() . '.' . (time() + $accessTokenExpire);
                     // Update user access_token value

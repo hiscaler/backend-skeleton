@@ -259,7 +259,7 @@ class Finance extends \yii\db\ActiveRecord
                 'balance' => $availableMoney
             ], ['id' => $this->id])->execute();
 
-            if ($this->call_business_process && ($class = Config::get("module.finance.business.class")) && class_exists($class)) {
+            if ($this->call_business_process && ($class = Config::get("business.finance.business.class")) && class_exists($class)) {
                 try {
                     call_user_func_array([new $class(), 'process'], [$insert, $changedAttributes, $this]);
                 } catch (Exception $e) {

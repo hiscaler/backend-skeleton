@@ -35,7 +35,7 @@ class Module extends \yii\base\Module
                 'basePath' => "@app/modules/admin/modules/$alias/messages",
             ];
         }
-        $identityClass = Config::get('identityClass.backend', Yii::$app->getUser()->identityClass);
+        $identityClass = Config::get('identity.class.backend', Yii::$app->getUser()->identityClass);
         Yii::$app->setComponents([
             'user' => [
                 'class' => 'yii\web\User',

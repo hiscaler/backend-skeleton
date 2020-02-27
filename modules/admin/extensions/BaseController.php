@@ -31,7 +31,7 @@ class BaseController extends Controller
     {
         if (parent::beforeAction($action)) {
             $user = Yii::$app->getUser();
-            if (!$user->getIsGuest() && Config::get('disableRepeatingLogin', false) && $user->getIdentity()->last_login_session != session_id()) {
+            if (!$user->getIsGuest() && Config::get('identity.disableRepeatingLogin', false) && $user->getIdentity()->last_login_session != session_id()) {
                 Yii::$app->getUser()->logout();
                 $this->goHome();
             }

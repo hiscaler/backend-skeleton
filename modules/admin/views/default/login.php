@@ -34,7 +34,7 @@ $name = Lookup::getValue('custom.site.name') ?: Yii::$app->name;
             'id' => 'login-form',
             'enableAjaxValidation' => false,
             'options' => [
-                'class' => Config::get('hideCaptcha') ? 'no-verify-code' : '',
+                'class' => Config::get('identity.hideCaptcha') ? 'no-verify-code' : '',
             ]
         ]);
         ?>
@@ -44,7 +44,7 @@ $name = Lookup::getValue('custom.site.name') ?: Yii::$app->name;
             <?= $form->field($model, 'password', $fieldConfigs)->passwordInput(); ?>
 
             <?php
-            if (Config::get('hideCaptcha') === false) {
+            if (Config::get('identity.hideCaptcha') === false) {
                 echo $form->field($model, 'verify_code', $fieldConfigs)->widget(Captcha::class, [
                     'template' => '{input}{image}',
                     'captchaAction' => 'default/captcha',
