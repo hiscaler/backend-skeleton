@@ -76,31 +76,43 @@ class Module extends \yii\base\Module
         $response = Yii::$app->getResponse();
         $response->format && $response->format = Response::FORMAT_JSON;
 
-        $modules = $this->getDevelopmentModules();
-        if (isset($modules['queue']) && class_exists('\yii\queue\db\Queue')) {
-            Yii::$app->setComponents([
-                'queue' => [
-                    'class' => \yii\queue\db\Queue::class,
-                    'mutex' => \yii\mutex\MysqlMutex::class,
-                    'channel' => 'default',
-                    'as log' => \yii\queue\LogBehavior::class,
-                ],
-            ]);
-        }
-        if (isset($modules['rbac'])) {
-            Yii::$app->setComponents([
-                'authManager' => [
-                    'class' => 'yii\rbac\DbManager',
-                ],
-            ]);
-            unset($modules['rbac']);
-        }
-
         // 载入已经安装的模块
-        foreach ($modules as $alias => $name) {
-            $this->setModule($alias, [
-                'class' => 'app\\modules\\api\\modules\\' . $alias . '\\Module',
-            ]);
+        $modules = $this->getDevelopmentModules();
+        foreach ($modules as $module) {
+            if ($module['enabled_api']) {
+                $continue = true;
+                $alias = $module['alias'];
+                switch ($alias) {
+                    case 'queue':
+                        if (class_exists('\yii\queue\db\Queue')) {
+                            Yii::$app->setComponents([
+                                'queue' => [
+                                    'class' => '\yii\queue\db\Queue',
+                                    'mutex' => '\yii\mutex\MysqlMutex',
+                                    'channel' => 'default',
+                                    'as log' => '\yii\queue\LogBehavior',
+                                ],
+                            ]);
+                        } else {
+                            $continue = false;
+                        }
+                        break;
+
+                    case 'rbac':
+                        Yii::$app->setComponents([
+                            'authManager' => [
+                                'class' => 'yii\rbac\DbManager',
+                            ],
+                        ]);
+                        break;
+
+                    default:
+                        $continue = true;
+                }
+                $continue && $this->setModule($alias, [
+                    'class' => 'app\\modules\\api\\modules\\' . $alias . '\\Module',
+                ]);
+            }
         }
     }
 
@@ -108,6 +120,7 @@ class Module extends \yii\base\Module
      * 获取开发模块
      *
      * @return array
+     * @throws \yii\db\Exception
      */
     private function getDevelopmentModules()
     {
@@ -115,7 +128,7 @@ class Module extends \yii\base\Module
         $cache = Yii::$app->getCache();
         $modules = $cache->get($key);
         if ($modules === false) {
-            $modules = \app\models\Module::map();
+            $modules = \app\models\Module::getInstalledModules();
             $cache->set($key, $modules, 0);
         }
 
