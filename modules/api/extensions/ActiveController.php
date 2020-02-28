@@ -87,7 +87,7 @@ class ActiveController extends \yii\rest\ActiveController
             ],
         ];
 
-        $tokenParam = 'accessToken';
+        $tokenParam = 'access_token';
         $accessToken = Yii::$app->getRequest()->getQueryParam($tokenParam);
         if (empty($accessToken)) {
             $headers = \Yii::$app->getRequest()->getHeaders();

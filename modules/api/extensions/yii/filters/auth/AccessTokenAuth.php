@@ -16,7 +16,7 @@ class AccessTokenAuth extends AuthMethod
     /**
      * @var string the parameter name for passing the access token
      */
-    public $tokenParam = 'accessToken';
+    public $tokenParam = 'access_token';
 
     /**
      * @param \yii\web\User $user
