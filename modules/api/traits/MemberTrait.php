@@ -10,6 +10,12 @@ use app\modules\api\models\MemberLoginLog;
 use app\modules\api\models\MemberProfile;
 use Yii;
 
+/**
+ * Member Trait
+ *
+ * @package app\modules\api\traits
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 trait MemberTrait
 {
 
