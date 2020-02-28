@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\components;
 
+use app\helpers\App;
 use app\helpers\Config;
 use Yii;
 
@@ -33,9 +34,9 @@ class ApplicationHelper
      */
     public static function hasRequireCheckAuth()
     {
-        $rbacConfig = Config::get('rbac', []);
-        $has = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
+        $has = App::rbacWorking();
         if ($has) {
+            $rbacConfig = Config::get('rbac', []);
             $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
             if (!is_array($ignoreUsers)) {
                 $ignoreUsers = [];

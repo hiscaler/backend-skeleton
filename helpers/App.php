@@ -33,4 +33,14 @@ class App
         return $token;
     }
 
+    /**
+     * 是否启用了 RBAC
+     *
+     * @return bool
+     */
+    public static function rbacWorking()
+    {
+        return Config::get('rbac.debug') === false && Yii::$app->getAuthManager();
+    }
+
 }

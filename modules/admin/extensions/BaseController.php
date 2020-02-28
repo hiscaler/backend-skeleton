@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\extensions;
 
+use app\helpers\App;
 use app\helpers\Config;
 use app\models\Lookup;
 use Yii;
@@ -45,9 +46,8 @@ class BaseController extends Controller
 
             $authManager = Yii::$app->getAuthManager();
             if ($authManager) {
-                $rbacConfig = Config::get('rbac', []);
-                $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
-                if ($requireCheckAuth) {
+                if (App::rbacWorking()) {
+                    $rbacConfig = Config::get('rbac', []);
                     $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
                     if (!is_array($ignoreUsers)) {
                         $ignoreUsers = [];

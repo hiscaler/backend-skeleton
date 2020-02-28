@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\widgets;
 
+use app\helpers\App;
 use app\helpers\Config;
 use app\models\Module;
 use app\modules\admin\components\ApplicationHelper;
@@ -25,9 +26,9 @@ class GlobalControlPanel extends Widget
     public function getItems()
     {
         $user = \Yii::$app->getUser();
-        $rbacConfig = Config::get('rbac', []);
-        $requireCheckAuth = isset($rbacConfig['debug']) && $rbacConfig['debug'] == false ? true : false;
+        $requireCheckAuth = App::rbacWorking();
         if ($requireCheckAuth) {
+            $rbacConfig = Config::get('rbac', []);
             $ignoreUsers = isset($rbacConfig['ignoreUsers']) ? $rbacConfig['ignoreUsers'] : [];
             if (!is_array($ignoreUsers)) {
                 $ignoreUsers = [];
@@ -37,7 +38,10 @@ class GlobalControlPanel extends Widget
                     $requireCheckAuth = false;
                 }
             }
+        } else {
+            $rbacConfig = [];
         }
+
         $items = [];
         $controllerId = Yii::$app->controller->id;
         $builtinModules = Config::get('modules', []);
