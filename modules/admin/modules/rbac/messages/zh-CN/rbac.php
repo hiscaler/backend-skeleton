@@ -8,6 +8,7 @@ return [
     // user
     'Username' => '账号',
     // role
+    'Role' => '角色',
     'Role Name' => '角色名称',
     'Description' => '描述',
     'Rule Name' => '规则',

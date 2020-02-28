@@ -30,8 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <tbody>
                 <tr v-for="item in users.items" v-bind:class="{'selected': item.id == activeObject.userId}">
                     <td class="serial-number">{{ item.id }}</td>
-                    <td>{{ item.username }}</td>
-                    <td v-for="(key, value) in users.extras">{{ item[key] }}</td>
+                    <td class="username">{{ item.username }}</td>
+                    <td v-for="(key, value) in users.extras" class="{{key}}">{{ item[key].toString() }}</td>
                     <td class="btn-1">
                         <button class="button-rbac" v-on:click="userRolesByUserId(item.id, $index)"><?= Yii::t('rbac', 'Roles') ?></button>
                     </td>

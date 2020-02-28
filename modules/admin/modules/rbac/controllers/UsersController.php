@@ -3,6 +3,7 @@
 namespace app\modules\admin\modules\rbac\controllers;
 
 use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\rbac\Item;
 use yii\web\Response;
@@ -38,6 +39,7 @@ class UsersController extends Controller
      *
      * @rbacDescription 获取所有用户权限
      * @return Response
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -52,23 +54,33 @@ class UsersController extends Controller
             $columns[] = $name;
             $extras[$name] = $text ?: $name;
         }
-        $items = (new \yii\db\Query())
+        $extras['roles'] = Yii::t('rbac', 'Role');
+        $authAssignments = [];
+        $rawAuthAssignments = \Yii::$app->getDb()->createCommand("SELECT [[item_name]], [[user_id]] FROM {$this->auth->assignmentTable}")->queryAll();
+        foreach ($rawAuthAssignments as $authAssignment) {
+            if (!isset($authAssignments[$authAssignment['user_id']])) {
+                $authAssignments[$authAssignment['user_id']] = [];
+            }
+            $authAssignments[$authAssignment['user_id']][] = $authAssignment['item_name'];
+        }
+        $items = (new Query())
             ->select($columns)
             ->from($userTable['name'])
             ->where(is_array($userTable['where']) ? $userTable['where'] : [])
             ->all($this->auth->db);
-        if ($rawColumns['id'] != 'id' || $rawColumns['username'] != 'username') {
-            foreach ($items as $key => $item) {
-                $t = $item;
-                if ($rawColumns['id'] != 'id') {
-                    $t['id'] = $item[$rawColumns['id']];
-                    unset($t[$rawColumns['id']]);
-                }
-                if ($rawColumns['username'] != 'username') {
-                    $t['username'] = $item[$rawColumns['username']];
-                    unset($t[$rawColumns['username']]);
-                }
-                $items[$key] = $t;
+        foreach ($items as $key => &$item) {
+            $item['roles'] = [];
+            $t = $item;
+            if ($rawColumns['id'] != 'id') {
+                $item['id'] = $item[$rawColumns['id']];
+                unset($item[$rawColumns['id']]);
+            }
+            if ($rawColumns['username'] != 'username') {
+                $t['username'] = $item[$rawColumns['username']];
+                unset($item[$rawColumns['username']]);
+            }
+            if (isset($authAssignments[$item['id']])) {
+                $item['roles'] = $authAssignments[$item['id']];
             }
         }
 

@@ -119,6 +119,13 @@ var vm = new Vue({
             axios.post(yadjet.rbac.urls.assign, { roleName: roleName, userId: vm.activeObject.userId })
                 .then(function(response) {
                     vm.user.roles.push(vm.roles[index]);
+                    var items = vm.users.items;
+                    for (var i in items) {
+                        console.info(items[i]);
+                        if (items[i].id == vm.activeObject.userId) {
+                            vm.users.items[i].roles.push(roleName);
+                        }
+                    }
                 })
                 .catch(function(error) {
                 });
@@ -127,9 +134,21 @@ var vm = new Vue({
         revoke: function(roleName, index) {
             axios.post(yadjet.rbac.urls.revoke, { roleName: roleName, userId: vm.activeObject.userId })
                 .then(function(response) {
-                    for (var i in vm.user.roles) {
-                        if (vm.user.roles[i].name === roleName) {
+                    var items = vm.user.roles;
+                    for (var i in items) {
+                        if (items[i].name === roleName) {
                             vm.user.roles.splice(i, 1);
+                            break;
+                        }
+                    }
+                    items = vm.users.items;
+                    for (var i in items) {
+                        if (items[i].id == vm.activeObject.userId) {
+                            for (var j in items[i].roles) {
+                                if (items[i].roles[j] === roleName) {
+                                    vm.users.items[i].roles.splice(j, 1);
+                                }
+                            }
                             break;
                         }
                     }
@@ -139,6 +158,7 @@ var vm = new Vue({
         },
         // 更新角色
         roleUpdate: function(key) {
+            console.info(key);
             var role = vm.roles[key];
             $('#rbac-role-form input#name').val(role.name);
             $('#rbac-role-form input#description').val(role.description);
@@ -252,6 +272,7 @@ var vm = new Vue({
                     .then(function(response) {
                         for (var i in vm.role.permissions) {
                             if (vm.role.permissions[i].name == permissionName) {
+                                console.info('delete');
                                 vm.role.permissions.splice(i, 1);
                                 break;
                             }

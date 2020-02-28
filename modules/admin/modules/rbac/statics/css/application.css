@@ -329,7 +329,22 @@ input {
 
 .rbac-grid-view table.table td.username {
     width: 60px;
-    text-align: center;
+}
+
+.rbac-grid-view table.table td.nickname {
+    width: 80px;
+}
+
+.rbac-grid-view table.table td.real_name {
+    width: 80px;
+}
+
+.rbac-grid-view table.table td.mobile_phone {
+    width: 100px;
+}
+
+.rbac-grid-view table.table td.email {
+    width: 120px;
 }
 
 .rbac-grid-view table.table td.user-role {

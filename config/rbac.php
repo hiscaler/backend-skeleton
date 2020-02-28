@@ -20,7 +20,8 @@ return [
              */
             'extra' => [
                 'nickname' => '昵称',
-                'role' => '角色',
+                'real_name' => '姓名',
+                'mobile_phone' => '手机号码',
             ],
         ],
         'where' => [], // 查询条件
