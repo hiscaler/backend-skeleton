@@ -687,6 +687,18 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             ->orderBy(['id' => SORT_DESC]);
     }
 
+    public function getRoles()
+    {
+        $roles = [];
+
+        $authManager = Yii::$app->getAuthManager();
+        if ($authManager) {
+            $roles = Yii::$app->getDb()->createCommand("SELECT [[item_name]] FROM {$authManager->assignmentTable} WHERE [[user_id]] = :memberId", [':memberId' => Yii::$app->getUser()->getId()])->queryColumn();
+        }
+
+        return $roles;
+    }
+
     /**
      * 根据用户积分修正用户所在分组
      *

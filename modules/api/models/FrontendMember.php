@@ -8,7 +8,7 @@ namespace app\modules\api\models;
  * @package app\modules\api\models
  * @author hiscaler <hiscaler@gmail.com>
  */
-class FrontendMember extends \app\models\FrontendMember
+class FrontendMember extends BaseFrontendMember
 {
 
 }

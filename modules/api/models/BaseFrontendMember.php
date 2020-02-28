@@ -5,12 +5,12 @@ namespace app\modules\api\models;
 use app\modules\api\traits\MemberTrait;
 
 /**
- * Class BaseMember
+ * Class BaseFrontendMember
  *
  * @package app\modules\api\models
  * @author hiscaler <hiscaler@gmail.com>
  */
-class BaseMember extends \app\models\Member
+class BaseFrontendMember extends \app\models\FrontendMember
 {
 
     use MemberTrait;
