@@ -105,14 +105,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     <td class="btn-3">
                         <button class="button-rbac" v-on:click="roleUpdate($index)"><?= Yii::t('rbac', 'Update') ?></button>
                         <button class="button-rbac" v-on:click="roleRemoveChildren(item.name)"><?= Yii::t('rbac', 'Remove Children') ?></button>
-                        <button class="button-rbac" v-on:click="roleAddChildren($index, $event)"><?= Yii::t('rbac', 'Add Children') ?></button>
+                        <button class="button-rbac" v-on:click="roleAddChildren(item.name)"><?= Yii::t('rbac', 'Add Children') ?></button>
                         <button class="button-rbac" v-on:click="permissionsByRole(item.name, $index)"><?= Yii::t('rbac', 'Permissions') ?></button>
                         <button class="button-rbac button-delete" v-on:click="roleDelete(item.name, $index, $event)">X</button>
                     </td>
                 </tr>
                 </tbody>
             </table>
-            <div id="window-roles" class="rbac-pop-window" v-show="activeObject.role">
+            <div id="window-roles" class="rbac-pop-window" v-show="window.rolePermissions">
                 <span class="up-arrow"></span>
                 <div class="permissions-search">
                     <input v-model.trim="role.keyword" type="text" placeholder="请输入您要搜索的权限名称" />

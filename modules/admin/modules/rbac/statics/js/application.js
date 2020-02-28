@@ -87,6 +87,9 @@ var vm = new Vue({
         formVisible: {
             role: false,
             permission: false
+        },
+        window: {
+            rolePermissions: false
         }
     },
     methods: {
@@ -158,7 +161,6 @@ var vm = new Vue({
         },
         // 更新角色
         roleUpdate: function(key) {
-            console.info(key);
             var role = vm.roles[key];
             $('#rbac-role-form input#name').val(role.name);
             $('#rbac-role-form input#description').val(role.description);
@@ -180,6 +182,8 @@ var vm = new Vue({
         // 删除角色关联的所有权限
         roleRemoveChildren: function(roleName) {
             layer.confirm('删除该角色关联的所有权限？', { icon: 3, title: '提示' }, function(boxIndex) {
+                vm.activeObject.role = roleName;
+                vm.window.rolePermissions = false;
                 axios.post(yadjet.rbac.urls.roles.removeChildren.replace('_name', roleName))
                     .then(function(response) {
                         vm.role.permissions = [];
@@ -224,6 +228,7 @@ var vm = new Vue({
         },
         // 根据角色获取关联的所有权限
         permissionsByRole: function(roleName, index) {
+            vm.window.rolePermissions = true;
             axios.get(yadjet.rbac.urls.roles.permissions.replace('_roleName', roleName))
                 .then(function(response) {
                     vm.activeObject.role = roleName;
@@ -255,11 +260,13 @@ var vm = new Vue({
                 });
         },
         // 添加所有权限至指定的角色
-        roleAddChildren: function(index, event) {
-            axios.post(yadjet.rbac.urls.roles.addChildren.replace('_roleName', vm.activeObject.role))
+        roleAddChildren: function(roleName) {
+            vm.activeObject.role = roleName;
+            vm.window.rolePermissions = false;
+            axios.post(yadjet.rbac.urls.roles.addChildren.replace('_roleName', roleName))
                 .then(function(response) {
                     for (var i in vm.permissions.raw) {
-                        vm.role.permissions.push(vm.permissions[i]);
+                        vm.role.permissions.push(vm.permissions.raw[i]);
                     }
                 })
                 .catch(function(error) {
@@ -321,6 +328,7 @@ var vm = new Vue({
         },
         // 关闭弹窗
         closeWindow: function() {
+            vm.window.rolePermissions = false;
             vm.activeObject.userId = 0;
             vm.activeObject.role = undefined;
         }
