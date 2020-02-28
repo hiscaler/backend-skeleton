@@ -75,10 +75,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="form-rbac" id="rbac-role-form" v-show="formVisible.role">
                     <form action="<?= \yii\helpers\Url::toRoute(['roles/save']) ?>">
                         <div class="row">
-                            <label><?= Yii::t('rbac', 'Role Name') ?>:</label><input type="text" class="rbac-input" id="name" name="name" value="" />
+                            <label><?= Yii::t('rbac', 'Role Name') ?>:</label><input type="text" class="rbac-input" id="role-name" name="name" value="" />
                         </div>
                         <div class="row">
-                            <label><?= Yii::t('rbac', 'Description') ?>:</label><input type="text" class="rbac-input" id="description" name="description" value="" />
+                            <label><?= Yii::t('rbac', 'Description') ?>:</label><input type="text" class="rbac-input" id="role-description" name="description" value="" />
                         </div>
                         <div class="row last-row">
                             <input class="button-rbac" id="rbac-submit-role" type="submit" value="<?= Yii::t('rbac', 'Save') ?>" />
@@ -97,12 +97,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="item in roles" v-bind:class="{'selected': item.name == activeObject.role}" v-on:click="roleUpdate($index)">
+                <tr v-for="item in roles" v-bind:class="{'selected': item.name == activeObject.role}">
                     <td class="role-name">{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>{{ item.rule_name }}</td>
                     <td>{{ item.data }}</td>
                     <td class="btn-3">
+                        <button class="button-rbac" v-on:click="roleUpdate($index)"><?= Yii::t('rbac', 'Update') ?></button>
                         <button class="button-rbac" v-on:click="roleRemoveChildren(item.name)"><?= Yii::t('rbac', 'Remove Children') ?></button>
                         <button class="button-rbac" v-on:click="roleAddChildren($index, $event)"><?= Yii::t('rbac', 'Add Children') ?></button>
                         <button class="button-rbac" v-on:click="permissionsByRole(item.name, $index)"><?= Yii::t('rbac', 'Permissions') ?></button>
@@ -113,11 +114,14 @@ $this->params['breadcrumbs'][] = $this->title;
             </table>
             <div id="window-roles" class="rbac-pop-window" v-show="activeObject.role">
                 <span class="up-arrow"></span>
+                <div class="permissions-search">
+                    <input v-model.trim="role.keyword" type="text" placeholder="请输入您要搜索的权限名称" />
+                </div>
                 <table class="table">
                     <thead>
                     <tr>
-                        <th><?= Yii::t('rbac', 'Role Name') ?></th>
-                        <th><?= Yii::t('rbac', 'Description') ?></th>
+                        <th><?= Yii::t('rbac', 'Permission Name') ?></th>
+                        <th><?= Yii::t('rbac', 'Permission Description') ?></th>
                         <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                         <th><?= Yii::t('rbac', 'Role Data') ?></th>
                         <th class="actions last">
@@ -148,10 +152,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div id="rbac-permission-form" v-show="formVisible.permission">
                     <form class="form-rbac" action="<?= \yii\helpers\Url::toRoute(['permission/create']) ?>">
                         <div class="row">
-                            <label><?= Yii::t('rbac', 'Permission Name') ?>:</label><input type="text" class="rbac-input" id="name" name="name" value="" />
+                            <label><?= Yii::t('rbac', 'Permission Name') ?>:</label><input type="text" class="rbac-input" id="permission-name" name="name" value="" />
                         </div>
                         <div class="row">
-                            <label><?= Yii::t('rbac', 'Permission Description') ?>:</label><input type="text" class="rbac-input" id="description" name="description" value="" />
+                            <label><?= Yii::t('rbac', 'Permission Description') ?>:</label><input type="text" class="rbac-input" id="permission-description" name="description" value="" />
                         </div>
                         <div class="row last-row">
                             <input class="button-rbac" id="rbac-submit-permission" type="submit" value="<?= Yii::t('rbac', 'Save') ?>" />

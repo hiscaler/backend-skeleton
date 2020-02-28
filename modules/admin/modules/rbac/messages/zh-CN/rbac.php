@@ -22,6 +22,7 @@ return [
     'Action' => '权限名称(动作链)',
     // Other
     'Save' => '保存',
+    'Update' => '更新',
     'Show Form' => '显示表单',
     'Hide Form' => '隐藏表单',
 ];

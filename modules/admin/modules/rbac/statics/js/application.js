@@ -70,6 +70,7 @@ var vm = new Vue({
         },
         roles: [],
         role: {
+            keyword: null,
             permissions: {}
         },
         permissions: {
@@ -127,7 +128,6 @@ var vm = new Vue({
             axios.post(yadjet.rbac.urls.revoke, { roleName: roleName, userId: vm.activeObject.userId })
                 .then(function(response) {
                     for (var i in vm.user.roles) {
-                        console.info(vm.user.roles[i].name);
                         if (vm.user.roles[i].name === roleName) {
                             vm.user.roles.splice(i, 1);
                             break;
@@ -225,9 +225,9 @@ var vm = new Vue({
         roleAddChild: function(permissionName, index, event) {
             axios.post(yadjet.rbac.urls.roles.addChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName))
                 .then(function(response) {
-                    for (var i in vm.permissions) {
-                        if (vm.permissions[i].name == permissionName) {
-                            vm.role.permissions.push(vm.permissions[i]);
+                    for (var i in vm.permissions.raw) {
+                        if (vm.permissions.raw[i].name == permissionName) {
+                            vm.role.permissions.push(vm.permissions.raw[i]);
                             break;
                         }
                     }
@@ -239,7 +239,7 @@ var vm = new Vue({
         roleAddChildren: function(index, event) {
             axios.post(yadjet.rbac.urls.roles.addChildren.replace('_roleName', vm.activeObject.role))
                 .then(function(response) {
-                    for (var i in vm.permissions) {
+                    for (var i in vm.permissions.raw) {
                         vm.role.permissions.push(vm.permissions[i]);
                     }
                 })
@@ -253,6 +253,7 @@ var vm = new Vue({
                     .then(function(response) {
                         for (var i in vm.role.permissions) {
                             if (vm.role.permissions[i].name == permissionName) {
+                                console.info('delete');
                                 vm.role.permissions.splice(i, 1);
                                 break;
                             }
@@ -325,10 +326,15 @@ var vm = new Vue({
         },
         // 当前操作角色关联的权限
         rolePermissions: function() {
-            var permissions = [], permission;
+            var permissions = [],
+                permission,
+                keyword = this.role.keyword;
             for (var i in this.permissions.raw) {
                 permission = clone(this.permissions.raw[i]);
                 permission.active = false;
+                if (keyword && permission.name.indexOf(keyword) === -1) {
+                    continue;
+                }
                 for (var j in this.role.permissions) {
                     if (permission.name == this.role.permissions[j].name) {
                         permission.active = true;
