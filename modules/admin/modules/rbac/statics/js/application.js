@@ -139,7 +139,6 @@ var vm = new Vue({
         },
         // 更新角色
         roleUpdate: function(key) {
-            console.info(key);
             var role = vm.roles[key];
             $('#rbac-role-form input#name').val(role.name);
             $('#rbac-role-form input#description').val(role.description);
@@ -253,7 +252,6 @@ var vm = new Vue({
                     .then(function(response) {
                         for (var i in vm.role.permissions) {
                             if (vm.role.permissions[i].name == permissionName) {
-                                console.info('delete');
                                 vm.role.permissions.splice(i, 1);
                                 break;
                             }
