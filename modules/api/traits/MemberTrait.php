@@ -6,6 +6,7 @@ use app\models\Meta;
 use app\modules\api\extensions\Formatter;
 use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\MemberCreditLog;
+use app\modules\api\models\MemberLoginLog;
 use app\modules\api\models\MemberProfile;
 use Yii;
 
@@ -99,6 +100,17 @@ trait MemberTrait
     public function getCreditLogs()
     {
         return $this->hasMany(MemberCreditLog::class, ['member_id' => 'id'])
+            ->orderBy(['id' => SORT_DESC]);
+    }
+
+    /**
+     * 登录日志
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLoginLogs()
+    {
+        return $this->hasMany(MemberLoginLog::class, ['member_id' => 'id'])
             ->orderBy(['id' => SORT_DESC]);
     }
 
