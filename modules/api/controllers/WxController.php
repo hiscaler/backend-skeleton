@@ -113,7 +113,7 @@ class WxController extends BaseController
                     } else {
                         $redirectUrl .= '&';
                     }
-                    $redirectUrl .= "accessToken=$accessToken";
+                    $redirectUrl .= "access_token=$accessToken";
                 }
 
                 $this->redirect($redirectUrl);

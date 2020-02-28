@@ -19,7 +19,7 @@ POST /api/passport/register
 POST /api/passport/login
 
 ### 说明
-登录成功后其他需要认证的请求 url 带上 accessToken 参数
+登录成功后其他需要认证的请求 url 带上 access_token 参数
 
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
@@ -36,7 +36,7 @@ POST /api/passport/login
 {
     "id": 1,
     "username": "username",
-    "accessToken": "accessToken",
+    "access_token": "accessToken",
     ...
 }
 ```
@@ -58,7 +58,7 @@ GET /api/passport/logout
 POST /api/passport/change-password
 
 ### 说明
-修改密码需要认证的请求 url 带上 accessToken 参数
+修改密码需要认证的请求 url 带上 access_token 参数
 
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |

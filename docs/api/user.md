@@ -27,7 +27,7 @@ POST /api/user/login
 | 密码 | password | string | | | Y ||
 
 ## 修改密码
-POST /api/user/change-password?accessToken=:tokenValue
+POST /api/user/change-password?access_token=:tokenValue
 
 ### 参数
 | 参数 | 键名称 | 值类型 | 长度 | 默认值 | 必填 | 备注 |

@@ -41,7 +41,7 @@ GET /api/credit/index
         ],
         "_links": {
             "self": {
-                "href": "http://192.168.2.222:8882/index.php/api/credit/index?id=4&accessToken=MrZLMBQRotaPY1UhzaR6dQiiFaRIrzuo&_format=json&page=1"
+                "href": "http://192.168.2.222:8882/index.php/api/credit/index?id=4&access_token=MrZLMBQRotaPY1UhzaR6dQiiFaRIrzuo&_format=json&page=1"
             }
         },
         "_meta": {

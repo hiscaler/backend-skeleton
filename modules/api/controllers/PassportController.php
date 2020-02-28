@@ -2,7 +2,6 @@
 
 namespace app\modules\api\controllers;
 
-use app\helpers\Config;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\forms\ChangeMyPasswordForm;
 use app\modules\api\forms\MemberLoginForm;
@@ -35,7 +34,7 @@ class PassportController extends ActiveController
     /**
      * @var string token 参数名称
      */
-    private $_token_param = 'accessToken';
+    private $_token_param = 'access_token';
 
     public function behaviors()
     {
@@ -164,42 +163,19 @@ class PassportController extends ActiveController
             throw new BadRequestHttpException("无效的 $this->_token_param 值。");
         }
         $class = $this->identityClass;
-        $member = $class::findIdentityByAccessToken($token);
+        $member = $class::findIdentityByAccessToken($token, AccessTokenAuth::class);
         if ($member === null) {
             throw new BadRequestHttpException("用户验证失败。");
         }
 
-        // 验证 token 是否有效
-        if (stripos($token, '.') === false) {
-            // 1. token值
-            $tokenIsValid = true;
-        } else {
-            $tokens = explode('.', $token);
-            if (isset($tokens[2])) {
-                // 3. 类型.token值.有效的时间戳
-                list (, , $expire) = $tokens;
-            } else {
-                // 2. token值.有效的时间戳
-                list (, $expire) = $tokens;
-            }
-            $accessTokenExpire = Config::get('identity.accessTokenExpire', 86400);
-            $accessTokenExpire = (int) $accessTokenExpire ?: 86400;
+        $member->generateAccessToken();
+        $newToken = $member->access_token;
+        Yii::$app->getDb()->createCommand()->update('{{%member}}', ['access_token' => $newToken], ['id' => $member->id])->execute();
 
-            $tokenIsValid = ((int) $expire + $accessTokenExpire) > time() ? true : false;
-        }
-
-        if ($tokenIsValid) {
-            $member->generateAccessToken();
-            $newToken = $member->access_token;
-            Yii::$app->getDb()->createCommand()->update('{{%member}}', ['access_token' => $newToken], ['id' => $member->id])->execute();
-
-            return [
-                'id' => $member->id,
-                'accessToken' => $newToken,
-            ];
-        } else {
-            throw new BadRequestHttpException("$this->_token_param 已失效。");
-        }
+        return [
+            'id' => $member->id,
+            'access_token' => $newToken,
+        ];
     }
 
     /**

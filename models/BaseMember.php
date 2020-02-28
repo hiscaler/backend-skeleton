@@ -240,7 +240,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public static function findIdentityByAccessToken($token, $type = null)
     {
         $member = null;
-        if ($type == 'app\modules\api\extensions\yii\filters\auth\AccessTokenAuth') {
+        if ($type == AccessTokenAuth::class) {
             /**
              * Token 格式
              * 1. token值

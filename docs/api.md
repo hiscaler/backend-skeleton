@@ -127,7 +127,7 @@ https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-login.html#wxchecksessionobjec
 
 ## GET /api/passport/login
 ### 说明
-会员登录，登录成功后其他需要认证的请求 url 带上 accessToken 参数
+会员登录，登录成功后其他需要认证的请求 url 带上 access_token 参数
 ### 参数说明
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |---|:---:|:---:|:---:|---|
@@ -138,7 +138,7 @@ https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-login.html#wxchecksessionobjec
 {
     "id": 1,
     "username": 'username',
-    "accessToken": 'accessToken',
+    "access_token": 'accessToken',
     ...
 }
 ```
