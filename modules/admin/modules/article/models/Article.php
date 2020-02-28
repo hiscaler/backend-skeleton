@@ -68,10 +68,10 @@ class Article extends BaseActiveRecord
     public function beforeValidate()
     {
         if (parent::beforeValidate()) {
-            if (empty($this->alias)) {
+            if (empty($this->alias) && $this->title) {
                 $alias = [];
                 foreach (explode('-', Inflector::slug($this->title)) as $slug) {
-                    $alias[] = $slug[0];
+                    $alias[] = $slug;
                 }
                 $this->alias = implode('', $alias);
             }
