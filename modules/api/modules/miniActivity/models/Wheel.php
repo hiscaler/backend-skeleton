@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\miniActivity\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 use app\modules\api\models\Constant;
 
 /**
@@ -69,17 +69,17 @@ class Wheel extends \yii\db\ActiveRecord
             'endDatetime' => 'end_datetime',
             'description',
             'photo' => function () {
-                return $this->photo ? UtilsHelper::fixStaticAssetUrl($this->photo) : null;
+                return $this->photo ? AppHelper::fixStaticAssetUrl($this->photo) : null;
             },
             'repeatPlayMessage' => 'repeat_play_message',
             'backgroundImage' => function () {
-                return $this->background_image ? UtilsHelper::fixStaticAssetUrl($this->background_image) : null;
+                return $this->background_image ? AppHelper::fixStaticAssetUrl($this->background_image) : null;
             },
             'backgroundImageRepeatType' => 'background_image_repeat_type',
             'finishedTitle' => 'finished_title',
             'finishedDescription' => 'finished_description',
             'finishedPhoto' => function () {
-                return $this->finished_photo ? UtilsHelper::fixStaticAssetUrl($this->finished_photo) : null;
+                return $this->finished_photo ? AppHelper::fixStaticAssetUrl($this->finished_photo) : null;
             },
             'blocksCount' => 'blocks_count',
             'awards' => function () {

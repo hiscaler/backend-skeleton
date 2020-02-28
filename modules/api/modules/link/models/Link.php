@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\link\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 class Link extends \app\modules\admin\modules\link\models\Link
 {
@@ -18,7 +18,7 @@ class Link extends \app\modules\admin\modules\link\models\Link
             'url',
             'url_open_target',
             'logo' => function ($model) {
-                return UtilsHelper::fixStaticAssetUrl($model['logo']);
+                return AppHelper::fixStaticAssetUrl($model['logo']);
             },
             'ordering',
             'enabled' => function ($model) {

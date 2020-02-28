@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\miniActivity\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 /**
  * This is the model class for table "{{%mini_activity_wheel_award}}".
@@ -38,7 +38,7 @@ class WheelAward extends \yii\db\ActiveRecord
             'photo' => function () {
                 $photo = $this->photo;
 
-                return $photo ? UtilsHelper::fixStaticAssetUrl($photo) : null;
+                return $photo ? AppHelper::fixStaticAssetUrl($photo) : null;
             },
             'totalQuantity' => 'total_quantity',
             'remainingQuantity' => 'remaining_quantity',

@@ -8,12 +8,12 @@ use yii\helpers\Inflector;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * Class UtilsHelper
+ * Class AppHelper
  *
  * @package app\modules\api\extensions
  * @author hiscaler <hiscaler@gmail.com>
  */
-class UtilsHelper
+class AppHelper
 {
 
     /**

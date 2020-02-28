@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\article\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 class Article extends \app\modules\admin\modules\article\models\Article
 {
@@ -16,7 +16,7 @@ class Article extends \app\modules\admin\modules\article\models\Article
             'keyword',
             'description',
             'content' => function ($model) {
-                return UtilsHelper::fixContentAssetUrl($model->content);
+                return AppHelper::fixContentAssetUrl($model->content);
             },
             'created_at',
             'created_by',

@@ -2,7 +2,7 @@
 
 namespace app\modules\api\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 /**
  * Class BaseModule
@@ -22,7 +22,7 @@ class BaseModule extends \app\models\Module
             'author',
             'version',
             'icon' => function ($model) {
-                return UtilsHelper::fixStaticAssetUrl($model->icon);
+                return AppHelper::fixStaticAssetUrl($model->icon);
             },
             'url',
             'description',

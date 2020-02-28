@@ -2,7 +2,7 @@
 
 namespace app\modules\api\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 /**
  * Class BaseCategory
@@ -26,7 +26,7 @@ class BaseCategory extends \app\models\Category
             'id_path',
             'name_path',
             'icon' => function ($model) {
-                return UtilsHelper::fixStaticAssetUrl($model->icon);
+                return AppHelper::fixStaticAssetUrl($model->icon);
             },
             'description',
             'enabled' => function ($model) {

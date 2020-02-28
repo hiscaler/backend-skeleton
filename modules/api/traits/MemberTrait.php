@@ -3,8 +3,8 @@
 namespace app\modules\api\traits;
 
 use app\models\Meta;
+use app\modules\api\extensions\AppHelper;
 use app\modules\api\extensions\Formatter;
-use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\MemberCreditLog;
 use app\modules\api\models\MemberLoginLog;
 use app\modules\api\models\MemberProfile;
@@ -41,7 +41,7 @@ trait MemberTrait
             'nickname',
             'real_name',
             'avatar' => function ($model) {
-                return UtilsHelper::fixStaticAssetUrl($model->avatar);
+                return AppHelper::fixStaticAssetUrl($model->avatar);
             },
             'email',
             'mobile_phone',

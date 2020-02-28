@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\ticket\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 class TicketAttachment extends \app\modules\admin\modules\ticket\models\Ticket
 {
@@ -13,7 +13,7 @@ class TicketAttachment extends \app\modules\admin\modules\ticket\models\Ticket
             'id',
             'ticket_id',
             'path' => function ($model) {
-                return UtilsHelper::fixStaticAssetUrl($model->path);
+                return AppHelper::fixStaticAssetUrl($model->path);
             },
         ];
     }

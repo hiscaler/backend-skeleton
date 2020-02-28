@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\slide\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 /**
  * This is the model class for table "{{%slide}}".
@@ -32,7 +32,7 @@ class Slide extends \app\modules\admin\modules\slide\models\Slide
             'url',
             'url_open_target',
             'picture_path' => function ($model) {
-                return UtilsHelper::fixStaticAssetUrl($model['picture_path']);
+                return AppHelper::fixStaticAssetUrl($model['picture_path']);
             },
             'ordering',
             'enabled' => function ($model) {

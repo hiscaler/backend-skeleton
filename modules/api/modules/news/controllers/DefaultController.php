@@ -3,8 +3,8 @@
 namespace app\modules\api\modules\news\controllers;
 
 use app\models\Category;
+use app\modules\api\extensions\AppHelper;
 use app\modules\api\extensions\BaseController;
-use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\Constant;
 use app\modules\api\modules\news\models\News;
 use app\modules\api\modules\news\models\NewsContent;
@@ -107,7 +107,7 @@ class DefaultController extends BaseController
         $condition = [
             't.enabled' => Constant::BOOLEAN_TRUE,
         ];
-        $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.short_title', 't.author', 't.source', 't.keywords', 't.description', 't.is_picture_news', 't.picture_path', 't.enabled_comment', 'comments_count', 't.published_at', 't.created_at', 't.updated_at', 'u.nickname AS editor'], $fields, ['short_title' => 't.title']);
+        $selectColumns = AppHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.short_title', 't.author', 't.source', 't.keywords', 't.description', 't.is_picture_news', 't.picture_path', 't.enabled_comment', 'comments_count', 't.published_at', 't.created_at', 't.updated_at', 'u.nickname AS editor'], $fields, ['short_title' => 't.title']);
         $query = (new \yii\db\ActiveQuery(News::class))
             ->alias('t')
             ->select($selectColumns);
@@ -126,13 +126,13 @@ class DefaultController extends BaseController
         }
 
         // Picture news
-        $picture = UtilsHelper::cleanString($picture);
+        $picture = AppHelper::cleanString($picture);
         if (!empty($picture) && in_array($picture, ['y', 'n'])) {
             $condition['t.is_picture_news'] = $picture == 'y' ? Constant::BOOLEAN_TRUE : Constant::BOOLEAN_FALSE;
         }
 
         // Category condition
-        $category = UtilsHelper::cleanString($category);
+        $category = AppHelper::cleanString($category);
         if (!empty($category)) {
             // 1,2,3表示获取 1,2,3 节点的数据
             if (($index = strpos($category, '!')) === false) {
@@ -205,7 +205,7 @@ class DefaultController extends BaseController
                         case 4: // 2015（返回2015年的文章）
                         case 6: // 201501（返回2015年1月份的文章）
                         case 8: // 20150101（返回2015年1月1日的文章）
-                            $dateRange = UtilsHelper::parseDate($date);
+                            $dateRange = AppHelper::parseDate($date);
                             if ($dateRange) {
                                 $condition = ['AND', $condition, ['BETWEEN', 't.published_at', $dateRange[0], $dateRange[1]]];
                             }
@@ -215,7 +215,7 @@ class DefaultController extends BaseController
                         case 7: // -201501（返回2015年1月份之前的文章）, +201501（返回2015年1月份之后的文章）
                         case 9: // -20150101（返回2015年1月1日之前的文章）, +20150101（返回2015年1月1日之后的文章）
                             if (in_array($date[0], ['-', '+'])) {
-                                $dateRange = UtilsHelper::parseDate(substr($date, -($len - 1)));
+                                $dateRange = AppHelper::parseDate(substr($date, -($len - 1)));
                                 if ($dateRange) {
                                     $condition = ['AND', $condition, [$date[0] === '-' ? '<' : '>', 't.published_at', $dateRange[0]]];
                                 }
@@ -249,7 +249,7 @@ class DefaultController extends BaseController
                 }
             }
             foreach ($rejectList as $key => $value) {
-                $values = UtilsHelper::cleanIntegerNumbers($value);
+                $values = AppHelper::cleanIntegerNumbers($value);
                 $count = count($values);
                 if ($count) {
                     if ($count == 1) {

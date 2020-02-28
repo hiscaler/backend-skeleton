@@ -58,7 +58,7 @@ class BaseController extends Controller
     public function beforeAction($action)
     {
         if (parent::beforeAction($action)) {
-            return UtilsHelper::checkRbacAuth($this->module->getUniqueId(), $action);
+            return AppHelper::checkRbacAuth($this->module->getUniqueId(), $action);
         } else {
             return false;
         }

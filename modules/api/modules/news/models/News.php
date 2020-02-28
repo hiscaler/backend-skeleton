@@ -4,7 +4,7 @@ namespace app\modules\api\modules\news\models;
 
 use app\models\BaseActiveRecord;
 use app\models\FileUploadConfig;
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 use yadjet\behaviors\ImageUploadBehavior;
 
 /**
@@ -137,7 +137,7 @@ class News extends BaseActiveRecord
             'description',
             'is_picture_news',
             'picture_path' => function () {
-                return UtilsHelper::fixStaticAssetUrl($this->picture_path);
+                return AppHelper::fixStaticAssetUrl($this->picture_path);
             },
             'enabled_comment',
             'comments_count',
@@ -152,7 +152,7 @@ class News extends BaseActiveRecord
     {
         return [
             'content' => function () {
-                return UtilsHelper::fixContentAssetUrl($this->newsContent->content);
+                return AppHelper::fixContentAssetUrl($this->newsContent->content);
             }
         ];
     }

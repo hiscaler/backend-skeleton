@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\vote\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 /**
  * This is the model class for table "{{%vote_option}}".
@@ -37,7 +37,7 @@ class VoteOption extends \yii\db\ActiveRecord
             'photo' => function ($model) {
                 $photo = $model->photo;
 
-                return $photo ? UtilsHelper::fixStaticAssetUrl($photo) : null;
+                return $photo ? AppHelper::fixStaticAssetUrl($photo) : null;
             },
             'votes_count',
         ];

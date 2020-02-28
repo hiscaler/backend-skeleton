@@ -2,7 +2,7 @@
 
 namespace app\modules\api\modules\feedback\models;
 
-use app\modules\api\extensions\UtilsHelper;
+use app\modules\api\extensions\AppHelper;
 
 class Feedback extends \app\modules\admin\modules\feedback\models\Feedback
 {
@@ -19,7 +19,7 @@ class Feedback extends \app\modules\admin\modules\feedback\models\Feedback
             'email',
             'ip',
             'picture' => function ($model) {
-                return UtilsHelper::fixStaticAssetUrl($model['picture']);
+                return AppHelper::fixStaticAssetUrl($model['picture']);
             },
             'message',
             'response_message',

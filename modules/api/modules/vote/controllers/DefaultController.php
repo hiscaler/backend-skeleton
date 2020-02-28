@@ -2,8 +2,8 @@
 
 namespace app\modules\api\modules\vote\controllers;
 
+use app\modules\api\extensions\AppHelper;
 use app\modules\api\extensions\BaseController;
-use app\modules\api\extensions\UtilsHelper;
 use app\modules\api\models\Constant;
 use app\modules\api\modules\vote\models\Vote;
 use Yii;
@@ -62,7 +62,7 @@ class DefaultController extends BaseController
             }
         }
 
-        $selectColumns = UtilsHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.description', 't.begin_datetime', 't.end_datetime', 't.total_votes_count', 't.allow_anonymous', 't.allow_view_results', 't.allow_multiple_choice', 't.interval_seconds', 't.items', 't.ordering', 't.created_at', 't.updated_at'], $fields);
+        $selectColumns = AppHelper::filterQuerySelectColumns(['t.id', 't.category_id', 'c.name AS category_name', 't.title', 't.description', 't.begin_datetime', 't.end_datetime', 't.total_votes_count', 't.allow_anonymous', 't.allow_view_results', 't.allow_multiple_choice', 't.interval_seconds', 't.items', 't.ordering', 't.created_at', 't.updated_at'], $fields);
         $query = (new ActiveQuery(Vote::class))
             ->alias('t')
             ->select($selectColumns)
