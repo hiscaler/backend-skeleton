@@ -261,16 +261,20 @@ var vm = new Vue({
         },
         // 添加所有权限至指定的角色
         roleAddChildren: function(roleName) {
-            vm.activeObject.role = roleName;
-            vm.window.rolePermissions = false;
-            axios.post(yadjet.rbac.urls.roles.addChildren.replace('_roleName', roleName))
-                .then(function(response) {
-                    for (var i in vm.permissions.raw) {
-                        vm.role.permissions.push(vm.permissions.raw[i]);
-                    }
-                })
-                .catch(function(error) {
-                });
+            layer.confirm('确定授予该角色所有权限？', { icon: 3, title: '提示' }, function(boxIndex) {
+                vm.activeObject.role = roleName;
+                vm.window.rolePermissions = false;
+                axios.post(yadjet.rbac.urls.roles.addChildren.replace('_roleName', roleName))
+                    .then(function(response) {
+                        for (var i in vm.permissions.raw) {
+                            vm.role.permissions.push(vm.permissions.raw[i]);
+                        }
+                    })
+                    .catch(function(error) {
+                    });
+
+                layer.close(boxIndex);
+            });
         },
         // 从角色中移除权限
         roleRemoveChild: function(permissionName, index, event) {
