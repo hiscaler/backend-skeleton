@@ -14,6 +14,7 @@ return [
         'type' => 'wx', // 注册类型 normal: 常规表单注册, wx: 使用微信第三方注册
         'status' => 1, // 会员注册默认值（\app\models\Member::STATUS_ACTIVE）
         'usable_scope' => 1, // 会员使用范围（0: 全部, 1: 前台, 2: 后台）
+        'role' => '', // 默认角色
         'expiryMinutes' => 0, // 有效截止时间（单位为：分钟），如果为 0 表示无限制
         'rules' => [
             'required' => ['mobile_phone'], // 必填的字段

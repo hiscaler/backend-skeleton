@@ -19,39 +19,45 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
         <?= $form->errorSummary($model) ?>
         <div class="tab-panel" id="tab-panel-basic">
-            <?= $form->field($model, 'type')->dropDownList(Member::typeOptions()) ?>
-            <?php
-            if ($model->getIsNewRecord()) {
-                echo $form->field($model, 'parent_id')->dropDownList(Member::map(), ['prompt' => '']);
-            }
-            ?>
+            <div class="entry">
+                <?= $form->field($model, 'type')->dropDownList(Member::typeOptions()) ?>
+                <?php
+                if ($model->getIsNewRecord()) {
+                    echo $form->field($model, 'parent_id')->dropDownList(Member::map(), ['prompt' => '']);
+                }
+                ?>
+            </div>
             <?php
             $options = ['maxlength' => true];
             !$model->getIsNewRecord() && $options['disabled'] = 'disabled';
-            echo $form->field($model, 'username')->textInput($options);
             ?>
-
-            <?= $form->field($model, 'nickname')->textInput(['maxlength' => true]) ?>
-
-            <?= $form->field($model, 'real_name')->textInput(['maxlength' => true]) ?>
+            <div class="entry">
+                <?= $form->field($model, 'username')->textInput($options); ?>
+                <?= $form->field($model, 'nickname')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="entry">
+                <?= $form->field($model, 'real_name')->textInput(['maxlength' => true]) ?>
+                <?php
+                $template = '{label}{input}{thumb}{error}';
+                $thumb = '';
+                if (!$model->isNewRecord && $model->avatar) {
+                    $thumb = '<img class="thumbnail" src="' . Yii::$app->getRequest()->getBaseUrl() . $model->avatar . '" />';
+                }
+                $template = str_replace('{thumb}', $thumb, $template);
+                echo $form->field($model, 'avatar', ['template' => $template])->fileInput() ?>
+            </div>
             <?php if ($model->isNewRecord): ?>
-                <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
+                <div class="entry">
+                    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 
-                <?= $form->field($model, 'confirm_password')->passwordInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'confirm_password')->passwordInput(['maxlength' => true]) ?>
+                </div>
             <?php endif; ?>
-            <?php
-            $template = '{label}{input}{thumb}{error}';
-            $thumb = '';
-            if (!$model->isNewRecord && $model->avatar) {
-                $thumb = '<img class="thumbnail" src="' . Yii::$app->getRequest()->getBaseUrl() . $model->avatar . '" />';
-            }
-            $template = str_replace('{thumb}', $thumb, $template);
-            echo $form->field($model, 'avatar', ['template' => $template])->fileInput() ?>
+            <div class="entry">
+                <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-            <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-
-            <?= $form->field($model, 'mobile_phone')->textInput(['maxlength' => true]) ?>
-
+                <?= $form->field($model, 'mobile_phone')->textInput(['maxlength' => true]) ?>
+            </div>
             <?= \yadjet\datePicker\my97\DatePicker::widget([
                 'form' => $form,
                 'model' => $model,
@@ -59,12 +65,12 @@ use yii\widgets\ActiveForm;
                 'pickerType' => 'datetime',
             ]) ?>
 
-            <?= $form->field($model, 'role')->dropDownList(Member::roleOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'role_list')->checkboxList($model::roleOptions(), $model->roles) ?>
+            <div class="entry">
+                <?= $form->field($model, 'usable_scope')->dropDownList(Member::usableScopeOptions()) ?>
 
-            <?= $form->field($model, 'usable_scope')->dropDownList(Member::usableScopeOptions()) ?>
-
-            <?= $form->field($model, 'status')->dropDownList(Member::statusOptions()) ?>
-
+                <?= $form->field($model, 'status')->dropDownList(Member::statusOptions()) ?>
+            </div>
             <?= $form->field($model, 'remark')->textarea(['rows' => 6]) ?>
         </div>
         <div class="tab-panel" id="tab-panel-metas" style="display: none">

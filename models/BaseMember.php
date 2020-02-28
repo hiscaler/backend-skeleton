@@ -82,6 +82,11 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public $fileFields = 'avatar';
 
     /**
+     * @var array 角色列表
+     */
+    public $role_list = [];
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -135,6 +140,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
                 'minSize' => 1024,
                 'maxSize' => 1024 * 200,
             ],
+            ['role_list', 'safe'],
         ];
 
         // 自定义验证规则
@@ -170,6 +176,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             'id' => '编号',
             'type' => '会员类型',
             'role' => '角色',
+            'role_list' => '角色',
             'category_id' => '分类',
             'group' => '分组',
             'unique_key' => '唯一码',
@@ -687,13 +694,19 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             ->orderBy(['id' => SORT_DESC]);
     }
 
+    /**
+     * 但其那会员拥有的角色
+     *
+     * @return array
+     * @throws \yii\db\Exception
+     */
     public function getRoles()
     {
         $roles = [];
 
         $authManager = Yii::$app->getAuthManager();
         if ($authManager) {
-            $roles = Yii::$app->getDb()->createCommand("SELECT [[item_name]] FROM {$authManager->assignmentTable} WHERE [[user_id]] = :memberId", [':memberId' => Yii::$app->getUser()->getId()])->queryColumn();
+            $roles = Yii::$app->getDb()->createCommand("SELECT [[item_name]] FROM {$authManager->assignmentTable} WHERE [[user_id]] = :memberId", [':memberId' => $this->id])->queryColumn();
         }
 
         return $roles;
@@ -756,7 +769,13 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         }
     }
 
-    // Events
+    public function afterFind()
+    {
+        parent::afterFind();
+        if (!$this->getIsNewRecord()) {
+            $this->role_list = $this->roles;
+        }
+    }
 
     /**
      * @param bool $insert
@@ -802,6 +821,48 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
+        $authManager = Yii::$app->getAuthManager();
+        if ($authManager) {
+            $addRoles = [];
+            if (is_array($this->role_list) && $this->role_list) {
+                $addRoles = $this->role_list;
+            } else {
+                $defaultRole = Config::get('member.register.role');
+                if ($defaultRole) {
+                    $addRoles[] = $defaultRole;
+                }
+            }
+            if ($addRoles) {
+                $roleOptions = self::roleOptions();
+                foreach ($addRoles as $i => $role) {
+                    if (!isset($roleOptions[$role])) {
+                        unset($addRoles[$i]);
+                    }
+                }
+            }
+
+            $revokeRoles = [];
+            if (!$insert) {
+                $existsRoles = $this->roles;
+                if ($existsRoles) {
+                    $revokeRoles = array_diff($existsRoles, $addRoles);
+                    $addRoles = array_diff($addRoles, $existsRoles);
+                }
+            }
+            if ($addRoles) {
+                foreach ($addRoles as $role) {
+                    $role = $authManager->getRole($role);
+                    $authManager->assign($role, $this->id);
+                }
+            }
+            if ($revokeRoles) {
+                foreach ($revokeRoles as $role) {
+                    $role = $authManager->getRole($role);
+                    $authManager->revoke($role, $this->id);
+                }
+            }
+        }
+
         // 会员业务逻辑处理
         $business = Config::get('member.business', []);
         foreach ($business as $class => $params) {
@@ -825,6 +886,10 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         if ($avatar && !filter_var($avatar, FILTER_VALIDATE_URL)) {
             $avatar = Yii::getAlias('@webroot/' . ltrim($avatar, '/'));
             file_exists($avatar) && FileHelper::unlink($avatar);
+        }
+
+        if ($authManager = Yii::$app->getAuthManager()) {
+            $authManager->revokeAll($this->id);
         }
 
         // 清理相关数据
