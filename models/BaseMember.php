@@ -128,7 +128,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             [['password_reset_token'], 'unique'],
             [['last_login_session'], 'string', 'max' => 128],
             [['status'], 'default', 'value' => Config::get('member.register.status', self::STATUS_PENDING)],
-            [['usable_scope'], 'default', 'value' => self::USABLE_SCOPE_ALL],
+            [['usable_scope'], 'default', 'value' => Config::get('member.register.usable_scope', self::USABLE_SCOPE_FRONTEND)],
             [['usable_scope'], 'in', 'range' => array_keys(self::usableScopeOptions())],
             ['avatar', 'image',
                 'extensions' => 'jpg,gif,png,jpeg',
