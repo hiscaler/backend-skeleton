@@ -88,7 +88,7 @@ return array(
     'Labels' => '推送位管理',
     'Lookups' => '系统常规设定',
     'Members' => '会员管理',
-    'Member Login Logs' => '会员登陆日志',
+    'Member Login Logs' => '会员登录日志',
     'Modules' => '扩展模块管理',
     'Users' => '系统用户管理',
     'User Groups' => '用户分组管理',
