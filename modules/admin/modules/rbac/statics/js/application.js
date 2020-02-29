@@ -124,7 +124,6 @@ var vm = new Vue({
                     vm.user.roles.push(vm.roles[index]);
                     var items = vm.users.items;
                     for (var i in items) {
-                        console.info(items[i]);
                         if (items[i].id == vm.activeObject.userId) {
                             vm.users.items[i].roles.push(roleName);
                         }
@@ -233,12 +232,7 @@ var vm = new Vue({
                 var items = vm.permissions.raw.filter(function(item) {
                     return item.name.indexOf(keyword) !== -1;
                 });
-                vm.permissions = {
-                    ...vm.permissions,
-                    ...{
-                        filtered: items,
-                    }
-                }
+                vm.permissions.filtered = items;
             } else {
                 vm.permissions.filtered = vm.permissions.raw;
             }
@@ -314,12 +308,17 @@ var vm = new Vue({
             layer.confirm('确定删除该权限？', { icon: 3, title: '提示' }, function(boxIndex) {
                 axios.post(yadjet.rbac.urls.roles.removeChild.replace('_roleName', vm.activeObject.role).replace('_permissionName', permissionName))
                     .then(function(response) {
-                        for (var i in vm.role.permissions) {
-                            if (vm.role.permissions[i].name == permissionName) {
-                                console.info('delete');
-                                vm.role.permissions.splice(i, 1);
-                                break;
+                        const resp = response.data;
+                        if (resp.success) {
+                            for (var i in vm.role.permissions) {
+                                if (vm.role.permissions[i].name == permissionName) {
+                                    vm.role.permissions.splice(i, 1);
+                                    break;
+                                }
                             }
+                        } else {
+                            layer.closeAll();
+                            layer.msg(resp.error.message);
                         }
                     })
                     .catch(function(error) {
@@ -350,7 +349,6 @@ var vm = new Vue({
                 axios.post(yadjet.rbac.urls.permissions.delete.replace('_name', name))
                     .then(function(response) {
                         const resp = response.data;
-                        console.info("resp", resp);
                         if (resp.success) {
                             var name = vm.permissions.filtered[index].name;
                             vm.permissions.filtered.splice(index, 1);
@@ -460,7 +458,7 @@ $(function() {
                         }
                     }
                     layer.closeAll();
-                    layer.msg("权限角色保存成功。");
+                    layer.msg("角色保存成功。");
                 } else {
                     layer.closeAll();
                     layer.alert(response.error.message);
@@ -475,24 +473,40 @@ $(function() {
     });
 
     $('#rbac-submit-permission').on('click', function() {
-        console.info('ddd');
         $.ajax({
             type: 'POST',
             url: yadjet.rbac.urls.permissions.create,
             data: $('#rbac-permission-form form').serialize(),
             returnType: 'json',
             success: function(response) {
+                console.info("ITem", response);
                 if (response.success) {
-                    vm.permissions.raw.push(response.data);
-                    vm.permissions.filtered.push(response.data);
+                    var item = response.data;
+                    console.info("ITem", item);
+                    var exists = false;
+                    for (var i in vm.permissions.raw) {
+                        if (vm.permissions.raw[i].name == item.name) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    console.info("exists?", exists);
+                    if (!exists) {
+                        vm.permissions.raw.push(item);
+                    }
+                    if (!vm.permissions.keyword || item.name.indexOf(vm.permissions.keyword) !== -1) {
+                        vm.permissions.filtered.push(item);
+                    }
+
                     layer.closeAll();
-                    layer.msg("权限角色保存成功。");
+                    layer.msg("权限保存成功。");
                 } else {
                     layer.alert(response.error.message);
                 }
             }, error: function(XMLHttpRequest, textStatus, errorThrown) {
                 layer.closeAll();
-                layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
+                console.info(XMLHttpRequest);
+                layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseJSON.error.message);
             }
         });
 

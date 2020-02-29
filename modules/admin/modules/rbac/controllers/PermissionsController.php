@@ -5,6 +5,7 @@ namespace app\modules\admin\modules\rbac\controllers;
 use Exception;
 use Yii;
 use yii\filters\AccessControl;
+use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 /**
@@ -42,10 +43,7 @@ class PermissionsController extends Controller
      */
     public function actionIndex()
     {
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => array_values($this->auth->getPermissions()),
-        ]);
+        return array_values($this->auth->getPermissions());
     }
 
     /**
@@ -60,8 +58,6 @@ class PermissionsController extends Controller
     {
         $request = Yii::$app->getRequest();
         if ($request->getIsPost()) {
-            $success = true;
-            $errorMessage = null;
             $rawBody = $request->getRawBody();
             $rawBody = json_decode($rawBody, true);
             if ($rawBody !== null) {
@@ -73,8 +69,7 @@ class PermissionsController extends Controller
                 $description = trim($request->post('description'));
             }
             if (empty($name)) {
-                $success = false;
-                $errorMessage = '名称不能为空。';
+                throw new BadRequestHttpException('称不能为空。');
             } else {
                 $permission = $this->auth->getPermission($name);
                 if ($permission) {
@@ -85,21 +80,9 @@ class PermissionsController extends Controller
                     $permission->description = $description;
                     $this->auth->add($permission);
                 }
-            }
-            $responseBody = [
-                'success' => $success,
-            ];
-            if (!$success) {
-                $responseBody['error']['message'] = $errorMessage;
-            } else {
-                $permission = (array) $permission;
-                $responseBody['data'] = $permission;
-            }
 
-            return new Response([
-                'format' => Response::FORMAT_JSON,
-                'data' => $responseBody
-            ]);
+                return $permission;
+            }
         }
     }
 
@@ -110,6 +93,7 @@ class PermissionsController extends Controller
      * @rbacDescription 删除权限
      * @param string $name
      * @return Response
+     * @throws BadRequestHttpException
      */
     public function actionDelete($name)
     {
@@ -117,22 +101,11 @@ class PermissionsController extends Controller
             $name = trim($name);
             $permission = $this->auth->getPermission($name);
             $this->auth->remove($permission);
-            $responseBody = [
-                'success' => true,
-            ];
-        } catch (Exception $ex) {
-            $responseBody = [
-                'success' => false,
-                'error' => [
-                    'message' => $ex->getMessage(),
-                ]
-            ];
-        }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $responseBody,
-        ]);
+            return $permission;
+        } catch (Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
     }
 
 }

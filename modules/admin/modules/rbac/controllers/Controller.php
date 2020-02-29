@@ -3,7 +3,11 @@
 namespace app\modules\admin\modules\rbac\controllers;
 
 use app\modules\admin\modules\rbac\helpers\RbacHelper;
+use Yii;
 use yii\base\Exception;
+use yii\filters\ContentNegotiator;
+use yii\filters\Cors;
+use yii\web\Response;
 
 /**
  * Class Controller
@@ -30,6 +34,31 @@ class Controller extends \yii\rest\Controller
         if ($this->auth === null) {
             throw new Exception('Please setting authManager component in config file.');
         }
+        Yii::$app->getResponse()->format = Response::FORMAT_JSON;
+    }
+
+    public function behaviors()
+    {
+        return [
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::class,
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                    'text/javascript' => Response::FORMAT_JSONP,
+                    'application/xml' => Response::FORMAT_XML,
+                ],
+            ],
+            'corsFilter' => [
+                'class' => Cors::class,
+                'cors' => [
+                    'Origin' => ['*'],
+                    'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+                    'Access-Control-Request-Headers' => ['*'],
+                    'Access-Control-Allow-Credentials' => false,
+                    'Access-Control-Max-Age' => 86400, // One day
+                ],
+            ],
+        ];
     }
 
 }

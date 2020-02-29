@@ -175,10 +175,7 @@ class DefaultController extends BaseController
 
         Yii::$app->getCache()->set('admin.rbac.default.roles', $ignorePermissions, 0);
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $permissions,
-        ]);
+        return $permissions;
     }
 
 }

@@ -2,10 +2,12 @@
 
 namespace app\modules\admin\modules\rbac\controllers;
 
+use stdClass;
 use Yii;
 use yii\base\Exception;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 /**
@@ -53,10 +55,7 @@ class RolesController extends Controller
      */
     public function actionIndex()
     {
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => array_values($this->auth->getRoles()),
-        ]);
+        return array_values($this->auth->getRoles());
     }
 
     /**
@@ -64,8 +63,8 @@ class RolesController extends Controller
      *
      * @rbacIgnore true
      * @rbacDescription 角色添加、更新权限
-     * @return Response
-     * @throws \Exception
+     * @return array
+     * @throws BadRequestHttpException
      */
     public function actionSave()
     {
@@ -90,22 +89,14 @@ class RolesController extends Controller
                     $this->auth->add($role);
                 }
             }
-            $responseBody = [
-                'success' => $success,
-            ];
-            if (!$success) {
-                $responseBody['error']['message'] = $errorMessage;
-            } else {
-                $responseBody['data'] = [
+            if ($success) {
+                return [
                     'role' => (array) $role,
                     'insert' => $insert ? true : false,
                 ];
+            } else {
+                throw new BadRequestHttpException($errorMessage);
             }
-
-            return new Response([
-                'format' => Response::FORMAT_JSON,
-                'data' => $responseBody
-            ]);
         }
     }
 
@@ -167,6 +158,7 @@ class RolesController extends Controller
      * @param string $roleName
      * @param string $permissionName
      * @return Response
+     * @throws BadRequestHttpException
      */
     public function actionAddChild($roleName, $permissionName)
     {
@@ -174,20 +166,11 @@ class RolesController extends Controller
             $role = $this->auth->getRole($roleName);
             $permission = $this->auth->getPermission($permissionName);
             $this->auth->addChild($role, $permission);
-            $responseBody = [
-                'success' => true,
-            ];
-        } catch (Exception $e) {
-            $responseBody = [
-                'success' => false,
-                'error' => ['message' => $e->getMessage()],
-            ];
-        }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $responseBody,
-        ]);
+            return $role;
+        } catch (Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
     }
 
     /**
@@ -196,7 +179,8 @@ class RolesController extends Controller
      * @rbacIgnore true
      * @rbacDescription 添加所有权限至指定的角色权限
      * @param $roleName
-     * @return Response
+     * @return array
+     * @throws BadRequestHttpException
      */
     public function actionAddChildren($roleName)
     {
@@ -209,28 +193,14 @@ class RolesController extends Controller
                         $this->auth->addChild($role, $permission);
                     }
                 }
-                $responseBody = ['success' => true];
+
+                return [];
             } else {
-                $responseBody = [
-                    'success' => false,
-                    'error' => [
-                        'message' => "$roleName 不存在。",
-                    ]
-                ];
+                throw new BadRequestHttpException("$roleName 不存在。");
             }
         } catch (Exception $e) {
-            $responseBody = [
-                'success' => false,
-                'error' => [
-                    'message' => $e->getMessage(),
-                ]
-            ];
+            throw new BadRequestHttpException($e->getMessage());
         }
-
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $responseBody,
-        ]);
     }
 
     /**
@@ -240,26 +210,18 @@ class RolesController extends Controller
      * @rbacDescription 移除角色和权限关联关系权限
      * @param string $roleName
      * @param string $permissionName
-     * @return Response
+     * @return stdClass
+     * @throws BadRequestHttpException
      */
     public function actionRemoveChild($roleName, $permissionName)
     {
         try {
             $this->auth->removeChild($this->auth->getRole($roleName), $this->auth->getPermission($permissionName));
-            $responseBody = ['success' => true];
-        } catch (\Exception $e) {
-            $responseBody = [
-                'success' => false,
-                'error' => [
-                    'message' => $e->getMessage(),
-                ]
-            ];
-        }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $responseBody,
-        ]);
+            return new stdClass();
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
     }
 
     /**
@@ -268,32 +230,22 @@ class RolesController extends Controller
      * @rbacIgnore true
      * @rbacDescription 删除角色关联的所有权限
      * @param string $name
-     * @return Response
+     * @return stdClass
+     * @throws BadRequestHttpException
      */
     public function actionRemoveChildren($name)
     {
         try {
             $role = $this->auth->getRole(trim($name));
             $result = $this->auth->removeChildren($role);
-            $responseBody = [
-                'success' => $result
-            ];
             if (!$result) {
-                $responseBody['error']['message'] = 'Unknown Error.';
+                throw new BadRequestHttpException('Unknown Error.');
+            } else {
+                return new stdClass();
             }
         } catch (\Exception $e) {
-            $responseBody = [
-                'success' => false,
-                'error' => [
-                    'message' => $e->getMessage(),
-                ]
-            ];
+            throw new BadRequestHttpException($e->getMessage());
         }
-
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $responseBody,
-        ]);
     }
 
 }

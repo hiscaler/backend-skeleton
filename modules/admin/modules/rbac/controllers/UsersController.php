@@ -2,10 +2,12 @@
 
 namespace app\modules\admin\modules\rbac\controllers;
 
+use stdClass;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\rbac\Item;
+use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 /**
@@ -85,13 +87,10 @@ class UsersController extends Controller
             }
         }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => [
-                'items' => $items,
-                'extras' => $extras,
-            ],
-        ]);
+        return [
+            'items' => $items,
+            'extras' => $extras,
+        ];
     }
 
     /**
@@ -108,10 +107,7 @@ class UsersController extends Controller
             $id = Yii::$app->getUser()->getId();
         }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => array_values($this->auth->getRolesByUser($id)),
-        ]);
+        return array_values($this->auth->getRolesByUser($id));
     }
 
     /**
@@ -128,10 +124,7 @@ class UsersController extends Controller
             $id = Yii::$app->getUser()->getId();
         }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $this->auth->getPermissionsByUser($id),
-        ]);
+        return $this->auth->getPermissionsByUser($id);
     }
 
     /**
@@ -140,7 +133,7 @@ class UsersController extends Controller
      * @rbacIgnore true
      * @rbacDescription 获取用户授权列表权限
      * @param null $id
-     * @return Response
+     * @return array
      * @throws \yii\db\Exception
      */
     public function actionAuths($id = null)
@@ -169,10 +162,7 @@ class UsersController extends Controller
             ];
         }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $items,
-        ]);
+        return $items;
     }
 
     /**
@@ -197,15 +187,12 @@ class UsersController extends Controller
             $success = false;
             $errorMessage = 'Parameters error.';
         }
-        $responseBody = ['success' => $success];
-        if (!$success) {
-            $responseBody['error']['message'] = $errorMessage;
-        }
 
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $responseBody,
-        ]);
+        if ($success) {
+            return new stdClass();
+        } else {
+            throw new BadRequestHttpException($errorMessage);
+        }
     }
 
     /**
@@ -213,7 +200,8 @@ class UsersController extends Controller
      *
      * @rbacIgnore true
      * @rbacDescription 撤销用户角色权限
-     * @return Response
+     * @return stdClass
+     * @throws BadRequestHttpException
      */
     public function actionRevoke()
     {
@@ -229,15 +217,11 @@ class UsersController extends Controller
             $success = false;
             $errorMessage = 'Parameters error.';
         }
-        $responseBody = ['success' => $success];
-        if (!$success) {
-            $responseBody['error']['message'] = $errorMessage;
+        if ($success) {
+            return new stdClass();
+        } else {
+            throw new BadRequestHttpException($errorMessage);
         }
-
-        return new Response([
-            'format' => Response::FORMAT_JSON,
-            'data' => $responseBody,
-        ]);
     }
 
 }

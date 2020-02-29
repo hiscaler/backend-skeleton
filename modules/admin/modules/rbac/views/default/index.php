@@ -244,37 +244,49 @@ $this->params['breadcrumbs'][] = $this->title;
         // 获取用户数据
         axios.get(yadjet.rbac.urls.users.list)
             .then(function(response) {
-                vm.users.items = response.data.items;
-                vm.users.extras = response.data.extras;
+                const resp = response.data;
+                if (resp.success) {
+                    vm.users.items = resp.data.items;
+                    vm.users.extras = resp.data.extras;
+                }
             })
             .catch(function(error) {
             });
 
         axios.get(yadjet.rbac.urls.roles.list)
             .then(function(response) {
-                vm.roles = response.data;
+                if (response.data.success) {
+                    vm.roles = response.data.data;
+                }
             })
             .catch(function(error) {
             });
 
         axios.get(yadjet.rbac.urls.permissions.list)
             .then(function(response) {
-                vm.permissions = {
-                    keyword: null,
-                    raw: response.data,
-                    filtered: response.data,
-                };
+                const resp = response.data;
+                if (resp.success) {
+                    vm.permissions = {
+                        keyword: null,
+                        raw: resp.data,
+                        filtered: resp.data,
+                    };
+                }
+
             })
             .catch(function(error) {
             });
 
         axios.get(yadjet.rbac.urls.permissions.scan)
             .then(function(response) {
-                vm.pendingPermissions = {
-                    keyword: null,
-                    raw: response.data,
-                    filtered: response.data,
-                };
+                if (response.data.success) {
+                    vm.pendingPermissions = {
+                        keyword: null,
+                        raw: response.data.data,
+                        filtered: response.data.data,
+                    };
+                }
+
             })
             .catch(function(error) {
             });
