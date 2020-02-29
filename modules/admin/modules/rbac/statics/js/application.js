@@ -179,6 +179,26 @@ var vm = new Vue({
             });
             vm.formVisible.role = true;
         },
+        // 权限编辑
+        permissionUpdate: function(key = null) {
+            var name, description;
+            if (key !== null) {
+                var item = vm.permissions.raw[key];
+                name = item.name;
+                description = item.description;
+            }
+            $('#rbac-permission-form input#permission-name').val(name);
+            $('#rbac-permission-form input#permission-description').val(description);
+            layer.open({
+                type: 1,
+                title: "权限编辑",
+                area: ['450px', '200px'],
+                fixed: false, //不固定
+                maxmin: true,
+                content: $('#form-permission')
+            });
+            vm.formVisible.role = true;
+        },
         // 删除角色
         roleDelete: function(roleName, index, event) {
             layer.confirm('确定删除该角色？', { icon: 3, title: '提示' }, function(boxIndex) {
@@ -332,7 +352,14 @@ var vm = new Vue({
                         const resp = response.data;
                         console.info("resp", resp);
                         if (resp.success) {
+                            var name = vm.permissions.filtered[index].name;
                             vm.permissions.filtered.splice(index, 1);
+                            for (var i in vm.permissions.raw) {
+                                if (vm.permissions.raw[i].name === name) {
+                                    vm.permissions.raw.splice(i, 1);
+                                    break;
+                                }
+                            }
                             for (var i in vm.pendingPermissions.filtered) {
                                 if (vm.pendingPermissions.filtered[i].name == name) {
                                     vm.pendingPermissions.filtered[i].active = true;
@@ -448,6 +475,7 @@ $(function() {
     });
 
     $('#rbac-submit-permission').on('click', function() {
+        console.info('ddd');
         $.ajax({
             type: 'POST',
             url: yadjet.rbac.urls.permissions.create,
@@ -455,11 +483,15 @@ $(function() {
             returnType: 'json',
             success: function(response) {
                 if (response.success) {
-                    vm.permissions.push(response.data);
+                    vm.permissions.raw.push(response.data);
+                    vm.permissions.filtered.push(response.data);
+                    layer.closeAll();
+                    layer.msg("权限角色保存成功。");
                 } else {
                     layer.alert(response.error.message);
                 }
             }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+                layer.closeAll();
                 layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
             }
         });

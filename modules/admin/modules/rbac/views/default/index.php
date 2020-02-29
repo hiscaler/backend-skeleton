@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                     <th><?= Yii::t('rbac', 'Role Data') ?></th>
                     <th class="actions last" style="text-align: right">
-                        <button @click="roleUpdate()">添加</button>
+                        <button class="button-rbac button-add" @click="roleUpdate()">+</button>
                     </th>
                 </tr>
                 </thead>
@@ -136,7 +136,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td>{{ item.data }}</td>
                         <td class="btn-1">
                             <button class="button-rbac button-delete" v-if="item.active" v-on:click="roleRemoveChild(item.name, $index, $event)">X</button>
-                            <button class="button-rbac" v-else v-on:click="roleAddChild(item.name, $index, $event)">+</button>
+                            <button class="button-rbac button-add" v-else v-on:click="roleAddChild(item.name, $index, $event)">+</button>
                         </td>
                     </tr>
                     </tbody>
@@ -144,11 +144,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         <div id="rbac-permissions" class="panel" style="display: none;">
-            <fieldset class="wrapper">
-                <legend>
-                    <button class="button-rbac" @click="toggleFormVisible('permission')">{{ formVisible.permission ? '<?= Yii::t('rbac', 'Hide Form') ?>' : '<?= Yii::t('rbac', 'Show Form') ?>' }}</button>
-                </legend>
-                <div id="rbac-permission-form" v-show="formVisible.permission">
+            <div id="form-permission" style="display: none">
+                <div id="rbac-permission-form">
                     <form class="form-rbac" action="<?= \yii\helpers\Url::toRoute(['permission/create']) ?>">
                         <div class="row">
                             <label><?= Yii::t('rbac', 'Permission Name') ?>:</label><input type="text" class="rbac-input" id="permission-name" name="name" value="" />
@@ -161,7 +158,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </form>
                 </div>
-            </fieldset>
+            </div>
             <div class="permissions-search">
                 <input v-model.trim="permissions.keyword" type="text" placeholder="请输入您要搜索的权限名称" v-on:input="permissionsFilter()" />
             </div>
@@ -172,7 +169,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     <th><?= Yii::t('rbac', 'Permission Description') ?></th>
                     <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                     <th><?= Yii::t('rbac', 'Permission Data') ?></th>
-                    <th class="actions last"></th>
+                    <th class="actions last">
+                        <button class="button-rbac button-add" @click="permissionUpdate()">+</button>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>

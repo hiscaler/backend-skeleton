@@ -95,11 +95,15 @@ input {
  * Common
  ******************************************************************************/
 .button-rbac {
+    display: inline-block;
     border: #E9E9E9 solid 1px;
     color: #7d8389;
     background-color: #FFF;
     border-radius: 3px;
     cursor: pointer;
+    height: 24px;
+    line-height: 16px;
+    vertical-align: middle;
 }
 
 .button-delete:hover {
@@ -107,6 +111,16 @@ input {
     background-color: #ff0000;
     color: #FFF;
     font-weight: bold;
+}
+
+.button-add {
+    font-weight: bold;
+}
+
+.button-add:hover {
+    background-color: #1aad19;
+    border-color: #CCC;
+    color: #FFF;
 }
 
 .wrapper {
