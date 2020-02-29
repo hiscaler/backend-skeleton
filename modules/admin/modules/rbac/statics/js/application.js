@@ -162,8 +162,8 @@ var vm = new Vue({
         // 更新角色
         roleUpdate: function(key) {
             var role = vm.roles[key];
-            $('#rbac-role-form input#name').val(role.name);
-            $('#rbac-role-form input#description').val(role.description);
+            $('#rbac-role-form input#role-name').val(role.name);
+            $('#rbac-role-form input#role-description').val(role.description);
             vm.formVisible.role = true;
         },
         // 删除角色
