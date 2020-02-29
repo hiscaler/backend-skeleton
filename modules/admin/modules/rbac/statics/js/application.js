@@ -304,8 +304,8 @@ var vm = new Vue({
             axios.post(yadjet.rbac.urls.permissions.create, { name: name, description: description })
                 .then(function(response) {
                     if (response.data.success) {
-                        vm.permissions.push(response.data.data);
-                        vm.pendingPermissions[index].active = false;
+                        vm.permissions.filtered.push(response.data.data);
+                        vm.pendingPermissions.filtered[index].active = false;
                     }
                 })
                 .catch(function(error) {
@@ -316,15 +316,23 @@ var vm = new Vue({
             layer.confirm('确定删除该权限？', { icon: 3, title: '提示' }, function(boxIndex) {
                 axios.post(yadjet.rbac.urls.permissions.delete.replace('_name', name))
                     .then(function(response) {
-                        vm.permissions.splice(index, 1);
-                        for (var i in vm.pendingPermissions) {
-                            if (vm.pendingPermissions[i].name == name) {
-                                vm.pendingPermissions[i].active = true;
-                                break;
+                        const resp = response.data;
+                        console.info("resp", resp);
+                        if (resp.success) {
+                            vm.permissions.filtered.splice(index, 1);
+                            for (var i in vm.pendingPermissions.filtered) {
+                                if (vm.pendingPermissions.filtered[i].name == name) {
+                                    vm.pendingPermissions.filtered[i].active = true;
+                                    break;
+                                }
                             }
+                            layer.msg(name + " 权限删除成功。");
+                        } else {
+                            layer.alert(resp.error.message);
                         }
                     })
                     .catch(function(error) {
+                        layer.alert(error);
                     });
 
                 layer.close(boxIndex);
