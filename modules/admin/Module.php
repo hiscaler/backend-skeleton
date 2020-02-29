@@ -78,10 +78,10 @@ class Module extends \yii\base\Module
         if (isset($modules['queue']) && class_exists('\yii\queue\db\Queue')) {
             Yii::$app->setComponents([
                 'queue' => [
-                    'class' => \yii\queue\db\Queue::class,
-                    'mutex' => \yii\mutex\MysqlMutex::class,
+                    'class' => '\yii\queue\db\Queue',
+                    'mutex' => '\yii\mutex\MysqlMutex',
                     'channel' => 'default',
-                    'as log' => \yii\queue\LogBehavior::class,
+                    'as log' => '\yii\queue\LogBehavior',
                 ],
             ]);
         }
