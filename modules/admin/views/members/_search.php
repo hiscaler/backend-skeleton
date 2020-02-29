@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'mobile_phone') ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'type')->dropDownList(Member::typeOptions(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'usable_scope')->dropDownList(Member::usableScopeOptions(), ['prompt' => '']) ?>
             <?= $form->field($model, 'status')->dropDownList(Member::statusOptions(), ['prompt' => '']) ?>
         </div>
         <div class="form-group buttons">

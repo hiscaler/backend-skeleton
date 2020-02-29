@@ -581,7 +581,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public static function usableScopeOptions()
     {
         return [
-            self::USABLE_SCOPE_ALL => '全部',
+            self::USABLE_SCOPE_ALL => '前后端',
             self::USABLE_SCOPE_FRONTEND => '前端',
             self::USABLE_SCOPE_BACKEND => '后端',
         ];

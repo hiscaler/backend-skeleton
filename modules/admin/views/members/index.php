@@ -135,6 +135,11 @@ $defaultAvatar = $baseUrl . '/images/default-avatar.jpg';
                 'format' => 'memberStatus',
                 'contentOptions' => ['class' => 'data-status'],
             ],
+            [
+                'attribute' => 'usable_scope',
+                'format' => 'memberUsableScope',
+                'contentOptions' => ['style' => 'width: 60px; text-align: center'],
+            ],
             // 'created_by',
             // 'updated_at',
             // 'updated_by',

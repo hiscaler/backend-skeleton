@@ -17,7 +17,7 @@ class MemberSearch extends Member
     public function rules()
     {
         return [
-            [['type', 'status', 'category_id', 'parent_id'], 'integer'],
+            [['type', 'status', 'usable_scope', 'category_id', 'parent_id'], 'integer'],
             [['username', 'mobile_phone'], 'safe'],
         ];
     }
@@ -63,6 +63,7 @@ class MemberSearch extends Member
         $query->andFilterWhere([
             'type' => $this->type,
             'status' => $this->status,
+            'usable_scope' => $this->usable_scope,
             'parent_id' => $this->parent_id,
         ]);
 
