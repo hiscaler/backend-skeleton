@@ -57,7 +57,7 @@ class DefaultController extends BaseController
     /**
      * 主页面
      *
-     * @rbacDescription 查看权限认证主页面权限
+     * @rbacDescription 会员授权功能
      * @return string
      */
     public function actionIndex()
@@ -111,6 +111,7 @@ class DefaultController extends BaseController
     /**
      * 扫描所有控制器获取动作和其说明
      *
+     * @rbacIgnore true
      * @rbacDescription 扫描所有控制器获取动作和其说明权限
      * @return Response
      * @throws \ReflectionException

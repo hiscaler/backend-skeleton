@@ -37,6 +37,7 @@ class UsersController extends Controller
     /**
      * 获取所有用户
      *
+     * @rbacIgnore true
      * @rbacDescription 获取所有用户权限
      * @return Response
      * @throws \yii\db\Exception
@@ -96,6 +97,7 @@ class UsersController extends Controller
     /**
      * 用户分配的角色
      *
+     * @rbacIgnore true
      * @rbacDescription 获取用户分配的角色权限
      * @param integer|mixed $id 用户 id
      * @return Response
@@ -115,6 +117,7 @@ class UsersController extends Controller
     /**
      * 用户分配的权限
      *
+     * @rbacIgnore true
      * @rbacDescription 获取用户分配的权限
      * @param integer|mixed $id
      * @return Response
@@ -134,6 +137,7 @@ class UsersController extends Controller
     /**
      * 用户授权列表
      *
+     * @rbacIgnore true
      * @rbacDescription 获取用户授权列表权限
      * @param null $id
      * @return Response
@@ -174,6 +178,7 @@ class UsersController extends Controller
     /**
      * 分配用户角色
      *
+     * @rbacIgnore true
      * @rbacDescription 分配用户角色权限
      * @return Response
      * @throws \Exception
@@ -206,6 +211,7 @@ class UsersController extends Controller
     /**
      * 撤销用户角色
      *
+     * @rbacIgnore true
      * @rbacDescription 撤销用户角色权限
      * @return Response
      */

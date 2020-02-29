@@ -36,6 +36,7 @@ class PermissionsController extends Controller
     /**
      * 返回定义的所有权限
      *
+     * @rbacIgnore true
      * @rbacDescription 所有定义的权限返回
      * @return Response
      */
@@ -50,6 +51,7 @@ class PermissionsController extends Controller
     /**
      * 添加权限
      *
+     * @rbacIgnore true
      * @rbacDescription 添加权限
      * @return Response
      * @throws Exception
@@ -104,6 +106,7 @@ class PermissionsController extends Controller
     /**
      * 删除权限
      *
+     * @rbacIgnore true
      * @rbacDescription 删除权限
      * @param string $name
      * @return Response
