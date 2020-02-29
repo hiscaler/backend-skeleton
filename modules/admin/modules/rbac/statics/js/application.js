@@ -160,10 +160,15 @@ var vm = new Vue({
                 });
         },
         // 更新角色
-        roleUpdate: function(key) {
-            var role = vm.roles[key];
-            $('#rbac-role-form input#role-name').val(role.name);
-            $('#rbac-role-form input#role-description').val(role.description);
+        roleUpdate: function(key = null) {
+            var name, description;
+            if (key !== null) {
+                var role = vm.roles[key];
+                name = role.name;
+                description = role.description;
+            }
+            $('#rbac-role-form input#role-name').val(name);
+            $('#rbac-role-form input#role-description').val(description);
             layer.open({
                 type: 1,
                 title: "角色编辑",

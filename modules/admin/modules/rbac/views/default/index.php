@@ -90,7 +90,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     <th><?= Yii::t('rbac', 'Description') ?></th>
                     <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                     <th><?= Yii::t('rbac', 'Role Data') ?></th>
-                    <th class="actions last"></th>
+                    <th class="actions last" style="text-align: right">
+                        <button @click="roleUpdate()">添加</button>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
