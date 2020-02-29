@@ -106,6 +106,13 @@ input {
     vertical-align: middle;
 }
 
+.button-close-window {
+    border-radius: 24px;
+    background-color: #ff0000;
+    color: #FFF;
+}
+
+.button-close-window:hover,
 .button-delete:hover {
     border-color: #CCC;
     background-color: #ff0000;

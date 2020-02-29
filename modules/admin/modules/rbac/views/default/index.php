@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                         <th><?= Yii::t('rbac', 'Role Data') ?></th>
                         <th class="actions last">
-                            <button class="button-rbac button-delete" v-on:click="closeWindow()">X</button>
+                            <button class="button-rbac button-close-window" v-on:click="closeWindow()">X</button>
                         </th>
                     </tr>
                     </thead>
@@ -124,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= Yii::t('rbac', 'Rule Name') ?></th>
                         <th><?= Yii::t('rbac', 'Role Data') ?></th>
                         <th class="actions last">
-                            <button class="button-rbac button-delete" v-on:click="closeWindow()">X</button>
+                            <button class="button-rbac button-close-window" v-on:click="closeWindow()">X</button>
                         </th>
                     </tr>
                     </thead>
