@@ -68,11 +68,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         <div id="rbac-roles" class="panel" style="display: none;">
-            <fieldset class="wrapper">
-                <legend>
-                    <button class="button-rbac" @click="toggleFormVisible('role')">{{ formVisible.role ? '<?= Yii::t('rbac', 'Hide Form') ?>' : '<?= Yii::t('rbac', 'Show Form') ?>' }}</button>
-                </legend>
-                <div class="form-rbac" id="rbac-role-form" v-show="formVisible.role">
+            <div id="form-role" style="display: none">
+                <div class="form-rbac" id="rbac-role-form">
                     <form action="<?= \yii\helpers\Url::toRoute(['roles/save']) ?>">
                         <div class="row">
                             <label><?= Yii::t('rbac', 'Role Name') ?>:</label><input type="text" class="rbac-input" id="role-name" name="name" value="" />
@@ -85,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </form>
                 </div>
-            </fieldset>
+            </div>
             <table class="table">
                 <thead>
                 <tr>

@@ -164,6 +164,14 @@ var vm = new Vue({
             var role = vm.roles[key];
             $('#rbac-role-form input#role-name').val(role.name);
             $('#rbac-role-form input#role-description').val(role.description);
+            layer.open({
+                type: 1,
+                title: "角色编辑",
+                area: ['450px', '200px'],
+                fixed: false, //不固定
+                maxmin: true,
+                content: $('#form-role')
+            });
             vm.formVisible.role = true;
         },
         // 删除角色
@@ -419,10 +427,14 @@ $(function() {
                             }
                         }
                     }
+                    layer.closeAll();
+                    layer.msg("权限角色保存成功。");
                 } else {
+                    layer.closeAll();
                     layer.alert(response.error.message);
                 }
             }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+                layer.closeAll();
                 layer.alert('ERROR ' + XMLHttpRequest.status + ' 错误信息： ' + XMLHttpRequest.responseText);
             }
         });
