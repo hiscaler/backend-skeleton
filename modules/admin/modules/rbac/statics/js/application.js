@@ -102,7 +102,7 @@ var vm = new Vue({
         userRolesByUserId: function(userId, index) {
             axios.get(yadjet.rbac.urls.user.roles.replace('_id', userId))
                 .then(function(response) {
-                    vm.user.roles = response.data;
+                    vm.user.roles = response.data.data;
                     vm.activeObject.userId = userId;
                     var $tr = $('#rbac-users > table tr:eq(' + (index + 1) + ')'),
                         offset = $tr.offset();
