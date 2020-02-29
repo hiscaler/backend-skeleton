@@ -1,7 +1,3 @@
-Queue 扩展
-=========
-
-## 介绍
 本扩展基于 **Yii2** 队列管理，使用前请使用
 ```shell
 php composer.phar require --prefer-dist yiisoft/yii2-queue
