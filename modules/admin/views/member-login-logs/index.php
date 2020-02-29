@@ -12,6 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
+    ['label' => '清理全部日志', 'url' => ['clean'], 'htmlOptions' => ['data-confirm' => '您确定要清理掉所有登录日志？', 'data-method' => 'post']],
 ];
 ?>
 <div class="member-login-log-index">

@@ -28,7 +28,7 @@ class MemberLoginLogsController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'view'],
+                        'actions' => ['index', 'view', 'clean'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -89,6 +89,20 @@ class MemberLoginLogsController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * 清理所有登录日志
+     *
+     * @rbacDescription 清理所有登录日志权限
+     * @return \yii\web\Response
+     * @throws \yii\db\Exception
+     */
+    public function actionClean()
+    {
+        Yii::$app->getDb()->createCommand()->truncateTable('{{%member_login_log}}')->execute();
 
         return $this->redirect(['index']);
     }
