@@ -2,14 +2,15 @@
 <view class="container">
     <view class="page">
         <view class="page__hd">
-            <template is="header" data="{{title: 'News', description: '资讯列表'}}"/>
+            <template is="header" data="{{title: 'News', description: '资讯详情'}}"/>
         </view>
         <view class="page__bd">
-            <view wx:for="{{items}}" wx:key="id">
-                <navigator url="/pages/news-detail/index?id={{item.id}}" class="title">
-                    {{item.title}}
-                </navigator>
+            <view class="news-detail">
+                <view class="title">{{item.title}}</view>
                 <view class="description">{{item.description}}</view>
+                <view class="content">
+                    {{item.content}}
+                </view>
             </view>
         </view>
         <view class="page__ft">

@@ -2,6 +2,7 @@
     "pages": [
         "pages/index/index",
         "pages/news/index",
+        "pages/news-detail/index",
         "pages/logs/logs",
         "widgets/tabbar/tabbar"
     ],
