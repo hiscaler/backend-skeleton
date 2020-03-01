@@ -1,0 +1,22 @@
+<import src="/templates/header.wxml"/>
+<view class="container">
+    <view class="page">
+        <view class="page__hd">
+            <template is="header" data="{{title: 'User Center'}}"/>
+        </view>
+        <view class="page__bd">
+            <view>
+                姓名：
+                <input data-name="username" bindinput="bindField" value="{{form.username}}"></input>
+                手机号码：
+                <input data-name="mobile_phone" bindinput="bindField" value="{{form.mobile_phone}}"></input>
+            </view>
+            <view>
+                <navigator url="/pages/uc/change-password/index">Change Password</navigator>
+            </view>
+        </view>
+        <view class="page__ft">
+            <tabbar-widget></tabbar-widget>
+        </view>
+    </view>
+</view>

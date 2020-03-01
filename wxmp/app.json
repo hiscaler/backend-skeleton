@@ -5,6 +5,8 @@
         "pages/article-detail/index",
         "pages/news/index",
         "pages/news-detail/index",
+        "pages/uc/account/index",
+        "pages/uc/change-password/index",
         "pages/logs/logs",
         "widgets/tabbar/tabbar"
     ],

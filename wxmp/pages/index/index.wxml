@@ -17,6 +17,8 @@
             </view>
             <view>
                 <navigator class="weui-btn weui-btn_primary" url="/pages/news/index?categoryId=1">News Category 1</navigator>
+                <navigator class="weui-btn weui-btn_primary" url="/pages/logs/logs">Logs</navigator>
+                <navigator class="weui-btn weui-btn_primary" url="/pages/uc/account/index">User Center</navigator>
             </view>
         </view>
         <view class="page__ft">
