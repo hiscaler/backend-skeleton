@@ -10,7 +10,10 @@ Component({
     data: {
         pages: [
             '/pages/index/index',
-            '/pages/news/index',
+            [
+                '/pages/news/index',
+                '/pages/news-detail/index',
+            ],
         ],
         defaultItems: [
             {
@@ -35,17 +38,27 @@ Component({
                 page = `/${page}`;
             }
             if (page) {
+                let activeIndex = null;
                 for (let i in this.data.pages) {
-                    if (this.data.pages[i] === page) {
-                        this.setData({ activeIndex: i });
+                    let children = this.data.pages[i];
+                    if (!Array.isArray(children)) {
+                        children = [children];
+                    }
+                    for (let j in children) {
+                        if (children[j] === page) {
+                            activeIndex = i;
+                            break;
+                        }
+                    }
+                    if (activeIndex !== null) {
                         break;
                     }
+
+                }
+                if (activeIndex !== null) {
+                    this.setData({ activeIndex });
                 }
             }
-
-        },
-        detached: function() {
-            // 在组件实例被从页面节点树移除时执行
         },
     },
     methods: {
@@ -54,8 +67,12 @@ Component({
             const detail = e.detail;
             console.info("Tab " + detail.index + " change");
             console.info("Tab item", detail.item);
+            let url = this.data.pages[detail.index];
+            if (Array.isArray(url)) {
+                url = url[0];
+            }
             wx.navigateTo({
-                url: this.data.pages[detail.index]
+                url
             });
         }
     }
