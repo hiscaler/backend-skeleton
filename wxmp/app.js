@@ -39,6 +39,7 @@ App({
             basePath: '',
             defaultAvatar: '',
         },
+        apiHost: "http://localhost:8000/index.php/api",
         identity: {
             id: 0,
             username: "",
