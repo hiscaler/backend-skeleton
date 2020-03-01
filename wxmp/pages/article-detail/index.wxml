@@ -1,0 +1,20 @@
+<import src="/templates/header.wxml"/>
+<view class="container">
+    <view class="page">
+        <view class="page__hd">
+            <template is="header" data="{{title: 'Article', description: 'Article List'}}"/>
+        </view>
+        <view class="page__bd">
+            <view class="article-detail">
+                <view class="title">{{item.title}}</view>
+                <view class="description">{{item.description}}</view>
+                <view class="content">
+                    <rich-text nodes="{{item.content}}"></rich-text>
+                </view>
+            </view>
+        </view>
+        <view class="page__ft">
+            <tabbar-widget/>
+        </view>
+    </view>
+</view>

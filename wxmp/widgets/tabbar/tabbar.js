@@ -10,6 +10,7 @@ Component({
     data: {
         pages: [
             '/pages/index/index',
+            '/pages/article/index',
             [
                 '/pages/news/index',
                 '/pages/news-detail/index',
@@ -21,6 +22,11 @@ Component({
                 "iconPath": "/static/images/icon-tabbar.png",
                 "selectedIconPath": "/static/images/icon-tabbar-active.png",
                 dot: true
+            },
+            {
+                "text": "文章",
+                "iconPath": "/static/images/icon-tabbar.png",
+                "selectedIconPath": "/static/images/icon-tabbar-active.png",
             },
             {
                 "text": "资讯",
