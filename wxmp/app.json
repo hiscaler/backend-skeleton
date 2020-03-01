@@ -1,7 +1,9 @@
 {
     "pages": [
         "pages/index/index",
-        "pages/logs/logs"
+        "pages/news/index",
+        "pages/logs/logs",
+        "widgets/tabbar/tabbar"
     ],
     "window": {
         "backgroundTextStyle": "light",

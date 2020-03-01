@@ -35,10 +35,14 @@ App({
     },
     globalData: {
         userInfo: null,
+        asset: {
+            basePath: '',
+            defaultAvatar: '',
+        },
         identity: {
             id: 0,
             username: "",
             avatar: "",
         }
     }
-})
+});

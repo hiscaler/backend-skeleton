@@ -1,0 +1,10 @@
+<template name="header">
+    <view class="page__header">
+        <view class="page__title">
+            {{title}}
+        </view>
+        <view class="page__desc">
+            {{description}}
+        </view>
+    </view>
+</template>

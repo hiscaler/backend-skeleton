@@ -1,0 +1,17 @@
+<import src="/templates/header.wxml"/>
+<view class="container">
+    <view class="page">
+        <view class="page__hd">
+            <template is="header" data="{{title: 'News', description: '资讯详情'}}"/>
+        </view>
+        <view class="page__bd">
+            <view wx:for="{{items}}" wx:key="id">
+                <view class="title">{{item.title}}</view>
+                <view class="description">{{item.description}}</view>
+            </view>
+        </view>
+        <view class="page__ft">
+            <tabbar-widget></tabbar-widget>
+        </view>
+    </view>
+</view>

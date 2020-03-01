@@ -1,13 +1,23 @@
-<!--index.wxml-->
+<import src="/templates/header.wxml"/>
 <view class="container">
-    <view class="userinfo">
-        <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo">获取头像昵称</button>
-        <block wx:else>
-            <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-            <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-        </block>
-    </view>
-    <view class="usermotto">
-        <text class="user-motto">{{motto}}</text>
+    <view class="page">
+        <view class="page__hd">
+            <template is="header" data="{{title: 'Header', description: 'Homepage'}}"/>
+        </view>
+        <view class="page__bd">
+            <view class="userinfo">
+                <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo">获取头像昵称</button>
+                <block wx:else>
+                    <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+                    <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+                </block>
+            </view>
+            <view class="usermotto">
+                <text class="user-motto">{{motto}}</text>
+            </view>
+        </view>
+        <view class="page__ft">
+            <tabbar-widget></tabbar-widget>
+        </view>
     </view>
 </view>

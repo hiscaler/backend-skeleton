@@ -1,6 +1,5 @@
 {
     "usingComponents": {
-        "mp-dialog": "/components/weui/dialog/dialog",
         "tabbar-widget": "/widgets/tabbar/tabbar"
     }
 }

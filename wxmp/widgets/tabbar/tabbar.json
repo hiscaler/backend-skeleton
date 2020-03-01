@@ -1,0 +1,7 @@
+{
+    "component": true,
+    "usingComponents": {
+        "mp-tabbar": "/components/weui/tabbar/tabbar"
+    },
+    "navigationBarTitleText": "UI组件库"
+}
