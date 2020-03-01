@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'short_name')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'parent_id')->dropDownList(Category::tree(null, Category::RETURN_TYPE_PUBLIC), ['prompt' => '']) ?>
+            <?= $form->field($model, 'parent_id')->dropDownList(Category::tree(null, Category::RETURN_TYPE_PUBLIC), ['prompt' => '根级']) ?>
             <?php
             $template = '{label}{input}{thumb}{error}';
             $thumb = '';
