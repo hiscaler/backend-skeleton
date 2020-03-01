@@ -5,11 +5,14 @@
             <template is="header" data="{{title: 'Article', description: 'Article List'}}"/>
         </view>
         <view class="page__bd">
-            <view class="article-list" wx:for="{{items}}" wx:key="id">
-                <navigator url="/pages/article-detail/index?id={{item.id}}" class="title">
-                    {{item.title}}
-                </navigator>
-                <view class="description">{{item.description}}</view>
+            <button class="weui-btn weui-btn_primary">dddd</button>
+            <view class="weui-btn-area">
+                <view class="article-list" wx:for="{{items}}" wx:key="id">
+                    <navigator url="/pages/article-detail/index?id={{item.id}}" class="weui-btn weui-btn_primary">
+                        {{item.title}}
+                    </navigator>
+                    <view class="description">{{item.description}}</view>
+                </view>
             </view>
         </view>
         <view class="page__ft">

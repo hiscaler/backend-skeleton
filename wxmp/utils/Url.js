@@ -3,7 +3,6 @@ const apiHost = getApp().globalData.apiHost;
 const toRoute = (router, params = {}) => {
     let url = apiHost + router;
     if (Object.keys(params).length) {
-
         let query = [];
         for (let key in params) {
             query.push(`${key}=${params[key]}`);

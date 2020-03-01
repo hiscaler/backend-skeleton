@@ -15,6 +15,9 @@
             <view class="usermotto">
                 <text class="user-motto">{{motto}}</text>
             </view>
+            <view>
+                <navigator class="weui-btn weui-btn_primary" url="/pages/news/index?categoryId=1">News Category 1</navigator>
+            </view>
         </view>
         <view class="page__ft">
             <tabbar-widget></tabbar-widget>
