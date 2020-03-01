@@ -77,7 +77,7 @@ Component({
             if (Array.isArray(url)) {
                 url = url[0];
             }
-            wx.navigateTo({
+            wx.redirectTo({
                 url
             });
         }
