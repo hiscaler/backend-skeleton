@@ -5,13 +5,13 @@
             <template is="header" data="{{title: 'Article', description: 'Article List'}}"/>
         </view>
         <view class="page__bd">
-            <view class="article-detail">
-                <view class="title">{{item.title}}</view>
-                <view class="description">{{item.description}}</view>
-                <view class="content">
+            <article class="weui-article">
+                <view class="weui-article__h1">{{item.title}}</view>
+                <section class="weui-article__section">{{item.description}}</section>
+                <section class="weui-article__section">
                     <rich-text nodes="{{item.content}}"></rich-text>
-                </view>
-            </view>
+                </section>
+            </article>
         </view>
         <view class="page__ft">
             <tabbar-widget/>
