@@ -17,5 +17,22 @@
 }
 
 .usermotto {
-    margin-top: 200px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* latest new items */
+.latest-news-items {
+}
+
+.latest-news-items .item {
+    margin-bottom: 10rpx;
+}
+
+.latest-news-items .item .title {
+    font-weight: bold;
+}
+
+.latest-news-items .item .description {
+    color: #ccc;
 }

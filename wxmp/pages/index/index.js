@@ -1,11 +1,13 @@
 const app = getApp();
+const Url = require('../../utils/Url.js');
 
 Page({
     data: {
         motto: 'Hello World',
         userInfo: {},
         hasUserInfo: false,
-        canIUse: wx.canIUse('button.open-type.getUserInfo')
+        canIUse: wx.canIUse('button.open-type.getUserInfo'),
+        latestNewsItems: [],
     },
     //事件处理函数
     bindViewTap: function() {
@@ -14,6 +16,28 @@ Page({
         })
     },
     onLoad: function() {
+        // Latest news itmes
+        wx.request({
+            url: Url.toRoute('/news/default', {
+                fields: "id,title,description,is_picture_news,picture_path,published_at",
+                limit: 5,
+            }),
+            success: res => {
+                const resp = res.data;
+                if (resp.success) {
+                    this.setData({
+                        latestNewsItems: resp.data.items,
+                    });
+                } else {
+                    wx.showModal({
+                        title: '提示',
+                        content: resp.error.message,
+                        showCancel: false,
+                    });
+                }
+            }
+        });
+
         if (app.globalData.userInfo) {
             this.setData({
                 userInfo: app.globalData.userInfo,

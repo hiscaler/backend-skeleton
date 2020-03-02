@@ -9,7 +9,7 @@
                 <view class="title">{{item.title}}</view>
                 <view class="description">{{item.description}}</view>
                 <view class="content">
-                    {{item.content}}
+                    <rich-text nodes="{{item.content}}"></rich-text>
                 </view>
             </view>
         </view>

@@ -1,4 +1,5 @@
-const apiHost = getApp().globalData.apiHost;
+const apiHost = getApp().globalData.config.apiHost,
+    Identity = require('./Identity');
 
 const toRoute = (router, params = {}) => {
     let url = apiHost + router;
@@ -9,7 +10,7 @@ const toRoute = (router, params = {}) => {
         }
         url += '?' + query.join("&");
     }
-    const token = wx.getStorageSync('acces_token');
+    const token = Identity.get('access_token');
     if (token) {
         if (url.indexOf('?') === -1) {
             url += '?';

@@ -1,0 +1,14 @@
+.account-information {
+}
+
+.account-information .avatar {
+    width: 60rpx;
+    height: 60rpx;
+    margin: 0 auto;
+}
+
+.account-information .avatar image {
+    max-width: 120rpx;
+    max-height: 120rpx;
+    border-radius: 120rpx;
+}

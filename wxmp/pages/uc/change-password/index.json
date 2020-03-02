@@ -1,5 +1,6 @@
 {
     "usingComponents": {
-        "tabbar-widget": "/widgets/tabbar/tabbar"
+        "tabbar-widget": "/widgets/tabbar/tabbar",
+        "mp-form": "/components/weui/form/form"
     }
 }

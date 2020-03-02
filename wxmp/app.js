@@ -34,16 +34,15 @@ App({
         })
     },
     globalData: {
-        userInfo: null,
-        asset: {
-            basePath: '',
-            defaultAvatar: '',
+        config: {
+            homeUrl: '/pages/index/index',
+            loginUrl: '/pages/uc/login/index',
+            asset: {
+                basePath: '',
+                defaultAvatar: '',
+            },
+            apiHost: "http://localhost:8000/index.php/api",
         },
-        apiHost: "http://localhost:8000/index.php/api",
-        identity: {
-            id: 0,
-            username: "",
-            avatar: "",
-        }
+        userInfo: null,
     }
 });

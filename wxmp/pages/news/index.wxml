@@ -5,11 +5,13 @@
             <template is="header" data="{{title: 'News', description: '资讯列表'}}"/>
         </view>
         <view class="page__bd">
-            <view wx:for="{{items}}" wx:key="id">
-                <navigator url="/pages/news-detail/index?id={{item.id}}" class="title">
-                    {{item.title}}
-                </navigator>
-                <view class="description">{{item.description}}</view>
+            <view class="news-items">
+                <view wx:for="{{items}}" wx:key="id" class="item">
+                    <navigator url="/pages/news-detail/index?id={{item.id}}" class="title">
+                        {{item.title}}
+                    </navigator>
+                    <view class="description">{{item.description}}</view>
+                </view>
             </view>
         </view>
         <view class="page__ft">

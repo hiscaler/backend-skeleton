@@ -6,13 +6,25 @@
         </view>
         <view class="page__bd">
             <view>
-                姓名：
-                <input data-name="username" bindinput="bindField" value="{{form.username}}"></input>
-                手机号码：
-                <input data-name="mobile_phone" bindinput="bindField" value="{{form.mobile_phone}}"></input>
+                <view>
+                    帐号：
+                    <input readonly="readonly" value="{{form.username}}"></input>
+                </view>
+                <view>
+                    昵称：
+                    <input data-name="nickname" bindinput="bindField" value="{{form.nickname}}"></input>
+                </view>
+                <view>
+                    姓名：
+                    <input data-name="real_name" bindinput="bindField" value="{{form.real_name}}"></input>
+                </view>
+                <view>
+                    手机号码：
+                    <input data-name="mobile_phone" bindinput="bindField" value="{{form.mobile_phone}}"></input>
+                </view>
             </view>
             <view>
-                <navigator url="/pages/uc/change-password/index">Change Password</navigator>
+                <button bindtap="updateHandle">确定</button>
             </view>
         </view>
         <view class="page__ft">

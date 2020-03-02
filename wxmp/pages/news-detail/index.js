@@ -1,23 +1,8 @@
 const Url = require('../../utils/Url.js');
 
-const items = [
-    {
-        id: 1,
-        title: "第 1 条新闻",
-        description: "第 1 条新闻描叙",
-        content: "第 1 条新闻正文内容",
-    },
-    {
-        id: 2,
-        title: "第 2 条新闻",
-        description: "第 2 条新闻描叙",
-        content: "第 2 条新闻正文内容",
-    }
-];
-
 Page({
     data: {
-        item: items[0],
+        item: {},
     },
     onLoad: function(options) {
         wx.showLoading();
@@ -27,7 +12,11 @@ Page({
         }
         if (id) {
             wx.request({
-                url: Url.toRoute('/news/default/view', { id }),
+                url: Url.toRoute('/news/default/view', {
+                    id,
+                    fields: 'id,title,description,is_picture_news,picture_path',
+                    expand: 'content'
+                }),
                 success: res => {
                     const resp = res.data;
                     if (resp.success) {

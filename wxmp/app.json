@@ -7,6 +7,8 @@
         "pages/news-detail/index",
         "pages/uc/account/index",
         "pages/uc/change-password/index",
+        "pages/uc/default/index",
+        "pages/uc/login/index",
         "pages/logs/logs",
         "widgets/tabbar/tabbar"
     ],
