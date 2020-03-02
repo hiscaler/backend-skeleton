@@ -1,6 +1,6 @@
 <import src="/templates/header.wxml"/>
 <view class="container">
-    <view class="page">
+    <view class="page home">
         <view class="page__hd">
             <template is="header" data="{{title: 'Header', description: 'Homepage'}}"/>
         </view>
@@ -16,9 +16,11 @@
                 <text class="user-motto">{{motto}}</text>
             </view>
             <view class="latest-news-items">
-                <view class="item" wx:for="{{latestNewsItems}}" wx:key="id">
-                    <navigator url="/pages/news/index?id={{item.id}}">{{item.title}}</navigator>
-                    <view class="description">{{item.description}}</view>
+                <view class="weui-flex item" wx:for="{{latestNewsItems}}" wx:key="id">
+                    <view class="weui-flex-item">
+                        <navigator url="/pages/news-detail/index?id={{item.id}}">{{item.title}}</navigator>
+                        <view class="description">{{item.description}}</view>
+                </view>
                 </view>
             </view>
             <view>

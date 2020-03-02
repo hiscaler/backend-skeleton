@@ -2,18 +2,14 @@
 }
 
 .news-items .item {
-    border-bottom: #ccc solid 1px;
-    margin-bottom: 10rpx;
+    margin-bottom: 30rpx;
 }
 
 .news-items .item .title {
-    border-bottom: #ccc dashed 1px;
-    font-size: 40rpx;
     font-weight: bold;
+    margin-bottom: 20rpx;
 }
 
 .news-items .item .description {
-    line-height: 48rpx;
     color: #ccc;
-    padding: 10rpx 0;
 }

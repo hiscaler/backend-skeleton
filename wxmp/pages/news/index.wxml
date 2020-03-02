@@ -1,16 +1,16 @@
 <import src="/templates/header.wxml"/>
 <view class="container">
-    <view class="page">
+    <view class="page flex">
         <view class="page__hd">
-            <template is="header" data="{{title: 'News', description: '资讯列表'}}"/>
+            <template is="header" data="{{title: '新闻中心', description: '这里看世界，世界看哪里？'}}"/>
         </view>
-        <view class="page__bd">
+        <view class="page__bd page__bd_spacing">
             <view class="news-items">
-                <view wx:for="{{items}}" wx:key="id" class="item">
-                    <navigator url="/pages/news-detail/index?id={{item.id}}" class="title">
-                        {{item.title}}
-                    </navigator>
-                    <view class="description">{{item.description}}</view>
+                <view wx:for="{{items}}" wx:key="id" class="weui-flex item">
+                    <view class="weui-flex-item">
+                        <navigator url="/pages/news-detail/index?id={{item.id}}" class="title">{{item.title}}</navigator>
+                        <view class="description">{{item.description}}</view>
+                    </view>
                 </view>
             </view>
         </view>

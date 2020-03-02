@@ -26,11 +26,12 @@
 }
 
 .latest-news-items .item {
-    margin-bottom: 10rpx;
+    margin-bottom: 20rpx;
 }
 
 .latest-news-items .item .title {
     font-weight: bold;
+    margin-bottom: 20rpx;
 }
 
 .latest-news-items .item .description {
