@@ -1,34 +1,38 @@
 <import src="/templates/header.wxml"/>
 <view class="container">
-    <view class="page">
+    <view class="page button">
         <view class="page__hd">
             <template is="header" data="{{title: '用户中心'}}"/>
         </view>
         <view class="page__bd">
-            <view>
-                <view>
-                    帐号：
-                    <input readonly="readonly" value="{{form.username}}"></input>
-                </view>
-                <view>
-                    昵称：
-                    <input data-name="nickname" bindinput="bindField" value="{{form.nickname}}"></input>
-                </view>
-                <view>
-                    姓名：
-                    <input data-name="real_name" bindinput="bindField" value="{{form.real_name}}"></input>
-                </view>
-                <view>
-                    手机号码：
-                    <input data-name="mobile_phone" bindinput="bindField" value="{{form.mobile_phone}}"></input>
-                </view>
-            </view>
-            <view>
-                <button bindtap="updateHandle">确定</button>
+            <mp-cells ext-class="form-cells" title="">
+                <mp-cell title="帐号" footer="{{form.username}}">
+                </mp-cell>
+                <mp-cell>
+                    <view>昵称</view>
+                    <view slot="footer">
+                        <input data-name="nickname" bindinput="bindField" value="{{form.nickname}}"></input>
+                    </view>
+                </mp-cell>
+                <mp-cell>
+                    <view>姓名</view>
+                    <view slot="footer">
+                        <input data-name="real_name" bindinput="bindField" value="{{form.real_name}}"></input>
+                    </view>
+                </mp-cell>
+                <mp-cell>
+                    <view>手机号码</view>
+                    <view slot="footer">
+                        <input data-name="mobile_phone" bindinput="bindField" value="{{form.mobile_phone}}"></input>
+                    </view>
+                </mp-cell>
+            </mp-cells>
+            <view class="button-sp-area">
+                <button class="weui-btn weui-btn_primary" bindtap="updateHandle">确定</button>
             </view>
         </view>
         <view class="page__ft">
-            <tabbar-widget></tabbar-widget>
+            <tabbar-widget/>
         </view>
     </view>
 </view>

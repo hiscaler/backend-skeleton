@@ -90,7 +90,6 @@ Page({
                         }
                         wx.showToast({
                             title: '修改成功',
-                            icon: "none",
                         });
                     } else {
                         let message = '';

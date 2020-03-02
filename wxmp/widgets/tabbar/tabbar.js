@@ -16,7 +16,7 @@ Component({
                 '/pages/news-detail/index',
             ],
             [
-                '/pages/uc/default/index',
+                '/pages/uc/index/index',
                 '/pages/uc/account/index',
                 '/pages/uc/account/index',
                 '/pages/uc/login/index',

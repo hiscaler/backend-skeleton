@@ -1,21 +1,27 @@
 <import src="/templates/header.wxml"/>
 <view class="container">
-    <view class="page">
+    <view class="page button">
         <view class="page__hd">
-            <template is="header" data="{{title: '用户中心'}}"/>
+            <template is="header" data="{{title: '会员登录'}}"/>
         </view>
         <view class="page__bd">
-            <form action="" onsubmit="loginHandle">
-                <view>
-                    帐号：
-                    <input data-name="username" min="1" bindinput="bindField" value="{{form.username}}"></input>
-                    密码：
-                    <input type="password" min="1" data-name="password" bindinput="bindField" value="{{form.password}}"></input>
-                </view>
-                <view>
-                    <button type="submit" bindtap="loginHandle">登录</button>
-                </view>
-            </form>
+            <mp-cells ext-class="form-cells" title="">
+                <mp-cell>
+                    <view>帐号</view>
+                    <view slot="footer">
+                        <input type="text" data-name="username" bindinput="bindField" value="{{form.username}}"></input>
+                    </view>
+                </mp-cell>
+                <mp-cell>
+                    <view>密码</view>
+                    <view slot="footer">
+                        <input type="password" data-name="password" bindinput="bindField" value="{{form.password}}"></input>
+                    </view>
+                </mp-cell>
+            </mp-cells>
+            <view class="button-sp-area">
+                <button class="weui-btn weui-btn_primary" bindtap="loginHandle">登录</button>
+            </view>
         </view>
         <view class="page__ft">
             <tabbar-widget/>

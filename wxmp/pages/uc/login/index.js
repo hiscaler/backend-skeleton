@@ -1,5 +1,6 @@
 const Url = require('../../../utils/Url.js'),
-    GlobalData = require('../../../utils/GlobalData.js');
+    GlobalData = require('../../../utils/GlobalData.js'),
+    Identity = require('../../../utils/Identity.js');
 
 const LOGIN_TYPE_ACCOUNT = 'account',
     LOGIN_TYPE_MOBILE_PHONE = 'mobile_phone',
@@ -12,6 +13,13 @@ Page({
             type: LOGIN_TYPE_ACCOUNT,
             username: null,
             password: null,
+        }
+    },
+    onLoad: function() {
+        if (!Identity.isGuest()) {
+            wx.redirectTo({
+                url: '/pages/uc/index/index',
+            });
         }
     },
     // 登录
@@ -55,12 +63,22 @@ Page({
                             title: '登录成功',
                         });
                         wx.redirectTo({
-                            url: '/pages/uc/account/index',
+                            url: '/pages/uc/index/index',
                         });
                     } else {
+                        let message = '';
+                        const error = resp.error;
+                        if (Array.isArray(error)) {
+                            for (let i in error) {
+                                message = error[i].message;
+                                break;
+                            }
+                        } else {
+                            message = error.message;
+                        }
                         wx.showModal({
                             title: '提示',
-                            content: resp.error.message,
+                            content: message,
                             showCancel: false,
                         });
                     }

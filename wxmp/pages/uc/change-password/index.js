@@ -1,4 +1,5 @@
-const Url = require('../../../utils/Url.js');
+const Url = require('../../../utils/Url.js'),
+    Identity = require('../../../utils/Identity.js');
 
 Page({
     data: {
@@ -6,6 +7,11 @@ Page({
             old_password: null,
             password: null,
             confirm_password: null,
+        }
+    },
+    onLoad: function() {
+        if (Identity.isGuest()) {
+            Identity.toLoginPage();
         }
     },
     // 修改密码

@@ -1,6 +1,6 @@
 <import src="/templates/header.wxml"/>
 <view class="container">
-    <view class="page">
+    <view class="page button">
         <view class="page__hd">
             <template is="header" data="{{title: '用户中心', description: '修改您的登录密码'}}"/>
         </view>
@@ -26,7 +26,7 @@
                         </view>
                     </mp-cell>
                 </mp-cells>
-                <view class="weui-form__opr-area">
+                <view class="button-sp-area">
                     <button class="weui-btn weui-btn_primary" bindtap="changePasswordHandle">确定</button>
                 </view>
             </form>

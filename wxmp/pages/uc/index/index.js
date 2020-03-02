@@ -15,15 +15,24 @@ Page({
             });
         }
     },
+    onShow: function() {
+        if (Identity.isGuest()) {
+            Identity.toLoginPage();
+        }
+    },
     // 注销
     logoutHandle: function() {
         wx.showActionSheet({
             itemList: ['确定'],
             success(res) {
-                wx.setStorageSync('identity', null);
-                wx.redirectTo({
-                    url: GlobalData.get('config.homeUrl', '/pages/index/index')
-                });
+                wx.removeStorage({
+                    key: 'identity',
+                    success(res) {
+                        wx.redirectTo({
+                            url: GlobalData.get('config.homeUrl', '/pages/index/index')
+                        });
+                    }
+                })
             },
             fail(res) {
                 console.log(res.errMsg)
