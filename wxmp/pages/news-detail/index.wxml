@@ -1,17 +1,17 @@
 <import src="/templates/header.wxml"/>
 <view class="container">
-    <view class="page">
+    <view class="page article">
         <view class="page__hd">
             <template is="header" data="{{title: 'News', description: '资讯详情'}}"/>
         </view>
         <view class="page__bd">
-            <view class="news-detail">
-                <view class="title">{{item.title}}</view>
-                <view class="description">{{item.description}}</view>
-                <view class="content">
+            <article class="weui-article">
+                <view class="weui-article__h1">{{item.title}}</view>
+                <section class="weui-article__section">{{item.description}}</section>
+                <section class="weui-article__section">
                     <rich-text nodes="{{item.content}}"></rich-text>
-                </view>
-            </view>
+                </section>
+            </article>
         </view>
         <view class="page__ft">
             <tabbar-widget></tabbar-widget>
