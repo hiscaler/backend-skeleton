@@ -2,6 +2,7 @@
 
 namespace app\business;
 
+use app\models\BaseMember;
 use app\models\Member;
 
 /**
@@ -19,7 +20,7 @@ class MemberNothingBusiness implements MemberBusinessInterface
      * @param array $changedAttributes
      * @param array $params
      */
-    public function process(Member $member, $insert, array $changedAttributes, array $params)
+    public function process(BaseMember $member, $insert, array $changedAttributes, array $params)
     {
         // @todo
     }
