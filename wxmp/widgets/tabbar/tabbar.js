@@ -15,6 +15,12 @@ Component({
                 '/pages/news/index',
                 '/pages/news-detail/index',
             ],
+            [
+                '/pages/uc/default/index',
+                '/pages/uc/account/index',
+                '/pages/uc/account/index',
+                '/pages/uc/login/index',
+            ],
         ],
         defaultItems: [
             {
@@ -33,6 +39,11 @@ Component({
                 "iconPath": "/static/images/icon-tabbar.png",
                 "selectedIconPath": "/static/images/icon-tabbar-active.png",
                 badge: '99+'
+            },
+            {
+                "text": "我的",
+                "iconPath": "/static/images/icon-tabbar.png",
+                "selectedIconPath": "/static/images/icon-tabbar-active.png",
             }
         ],
         activeIndex: -1,
