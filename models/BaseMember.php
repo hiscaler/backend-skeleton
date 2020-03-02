@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\helpers\App;
 use app\helpers\Config;
 use yadjet\behaviors\ImageUploadBehavior;
 use yadjet\helpers\IsHelper;
@@ -395,9 +396,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public static function roleOptions()
     {
         $roles = [];
-        $authManager = Yii::$app->getAuthManager();
-        if ($authManager) {
-            foreach ($authManager->getRoles() as $role) {
+        if (App::rbacWorking()) {
+            foreach (Yii::$app->getAuthManager()->getRoles() as $role) {
                 $roles[$role->name] = $role->description ?: $role->name;
             }
         }
@@ -704,9 +704,10 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $roles = [];
 
-        $authManager = Yii::$app->getAuthManager();
-        if ($authManager) {
-            $roles = Yii::$app->getDb()->createCommand("SELECT [[item_name]] FROM {$authManager->assignmentTable} WHERE [[user_id]] = :memberId", [':memberId' => $this->id])->queryColumn();
+        if (App::rbacWorking()) {
+            if ($authManager = Yii::$app->getAuthManager()) {
+                $roles = Yii::$app->getDb()->createCommand("SELECT [[item_name]] FROM {$authManager->assignmentTable} WHERE [[user_id]] = :memberId", [':memberId' => $this->id])->queryColumn();
+            }
         }
 
         return $roles;

@@ -15,7 +15,7 @@ return [
             'id' => 'users',
             'label' => 'Users',
             'url' => ['users/index'],
-            'forceEmbed' => true,
+            'forceEmbed' => false,
         ],
         'app-models-Module' => [
             'id' => 'modules',
