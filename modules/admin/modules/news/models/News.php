@@ -52,8 +52,8 @@ class News extends BaseWithLabelActiveRecord
      */
     public function init()
     {
-        parent::init();
         $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'picture_path');
+        parent::init();
     }
 
     /**

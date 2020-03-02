@@ -135,11 +135,15 @@ class News extends BaseActiveRecord
             'source_url',
             'keywords',
             'description',
-            'is_picture_news',
-            'picture_path' => function () {
-                return AppHelper::fixStaticAssetUrl($this->picture_path);
+            'is_picture_news' => function ($model) {
+                return boolval($model->is_picture_news);
             },
-            'enabled_comment',
+            'picture_path' => function ($model) {
+                return AppHelper::fixStaticAssetUrl($model->picture_path);
+            },
+            'enabled_comment' => function ($model) {
+                return boolval($model->enabled_comment);
+            },
             'comments_count',
             'clicks_count',
             'published_at',
