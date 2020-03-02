@@ -2,7 +2,7 @@
 <view class="container">
     <view class="page">
         <view class="page__hd">
-            <template is="header" data="{{title: 'User Center'}}"/>
+            <template is="header" data="{{title: '用户中心'}}"/>
         </view>
         <view class="page__bd">
             <form action="" onsubmit="loginHandle">

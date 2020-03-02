@@ -1,5 +1,7 @@
 {
     "usingComponents": {
-        "tabbar-widget": "/widgets/tabbar/tabbar"
+        "tabbar-widget": "/widgets/tabbar/tabbar",
+        "mp-cells": "/components/weui/cells/cells",
+        "mp-cell": "/components/weui/cell/cell"
     }
 }

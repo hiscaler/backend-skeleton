@@ -1,4 +1,7 @@
 @import'./components/weui/weui-wxss/dist/style/weui.wxss';
+@import'./components/weui/weui-wxss/dist/style/widget/weui-button/weui-btn_default.wxss';
+@import'./components/weui/weui-wxss/dist/style/widget/weui-button/weui-btn_global.wxss';
+@import'./components/weui/weui-wxss/dist/style/widget/weui-button/weui-btn_primary.wxss';
 
 /**app.wxss**/
 body {
@@ -195,14 +198,18 @@ body[data-weui-theme=dark] .page__ft img {
 .page__title {
     text-align: left;
     font-size: 20px;
-    font-weight: 400
+    font-weight: 400;
+    margin-bottom: 30rpx;
+    padding: 20rpx 20rpx;
 }
 
 .page__desc {
-    margin-top: 4px;
+    margin-top: 4rpx;
     color: var(--weui-FG-1);
     text-align: left;
-    font-size: 14px
+    font-size: 14px;
+    padding: 20rpx 20rpx;
+    color: #ccc;
 }
 
 .weui-cell_example:before {

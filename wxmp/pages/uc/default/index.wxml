@@ -2,28 +2,24 @@
 <view class="container">
     <view class="page">
         <view class="page__hd">
-            <template is="header" data="{{title: 'User Center'}}"/>
+            <template is="header" data="{{title: '用户中心'}}"/>
         </view>
         <view class="page__bd">
             <view class="account-information">
-                <view class="avatar">
-                    <image src="{{identity.avatar}}" mode="aspectFit"/>
-                </view>
-                <view>帐号：{{identity.username}}</view>
-                <view>昵称：{{identity.nickname}}</view>
-                <view>姓名：{{identity.real_name}}</view>
-                <view>手机号码：{{identity.mobile_phone}}</view>
+                <mp-cells ext-class="account-cells" title="">
+                    <view class="avatar">
+                        <image src="{{identity.avatar}}" mode="aspectFit"/>
+                    </view>
+                    <mp-cell value="帐号" footer="{{identity.username}}"></mp-cell>
+                    <mp-cell value="昵称" footer="{{identity.nickname}}"></mp-cell>
+                    <mp-cell value="姓名" footer="{{identity.real_name}}"></mp-cell>
+                    <mp-cell value="手机号码" footer="{{identity.mobile_phone}}"></mp-cell>
+                </mp-cells>
             </view>
-            <view class="weui-btn_area">
-                <view>
-                    <navigator class="weui-btn weui-btn_primary" url="/pages/uc/account/index">修改资料</navigator>
-                </view>
-                <view>
-                    <navigator class="weui-btn weui-btn_primary" url="/pages/uc/change-password/index">修改密码</navigator>
-                </view>
-                <view>
-                    <button class="weui-btn weui-btn_primary" bindtap="logoutHandle">退出</button>
-                </view>
+            <view class="button-sp-area">
+                <navigator class="weui-btn weui-btn_primary" url="/pages/uc/account/index">修改资料</navigator>
+                <navigator class="weui-btn weui-btn_primary" url="/pages/uc/change-password/index">修改密码</navigator>
+                <button class="weui-btn weui-btn_primary" bindtap="logoutHandle">退出</button>
             </view>
         </view>
         <view class="page__ft">
