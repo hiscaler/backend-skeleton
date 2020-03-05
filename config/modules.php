@@ -2,7 +2,7 @@
 
 return [
     /**
-     *'app-models-Article' => [
+     * 'app-models-Article' => [
      *    'id' => 'articles', // 控制器名称（唯一）
      *    'label' => 'Articles', //  需要翻译的文本（app.php）
      *    'url' => ['/articles/index'], // 访问 URL
