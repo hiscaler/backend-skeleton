@@ -2,6 +2,7 @@
 
 namespace app\modules\api\traits;
 
+use app\helpers\App;
 use app\models\Meta;
 use app\modules\api\extensions\AppHelper;
 use app\modules\api\extensions\Formatter;
@@ -120,6 +121,23 @@ trait MemberTrait
             ->orderBy(['id' => SORT_DESC]);
     }
 
+    /**
+     * 会员权限
+     *
+     * @return array|\yii\rbac\Permission[]
+     */
+    public function getPermissions()
+    {
+        $permissions = [];
+        if (App::rbacWorking()) {
+            if ($authManager = Yii::$app->getAuthManager()) {
+                $permissions = $authManager->getPermissionsByUser($this->id);
+            }
+        }
+
+        return $permissions;
+    }
+
     public function extraFields()
     {
         return [
@@ -129,6 +147,7 @@ trait MemberTrait
             'meta_items' => 'metaItems',
             'login_logs' => 'loginLogs',
             'roles',
+            'permissions',
         ];
     }
 
