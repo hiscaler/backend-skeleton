@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'remittance_slip')->fileInput() ?>
         </div>
         <div class="entry">
-            <?= $form->field($model, 'member_id')->dropDownList(Member::map('nickname'), ['prompt' => '']) ?>
+            <?= $form->field($model, 'member_id')->dropDownList(Member::map(null, null, 'mobile_phone'), ['prompt' => '']) ?>
 
             <?= $form->field($model, 'status')->dropDownList(Finance::statusOptions()) ?>
         </div>

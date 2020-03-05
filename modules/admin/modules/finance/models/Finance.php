@@ -52,8 +52,8 @@ class Finance extends \yii\db\ActiveRecord
      */
     public function init()
     {
-        parent::init();
         $this->_fileUploadConfig = FileUploadConfig::getConfig(static::class, 'remittance_slip');
+        parent::init();
     }
 
     /**
@@ -106,7 +106,7 @@ class Finance extends \yii\db\ActiveRecord
             ['type', 'in', 'range' => array_keys(self::typeOptions())],
             ['source', 'default', 'value' => self::SOURCE_CASH],
             ['source', 'in', 'range' => array_keys(self::sourceOptions())],
-            ['money', 'integer', 'min' => 1],
+            ['money', 'integer', 'min' => 100, 'max' => 2147483647], // MySQL Int max value: 2147483647
             [['money', 'member_id'], 'required'],
             [['remark'], 'trim'],
             [['remark'], 'string'],
