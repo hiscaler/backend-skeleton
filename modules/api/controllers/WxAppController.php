@@ -148,7 +148,7 @@ class WxAppController extends BaseController
                 $transaction->commit();
 
                 return [
-                    'sessionKey' => $accessToken,
+                    'access_token' => $accessToken,
                     'openid' => $openId,
                 ];
             } else {

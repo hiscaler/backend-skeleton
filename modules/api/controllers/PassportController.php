@@ -187,13 +187,14 @@ class PassportController extends ActiveController
      */
     public function actionChangePassword()
     {
-        $token = Yii::$app->getRequest()->get($this->_token_param);
+        $request = Yii::$app->getRequest();
+        $token = $request->get($this->_token_param);
         if ($token) {
             $class = $this->identityClass;
             $member = $class::findIdentityByAccessToken($token);
             if ($member) {
                 $model = new ChangeMyPasswordForm();
-                $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+                $model->load($request->getBodyParams(), '');
                 $member->setPassword($model->password);
                 if ($model->validate() && $member->save(false) === false && !$model->hasErrors()) {
                     throw new ServerErrorHttpException('Failed to update the object for unknown reason.');
