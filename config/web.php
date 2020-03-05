@@ -99,6 +99,45 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
+        'allowedIPs' => ['127.0.0.1', '::1'],
+        'generators' => [
+            'model' => [
+                'class' => 'yii\gii\generators\model\Generator',
+                'templates' => [
+                    'bs' => '@app/giiTemplates/model/default',
+                ]
+            ],
+            'crud' => [
+                'class' => 'yii\gii\generators\crud\Generator',
+                'templates' => [
+                    'bs' => '@app/giiTemplates/crud/default',
+                ]
+            ],
+            'controller' => [
+                'class' => 'yii\gii\generators\controller\Generator',
+                'templates' => [
+                    'bs' => '@app/giiTemplates/controller/default',
+                ]
+            ],
+            'form' => [
+                'class' => 'yii\gii\generators\form\Generator',
+                'templates' => [
+                    'bs' => '@app/giiTemplates/form/default',
+                ]
+            ],
+            'module' => [
+                'class' => 'yii\gii\generators\module\Generator',
+                'templates' => [
+                    'bs' => '@app/giiTemplates/module/default',
+                ]
+            ],
+            'extension' => [
+                'class' => 'yii\gii\generators\extension\Generator',
+                'templates' => [
+                    'bs' => '@app/giiTemplates/extension/default',
+                ]
+            ],
+        ],
     ];
 }
 
