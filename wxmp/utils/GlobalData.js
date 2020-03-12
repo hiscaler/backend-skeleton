@@ -4,7 +4,7 @@ const get = (key = null, defaultValue = null) => {
     if (key === null) {
         value = globalData;
     } else {
-        let items = key.split('.');
+        const items = key.split('.');
         for (let i in items) {
             let name = items[i];
             if (globalData.hasOwnProperty(name)) {

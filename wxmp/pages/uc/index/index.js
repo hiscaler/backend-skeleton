@@ -22,22 +22,23 @@ Page({
     },
     // 注销
     logoutHandle: function() {
-        wx.showActionSheet({
-            itemList: ['确定'],
-            success(res) {
-                wx.removeStorage({
-                    key: 'identity',
-                    success(res) {
-                        wx.redirectTo({
-                            url: GlobalData.get('config.homeUrl', '/pages/index/index')
-                        });
-                    }
-                })
-            },
-            fail(res) {
-                console.log(res.errMsg)
+        wx.showModal({
+            title: '提示',
+            content: '您是否确定退出？',
+            success: function(sm) {
+                if (sm.confirm) {
+                    wx.removeStorage({
+                        key: 'identity',
+                        success(res) {
+                            wx.redirectTo({
+                                url: GlobalData.get('config.homeUrl', '/pages/index/index')
+                            });
+                        }
+                    });
+                } else if (sm.cancel) {
+
+                }
             }
         });
-
     }
 });
