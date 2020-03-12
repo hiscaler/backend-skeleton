@@ -3,7 +3,13 @@ const Url = require('../../../utils/Url.js'),
 
 Page({
     data: {
-        form: {}
+        form: {},
+        files: [
+            {
+                url: '',
+                error: false,
+            },
+        ]
     },
     onLoad: function(options) {
         if (Identity.isGuest()) {
@@ -22,6 +28,12 @@ Page({
                                 real_name: resp.data.real_name,
                                 mobile_phone: resp.data.mobile_phone,
                             },
+                            files: [
+                                {
+                                    url: resp.data.avatar,
+                                    error: false,
+                                }
+                            ]
                         });
                     } else {
                         wx.showModal({
@@ -35,7 +47,77 @@ Page({
                     wx.hideLoading({});
                 }
             });
+            this.setData({
+                selectFile: this.selectFile.bind(this),
+                uploadFile: this.uploadFile.bind(this)
+            });
         }
+    },
+    chooseImage: function(e) {
+        let that = this;
+        wx.chooseImage({
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera'],
+            success: function(res) {
+                that.setData({
+                    files: that.data.files.concat(res.tempFilePaths)
+                });
+            }
+        })
+    },
+    previewImage: function(e) {
+        wx.previewImage({
+            current: e.currentTarget.id,
+            urls: this.data.files
+        });
+    },
+    selectFile(files) {
+        // 返回 false 可以阻止某次文件上传
+        console.log('files', files);
+    },
+    uploadFile(files) {
+        console.log('upload files', files);
+        // 文件上传的函数，返回一个promise
+        return new Promise((resolve, reject) => {
+            if (files.hasOwnProperty('contents') && files.contents.length) {
+                const contents = files.contents[0];
+                const file = files.tempFilePaths[0];
+                const fileExtension = file.split('.').pop().toLowerCase();
+                let mimeType;
+                switch (fileExtension) {
+                    case 'png':
+                        mimeType = 'image/png';
+                        break;
+
+                    case 'gif':
+                        mimeType = 'image/gif';
+                        break;
+
+                    default:
+                        mimeType = 'image/jpg';
+                        break;
+                }
+                const avatar = `data:${mimeType};base64,` + wx.arrayBufferToBase64(contents);
+                this.setData({
+                    form: {
+                        ...this.data.form,
+                        ...{ 'avatar': avatar }
+                    }
+                });
+                let object = {
+                    urls: [avatar],
+                };
+                resolve(object);
+            } else {
+                reject('请上传文件。');
+            }
+        })
+    },
+    uploadError(e) {
+        console.log('upload error', e.detail);
+    },
+    uploadSuccess(e) {
+        console.log('upload success', e.detail);
     },
     // 数据双向绑定
     bindField: function(e) {

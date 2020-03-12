@@ -6,7 +6,12 @@
         </view>
         <view class="page__bd">
             <mp-cells ext-class="form-cells" title="">
-                <mp-cell title="帐号" footer="{{form.username}}">
+                <mp-cell title="帐号" footer="{{form.username}}"></mp-cell>
+                <mp-cell>
+                    <view>头像</view>
+                    <view slot="footer">
+                        <mp-uploader bindfail="uploadError" bindsuccess="uploadSuccess" select="{{selectFile}}" upload="{{uploadFile}}" files="{{files}}" max-count="1" title="" tips="" delete="{{true}}"></mp-uploader>
+                    </view>
                 </mp-cell>
                 <mp-cell>
                     <view>昵称</view>
@@ -24,6 +29,20 @@
                     <view>手机号码</view>
                     <view slot="footer">
                         <input data-name="mobile_phone" bindinput="bindField" value="{{form.mobile_phone}}"></input>
+                    </view>
+                </mp-cell>
+                <mp-cell>
+                    <view>
+                        <editor
+                                id="remark"
+                                class="ql-container"
+                                placeholder="请输入备注信息..."
+                                showImgSize
+                                showImgToolbar
+                                showImgResize
+                                read-only="false"
+                                bindready="onEditorReady">
+                        </editor>
                     </view>
                 </mp-cell>
             </mp-cells>
