@@ -27,6 +27,7 @@ Page({
                                 nickname: resp.data.nickname,
                                 real_name: resp.data.real_name,
                                 mobile_phone: resp.data.mobile_phone,
+                                remark: resp.data.remark,
                             },
                             files: [
                                 {
@@ -35,6 +36,13 @@ Page({
                                 }
                             ]
                         });
+                        wx.createSelectorQuery()
+                            .select('#remark')
+                            .context(function(res) {
+                                res.context.setContents({
+                                    html: resp.data.remark
+                                })
+                            }).exec()
                     } else {
                         wx.showModal({
                             title: '提示',
@@ -128,6 +136,15 @@ Page({
         form[name] = value;
         this.setData({
             form,
+        });
+    },
+    bindRemark: function(e) {
+        console.info(e);
+        this.setData({
+            form: {
+                ...this.data.form,
+                ...{ remark: e.detail.html }
+            }
         });
     },
     // 修改个人资料

@@ -10,7 +10,7 @@
                 <mp-cell>
                     <view>头像</view>
                     <view slot="footer">
-                        <mp-uploader bindfail="uploadError" bindsuccess="uploadSuccess" select="{{selectFile}}" upload="{{uploadFile}}" files="{{files}}" max-count="1" title="" tips="" delete="{{true}}"></mp-uploader>
+                        <mp-uploader bindfail="uploadError" bindsuccess="uploadSuccess" select="{{selectFile}}" upload="{{uploadFile}}" files="{{files}}" max-count="1" title="" tips="" delete="{{false}}"></mp-uploader>
                     </view>
                 </mp-cell>
                 <mp-cell>
@@ -40,8 +40,9 @@
                                 showImgSize
                                 showImgToolbar
                                 showImgResize
-                                read-only="false"
-                                bindready="onEditorReady">
+                                data-name="mobile_phone"
+                                bindblur="bindRemark"
+                        >
                         </editor>
                     </view>
                 </mp-cell>
