@@ -1,0 +1,30 @@
+### 会员注册
+POST {{host}}/api/passport/register
+Content-Type: application/json
+
+{
+    "username": "user{{$uuid}}",
+    "nickname": "nick-{{$uuid}}"
+}
+
+### 会员登录
+POST {{host}}/api/passport/login
+Content-Type: application/json
+
+{
+    "type": "account",
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+### 修改密码
+POST {{host}}/api/passport/change-password?access_token={{accessToken}}
+Content-Type: application/json
+
+{
+    "old_password": "{{password}}",
+    "password": "{{password}}",
+    "confirm_password": "{{password}}"
+}
+
+###
