@@ -80,6 +80,7 @@ class CategoryController extends ActiveController
     /**
      * 获取分类数据列表
      *
+     * @rbacDescription 分类列表数据查看
      * @param null|string $sign
      * @param int $level
      * @param string $flat

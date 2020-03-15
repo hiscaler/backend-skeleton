@@ -35,6 +35,7 @@ class SmsController extends BaseController
     /**
      * 发送短信
      *
+     * @rbacDescription 发送短信
      * @return SmsForm
      * @throws ServerErrorHttpException
      * @throws \yii\base\InvalidConfigException

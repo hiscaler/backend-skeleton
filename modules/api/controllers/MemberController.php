@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 
+use app\models\Member;
 use app\modules\api\extensions\ActiveController;
 use app\modules\api\extensions\Formatter;
 use app\modules\api\models\FrontendMember;
@@ -48,7 +49,7 @@ class MemberController extends ActiveController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'statistics'],
+                        'actions' => ['index', 'create', 'update', 'view', 'delete', 'statistics', 'roles'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -77,8 +78,20 @@ class MemberController extends ActiveController
     }
 
     /**
+     * 会员角色
+     *
+     * @rbacDescription 角色列表数据
+     * @return array
+     */
+    public function actionRoles()
+    {
+        return Member::roleOptions();
+    }
+
+    /**
      * 会员注册统计
      *
+     * @rbacDescription 会员注册统计数据
      * @param null $beginDate
      * @param null $endDate
      * @param string $type

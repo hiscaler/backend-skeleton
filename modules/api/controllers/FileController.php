@@ -72,6 +72,7 @@ class FileController extends AuthController
     /**
      * 文件上传
      *
+     * @rbacDescription 文件上传
      * @param string $key
      * @param bool $single
      * @return array|mixed|DynamicModel
@@ -264,6 +265,7 @@ class FileController extends AuthController
     /**
      * 删除文件
      *
+     * @rbacDescription 文件删除
      * @param $url
      * @return stdClass
      * @throws NotFoundHttpException
