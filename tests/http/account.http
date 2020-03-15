@@ -1,0 +1,7 @@
+###
+GET {{host}}/api/account/view?access_token={{accessToken}}&fields=id,type,username,nickname,real_name&expand=roles
+Accept: application/json
+
+{}
+
+###
