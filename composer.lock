@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "383192b9ea3f8db0525e6680e92fb8e2",
+    "content-hash": "85553f2d877b2b89fadc88b01f8ddec8",
     "packages": [
         {
             "name": "bower-asset/inputmask",
@@ -760,16 +760,16 @@
         },
         {
             "name": "imagine/imagine",
-            "version": "v0.7.1",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/avalanche123/Imagine.git",
-                "reference": "a9a702a946073cbca166718f1b02a1e72d742daa"
+                "reference": "cb2361e5bb4410b681462d8e4f912bc5dabf84ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/avalanche123/Imagine/zipball/a9a702a946073cbca166718f1b02a1e72d742daa",
-                "reference": "a9a702a946073cbca166718f1b02a1e72d742daa",
+                "url": "https://api.github.com/repos/avalanche123/Imagine/zipball/cb2361e5bb4410b681462d8e4f912bc5dabf84ab",
+                "reference": "cb2361e5bb4410b681462d8e4f912bc5dabf84ab",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -782,8 +782,8 @@
                 "php": ">=5.3.2"
             },
             "require-dev": {
-                "sami/sami": "^3.3",
-                "symfony/phpunit-bridge": "^3.2"
+                "friendsofphp/php-cs-fixer": "2.2.*",
+                "phpunit/phpunit": "^4.8 || ^5.7 || ^6.5 || ^7.5 || ^8.4"
             },
             "suggest": {
                 "ext-gd": "to use the GD implementation",
@@ -797,8 +797,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Imagine": "lib/"
+                "psr-4": {
+                    "Imagine\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -820,7 +820,7 @@
                 "image manipulation",
                 "image processing"
             ],
-            "time": "2017-05-16T10:31:22+00:00"
+            "time": "2019-12-04T09:55:33+00:00"
         },
         {
             "name": "itbdw/ip-database",
@@ -1645,16 +1645,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.10.2",
+            "version": "v1.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "b4400efc9d206e83138e2bb97ed7f5b14b831cd9"
+                "reference": "451c3cd1418cf640de218914901e51b064abb093"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/b4400efc9d206e83138e2bb97ed7f5b14b831cd9",
-                "reference": "b4400efc9d206e83138e2bb97ed7f5b14b831cd9",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/451c3cd1418cf640de218914901e51b064abb093",
+                "reference": "451c3cd1418cf640de218914901e51b064abb093",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1710,7 +1710,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2020-01-20T15:57:02+00:00"
+            "time": "2020-03-05T15:02:03+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2149,16 +2149,16 @@
         },
         {
             "name": "pimple/pimple",
-            "version": "v3.2.3",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silexphp/Pimple.git",
-                "reference": "9e403941ef9d65d20cba7d54e29fe906db42cf32"
+                "reference": "e55d12f9d6a0e7f9c85992b73df1267f46279930"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/9e403941ef9d65d20cba7d54e29fe906db42cf32",
-                "reference": "9e403941ef9d65d20cba7d54e29fe906db42cf32",
+                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/e55d12f9d6a0e7f9c85992b73df1267f46279930",
+                "reference": "e55d12f9d6a0e7f9c85992b73df1267f46279930",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2168,16 +2168,16 @@
                 ]
             },
             "require": {
-                "php": ">=5.3.0",
+                "php": "^7.2.5",
                 "psr/container": "^1.0"
             },
             "require-dev": {
-                "symfony/phpunit-bridge": "^3.2"
+                "symfony/phpunit-bridge": "^3.4|^4.4|^5.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.2.x-dev"
+                    "dev-master": "3.3.x-dev"
                 }
             },
             "autoload": {
@@ -2196,12 +2196,12 @@
                 }
             ],
             "description": "Pimple, a simple Dependency Injection Container",
-            "homepage": "http://pimple.sensiolabs.org",
+            "homepage": "https://pimple.symfony.com",
             "keywords": [
                 "container",
                 "dependency injection"
             ],
-            "time": "2018-01-21T07:42:36+00:00"
+            "time": "2020-03-03T09:12:48+00:00"
         },
         {
             "name": "psr/container",
@@ -3108,16 +3108,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.4.37",
+            "version": "v3.4.38",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "f3abd07a56111ebe6a1ad6f1cbc23e4f8983f8f5"
+                "reference": "4d440be93adcfd5e4ee0bdc7acd1c3260625728f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/f3abd07a56111ebe6a1ad6f1cbc23e4f8983f8f5",
-                "reference": "f3abd07a56111ebe6a1ad6f1cbc23e4f8983f8f5",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/4d440be93adcfd5e4ee0bdc7acd1c3260625728f",
+                "reference": "4d440be93adcfd5e4ee0bdc7acd1c3260625728f",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3164,7 +3164,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2020-01-04T12:05:51+00:00"
+            "time": "2020-02-06T08:18:51+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -3731,12 +3731,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hiscaler/helpers.git",
-                "reference": "47ffd23a2343746dbccca8fde0674ee165c27da0"
+                "reference": "50ac6297ab789ba0ded76654143d1f6f041271ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hiscaler/helpers/zipball/47ffd23a2343746dbccca8fde0674ee165c27da0",
-                "reference": "47ffd23a2343746dbccca8fde0674ee165c27da0",
+                "url": "https://api.github.com/repos/hiscaler/helpers/zipball/50ac6297ab789ba0ded76654143d1f6f041271ae",
+                "reference": "50ac6297ab789ba0ded76654143d1f6f041271ae",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3769,7 +3769,7 @@
                 }
             ],
             "description": "PHP Helper Class",
-            "time": "2020-01-07T05:45:22+00:00"
+            "time": "2020-03-07T11:15:55+00:00"
         },
         {
             "name": "yadjet/yii2-date-picker",
@@ -3821,16 +3821,16 @@
         },
         {
             "name": "yadjet/yii2-file-upload-behaviors",
-            "version": "1.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hiscaler/yii2-file-upload-behaviors.git",
-                "reference": "bd2a8b98e8e83487363e4b9d4c3c1c584e7637c5"
+                "reference": "b8964ea13da4f903af0bd9b3d7e1ef6c08eb3f0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hiscaler/yii2-file-upload-behaviors/zipball/bd2a8b98e8e83487363e4b9d4c3c1c584e7637c5",
-                "reference": "bd2a8b98e8e83487363e4b9d4c3c1c584e7637c5",
+                "url": "https://api.github.com/repos/hiscaler/yii2-file-upload-behaviors/zipball/b8964ea13da4f903af0bd9b3d7e1ef6c08eb3f0a",
+                "reference": "b8964ea13da4f903af0bd9b3d7e1ef6c08eb3f0a",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3841,7 +3841,9 @@
             },
             "require": {
                 "php": ">=5.4",
-                "yiisoft/yii2": "*"
+                "yadjet/helpers": "dev-master",
+                "yiisoft/yii2": "~2.0",
+                "yiisoft/yii2-imagine": "~2.2"
             },
             "type": "project",
             "autoload": {
@@ -3862,10 +3864,12 @@
             "description": "File upload behaviors For Yii2",
             "keywords": [
                 "Behavior",
+                "Image upload",
+                "file upload",
                 "upload",
                 "yii2"
             ],
-            "time": "2015-07-28T04:44:39+00:00"
+            "time": "2020-03-15T10:45:55+00:00"
         },
         {
             "name": "yadjet/yii2-ueditor",
@@ -4181,16 +4185,16 @@
         },
         {
             "name": "yiisoft/yii2-imagine",
-            "version": "2.1.1",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-imagine.git",
-                "reference": "a8a1a068862a86e3395e665bc86e63d5c9b60841"
+                "reference": "8637f63ee2eb81b7fe1f4c0e16cc8cc474a68bae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-imagine/zipball/a8a1a068862a86e3395e665bc86e63d5c9b60841",
-                "reference": "a8a1a068862a86e3395e665bc86e63d5c9b60841",
+                "url": "https://api.github.com/repos/yiisoft/yii2-imagine/zipball/8637f63ee2eb81b7fe1f4c0e16cc8cc474a68bae",
+                "reference": "8637f63ee2eb81b7fe1f4c0e16cc8cc474a68bae",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -4200,8 +4204,11 @@
                 ]
             },
             "require": {
-                "imagine/imagine": "~0.6.0 | ~0.7.1",
+                "imagine/imagine": "^0.6 | ^0.7 | ^1.0",
                 "yiisoft/yii2": "~2.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "<7"
             },
             "type": "yii2-extension",
             "extra": {
@@ -4231,7 +4238,7 @@
                 "imagine",
                 "yii2"
             ],
-            "time": "2018-02-22T11:57:06+00:00"
+            "time": "2019-06-04T12:38:50+00:00"
         },
         {
             "name": "yiisoft/yii2-swiftmailer",
@@ -4689,6 +4696,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "yadjet/helpers": 20,
+        "yadjet/yii2-file-upload-behaviors": 20,
         "yadjet/yii2-date-picker": 20,
         "yadjet/yii2-ueditor": 20,
         "yadjet/yii2-ztree": 20,
