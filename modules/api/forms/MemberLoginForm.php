@@ -25,17 +25,17 @@ class MemberLoginForm extends Model
     /**
      * 登录方式
      */
-    const TYPE_ACCOUNT = 'account';
-    const TYPE_MOBILE_PHONE = 'mobile_phone';
-    const TYPE_CAPTCHA = 'captcha';
-    const TYPE_ACCESS_TOKEN = 'access_token';
+    const SCENE_ACCOUNT = 'account';
+    const SCENE_MOBILE_PHONE = 'mobile_phone';
+    const SCENE_CAPTCHA = 'captcha';
+    const SCENE_ACCESS_TOKEN = 'access_token';
 
     private $_member;
 
     /**
      * @var string 登录类型
      */
-    public $type;
+    public $scene;
 
     /**
      * @var string 用户名
@@ -68,14 +68,14 @@ class MemberLoginForm extends Model
     public function rules()
     {
         return [
-            [['type'], 'required'],
-            [['type'], 'string'],
-            [['type', 'username', 'password', 'mobile_phone', 'captcha', 'access_token'], 'string'],
-            [['type', 'username', 'password', 'mobile_phone', 'captcha', 'access_token'], 'trim'],
-            ['type', 'default', 'value' => self::TYPE_ACCOUNT],
-            ['type', 'in', 'range' => array_keys(self::typeOptions())],
+            [['scene'], 'required'],
+            [['scene'], 'string'],
+            [['scene', 'username', 'password', 'mobile_phone', 'captcha', 'access_token'], 'string'],
+            [['scene', 'username', 'password', 'mobile_phone', 'captcha', 'access_token'], 'trim'],
+            ['scene', 'default', 'value' => self::SCENE_ACCOUNT],
+            ['scene', 'in', 'range' => array_keys(self::sceneOptions())],
             [['username', 'password'], 'required', 'when' => function ($model) {
-                return $model->type == self::TYPE_ACCOUNT;
+                return $model->scene == self::SCENE_ACCOUNT;
             }],
             ['username', function ($attribute, $params) {
                 if (!$this->hasErrors()) {
@@ -88,16 +88,16 @@ class MemberLoginForm extends Model
                     }
                 }
             }, 'when' => function ($model) {
-                return $model->type == self::TYPE_ACCOUNT;
+                return $model->scene == self::SCENE_ACCOUNT;
             }],
             [['mobile_phone'], 'required', 'when' => function ($model) {
-                return in_array($model->type, [self::TYPE_MOBILE_PHONE, self::TYPE_CAPTCHA]);
+                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_CAPTCHA]);
             }],
             ['mobile_phone', MobilePhoneNumberValidator::class, 'when' => function ($model) {
-                return in_array($model->type, [self::TYPE_MOBILE_PHONE, self::TYPE_CAPTCHA]);
+                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_CAPTCHA]);
             }],
             [['captcha'], 'required', 'when' => function ($model) {
-                return $model->type == self::TYPE_CAPTCHA;
+                return $model->scene == self::SCENE_CAPTCHA;
             }],
             ['captcha', function ($attribute, $params) {
                 if (!$this->hasErrors()) {
@@ -112,10 +112,10 @@ class MemberLoginForm extends Model
                     }
                 }
             }, 'when' => function ($model) {
-                return in_array($model->type, [self::TYPE_MOBILE_PHONE, self::TYPE_CAPTCHA]);
+                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_CAPTCHA]);
             }],
             [['access_token'], 'required', 'when' => function ($model) {
-                return $model->type == self::TYPE_ACCESS_TOKEN;
+                return $model->scene == self::SCENE_ACCESS_TOKEN;
             }],
             ['access_token', function ($attribute, $params) {
                 if (!$this->hasErrors()) {
@@ -124,7 +124,7 @@ class MemberLoginForm extends Model
                     }
                 }
             }, 'when' => function ($model) {
-                return $model->type == self::TYPE_ACCESS_TOKEN;
+                return $model->scene == self::SCENE_ACCESS_TOKEN;
             }],
             ['password', function ($attribute, $params) {
                 $member = $this->getMember();
@@ -135,7 +135,7 @@ class MemberLoginForm extends Model
                     $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
                 }
             }, 'when' => function ($model) {
-                return in_array($model->type, [self::TYPE_ACCOUNT, self::TYPE_MOBILE_PHONE]);
+                return in_array($model->scene, [self::SCENE_ACCOUNT, self::SCENE_MOBILE_PHONE]);
             }],
         ];
     }
@@ -143,7 +143,7 @@ class MemberLoginForm extends Model
     public function attributeLabels()
     {
         return [
-            'type' => '登录类型',
+            'scene' => '登录类型',
             'username' => '用户名',
             'password' => '密码',
             'mobile_phone' => '手机号码',
@@ -157,13 +157,13 @@ class MemberLoginForm extends Model
      *
      * @return array
      */
-    public static function typeOptions()
+    public static function sceneOptions()
     {
         return [
-            self::TYPE_ACCOUNT => '帐号登录',
-            self::TYPE_MOBILE_PHONE => '手机登录',
-            self::TYPE_CAPTCHA => '验证码登录',
-            self::TYPE_ACCESS_TOKEN => '令牌登录',
+            self::SCENE_ACCOUNT => '帐号登录',
+            self::SCENE_MOBILE_PHONE => '手机登录',
+            self::SCENE_CAPTCHA => '验证码登录',
+            self::SCENE_ACCESS_TOKEN => '令牌登录',
         ];
     }
 
@@ -187,13 +187,13 @@ class MemberLoginForm extends Model
     {
         if ($this->_member === null) {
             $class = Config::get('identity.class.frontend', Yii::$app->getUser()->identityClass);
-            switch ($this->type) {
-                case self::TYPE_MOBILE_PHONE:
-                case self::TYPE_CAPTCHA:
+            switch ($this->scene) {
+                case self::SCENE_MOBILE_PHONE:
+                case self::SCENE_CAPTCHA:
                     $this->_member = $class::findByMobilePhone($this->mobile_phone);
                     break;
 
-                case self::TYPE_ACCESS_TOKEN:
+                case self::SCENE_ACCESS_TOKEN:
                     $this->_member = $class::findIdentityByAccessToken($this->access_token);
                     break;
 
