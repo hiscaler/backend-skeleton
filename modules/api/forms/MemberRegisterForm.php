@@ -17,13 +17,13 @@ class MemberRegisterForm extends Member
     /**
      * 会员注册场景
      *
-     * account. 账号登录：验证用户名和密码
-     * mobile_phone. 手机登录：验证手机号码和密码
-     * captcha. 验证码登录：验证手机号码和验证码
+     * account. 账号注册：验证用户名和密码
+     * mobile_phone. 手机注册：验证手机号码和密码
+     * sms. 验证码注册：验证手机号码和短信验证码
      */
     const SCENE_ACCOUNT = 'account';
-    const SCENE_MOBILE_PHONE = 'mobile_phone';
-    const SCENE_CAPTCHA = 'captcha';
+    const SCENE_MOBILE_PHONE = 'mobile-phone';
+    const SCENE_SMS = 'sms';
 
     /**
      * @var string 注册方式
@@ -60,7 +60,7 @@ class MemberRegisterForm extends Member
             ['scene', 'string'],
             ['scene', 'trim'],
             ['scene', 'default', 'value' => self::SCENE_ACCOUNT],
-            ['scene', 'in', 'range' => [self::SCENE_ACCOUNT, self::SCENE_MOBILE_PHONE, self::SCENE_CAPTCHA]],
+            ['scene', 'in', 'range' => [self::SCENE_ACCOUNT, self::SCENE_MOBILE_PHONE, self::SCENE_SMS]],
             [['password', 'confirm_password'], 'required', 'when' => function ($model) {
                 return in_array($model->scene, [self::SCENE_ACCOUNT, self::SCENE_MOBILE_PHONE]);
             }],
@@ -78,13 +78,13 @@ class MemberRegisterForm extends Member
                     return in_array($model->scene, [self::SCENE_ACCOUNT, self::SCENE_MOBILE_PHONE]);
                 }],
             ['captcha', 'required', 'when' => function ($model) {
-                return $model->scene == self::SCENE_CAPTCHA;
+                return $model->scene == self::SCENE_SMS;
             }],
             ['captcha', 'string', 'when' => function ($model) {
-                return $model->scene == self::SCENE_CAPTCHA;
+                return $model->scene == self::SCENE_SMS;
             }],
             ['captcha', 'trim', 'when' => function ($model) {
-                return $model->scene == self::SCENE_CAPTCHA;
+                return $model->scene == self::SCENE_SMS;
             }],
             ['captcha', function ($attribute, $params) {
                 if (!$this->hasErrors()) {
@@ -94,10 +94,10 @@ class MemberRegisterForm extends Member
                     }
                 }
             }, 'when' => function ($model) {
-                return $model->scene == self::SCENE_CAPTCHA;
+                return $model->scene == self::SCENE_SMS;
             }],
             ['scene', function ($model, $params) {
-                if (in_array($this->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_CAPTCHA])) {
+                if (in_array($this->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_SMS])) {
                     $this->username = $this->mobile_phone;
                 }
             }],

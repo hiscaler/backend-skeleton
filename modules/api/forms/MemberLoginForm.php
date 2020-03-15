@@ -13,7 +13,7 @@ use yii\base\Model;
  * 验证规则：
  * 1. 账号登录：验证用户名和密码
  * 2. 手机登录：验证手机号码和密码
- * 3. 验证码登录：验证手机号码和验证码
+ * 3. 短信登录：验证手机号码和短信
  * 4. 令牌登录：验证令牌
  *
  * @package app\modules\api\forms
@@ -26,9 +26,9 @@ class MemberLoginForm extends Model
      * 登录方式
      */
     const SCENE_ACCOUNT = 'account';
-    const SCENE_MOBILE_PHONE = 'mobile_phone';
-    const SCENE_CAPTCHA = 'captcha';
-    const SCENE_ACCESS_TOKEN = 'access_token';
+    const SCENE_MOBILE_PHONE = 'mobile-phone';
+    const SCENE_SMS = 'sms';
+    const SCENE_ACCESS_TOKEN = 'access-token';
 
     private $_member;
 
@@ -91,13 +91,13 @@ class MemberLoginForm extends Model
                 return $model->scene == self::SCENE_ACCOUNT;
             }],
             [['mobile_phone'], 'required', 'when' => function ($model) {
-                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_CAPTCHA]);
+                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_SMS]);
             }],
             ['mobile_phone', MobilePhoneNumberValidator::class, 'when' => function ($model) {
-                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_CAPTCHA]);
+                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_SMS]);
             }],
             [['captcha'], 'required', 'when' => function ($model) {
-                return $model->scene == self::SCENE_CAPTCHA;
+                return $model->scene == self::SCENE_SMS;
             }],
             ['captcha', function ($attribute, $params) {
                 if (!$this->hasErrors()) {
@@ -112,7 +112,7 @@ class MemberLoginForm extends Model
                     }
                 }
             }, 'when' => function ($model) {
-                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_CAPTCHA]);
+                return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_SMS]);
             }],
             [['access_token'], 'required', 'when' => function ($model) {
                 return $model->scene == self::SCENE_ACCESS_TOKEN;
@@ -162,7 +162,7 @@ class MemberLoginForm extends Model
         return [
             self::SCENE_ACCOUNT => '帐号登录',
             self::SCENE_MOBILE_PHONE => '手机登录',
-            self::SCENE_CAPTCHA => '验证码登录',
+            self::SCENE_SMS => '验证码登录',
             self::SCENE_ACCESS_TOKEN => '令牌登录',
         ];
     }
@@ -189,7 +189,7 @@ class MemberLoginForm extends Model
             $class = Config::get('identity.class.frontend', Yii::$app->getUser()->identityClass);
             switch ($this->scene) {
                 case self::SCENE_MOBILE_PHONE:
-                case self::SCENE_CAPTCHA:
+                case self::SCENE_SMS:
                     $this->_member = $class::findByMobilePhone($this->mobile_phone);
                     break;
 
