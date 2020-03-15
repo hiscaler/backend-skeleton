@@ -822,8 +822,9 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $authManager = Yii::$app->getAuthManager();
-        if ($authManager) {
+
+        if (App::rbacWorking()) {
+            $authManager = Yii::$app->getAuthManager();
             $addRoles = [];
             if (is_array($this->role_list) && $this->role_list) {
                 $addRoles = $this->role_list;
@@ -889,8 +890,8 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
             file_exists($avatar) && FileHelper::unlink($avatar);
         }
 
-        if ($authManager = Yii::$app->getAuthManager()) {
-            $authManager->revokeAll($this->id);
+        if (App::rbacWorking()) {
+            Yii::$app->getAuthManager()->revokeAll($this->id);
         }
 
         // 清理相关数据
