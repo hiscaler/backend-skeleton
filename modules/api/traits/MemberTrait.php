@@ -6,6 +6,7 @@ use app\helpers\App;
 use app\models\Meta;
 use app\modules\api\extensions\AppHelper;
 use app\modules\api\extensions\Formatter;
+use app\modules\api\models\Member;
 use app\modules\api\models\MemberCreditLog;
 use app\modules\api\models\MemberLoginLog;
 use app\modules\api\models\MemberProfile;
@@ -138,6 +139,16 @@ trait MemberTrait
         return $permissions;
     }
 
+    /**
+     * 邀请列表
+     *
+     * @return mixed
+     */
+    public function getInvitations()
+    {
+        return $this->hasMany(Member::class, ['parent_id' => 'id']);
+    }
+
     public function extraFields()
     {
         return [
@@ -148,6 +159,7 @@ trait MemberTrait
             'login_logs' => 'loginLogs',
             'roles',
             'permissions',
+            'invitations',
         ];
     }
 

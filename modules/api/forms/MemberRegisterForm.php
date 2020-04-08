@@ -101,6 +101,20 @@ class MemberRegisterForm extends Member
                     $this->username = $this->mobile_phone;
                 }
             }],
+            ['invitation_code', 'trim'],
+            ['invitation_code', 'string'],
+            ['invitation_code', function ($attribute, $params) {
+                if ($this->invitation_code) {
+                    $memberId = Yii::$app->getDb()->createCommand("SELECT [[id]] FROM {{%member}} WHERE [[unique_key]] = :uniqueKey", [
+                        ':uniqueKey' => $this->invitation_code,
+                    ])->queryScalar();
+                    if ($memberId) {
+                        $this->parent_id = $memberId;
+                    } else {
+                        $this->addError($attribute, '请填写正确的邀请码。');
+                    }
+                }
+            }],
         ];
 
         return array_merge($rules, $parentRules);
