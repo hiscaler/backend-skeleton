@@ -643,6 +643,16 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * 邀请列表
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInvitations()
+    {
+        return $this->hasMany(Member::class, ['parent_id' => 'id']);
+    }
+
+    /**
      * 微信资料
      *
      * @return \yii\db\ActiveQuery
