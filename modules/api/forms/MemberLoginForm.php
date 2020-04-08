@@ -77,19 +77,6 @@ class MemberLoginForm extends Model
             [['username', 'password'], 'required', 'when' => function ($model) {
                 return $model->scene == self::SCENE_ACCOUNT;
             }],
-            ['username', function ($attribute, $params) {
-                if (!$this->hasErrors()) {
-                    $member = $this->getMember();
-                    if (!$member ||
-                        (Config::get('identity.ignorePassword') === false && !$member->validatePassword($this->password)) ||
-                        (($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword)
-                    ) {
-                        $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
-                    }
-                }
-            }, 'when' => function ($model) {
-                return $model->scene == self::SCENE_ACCOUNT;
-            }],
             [['mobile_phone'], 'required', 'when' => function ($model) {
                 return in_array($model->scene, [self::SCENE_MOBILE_PHONE, self::SCENE_SMS]);
             }],
@@ -128,11 +115,13 @@ class MemberLoginForm extends Model
             }],
             ['password', function ($attribute, $params) {
                 $member = $this->getMember();
-                if (!$member ||
-                    (Config::get('identity.ignorePassword') === false && !$member->validatePassword($this->password)) ||
-                    (($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword)
-                ) {
-                    $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
+                if (!$member) {
+                    $this->addError($attribute, '错误的用户名！');
+                } else {
+                    if ((($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword) &&
+                        (Config::get('identity.ignorePassword') === false && !$member->validatePassword($this->password))) {
+                        $this->addError($attribute, '错误的密码！');
+                    }
                 }
             }, 'when' => function ($model) {
                 return in_array($model->scene, [self::SCENE_ACCOUNT, self::SCENE_MOBILE_PHONE]);

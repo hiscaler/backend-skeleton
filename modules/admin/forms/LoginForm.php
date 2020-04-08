@@ -52,12 +52,14 @@ class LoginForm extends Model
     {
         if (!$this->hasErrors()) {
             /* @var $user Member */
-            $user = $this->getUser();
-            if (!$user ||
-                (Config::get('identity.ignorePassword') === false && !$user->validatePassword($this->password)) ||
-                (($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword)
-            ) {
-                $this->addError($attribute, Yii::t('app', 'Incorrect username or password.'));
+            $member = $this->getUser();
+            if (!$member) {
+                $this->addError($attribute, '错误的用户名！');
+            } else {
+                if ((($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword) &&
+                    (Config::get('identity.ignorePassword') === false && !$member->validatePassword($this->password))) {
+                    $this->addError($attribute, '错误的密码！');
+                }
             }
         }
     }
