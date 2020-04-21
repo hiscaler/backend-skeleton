@@ -21,6 +21,7 @@ class Module extends \yii\base\Module
 
     /**
      * @inheritdoc
+     * @throws \yii\db\Exception
      */
     public function init()
     {
