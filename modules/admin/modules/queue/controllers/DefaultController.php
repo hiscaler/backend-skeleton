@@ -95,7 +95,7 @@ class DefaultController extends BaseController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        \Yii::$app->getDb()->createCommand()
+        Yii::$app->getDb()->createCommand()
             ->delete($this->queue->tableName, ['id' => $model['id']])
             ->execute();
 
@@ -116,7 +116,7 @@ class DefaultController extends BaseController
         $ids = trim(Yii::$app->getRequest()->post('ids'));
         $ids = array_filter(array_unique(explode(',', $ids)));
         if ($ids) {
-            \Yii::$app->getDb()
+            Yii::$app->getDb()
                 ->createCommand()
                 ->delete($this->queue->tableName, ['id' => $ids])
                 ->execute();

@@ -1,5 +1,7 @@
 <?php
 
+use app\modules\admin\components\CssBlock;
+use app\modules\admin\components\JsBlock;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 
@@ -41,7 +43,7 @@ $this->params['menus'] = [
                     $obj = unserialize($model['job']);
                     $vars = json_encode(get_object_vars($obj), JSON_UNESCAPED_UNICODE + JSON_NUMERIC_CHECK);
 
-                    return nl2br("<em class='badges badges-red'>{$model['id']}</em> " . get_class($obj) . PHP_EOL . "<div class='code'>$vars</div>");
+                    return nl2br("<em class='badges badges-red'>#{$model['id']}</em> " . get_class($obj) . "<span class='code'>$vars</span>");
                 },
                 'contentOptions' => ['class' => 'wrap']
             ],
@@ -92,20 +94,21 @@ $this->params['menus'] = [
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
-<?php \app\modules\admin\components\CssBlock::begin() ?>
+<?php CssBlock::begin() ?>
 <style type="text/css">
     .code {
         margin-top: 10px;
         border-radius: 5px;
-        padding: 4px;
+        padding: 1px 4px;
         background: #0f0f0f;
         color: #FFF;
         line-height: 24px;
+        margin-left: 10px;
     }
 </style>
-<?php \app\modules\admin\components\CssBlock::end() ?>
+<?php CssBlock::end() ?>
 
-<?php \app\modules\admin\components\JsBlock::begin() ?>
+<?php JsBlock::begin() ?>
 <script type="text/javascript">
     $(function() {
         // 批量删除
@@ -144,4 +147,4 @@ $this->params['menus'] = [
         });
     });
 </script>
-<?php \app\modules\admin\components\JsBlock::end() ?>
+<?php JsBlock::end() ?>
