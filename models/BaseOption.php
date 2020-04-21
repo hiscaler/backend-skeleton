@@ -54,13 +54,22 @@ class BaseOption
      * @param int $min
      * @param int $max
      * @param int $step
+     * @param null|string $prefix
+     * @param null|string $suffix
      * @return array
      */
-    public static function numbers($min = 1, $max = 60, $step = 1)
+    public static function numbers($min = 1, $max = 60, $step = 1, $prefix = null, $suffix = null)
     {
         $numbers = [];
         for ($i = $min; $i <= $max; $i += $step) {
-            $numbers[$i] = $i;
+            $v = $i;
+            if ($prefix) {
+                $v = "{$prefix} {$v}";
+            }
+            if ($suffix) {
+                $v .= " {$suffix}";
+            }
+            $numbers[$i] = $v;
         }
 
         return $numbers;
