@@ -2,5 +2,6 @@
     "name": "队列管理",
     "author": "hiscaler",
     "version": "0.0.1",
-    "url": "http://www.github.com/hiscaler"
+    "url": "http://www.github.com/hiscaler",
+    "enabled_api": true
 }
