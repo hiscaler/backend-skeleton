@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\helpers\App;
 use app\helpers\Config;
+use app\modules\api\extensions\yii\filters\auth\AccessTokenAuth;
 use yadjet\behaviors\ImageUploadBehavior;
 use yadjet\helpers\IsHelper;
 use yadjet\helpers\StringHelper;
