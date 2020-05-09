@@ -43,7 +43,7 @@ trait MemberTrait
             'nickname',
             'real_name',
             'avatar' => function ($model) {
-                return AppHelper::fixStaticAssetUrl($model->avatar);
+                return AppHelper::fixStaticAssetUrl($model->avatar ?: '/images/avatar-default.png');
             },
             'email',
             'mobile_phone',
