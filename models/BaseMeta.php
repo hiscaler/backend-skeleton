@@ -601,10 +601,6 @@ class BaseMeta extends ActiveRecord
             ->all();
         foreach ($rawValues as $data) {
             switch ($data['return_value_type']) {
-                case self::RETURN_VALUE_TYPE_STRING:
-                    $value = (string) $data['string_value'];
-                    break;
-
                 case self::RETURN_VALUE_TYPE_TEXT:
                     $value = (string) $data['text_value'];
                     break;

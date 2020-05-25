@@ -2,18 +2,31 @@
 
 namespace app\forms;
 
+use Yii;
 use yii\base\DynamicModel;
 use yii\helpers\Inflector;
 
 /**
  * 动态表单
  *
+ * @package app\forms
  * @author hiscaler <hiscaler@gmail.com>
  */
 class DynamicForm extends DynamicModel
 {
 
+    /**
+     * 自定义字段属性
+     *
+     * @var array
+     */
     private $_metaOptions = [];
+
+    /**
+     * 属性名称
+     *
+     * @var array
+     */
     private $_attributeLabels = [];
 
     public function __construct(array $metaOptions)

@@ -25,6 +25,7 @@ $this->params['menus'] = [
     ['label' => Yii::t('app', 'List'), 'url' => ['index']],
     ['label' => Yii::t('app', 'Create'), 'url' => ['create']],
     ['label' => Yii::t('app', 'Update'), 'url' => ['update', 'id' => $model->id]],
+];
 ?>
 <div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-view">
 
