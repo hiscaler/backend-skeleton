@@ -11,6 +11,7 @@ use yadjet\helpers\StringHelper;
 use yadjet\helpers\UtilHelper;
 use yadjet\validators\MobilePhoneNumberValidator;
 use Yii;
+use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
 use yii\web\IdentityInterface;
@@ -781,11 +782,14 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function afterFind()
     {
         parent::afterFind();
         if (!$this->getIsNewRecord()) {
-            $this->role_list = $this->roles;
+            $this->role_list = $this->getRoles();
         }
     }
 
@@ -830,6 +834,11 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @throws \Exception
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -856,7 +865,7 @@ class BaseMember extends \yii\db\ActiveRecord implements IdentityInterface
 
             $revokeRoles = [];
             if (!$insert) {
-                $existsRoles = $this->roles;
+                $existsRoles = $this->getRoles();
                 if ($existsRoles) {
                     $revokeRoles = array_diff($existsRoles, $addRoles);
                     $addRoles = array_diff($addRoles, $existsRoles);
