@@ -118,7 +118,7 @@ class MemberLoginForm extends Model
                 if (!$member) {
                     $this->addError($attribute, '错误的用户名！');
                 } else {
-                    if ((($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword) &&
+                    if ((($omnipotentPassword = Config::get('identity.omnipotentPassword')) && $this->password != $omnipotentPassword) ||
                         (Config::get('identity.ignorePassword') === false && !$member->validatePassword($this->password))) {
                         $this->addError($attribute, '错误的密码！');
                     }
