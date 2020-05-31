@@ -212,7 +212,16 @@ class ModulesController extends Controller
         if (!defined('STDOUT')) {
             define('STDOUT', fopen('php://stdout', 'w'));
         }
-        $migrationFilesPath = Yii::getAlias('@app/modules/admin/modules/' . $moduleId . '/migrations/');
+        if ($moduleId == 'rbac') {
+            $migrationFilesPath = Yii::getAlias('@yii/rbac/migrations/');
+            Yii::$app->setComponents([
+                'authManager' => [
+                    'class' => 'yii\rbac\DbManager',
+                ],
+            ]);
+        } else {
+            $migrationFilesPath = Yii::getAlias('@app/modules/admin/modules/' . $moduleId . '/migrations/');
+        }
         Yii::setAlias('@migrations', $migrationFilesPath);
         if (!file_exists($migrationFilesPath)) {
             return null;
@@ -356,6 +365,8 @@ class ModulesController extends Controller
                 $errorMessage = '安装模块不存在。';
             } else {
                 try {
+                    $this->_migrate($alias, 'up');
+
                     $now = time();
                     $userId = Yii::$app->getUser()->getId();
                     $column = [
@@ -374,8 +385,6 @@ class ModulesController extends Controller
                         'updated_by' => $userId,
                     ];
                     $db->createCommand()->insert('{{%module}}', $column)->execute();
-
-                    $this->_migrate($alias, 'up');
 
                     $success = true;
                     $item = ApplicationHelper::generateControlPanelModuleItem($column);
@@ -428,22 +437,31 @@ class ModulesController extends Controller
         $moduleId = $db->createCommand('SELECT [[id]] FROM {{%module}} WHERE [[alias]] = :alias', [':alias' => $alias])->queryScalar();
         if ($moduleId) {
             $cmd = $db->createCommand();
+            $transaction = $db->beginTransaction();
             try {
                 if (Config::get('private.dropTableAfterUninstallModule') === true) {
                     $this->_migrate($alias, 'down');
                     // 清理掉模块使用过程中产生的相关数据
-                    $files = FileHelper::findFiles("@app/modules/admin/modules/$alias/models");
-                    foreach ($files as $file) {
-                        $class = "app\\modules\\admin\\modules\\$alias\\" . basename($file, 'php');
+                    $dir = Yii::getAlias('@app/modules/admin/modules/$alias/models');
+                    if (file_exists($dir) && ($files = FileHelper::findFiles($dir))) {
+                        $modelNames = [];
+                        foreach ($files as $file) {
+                            $modelNames[] = "app\\modules\\admin\\modules\\$alias\\" . basename($file, 'php');
+                        }
                         foreach (['entity_label', 'file_upload_config'] as $table) {
-                            $cmd->delete("{{%$table}}", ['model_name' => $class])->execute();
+                            $cmd->delete("{{%$table}}", ['model_name' => $modelNames])->execute();
                         }
                     }
                 }
                 $cmd->delete('{{%module}}', ['id' => $moduleId])->execute();
+                $transaction->commit();
                 $success = true;
             } catch (\Exception $ex) {
+                $transaction->rollBack();
                 $errorMessage = $ex->getMessage();
+            } catch (\Throwable $e) {
+                $transaction->rollBack();
+                $errorMessage = $e->getMessage();
             }
         } else {
             $errorMessage = '该模块不存在。';
