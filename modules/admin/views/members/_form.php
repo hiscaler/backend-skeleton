@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Member;
+use app\modules\admin\modules\wuliu\models\DxmAccount;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -26,6 +27,9 @@ use yii\widgets\ActiveForm;
                     echo $form->field($model, 'parent_id')->dropDownList(Member::map(), ['prompt' => '']);
                 }
                 ?>
+            </div>
+            <div class="entry">
+                <?= $form->field($model, 'category_id')->dropDownList(DxmAccount::map(), ['prompt' => '']) ?>
             </div>
             <?php
             $options = ['maxlength' => true];

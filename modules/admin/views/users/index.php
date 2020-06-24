@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\components\JsBlock;
 use app\modules\admin\components\MessageBox;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -101,7 +102,7 @@ $this->params['menus'] = [
 <?php
 $title = Yii::t('app', 'Please choice this user can manager categories');
 
-\app\modules\admin\components\JsBlock::begin();
+JsBlock::begin();
 ?>
 <script type="text/javascript">
     $(function() {
@@ -161,4 +162,4 @@ $title = Yii::t('app', 'Please choice this user can manager categories');
         yadjet.actions.toggle("table td.enabled-handler img", "<?= Url::toRoute('toggle') ?>");
     });
 </script>
-<?php \app\modules\admin\components\JsBlock::end() ?>
+<?php JsBlock::end() ?>

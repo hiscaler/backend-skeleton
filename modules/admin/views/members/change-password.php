@@ -11,10 +11,8 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="user-create">
-    <?=
-    $this->render('_changePasswordForm', [
+    <?= $this->render('_changePasswordForm', [
         'member' => $member,
         'model' => $model,
-    ]);
-    ?>
+    ]) ?>
 </div>

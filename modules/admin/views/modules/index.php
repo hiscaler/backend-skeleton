@@ -1,6 +1,7 @@
 <?php
 
 use app\helpers\Config;
+use app\modules\admin\components\JsBlock;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -96,7 +97,7 @@ $iconAPI = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/api.png';
         </div>
     </div>
 </div>
-<?php \app\modules\admin\components\JsBlock::begin() ?>
+<?php JsBlock::begin() ?>
 <script type="text/javascript">
     $(function() {
         var installText = '<?= Yii::t('module', 'Install')?>',
@@ -224,4 +225,4 @@ $iconAPI = Yii::$app->getRequest()->getBaseUrl() . '/admin/images/api.png';
         });
     });
 </script>
-<?php \app\modules\admin\components\JsBlock::end() ?>
+<?php JsBlock::end() ?>

@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\components\JsBlock;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
@@ -90,8 +91,8 @@ $this->params['menus'] = [
     ?>
     <?php Pjax::end(); ?>
 </div>
-<?php \app\modules\admin\components\JsBlock::begin() ?>
+<?php JsBlock::begin() ?>
 <script type="text/javascript">
     yadjet.actions.toggle("table td.enabled-handler img", "<?= Url::toRoute('toggle') ?>");
 </script>
-<?php \app\modules\admin\components\JsBlock::end() ?>
+<?php JsBlock::end() ?>

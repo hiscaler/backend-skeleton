@@ -12,9 +12,7 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="user-create">
-    <?=
-    $this->render('_addCreditForm', [
+    <?= $this->render('_addCreditForm', [
         'model' => $model,
-    ]);
-    ?>
+    ]) ?>
 </div>

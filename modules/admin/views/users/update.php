@@ -16,10 +16,8 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="slide-update">
-    <?=
-    $this->render('_form', [
+    <?= $this->render('_form', [
         'model' => $model,
         'dynamicModel' => $dynamicModel,
-    ])
-    ?>
+    ]) ?>
 </div>

@@ -13,9 +13,7 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="file-upload-config-create">
-    <?=
-    $this->render('_form', [
+    <?= $this->render('_form', [
         'model' => $model,
-    ])
-    ?>
+    ]) ?>
 </div>

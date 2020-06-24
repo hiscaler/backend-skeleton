@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\components\JsBlock;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -66,29 +67,29 @@ $this->params['menus'] = [
         </div>
     </div>
 </div>
-<?php \app\modules\admin\components\JsBlock::begin() ?>
-    <script type="text/javascript">
-        yadjet.urls = {
-            validators: '<?= \yii\helpers\Url::toRoute(['api/validators']) ?>',
-            meta: {
-                validators: '<?= \yii\helpers\Url::toRoute(['api/meta-validators', 'metaId' => $model['id']]) ?>'
-            }
-        };
-        axios.get(yadjet.urls.validators, {})
-            .then(function(response) {
-                vm.validators = response.data;
-            })
-            .catch(function(error) {
-                console.log(error)
-                vm.validators = [];
-            });
-        axios.get(yadjet.urls.meta.validators, {})
-            .then(function(response) {
-                vm.meta.validators = response.data;
-            })
-            .catch(function(error) {
-                console.log(error)
-                vm.meta.validators = [];
-            });
-    </script>
-<?php \app\modules\admin\components\JsBlock::end() ?>
+<?php JsBlock::begin() ?>
+<script type="text/javascript">
+    yadjet.urls = {
+        validators: '<?= \yii\helpers\Url::toRoute(['api/validators']) ?>',
+        meta: {
+            validators: '<?= \yii\helpers\Url::toRoute(['api/meta-validators', 'metaId' => $model['id']]) ?>'
+        }
+    };
+    axios.get(yadjet.urls.validators, {})
+        .then(function(response) {
+            vm.validators = response.data;
+        })
+        .catch(function(error) {
+            console.log(error)
+            vm.validators = [];
+        });
+    axios.get(yadjet.urls.meta.validators, {})
+        .then(function(response) {
+            vm.meta.validators = response.data;
+        })
+        .catch(function(error) {
+            console.log(error)
+            vm.meta.validators = [];
+        });
+</script>
+<?php JsBlock::end() ?>

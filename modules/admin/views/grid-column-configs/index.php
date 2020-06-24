@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\admin\components\JsBlock;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
@@ -45,10 +46,10 @@ use yii\widgets\Pjax;
     Pjax::end();
     ?>
 </div>
-<?php \app\modules\admin\components\JsBlock::begin() ?>
-    <script type="text/javascript">
-        $(function() {
-            yadjet.actions.toggle("table td.visible-handler img", "<?= Url::toRoute('toggle') ?>", { "name": "<?= $gridId ?>" });
-        });
-    </script>
-<?php \app\modules\admin\components\JsBlock::end() ?>
+<?php JsBlock::begin() ?>
+<script type="text/javascript">
+    $(function() {
+        yadjet.actions.toggle("table td.visible-handler img", "<?= Url::toRoute('toggle') ?>", { "name": "<?= $gridId ?>" });
+    });
+</script>
+<?php JsBlock::end() ?>

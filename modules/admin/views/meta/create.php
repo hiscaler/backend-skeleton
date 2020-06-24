@@ -14,9 +14,7 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="meta-create">
-    <?=
-    $this->render('_form', [
+    <?= $this->render('_form', [
         'model' => $model,
-    ])
-    ?>
+    ]) ?>
 </div>

@@ -12,10 +12,8 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="user-create">
-    <?=
-    $this->render('_form', [
+    <?= $this->render('_form', [
         'model' => $model,
         'dynamicModel' => $dynamicModel,
-    ])
-    ?>
+    ]) ?>
 </div>

@@ -18,4 +18,3 @@ $this->params['menus'] = [
 echo $this->render('_form', [
     'model' => $model,
 ]);
-

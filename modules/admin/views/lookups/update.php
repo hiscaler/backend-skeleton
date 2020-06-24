@@ -16,9 +16,7 @@ $this->params['menus'] = [
 ];
 ?>
 <div class="lookup-update">
-    <?=
-    $this->render('_form', [
+    <?= $this->render('_form', [
         'model' => $model,
-    ])
-    ?>
+    ]) ?>
 </div>
