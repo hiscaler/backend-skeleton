@@ -25,7 +25,7 @@ class MemberLoginLogs extends Widget
         $formatter = Yii::$app->getFormatter();
         $rawData = Yii::$app->getDb()->createCommand('SELECT [[t.ip]], [[t.client_information]], [[t.login_at]] FROM {{%member_login_log}} t WHERE [[t.member_id]] = :memberId AND [[t.login_at]] >= :ts ORDER BY [[t.login_at]] DESC', [
             ':memberId' => Yii::$app->getUser()->getId(),
-            ':ts' => strtotime('-2 months')
+            ':ts' => strtotime('-2 weeks')
         ])->queryAll();
         $days = 7;
         foreach ($rawData as $data) {

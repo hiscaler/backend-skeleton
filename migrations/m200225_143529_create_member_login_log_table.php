@@ -20,6 +20,7 @@ class m200225_143529_create_member_login_log_table extends Migration
             'login_at' => $this->integer()->notNull()->comment('登录时间'),
             'client_information' => $this->string()->notNull()->comment('客户端信息'),
         ]);
+        $this->createIndex('member_id_login_at', '{{%member_login_log}}', ['member_id', 'login_at']);
     }
 
     /**
