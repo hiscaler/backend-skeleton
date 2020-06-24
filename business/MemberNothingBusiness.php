@@ -3,7 +3,6 @@
 namespace app\business;
 
 use app\models\BaseMember;
-use app\models\Member;
 
 /**
  * 业务处理接口类
@@ -15,7 +14,7 @@ class MemberNothingBusiness implements MemberBusinessInterface
 {
 
     /**
-     * @param Member $member
+     * @param BaseMember $member
      * @param $insert
      * @param array $changedAttributes
      * @param array $params
