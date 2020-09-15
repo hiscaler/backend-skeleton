@@ -9,6 +9,7 @@ use Imagine\Image\ManipulatorInterface;
 use RuntimeException;
 use stdClass;
 use yadjet\helpers\ImageHelper;
+use yadjet\helpers\UrlHelper;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
@@ -30,8 +31,18 @@ use yii\web\UploadedFile;
 class FileController extends AuthController
 {
 
+    /**
+     * 类型
+     */
     const TYPE_IMAGE = 'image';
     const TYPE_FILE = 'file';
+
+    /**
+     * 文件格式
+     */
+    const FORMAT_UPLOADED_FILE = 'uploaded-file';
+    const FORMAT_BASE64 = 'base64';
+    const FORMAT_NETWORK_FILE = 'network-file';
 
     protected $type = self::TYPE_FILE;
 
@@ -90,15 +101,9 @@ class FileController extends AuthController
 
         $request = Yii::$app->getRequest();
         $files = UploadedFile::getInstancesByName($key);
-        $validator = null;
-        if ($files) {
-            $validator = $this->type;
-        } else {
+        if (!$files) {
             $files = $request->post($key);
             !$files && $files = $request->get($key);
-            if ($files) {
-                $validator = 'string';
-            }
             if ($files && !is_array($files)) {
                 $files = [$files];
             }
@@ -110,16 +115,27 @@ class FileController extends AuthController
         $models = [];
         foreach ($files as $i => $file) {
             $attr = $key . '_' . $i;
-            $model = new DynamicModel([$attr, 'type', 'generate_thumbnail', 'thumbnail_size', 'thumbnail_mode']);
+            $model = new DynamicModel([$attr, 'type', 'file_format', 'generate_thumbnail', 'thumbnail_size', 'thumbnail_mode']);
             $model->load(Yii::$app->getRequest()->getBodyParams(), '');
             $model->type = $this->type;
             $model->addRule('type', 'string');
+            $model->addRule('file_format', 'safe');
             $model->addRule('type', 'in', ['range' => ['file', 'image']]);
             $model->$attr = $file;
-            switch ($validator) {
-                case 'file':
-                case 'image':
-                    $model->addRule($attr, $validator, [
+            $fileFormat = null;
+            if ($file instanceof UploadedFile) {
+                $fileFormat = self::FORMAT_UPLOADED_FILE;
+            } elseif (is_string($file) && substr($file, 0, 5) == 'data:') {
+                $fileFormat = self::FORMAT_BASE64;
+            } elseif (is_string($file) && (substr($file, 0, 4) == 'http') || substr($file, 0, 2) == '//') {
+                $fileFormat = self::FORMAT_NETWORK_FILE;
+            } else {
+                $fileFormat = null;
+            }
+            $model->file_format = $fileFormat;
+            switch ($fileFormat) {
+                case self::FORMAT_UPLOADED_FILE:
+                    $model->addRule($attr, $this->type, [
                         'skipOnEmpty' => false,
                         'enableClientValidation' => false,
                         'extensions' => $config[$this->type]['extensions'],
@@ -128,13 +144,26 @@ class FileController extends AuthController
                     ]);
                     break;
 
-                default:
+                case self::FORMAT_NETWORK_FILE:
+                    // Network resource
+                    $model->addRule($attr, function ($attribute, $params) use ($model, $file) {
+                        if (substr($file, 0, 4) != 'http' && substr($file, 0, 2) != '//') {
+                            $model->addError($attribute, '无效的网络图片文件。');
+                        }
+                    });
+                    break;
+
+                case self::FORMAT_BASE64:
                     // Is base64 format image
                     $model->addRule($attr, function ($attribute, $params) use ($model, $file) {
                         if (substr($file, 0, 5) != 'data:' || @imagecreatefromstring(ImageHelper::base64Decode($file)) === false) {
                             $model->addError($attribute, '无效的 Base64 图片文件。');
                         }
                     });
+                    break;
+
+                default:
+                    $model->addError($attr, '未知的上传对象。');
                     break;
             }
             if ($this->type == self::TYPE_IMAGE) {
@@ -184,14 +213,14 @@ class FileController extends AuthController
             $file = $model->$attr;
             $originalName = null;
             $extensionName = null;
-            if ($validator == 'string') {
+            if ($model->file_format == self::FORMAT_BASE64) {
                 $t = explode(';', $file);
                 $mimeType = substr($t[0], 5);
                 $extensionName = FileHelper::getExtensionsByMimeType($mimeType);
                 $extensionName && $extensionName = $extensionName[0];
 
                 $fileSize = 0;
-            } else {
+            } elseif ($model->file_format == self::FORMAT_UPLOADED_FILE) {
                 $originalName = $file->name;
                 $extensionName = $file->getExtension();
                 if (empty($extensionName)) {
@@ -201,14 +230,40 @@ class FileController extends AuthController
 
                 $fileSize = $file->size;
                 $mimeType = FileHelper::getMimeTypeByExtension($extensionName);
+            } elseif ($model->file_format == self::FORMAT_NETWORK_FILE) {
+                $extensionName = ImageHelper::getExtension($file);
+                $mimeType = FileHelper::getMimeTypeByExtension($extensionName);
+                $fileSize = 0;
+            } else {
+                $fileSize = 0;
+                $mimeType = null;
             }
             empty($extensionName) && $extensionName = 'jpg';
             $uploader->setFilename(null, $extensionName);
-            if ($validator == 'string') {
-                $success = file_put_contents($uploader->getPath(), ImageHelper::base64Decode($file));
-                $fileSize = filesize($uploader->getPath());
-            } else {
-                $success = $file->saveAs($uploader->getPath());
+
+            switch ($model->file_format) {
+                case self::FORMAT_UPLOADED_FILE:
+                    $success = $file->saveAs($uploader->getPath());
+                    break;
+
+                case self::FORMAT_BASE64:
+                    $success = file_put_contents($uploader->getPath(), ImageHelper::base64Decode($file));
+                    $fileSize = filesize($uploader->getPath());
+                    break;
+
+                case self::FORMAT_NETWORK_FILE:
+                    $content = file_get_contents($file);
+                    if ($content !== false) {
+                        $success = file_put_contents($uploader->getPath(), $content);
+                        $fileSize = filesize($uploader->getPath());
+                    } else {
+                        $success = false;
+                    }
+                    break;
+
+                default:
+                    $success = false;
+                    break;
             }
 
             if ($success) {

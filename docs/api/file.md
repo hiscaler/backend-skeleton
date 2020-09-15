@@ -12,10 +12,11 @@ POST /api/file/uploading
 | generate_thumbnail | int | 否 | 1 | 是否生成缩略图 |
 | thumbnail_size | string | 否 | 100x100 | 缩略图尺寸，宽度x高度 |
 
-> 允许上传的文件格式为以下三种：
+> 允许上传的文件格式为以下四种：
 > 1. Base64 格式的图片文件
 > 2. 一个文件对象
 > 3. 多个文件对象组成的数组
+> 4. 网络文件地址，比如 https://pics7.baidu.com/feed/dcc451da81cb39dbe7d2055bccb31f23aa1830dc.jpeg?token=f2c1be804c9bc36ea5f7258bb3c74d4c
 >
 > 无论传递的是何种格式的文件数据，接口端都会对接收到的数据进行解析，分析出您上传的对象并进行相应的处理。
 >
